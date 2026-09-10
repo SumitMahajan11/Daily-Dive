@@ -24,6 +24,12 @@ yarn-error.log*
 *.sln
 *.sw?
 
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
 # Testing & screenshots
 screenshots/
 C:\Users\SUMIT\.gemini\antigravity-ide\brain\
+
