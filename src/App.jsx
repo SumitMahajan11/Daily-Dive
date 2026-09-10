@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
 import { Navbar } from './components/Navbar/Navbar';
@@ -11,54 +11,117 @@ import { AuthScreen } from './components/Auth/AuthScreen';
 import { ToastContainer } from './components/UI/Toast';
 import { RotateCw, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
 
+const SECTIONS = [
+  { id: 'spin',     label: 'Spin Roulette',    icon: RotateCw,          kbd: '1' },
+  { id: 'filter',   label: 'Category Filter',  icon: SlidersHorizontal, kbd: '2' },
+  { id: 'progress', label: 'Progress & Stats', icon: BarChart3,         kbd: '3' },
+  { id: 'settings', label: 'Settings',          icon: Settings,          kbd: '4' },
+];
+
+/* ── Small helper components ── */
+
+const SectionDivider = ({ label, icon: Icon }) => (
+  <div className="flex items-center gap-3 mb-6">
+    <div className="flex items-center gap-2 text-primary">
+      <Icon size={18} />
+      <h2 className="text-sm font-semibold uppercase tracking-widest text-primary/80">{label}</h2>
+    </div>
+    <div className="flex-1 h-px bg-outline-variant/20" />
+  </div>
+);
+
+const HorizontalSeparator = () => (
+  <div className="max-w-4xl mx-auto px-4 sm:px-8">
+    <div className="h-px bg-gradient-to-r from-transparent via-outline-variant/30 to-transparent" />
+  </div>
+);
+
 const MainLayout = () => {
   const { user } = useAuth();
   const { topics, eligibleTopics, userProgressMap } = useData();
-  const [activeTab, setActiveTab] = useState('spin');
+  const [activeSection, setActiveSection] = useState('spin');
 
-  // Keyboard navigation shortcuts: 1 -> Spin, 2 -> Filter, 3 -> Progress, 4 -> Settings
+  const sectionRefs = useRef({});
+  const isScrollingProgrammatically = useRef(false);
+
+  // Register a ref for each section
+  const setSectionRef = useCallback((id) => (el) => {
+    sectionRefs.current[id] = el;
+  }, []);
+
+  // Scroll to a section smoothly
+  const scrollToSection = useCallback((id) => {
+    const el = sectionRefs.current[id];
+    if (!el) return;
+    isScrollingProgrammatically.current = true;
+    setActiveSection(id);
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    // Release programmatic flag after scroll animation (~800ms)
+    setTimeout(() => { isScrollingProgrammatically.current = false; }, 900);
+  }, []);
+
+  // IntersectionObserver: keep active nav in sync while user scrolls manually
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (isScrollingProgrammatically.current) return;
+        let best = null;
+        let bestRatio = 0;
+        entries.forEach((entry) => {
+          if (entry.intersectionRatio > bestRatio) {
+            bestRatio = entry.intersectionRatio;
+            best = entry;
+          }
+        });
+        if (best && best.isIntersecting && best.target.dataset.section) {
+          setActiveSection(best.target.dataset.section);
+        }
+      },
+      { threshold: [0.15, 0.5, 0.85], rootMargin: '-10% 0px -15% 0px' }
+    );
+
+    SECTIONS.forEach(({ id }) => {
+      const el = sectionRefs.current[id];
+      if (el) observer.observe(el);
+    });
+
+    return () => observer.disconnect();
+  }, []);
+
+  // Keyboard shortcuts: 1-4 scroll to sections
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-      if (e.key === '1') setActiveTab('spin');
-      else if (e.key === '2') setActiveTab('filter');
-      else if (e.key === '3') setActiveTab('progress');
-      else if (e.key === '4') setActiveTab('settings');
+      const map = { '1': 'spin', '2': 'filter', '3': 'progress', '4': 'settings' };
+      if (map[e.key]) scrollToSection(map[e.key]);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, []);
+  }, [scrollToSection]);
 
   const learnedCount = Object.keys(userProgressMap).length;
   const totalTopics = topics.length || 1;
   const progressPercent = Math.min(100, Math.round((learnedCount / totalTopics) * 100));
 
-  const navItems = [
-    { id: 'spin', label: 'Spin Roulette', icon: RotateCw, kbd: '1' },
-    { id: 'filter', label: 'Category Filter', icon: SlidersHorizontal, kbd: '2' },
-    { id: 'progress', label: 'Progress & Stats', icon: BarChart3, kbd: '3' },
-    { id: 'settings', label: 'Settings', icon: Settings, kbd: '4' }
-  ];
-
   return (
     <div className="bg-surface font-sans text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white">
-      {/* Top Navbar */}
-      <Navbar activeTab={activeTab} onNavigateTab={setActiveTab} />
+      {/* Top Navbar — passes activeSection & scroll handler */}
+      <Navbar activeTab={activeSection} onNavigateTab={scrollToSection} />
 
-      {/* Main Wrapper with Desktop Sidebar */}
+      {/* Main Wrapper */}
       <div className="flex-1 w-full max-w-6xl mx-auto flex pt-14 pb-20 md:pb-8">
-        
-        {/* Desktop Sidebar Navigation */}
+
+        {/* Desktop Sticky Sidebar */}
         <aside className="hidden md:flex flex-col w-64 p-4 sticky top-14 h-[calc(100vh-3.5rem)] border-r border-outline-variant/20 shrink-0">
           <nav className="flex flex-col gap-1.5 flex-1">
-            {navItems.map(item => {
+            {SECTIONS.map(item => {
               const Icon = item.icon;
-              const isActive = activeTab === item.id;
+              const isActive = activeSection === item.id;
               return (
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => setActiveTab(item.id)}
+                  onClick={() => scrollToSection(item.id)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all cursor-pointer ${
                     isActive
                       ? 'text-primary bg-primary-container/20 border border-primary-container/30'
@@ -95,31 +158,78 @@ const MainLayout = () => {
           </div>
         </aside>
 
-        {/* Main Content Area */}
-        <main className="flex-1 w-full px-4 sm:px-8 py-6 max-w-4xl mx-auto overflow-x-hidden">
-          {activeTab === 'auth' && (
-            <AuthScreen onAuthSuccess={() => setActiveTab('spin')} />
-          )}
-          {activeTab === 'spin' && (
-            <SpinScreen onNavigateFilter={() => setActiveTab('filter')} />
-          )}
-          {activeTab === 'filter' && (
-            <FilterScreen onSpinActivePool={() => setActiveTab('spin')} />
-          )}
-          {activeTab === 'progress' && (
-            <ProgressScreen onReviewTopic={() => setActiveTab('spin')} />
-          )}
-          {activeTab === 'settings' && (
-            <SettingsScreen />
-          )}
-        </main>
+        {/* Scrollable Content — all sections stacked vertically */}
+        <main className="flex-1 w-full overflow-x-hidden">
 
+          {/* Auth section (only when not signed in) */}
+          {!user && (
+            <section
+              id="auth"
+              data-section="auth"
+              className="px-4 sm:px-8 py-8 max-w-4xl mx-auto"
+            >
+              <AuthScreen onAuthSuccess={() => scrollToSection('spin')} />
+            </section>
+          )}
+
+          {/* ── SPIN ── */}
+          <section
+            id="spin"
+            data-section="spin"
+            ref={setSectionRef('spin')}
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+          >
+            <SectionDivider label="Spin Roulette" icon={RotateCw} />
+            <SpinScreen onNavigateFilter={() => scrollToSection('filter')} />
+          </section>
+
+          <HorizontalSeparator />
+
+          {/* ── FILTER ── */}
+          <section
+            id="filter"
+            data-section="filter"
+            ref={setSectionRef('filter')}
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+          >
+            <SectionDivider label="Category Filter" icon={SlidersHorizontal} />
+            <FilterScreen onSpinActivePool={() => scrollToSection('spin')} />
+          </section>
+
+          <HorizontalSeparator />
+
+          {/* ── PROGRESS ── */}
+          <section
+            id="progress"
+            data-section="progress"
+            ref={setSectionRef('progress')}
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+          >
+            <SectionDivider label="Progress & Stats" icon={BarChart3} />
+            <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+          </section>
+
+          <HorizontalSeparator />
+
+          {/* ── SETTINGS ── */}
+          <section
+            id="settings"
+            data-section="settings"
+            ref={setSectionRef('settings')}
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+          >
+            <SectionDivider label="Settings" icon={Settings} />
+            <SettingsScreen />
+          </section>
+
+          {/* Bottom breathing room */}
+          <div className="h-16" />
+        </main>
       </div>
 
-      {/* Mobile Bottom Navigation */}
-      <BottomNavigation activeTab={activeTab} onSelectTab={setActiveTab} />
+      {/* Mobile Bottom Navigation — scrolls to section */}
+      <BottomNavigation activeTab={activeSection} onSelectTab={scrollToSection} />
 
-      {/* Toast Notifications */}
       <ToastContainer />
     </div>
   );
