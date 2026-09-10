@@ -1,6 +1,6 @@
 {
-  "name": "Life Learning Roulette",
-  "short_name": "Life Roulette",
+  "name": "Daily Dive",
+  "short_name": "Daily Dive",
   "description": "Micro-learning on demand: spin for curated learning topics, maintain daily streaks, and master core concepts across tech, mind, and world ideas.",
   "start_url": "./index.html",
   "scope": "./",

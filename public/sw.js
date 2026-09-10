@@ -1,5 +1,5 @@
-// Life Learning Roulette - Service Worker
-const CACHE_NAME = 'life-learning-roulette-v1';
+// Daily Dive - Service Worker
+const CACHE_NAME = 'daily-dive-v1';
 
 const APP_SHELL = [
   './',

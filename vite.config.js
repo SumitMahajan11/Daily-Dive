@@ -9,8 +9,8 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-192-maskable.png', 'icons/icon-512-maskable.png'],
       manifest: {
-        name: 'Life Learning Roulette',
-        short_name: 'Life Roulette',
+        name: 'Daily Dive',
+        short_name: 'Daily Dive',
         description: 'Micro-learning on demand: spin for curated learning topics, maintain daily streaks, and master core concepts across tech, mind, and world ideas.',
         start_url: '/',
         scope: '/',

@@ -1,4 +1,4 @@
-# Life Learning Roulette
+# Daily Dive
 
 A distraction-free, privacy-first progressive web application (PWA) for daily micro-learning on demand. Spin for curated learning topics across technical, psychological, philosophical, and financial disciplines, maintain daily streaks, and review concepts using spaced repetition.
 
@@ -50,8 +50,8 @@ A distraction-free, privacy-first progressive web application (PWA) for daily mi
 ### Installation
 ```bash
 # Clone the repository
-git clone https://github.com/SumitMahajan11/life-learning-roulette.git
-cd life-learning-roulette
+git clone https://github.com/SumitMahajan11/Daily-Dive.git
+cd Daily-Dive
 
 # Install dependencies
 npm install

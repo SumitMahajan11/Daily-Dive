@@ -12,12 +12,12 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
 
   const getScreenTitle = () => {
     switch (activeTab) {
-      case 'spin': return 'Life Learning Roulette';
+      case 'spin': return 'Daily Dive';
       case 'filter': return 'Category Filters';
       case 'progress': return 'Progress & Metrics';
       case 'settings': return 'Settings & Preferences';
       case 'auth': return 'Account Access';
-      default: return 'Life Learning Roulette';
+      default: return 'Daily Dive';
     }
   };
 

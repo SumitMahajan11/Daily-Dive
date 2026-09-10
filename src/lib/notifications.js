@@ -41,7 +41,7 @@ export function scheduleDailyReminder(timeStr = '09:00 AM', onTrigger = null) {
   reminderTimerId = setTimeout(() => {
     if (Notification.permission === 'granted') {
       try {
-        const notif = new Notification('Life Learning Roulette', {
+        const notif = new Notification('Daily Dive', {
           body: "Time for your daily learning spin! Discover a new micro-concept and maintain your streak.",
           icon: '/icons/icon-192.png',
           badge: '/icons/icon-192.png'

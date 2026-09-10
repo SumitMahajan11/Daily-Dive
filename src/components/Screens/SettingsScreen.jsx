@@ -51,7 +51,7 @@ export const SettingsScreen = () => {
     const handleAppInstalled = () => {
       setDeferredPrompt(null);
       setIsStandalone(true);
-      showToast('Life Learning Roulette installed!', 'success');
+      showToast('Daily Dive installed!', 'success');
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
@@ -453,7 +453,7 @@ export const SettingsScreen = () => {
                 <Disc size={20} />
               </div>
               <div>
-                <div className="font-semibold text-sm sm:text-base text-on-surface">Life Learning Roulette</div>
+                <div className="font-semibold text-sm sm:text-base text-on-surface">Daily Dive</div>
                 <div className="text-xs text-on-surface-variant">Distraction-free lifelong learning for modern polymaths</div>
               </div>
             </div>
