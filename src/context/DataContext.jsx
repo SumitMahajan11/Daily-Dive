@@ -119,12 +119,20 @@ export const DataProvider = ({ children }) => {
 
   // Filtered / eligible topics
   const eligibleTopics = useMemo(() => {
+    const ec = userSettings.enabled_categories;
+    const hasExplicitSettings = Object.keys(ec).length > 0;
+
+    // If no settings have been explicitly saved yet → all topics are eligible (default open state)
+    if (!hasExplicitSettings) return topics;
+
     return topics.filter(t => {
       const group = t.group_name || t.group;
       const cat = t.category || t.sub;
-      if (userSettings.enabled_categories[group] === false) return false;
-      if (userSettings.enabled_categories[`${group}::${cat}`] === false ||
-          userSettings.enabled_categories[cat] === false) return false;
+      // Group must be explicitly true (not just "not false")
+      if (ec[group] !== true) return false;
+      // Category must also be explicitly true
+      const catKey = `${group}::${cat}`;
+      if (ec[catKey] !== true && ec[cat] !== true) return false;
       return true;
     });
   }, [topics, userSettings.enabled_categories]);

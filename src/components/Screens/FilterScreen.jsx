@@ -28,8 +28,22 @@ export const FilterScreen = ({ onSpinActivePool }) => {
     }));
   };
 
+  // Returns true if enabled_categories has any explicit key set (user has customised at least once)
+  const hasAnyExplicitSetting = Object.keys(enabled).length > 0;
+
   const handleGroupToggle = (group, isChecked) => {
-    const patch = { ...enabled, [group]: isChecked };
+    let patch = { ...enabled };
+
+    // If this is the first explicit toggle, seed ALL groups as enabled so
+    // the default-allow state is replaced with fully explicit state.
+    if (!hasAnyExplicitSetting) {
+      CATEGORY_TREE.forEach(g => {
+        patch[g.group] = true;
+        g.categories.forEach(cat => { patch[`${g.group}::${cat.name}`] = true; });
+      });
+    }
+
+    patch[group] = isChecked;
     const groupDef = CATEGORY_TREE.find(g => g.group === group);
     if (groupDef) {
       groupDef.categories.forEach(cat => {
@@ -40,8 +54,26 @@ export const FilterScreen = ({ onSpinActivePool }) => {
   };
 
   const handleCategoryToggle = (group, categoryName, isChecked) => {
+    let patch = { ...enabled };
+
+    // Same seed logic — first explicit touch locks in all groups explicitly
+    if (!hasAnyExplicitSetting) {
+      CATEGORY_TREE.forEach(g => {
+        patch[g.group] = true;
+        g.categories.forEach(cat => { patch[`${g.group}::${cat.name}`] = true; });
+      });
+    }
+
     const key = `${group}::${categoryName}`;
-    const patch = { ...enabled, [key]: isChecked };
+    patch[key] = isChecked;
+    // If all sub-categories of the group are now disabled, disable the group header too
+    const groupDef = CATEGORY_TREE.find(g => g.group === group);
+    if (groupDef) {
+      const allOff = groupDef.categories.every(cat => patch[`${group}::${cat.name}`] === false);
+      if (allOff) patch[group] = false;
+      const anyOn = groupDef.categories.some(cat => patch[`${group}::${cat.name}`] !== false);
+      if (anyOn) patch[group] = true;
+    }
     updateSettings({ enabled_categories: patch });
   };
 
