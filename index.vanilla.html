@@ -1,0 +1,3276 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <title>Life Learning Roulette — Micro-learning on Demand</title>
+  <meta name="description" content="A distraction-free, privacy-first single-page roulette application for daily micro-learning across tech, career, mental models, and world ideas.">
+  
+  <!-- PWA Manifest & App Icons -->
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#11131b">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Life Roulette">
+  <link rel="icon" type="image/png" sizes="192x192" href="./icons/icon-192.png">
+  <link rel="apple-touch-icon" sizes="192x192" href="./icons/icon-192.png">
+  
+  <!-- Google Fonts & Icons -->
+  <link href="https://fonts.googleapis.com" rel="preconnect">
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet">
+  
+  <!-- Supabase JS Client CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "error": "#ffb4ab",
+            "primary-container": "#5e6ad2",
+            "on-primary-fixed-variant": "#2e3aa2",
+            "tertiary-fixed": "#ffddbb",
+            "on-tertiary-fixed": "#2b1700",
+            "on-tertiary-container": "#fffaf8",
+            "secondary-container": "#42466e",
+            "inverse-on-surface": "#2e3039",
+            "on-secondary": "#292d53",
+            "error-container": "#93000a",
+            "tertiary-fixed-dim": "#ffb867",
+            "outline": "#908f9e",
+            "on-surface-variant": "#c6c5d5",
+            "on-primary-fixed": "#000965",
+            "secondary": "#c0c3f2",
+            "on-secondary-container": "#b1b5e3",
+            "tertiary": "#ffb867",
+            "on-tertiary-fixed-variant": "#673d00",
+            "outline-variant": "#454652",
+            "on-primary": "#121f8b",
+            "surface": "#11131b",
+            "background": "#11131b",
+            "on-secondary-fixed-variant": "#3f446b",
+            "primary": "#bdc2ff",
+            "on-background": "#e2e1ed",
+            "on-primary-container": "#fdfaff",
+            "surface-container": "#1d1f28",
+            "inverse-surface": "#e2e1ed",
+            "surface-variant": "#33343d",
+            "inverse-primary": "#4854bb",
+            "on-surface": "#e2e1ed",
+            "on-secondary-fixed": "#13183d",
+            "surface-container-low": "#191b24",
+            "surface-container-lowest": "#0c0e16",
+            "on-error": "#690005",
+            "primary-fixed-dim": "#bdc2ff",
+            "on-error-container": "#ffdad6",
+            "surface-container-highest": "#33343d",
+            "tertiary-container": "#a56500",
+            "surface-dim": "#11131b",
+            "secondary-fixed": "#dfe0ff",
+            "surface-bright": "#373942",
+            "secondary-fixed-dim": "#c0c3f2",
+            "surface-tint": "#bdc2ff",
+            "on-tertiary": "#482900",
+            "surface-container-high": "#282a32",
+            "primary-fixed": "#dfe0ff"
+          },
+          borderRadius: {
+            "DEFAULT": "0.25rem",
+            "lg": "0.5rem",
+            "xl": "0.75rem",
+            "2xl": "1rem",
+            "full": "9999px"
+          },
+          fontFamily: {
+            "sans": ["Inter", "sans-serif"],
+            "mono": ["JetBrains Mono", "monospace"]
+          }
+        }
+      }
+    };
+  </script>
+  
+  <style>
+    @layer base {
+      html, body {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background-color: #11131b;
+        color: #e2e1ed;
+        font-family: 'Inter', sans-serif;
+      }
+      .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem); }
+      .pt-safe { padding-top: max(env(safe-area-inset-top, 0px), 0.5rem); }
+    }
+    
+    /* Custom Scrollbar for desktop */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #11131b;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #282a32;
+      border-radius: 4px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #454652;
+    }
+
+    /* Tab transition animation */
+    .tab-content {
+      display: none;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: opacity 0.25s ease, transform 0.25s ease;
+    }
+    .tab-content.active {
+      display: block;
+      opacity: 1;
+      transform: translateY(0);
+    }
+    
+    .category-accordion {
+      transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), opacity 0.25s ease;
+    }
+  </style>
+</head>
+
+<body class="bg-surface font-sans text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white">
+  
+  <!-- AUTH LOADING OVERLAY (Route Guard State) -->
+  <div id="auth-loading-overlay" class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-[#11131b] transition-opacity duration-300">
+    <div class="relative w-16 h-16 flex items-center justify-center mb-4">
+      <div class="absolute inset-0 rounded-full border-2 border-primary-container/20 animate-ping"></div>
+      <div class="w-12 h-12 rounded-full border-2 border-primary-container/30 border-t-primary animate-spin"></div>
+      <span class="material-symbols-outlined text-primary text-[20px] absolute">token</span>
+    </div>
+    <p class="font-mono text-xs text-on-surface-variant tracking-tight">Verifying Supabase session...</p>
+  </div>
+
+  <!-- TOP APP BAR -->
+  <header class="fixed top-0 w-full z-40 pt-safe bg-surface/85 backdrop-blur-xl border-b border-outline-variant/30">
+    <div class="max-w-6xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-between">
+      
+      <!-- Brand & Active Screen Title -->
+      <div class="flex items-center gap-3">
+        <div class="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-container/20 border border-primary-container/30 text-primary">
+          <span class="material-symbols-outlined text-[19px]">token</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-semibold text-base text-on-surface tracking-tight" id="header-title">Life Learning Roulette</span>
+          <span class="text-[11px] font-mono text-on-surface-variant hidden sm:inline" id="header-subtitle">Micro-learning on Demand</span>
+        </div>
+      </div>
+      
+      <!-- Top Actions / Stats Pill -->
+      <div class="flex items-center gap-3">
+        <!-- Streak Counter -->
+        <div class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant text-xs shadow-inner">
+          <span class="material-symbols-outlined text-[15px] text-tertiary">local_fire_department</span>
+          <span class="font-mono font-medium text-on-surface" id="header-streak-text">0d streak</span>
+        </div>
+        
+        <!-- Offline / Auth Indicator -->
+        <div class="hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[11px]">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+          <span id="header-connection-status">Supabase Sync</span>
+        </div>
+
+        <!-- User / Quick Profile Avatar Dropdown -->
+        <div class="relative" id="user-profile-container">
+          <button id="quick-avatar-btn" class="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary hover:opacity-90 transition-opacity ring-2 ring-primary/20 cursor-pointer shadow-sm" title="Profile & Account">
+            <span class="material-symbols-outlined text-[18px]" id="avatar-icon">person</span>
+            <span class="font-mono text-xs font-bold hidden" id="avatar-initials">U</span>
+          </button>
+
+          <!-- Dropdown Menu -->
+          <div id="user-dropdown-menu" class="hidden absolute right-0 mt-2 w-64 rounded-xl bg-surface-container-low border border-outline-variant/40 shadow-2xl p-2 z-50 animate-in fade-in slide-in-from-top-2 duration-150">
+            <div class="px-3 py-2.5 border-b border-outline-variant/30 mb-1">
+              <p class="text-[10px] font-mono text-outline uppercase tracking-wider">Signed in as</p>
+              <p class="text-xs font-medium text-on-surface truncate mt-0.5" id="dropdown-user-email">guest@roulette.app</p>
+              <div class="mt-2 flex items-center gap-1.5">
+                <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded bg-primary-container/20 text-primary font-mono text-[10px] border border-primary-container/30">
+                  <span class="material-symbols-outlined text-[12px]">verified_user</span>
+                  <span id="dropdown-auth-provider">Supabase Auth</span>
+                </span>
+              </div>
+            </div>
+
+            <button id="menu-settings-btn" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors text-left cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">settings</span>
+              <span>Preferences & Settings</span>
+            </button>
+
+            <button id="menu-config-btn" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg transition-colors text-left cursor-pointer">
+              <span class="material-symbols-outlined text-[16px]">key</span>
+              <span>Supabase Connection</span>
+            </button>
+
+            <div class="my-1 border-t border-outline-variant/20"></div>
+
+            <button id="menu-logout-btn" type="button" class="w-full flex items-center gap-2.5 px-3 py-2 text-xs text-error hover:bg-error-container/20 rounded-lg transition-colors text-left cursor-pointer font-medium">
+              <span class="material-symbols-outlined text-[16px]">logout</span>
+              <span>Log out</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </header>
+
+  <!-- MAIN WRAPPER (Responsive Sidebar on Desktop + Content Area) -->
+  <div class="flex-1 w-full max-w-6xl mx-auto flex pt-14 pb-20 md:pb-8">
+    
+    <!-- DESKTOP SIDEBAR NAVIGATION (Hidden on Mobile) -->
+    <aside class="hidden md:flex flex-col w-64 p-4 sticky top-14 h-[calc(100vh-3.5rem)] border-r border-outline-variant/20 shrink-0">
+      <nav class="flex flex-col gap-1.5 flex-1">
+        <button class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all text-primary bg-primary-container/20 border border-primary-container/30" data-target="tab-spin">
+          <span class="material-symbols-outlined text-[20px]">cached</span>
+          <span>Spin Roulette</span>
+          <kbd class="ml-auto font-mono text-[10px] px-1.5 py-0.5 bg-surface-container text-outline rounded border border-outline-variant/30">1</kbd>
+        </button>
+
+        <button class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all text-on-surface-variant hover:text-on-surface hover:bg-surface-container" data-target="tab-filter">
+          <span class="material-symbols-outlined text-[20px]">tune</span>
+          <span>Category Filter</span>
+          <kbd class="ml-auto font-mono text-[10px] px-1.5 py-0.5 bg-surface-container text-outline rounded border border-outline-variant/30">2</kbd>
+        </button>
+
+        <button class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all text-on-surface-variant hover:text-on-surface hover:bg-surface-container" data-target="tab-progress">
+          <span class="material-symbols-outlined text-[20px]">analytics</span>
+          <span>Progress &amp; Stats</span>
+          <kbd class="ml-auto font-mono text-[10px] px-1.5 py-0.5 bg-surface-container text-outline rounded border border-outline-variant/30">3</kbd>
+        </button>
+
+        <button class="nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all text-on-surface-variant hover:text-on-surface hover:bg-surface-container" data-target="tab-settings">
+          <span class="material-symbols-outlined text-[20px]">settings</span>
+          <span>Settings</span>
+          <kbd class="ml-auto font-mono text-[10px] px-1.5 py-0.5 bg-surface-container text-outline rounded border border-outline-variant/30">4</kbd>
+        </button>
+      </nav>
+
+      <!-- Sidebar Footer Card -->
+      <div class="mt-auto p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/30 space-y-2">
+        <div class="flex items-center justify-between text-xs font-mono text-on-surface-variant">
+          <span>Active Topics:</span>
+          <span class="text-primary font-semibold" id="sidebar-active-count">156 / 156</span>
+        </div>
+        <div class="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
+          <div class="bg-primary-container h-full rounded-full transition-all duration-300" id="sidebar-progress-bar" style="width: 27%"></div>
+        </div>
+        <p class="text-[11px] text-outline">Press <kbd class="px-1 py-0.5 bg-surface-container rounded border border-outline-variant/40 font-mono">Space</kbd> anywhere to spin instantly.</p>
+      </div>
+    </aside>
+
+    <!-- MAIN SCROLLABLE CONTENT VIEW -->
+    <main class="flex-1 w-full px-4 sm:px-8 py-6 max-w-4xl mx-auto overflow-x-hidden">
+      
+      <!-- ============================================== -->
+      <!-- TAB 0: AUTHENTICATION SCREEN (LOGIN & SIGN UP) -->
+      <!-- ============================================== -->
+      <div id="tab-auth" class="tab-content">
+        <div class="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-md mx-auto py-4">
+          
+          <!-- Auth Card Container -->
+          <div class="w-full bg-surface-container-low rounded-2xl p-6 sm:p-8 border border-[#2d3148] shadow-[0_12px_40px_rgba(0,0,0,0.55)] relative">
+            
+            <!-- App Logo Badge & Title -->
+            <div class="flex flex-col items-center text-center mb-6">
+              <div class="w-12 h-12 rounded-xl bg-primary-container/20 border border-primary-container/40 text-primary flex items-center justify-center mb-3 shadow-inner">
+                <span class="material-symbols-outlined text-[28px]">token</span>
+              </div>
+              <h2 class="text-xl sm:text-2xl font-bold tracking-tight text-on-surface" id="auth-heading">Welcome to Life Learning</h2>
+              <p class="text-xs sm:text-sm text-on-surface-variant mt-1" id="auth-subheading">Sign in to spin topics and build your daily learning streak</p>
+            </div>
+
+            <!-- Tab Switcher (Log in / Sign up) -->
+            <div class="flex p-1 rounded-xl bg-surface-container-highest border border-outline-variant/30 mb-5">
+              <button id="auth-tab-login-btn" type="button" class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all text-primary bg-surface shadow-sm cursor-pointer">
+                Log In
+              </button>
+              <button id="auth-tab-signup-btn" type="button" class="flex-1 py-2 text-xs font-semibold rounded-lg transition-all text-on-surface-variant hover:text-on-surface cursor-pointer">
+                Sign Up
+              </button>
+            </div>
+
+            <!-- Alert Message Banner (Error / Success) -->
+            <div id="auth-alert-box" class="hidden mb-4 p-3 rounded-xl text-xs flex items-start gap-2.5 transition-all">
+              <span class="material-symbols-outlined text-[18px] shrink-0 mt-0.5" id="auth-alert-icon">info</span>
+              <div class="flex-1 text-[12px] leading-snug" id="auth-alert-text"></div>
+              <button type="button" id="auth-alert-close" class="text-on-surface-variant hover:text-on-surface cursor-pointer">
+                <span class="material-symbols-outlined text-[14px]">close</span>
+              </button>
+            </div>
+
+            <!-- Google OAuth Button -->
+            <button id="google-auth-btn" type="button" class="w-full h-11 bg-surface-container-high hover:bg-surface-bright active:scale-[0.99] border border-outline-variant/40 rounded-xl text-xs sm:text-sm font-medium text-on-surface flex items-center justify-center gap-3 transition-all cursor-pointer shadow-sm">
+              <svg class="w-4 h-4" viewBox="0 0 24 24">
+                <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/>
+                <path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.06H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.94l2.85-2.22.81-.63z"/>
+                <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
+              </svg>
+              <span>Continue with Google</span>
+            </button>
+
+            <!-- Divider -->
+            <div class="flex items-center gap-3 my-4">
+              <div class="flex-1 h-px bg-outline-variant/30"></div>
+              <span class="text-[11px] font-mono text-outline uppercase tracking-wider">or with email</span>
+              <div class="flex-1 h-px bg-outline-variant/30"></div>
+            </div>
+
+            <!-- Email / Password Form -->
+            <form id="auth-form" class="space-y-3.5" novalidate>
+              
+              <!-- Email Input -->
+              <div>
+                <label for="auth-email" class="block text-[11px] font-mono uppercase tracking-wider text-on-surface-variant mb-1.5 font-medium">Email address</label>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-[18px] text-outline pointer-events-none">mail</span>
+                  <input 
+                    type="email" 
+                    id="auth-email" 
+                    required 
+                    placeholder="name@example.com" 
+                    autocomplete="email"
+                    class="w-full h-10 pl-9 pr-3 rounded-xl bg-surface-container-high border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs sm:text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-sans"
+                  >
+                </div>
+                <p class="hidden text-[11px] text-error mt-1 font-mono" id="email-validation-msg">Please enter a valid email address.</p>
+              </div>
+
+              <!-- Password Input -->
+              <div>
+                <div class="flex items-center justify-between mb-1.5">
+                  <label for="auth-password" class="block text-[11px] font-mono uppercase tracking-wider text-on-surface-variant font-medium">Password</label>
+                  <span class="text-[10px] font-mono text-outline" id="password-hint">Min 6 characters</span>
+                </div>
+                <div class="relative flex items-center">
+                  <span class="material-symbols-outlined absolute left-3 text-[18px] text-outline pointer-events-none">lock</span>
+                  <input 
+                    type="password" 
+                    id="auth-password" 
+                    required 
+                    placeholder="••••••••" 
+                    autocomplete="current-password"
+                    class="w-full h-10 pl-9 pr-10 rounded-xl bg-surface-container-high border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs sm:text-sm focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all font-sans"
+                  >
+                  <button type="button" id="toggle-pwd-btn" class="absolute right-3 text-outline hover:text-on-surface cursor-pointer" title="Show/hide password">
+                    <span class="material-symbols-outlined text-[18px]" id="toggle-pwd-icon">visibility</span>
+                  </button>
+                </div>
+                <p class="hidden text-[11px] text-error mt-1 font-mono" id="pwd-validation-msg">Password must be at least 6 characters.</p>
+              </div>
+
+              <!-- Submit Button -->
+              <button 
+                type="submit" 
+                id="auth-submit-btn" 
+                class="w-full h-11 mt-2 bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-white rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-primary-container/20"
+              >
+                <span class="material-symbols-outlined text-[18px]" id="auth-submit-icon">login</span>
+                <span id="auth-submit-text">Sign In</span>
+              </button>
+            </form>
+
+            <!-- Bottom Toggle Text -->
+            <div class="mt-5 text-center text-xs text-on-surface-variant">
+              <span id="auth-switch-prompt">Don't have an account?</span>
+              <button type="button" id="auth-switch-btn" class="ml-1 text-primary hover:underline font-semibold cursor-pointer">
+                Sign up
+              </button>
+            </div>
+
+            <!-- Supabase Config Status Pill / Setup helper -->
+            <div class="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between text-[11px] font-mono text-outline">
+              <span class="flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-emerald-400" id="supabase-status-dot"></span>
+                <span id="supabase-status-label">Supabase Backend Connected</span>
+              </span>
+              <button type="button" id="open-config-btn" class="hover:text-primary transition-colors underline cursor-pointer">Config</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 1: SPIN ROULETTE -->
+      <!-- ============================================== -->
+      <div id="tab-spin" class="tab-content active">
+        <div class="flex flex-col w-full max-w-2xl mx-auto pb-6">
+          
+          <!-- Minimalist Precision Wheel Dial -->
+          <div class="flex flex-col items-center justify-center py-2 relative">
+            
+            <!-- Top Indigo Indicator Needle -->
+            <div class="z-20 mb-[-8px] flex flex-col items-center drop-shadow-md">
+              <div class="w-2 h-2 bg-primary-container rotate-45 mb-0.5 shadow-sm border border-primary/50"></div>
+              <div class="w-1 h-3 bg-primary-container rounded-full"></div>
+            </div>
+
+            <!-- Dial Ring Container -->
+            <div class="relative w-52 h-52 sm:w-60 sm:h-60 flex items-center justify-center">
+              <div class="absolute inset-0 rounded-full border border-outline-variant/40 shadow-[0_0_20px_rgba(94,106,210,0.1)]"></div>
+              
+              <!-- Segmented Wheel SVG -->
+              <svg id="spin-wheel-svg" class="w-48 h-48 sm:w-56 sm:h-56 select-none cursor-pointer" viewBox="0 0 160 160">
+                <circle cx="80" cy="80" fill="#0d0f17" r="74" stroke="#1d1f28" stroke-width="1.5"></circle>
+                
+                <!-- Quadrant 1: TECH (Top Right) -->
+                <path d="M 80,6 A 74,74 0 0,1 154,80 L 80,80 Z" fill="#1b1e2f" opacity="0.95"></path>
+                <!-- Quadrant 2: MONEY & CAREER (Bottom Right) -->
+                <path d="M 154,80 A 74,74 0 0,1 80,154 L 80,80 Z" fill="#121522" opacity="0.75"></path>
+                <!-- Quadrant 3: MIND & GROWTH (Bottom Left) -->
+                <path d="M 80,154 A 74,74 0 0,1 6,80 L 80,80 Z" fill="#1b1e2f" opacity="0.55"></path>
+                <!-- Quadrant 4: WORLD & IDEAS (Top Left) -->
+                <path d="M 6,80 A 74,74 0 0,1 80,6 L 80,80 Z" fill="#121522" opacity="0.85"></path>
+
+                <!-- Dividers -->
+                <line stroke="#2b2f44" stroke-width="1" x1="80" x2="80" y1="6" y2="154"></line>
+                <line stroke="#2b2f44" stroke-width="1" x1="6" x2="154" y1="80" y2="80"></line>
+
+                <!-- Labels -->
+                <text fill="#bdc2ff" font-family="Inter" font-size="7" font-weight="600" letter-spacing="0.06em" text-anchor="middle" x="114" y="50">TECH</text>
+                <text fill="#ffb867" font-family="Inter" font-size="7" font-weight="600" letter-spacing="0.06em" text-anchor="middle" x="114" y="114">MONEY</text>
+                <text fill="#c0c3f2" font-family="Inter" font-size="7" font-weight="600" letter-spacing="0.06em" text-anchor="middle" x="46" y="114">MIND</text>
+                <text fill="#908f9e" font-family="Inter" font-size="7" font-weight="600" letter-spacing="0.06em" text-anchor="middle" x="46" y="50">WORLD</text>
+
+                <!-- Center Hub -->
+                <circle cx="80" cy="80" fill="#090a10" r="16" stroke="#2b2f44" stroke-width="1.5"></circle>
+                <circle cx="80" cy="80" fill="#5e6ad2" r="4.5" stroke="#ffffff" stroke-width="0.75"></circle>
+              </svg>
+            </div>
+
+            <!-- Ticker Readout -->
+            <div class="mt-3 flex items-center gap-2 font-mono text-xs text-on-surface-variant">
+              <span class="w-2 h-2 rounded-full bg-primary animate-pulse" id="ticker-dot"></span>
+              <span class="tracking-tight" id="ticker-status">Ready to spin · 156 topics active in pool</span>
+            </div>
+          </div>
+
+          <!-- Spin Action Button -->
+          <div class="flex flex-col items-center gap-2 my-3">
+            <button id="spin-btn" class="w-full max-w-sm h-11 bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] transition-all text-white font-medium rounded-lg flex items-center justify-center gap-2 text-sm shadow-lg shadow-primary-container/20 cursor-pointer">
+              <span class="material-symbols-outlined text-[18px]">refresh</span>
+              <span>Spin Roulette</span>
+              <kbd class="ml-1.5 px-1.5 py-0.5 text-[10px] font-mono bg-white/20 text-white rounded border border-white/30">Space</kbd>
+            </button>
+            <div class="flex items-center justify-center gap-1.5 font-mono text-[11px] tracking-tight text-on-surface-variant">
+              <span class="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
+              <span id="spin-sub-info">Random selection from all active categories</span>
+            </div>
+          </div>
+
+          <!-- Active Result Card -->
+          <div class="mt-4 w-full bg-surface-container-low rounded-xl p-5 sm:p-6 shadow-[0_8px_30px_rgb(0,0,0,0.45)] border border-[#2d3148] relative transition-all duration-300">
+            
+            <!-- Breadcrumbs & Status Tags -->
+            <div class="flex items-center justify-between pb-3 mb-3 border-b border-outline-variant/30">
+              <div class="flex items-center gap-2 text-xs font-medium text-on-surface-variant">
+                <span class="text-primary font-semibold" id="card-group">Tech</span>
+                <span class="text-outline">/</span>
+                <span class="text-on-surface" id="card-sub">AI &amp; ML</span>
+              </div>
+              <div class="flex items-center gap-1.5" id="card-tags-container">
+                <span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-tight uppercase">rag</span>
+                <span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-tight uppercase">llms</span>
+              </div>
+            </div>
+
+            <!-- Topic Title -->
+            <h2 class="text-xl sm:text-2xl text-on-surface font-semibold tracking-tight" id="topic-title">
+              Retrieval-Augmented Generation (RAG)
+            </h2>
+
+            <!-- Plain, Concrete Description -->
+            <p class="mt-2.5 text-sm sm:text-base text-on-surface-variant leading-relaxed" id="topic-desc">
+              Combines pre-trained parametric models with dense vector retrieval across external knowledge stores to reduce hallucinations and ground responses in private data.
+            </p>
+
+            <!-- Curated External Sources Header -->
+            <div class="mt-5 pt-4 border-t border-outline-variant/20">
+              <div class="text-xs text-outline uppercase tracking-wider mb-2.5 font-medium flex items-center justify-between">
+                <span>Primary References &amp; Deep Dives</span>
+                <span class="material-symbols-outlined text-[14px]">menu_book</span>
+              </div>
+
+              <!-- Links Stack -->
+              <div class="flex flex-col space-y-2" id="references-container">
+                <a class="group flex items-start justify-between p-2.5 -mx-2 rounded-lg hover:bg-surface-container transition-colors" href="https://arxiv.org/abs/2005.11401" rel="noopener noreferrer" target="_blank">
+                  <div class="flex flex-col pr-2">
+                    <div class="flex items-center gap-2">
+                      <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[10px] uppercase font-semibold">Paper</span>
+                      <span class="text-xs sm:text-sm text-on-surface group-hover:text-primary transition-colors font-medium">Lewis et al. — Original RAG Paper (arXiv)</span>
+                    </div>
+                    <span class="text-[12px] text-outline leading-tight mt-1">Foundational paper introducing parametric &amp; non-parametric memory</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary transition-colors mt-0.5 shrink-0">north_east</span>
+                </a>
+
+                <a class="group flex items-start justify-between p-2.5 -mx-2 rounded-lg hover:bg-surface-container transition-colors" href="https://www.pinecone.io/learn/vector-database/" rel="noopener noreferrer" target="_blank">
+                  <div class="flex flex-col pr-2">
+                    <div class="flex items-center gap-2">
+                      <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[10px] uppercase font-semibold">Guide</span>
+                      <span class="text-xs sm:text-sm text-on-surface group-hover:text-primary transition-colors font-medium">Pinecone — Dense Retrieval &amp; Vector Indices</span>
+                    </div>
+                    <span class="text-[12px] text-outline leading-tight mt-1">Architecture guide to semantic search pipelines and embeddings</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary transition-colors mt-0.5 shrink-0">north_east</span>
+                </a>
+
+                <a class="group flex items-start justify-between p-2.5 -mx-2 rounded-lg hover:bg-surface-container transition-colors" href="https://python.langchain.com/docs/use_cases/question_answering/" rel="noopener noreferrer" target="_blank">
+                  <div class="flex flex-col pr-2">
+                    <div class="flex items-center gap-2">
+                      <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[10px] uppercase font-semibold">Docs</span>
+                      <span class="text-xs sm:text-sm text-on-surface group-hover:text-primary transition-colors font-medium">LangChain — Advanced Chunking &amp; Re-ranking</span>
+                    </div>
+                    <span class="text-[12px] text-outline leading-tight mt-1">Practical production patterns for multi-stage document retrieval</span>
+                  </div>
+                  <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary transition-colors mt-0.5 shrink-0">north_east</span>
+                </a>
+              </div>
+            </div>
+
+            <!-- Actions Footer -->
+            <div class="mt-6 pt-4 border-t border-outline-variant/20 flex items-center justify-between gap-3">
+              <button id="mark-learned-btn" class="flex-1 h-10 bg-primary-container hover:bg-primary-container/90 text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm">
+                <span class="material-symbols-outlined text-[18px]">check</span>
+                <span id="mark-learned-text">Mark as learned</span>
+              </button>
+              <button id="spin-again-btn" class="px-4 h-10 text-on-surface-variant hover:text-on-surface hover:bg-surface-container rounded-lg font-medium text-sm transition-colors cursor-pointer">
+                Spin again
+              </button>
+            </div>
+
+          </div>
+
+          <!-- Micro System Note -->
+          <div class="mt-4 flex items-center justify-center gap-1.5 text-xs font-mono text-on-surface-variant">
+            <span class="material-symbols-outlined text-[15px] text-emerald-400">cloud_done</span>
+            <span>Saved &amp; synced with your account</span>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 2: CATEGORY TREE FILTER -->
+      <!-- ============================================== -->
+      <div id="tab-filter" class="tab-content">
+        <div class="flex flex-col w-full max-w-2xl mx-auto pb-8 space-y-4">
+          
+          <!-- Pool Configuration Card -->
+          <div class="flex flex-col gap-2">
+            <div class="flex items-center justify-between px-1">
+              <div class="flex items-center gap-2">
+                <span class="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
+                <span class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Pool Configuration</span>
+                <span class="font-mono text-[11px] text-outline hidden sm:inline">(auto-saved)</span>
+              </div>
+              <button id="reset-filter-btn" class="font-mono text-xs text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 cursor-pointer">
+                <span class="material-symbols-outlined text-[14px]">restart_alt</span>
+                <span>Reset to default</span>
+              </button>
+            </div>
+
+            <!-- Master Switch Row -->
+            <div class="w-full bg-surface-container-low rounded-xl p-4 flex items-center justify-between border border-outline-variant/30">
+              <div class="flex flex-col">
+                <span class="font-medium text-sm sm:text-base text-on-surface">Master Topic Switch</span>
+                <span class="font-mono text-xs text-on-surface-variant" id="master-pool-label">156 active topics across 4 categories</span>
+              </div>
+              <label class="relative inline-flex items-center cursor-pointer">
+                <input id="master-toggle" type="checkbox" checked class="sr-only peer">
+                <div class="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
+              </label>
+            </div>
+          </div>
+
+          <!-- Hierarchical Category Trees -->
+          <div class="flex flex-col space-y-3" id="tree-container">
+            
+            <!-- Group 1: TECH (Expanded by default as primary category) -->
+            <div class="group-node flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20" data-group="Tech">
+              <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-low transition-colors group-header-row">
+                <div class="flex items-center gap-3 min-w-0">
+                  <button class="w-6 h-6 flex items-center justify-center text-on-surface-variant chevron-btn transition-transform duration-200" type="button">
+                    <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                  </button>
+                  <div class="flex flex-col truncate">
+                    <div class="flex items-center gap-2">
+                      <span class="font-semibold text-base text-on-surface truncate">Tech</span>
+                      <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-mono">5 sub-categories · 48 topics</span>
+                    </div>
+                  </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer ml-2" onclick="event.stopPropagation()">
+                  <input type="checkbox" checked class="group-switch sr-only peer" data-group="Tech">
+                  <div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+                </label>
+              </div>
+
+              <div class="group-body flex flex-col px-4 pb-3 space-y-2">
+                <!-- AI & ML -->
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="AI & ML">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">AI &amp; Machine Learning</span>
+                      <span class="font-mono text-xs text-outline">12 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Tech" data-sub="AI & ML">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">LLMs</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">RAG</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">LoRA</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Transformers</span>
+                  </div>
+                </div>
+
+                <!-- Cloud & Infra -->
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Cloud & Infra">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Cloud &amp; Infrastructure</span>
+                      <span class="font-mono text-xs text-outline">9 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Tech" data-sub="Cloud & Infra">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Kubernetes</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Terraform</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Docker</span>
+                  </div>
+                </div>
+
+                <!-- Web Dev -->
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Web Dev">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Web Architecture &amp; Performance</span>
+                      <span class="font-mono text-xs text-outline">9 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Tech" data-sub="Web Dev">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">React Server Components</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">WebAssembly</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">IndexedDB</span>
+                  </div>
+                </div>
+
+                <!-- Data Structures & Algorithms -->
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Data Structures & Algorithms">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Data Structures &amp; Algorithms</span>
+                      <span class="font-mono text-xs text-outline">10 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Tech" data-sub="Data Structures & Algorithms">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Bloom Filters</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Trie</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Dynamic Programming</span>
+                  </div>
+                </div>
+
+                <!-- Systems & Distributed Computing -->
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Systems & Distributed Computing">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Systems &amp; Distributed Computing</span>
+                      <span class="font-mono text-xs text-outline">8 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Tech" data-sub="Systems & Distributed Computing">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Raft Consensus</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Kafka Log Partitioning</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">CAP Theorem</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 2: MONEY & CAREER (Collapsed by default) -->
+            <div class="group-node flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20" data-group="Money & Career">
+              <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-low transition-colors group-header-row">
+                <div class="flex items-center gap-3 min-w-0">
+                  <button class="w-6 h-6 flex items-center justify-center text-on-surface-variant chevron-btn transition-transform duration-200 -rotate-90" type="button">
+                    <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                  </button>
+                  <div class="flex flex-col truncate">
+                    <div class="flex items-center gap-2">
+                      <span class="font-semibold text-base text-on-surface truncate">Money &amp; Career</span>
+                      <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-mono">2 sub-categories · 24 topics</span>
+                    </div>
+                  </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer ml-2" onclick="event.stopPropagation()">
+                  <input type="checkbox" checked class="group-switch sr-only peer" data-group="Money & Career">
+                  <div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+                </label>
+              </div>
+
+              <div class="group-body hidden flex flex-col px-4 pb-3 space-y-2">
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Finance & Equity">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Finance &amp; Equity Compensation</span>
+                      <span class="font-mono text-xs text-outline">12 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Money & Career" data-sub="Finance & Equity">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">83(b) Elections</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">QSBS Exemptions</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">ISO vs NSO Options</span>
+                  </div>
+                </div>
+
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Business & Strategy">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Business Strategy &amp; Growth</span>
+                      <span class="font-mono text-xs text-outline">12 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Money & Career" data-sub="Business & Strategy">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Network Effects</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Unit Economics</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Pricing Power</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 3: MIND & GROWTH (Collapsed by default) -->
+            <div class="group-node flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20" data-group="Mind & Growth">
+              <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-low transition-colors group-header-row">
+                <div class="flex items-center gap-3 min-w-0">
+                  <button class="w-6 h-6 flex items-center justify-center text-on-surface-variant chevron-btn transition-transform duration-200 -rotate-90" type="button">
+                    <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                  </button>
+                  <div class="flex flex-col truncate">
+                    <div class="flex items-center gap-2">
+                      <span class="font-semibold text-base text-on-surface truncate">Mind &amp; Growth</span>
+                      <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-mono">4 sub-categories · 44 topics</span>
+                    </div>
+                  </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer ml-2" onclick="event.stopPropagation()">
+                  <input type="checkbox" checked class="group-switch sr-only peer" data-group="Mind & Growth">
+                  <div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+                </label>
+              </div>
+
+              <div class="group-body hidden flex flex-col px-4 pb-3 space-y-2">
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Decision Systems">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Decision Systems &amp; Mental Models</span>
+                      <span class="font-mono text-xs text-outline">12 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Mind & Growth" data-sub="Decision Systems">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Inversion Thinking</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">First Principles</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Pre-Mortem Analysis</span>
+                  </div>
+                </div>
+
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Habits & Focus">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Habits, Focus &amp; Deep Work</span>
+                      <span class="font-mono text-xs text-outline">12 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="Mind & Growth" data-sub="Habits & Focus">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Implementation Intentions</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Dopamine Baseline Reset</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Spaced Repetition</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Group 4: WORLD & IDEAS (Collapsed by default) -->
+            <div class="group-node flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20" data-group="World & Ideas">
+              <div class="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-low transition-colors group-header-row">
+                <div class="flex items-center gap-3 min-w-0">
+                  <button class="w-6 h-6 flex items-center justify-center text-on-surface-variant chevron-btn transition-transform duration-200 -rotate-90" type="button">
+                    <span class="material-symbols-outlined text-[20px]">expand_more</span>
+                  </button>
+                  <div class="flex flex-col truncate">
+                    <div class="flex items-center gap-2">
+                      <span class="font-semibold text-base text-on-surface truncate">World &amp; Ideas</span>
+                      <span class="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-mono">2 sub-categories · 40 topics</span>
+                    </div>
+                  </div>
+                </div>
+                <label class="relative inline-flex items-center cursor-pointer ml-2" onclick="event.stopPropagation()">
+                  <input type="checkbox" checked class="group-switch sr-only peer" data-group="World & Ideas">
+                  <div class="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
+                </label>
+              </div>
+
+              <div class="group-body hidden flex flex-col px-4 pb-3 space-y-2">
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Network Dynamics">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Network Dynamics &amp; Systems</span>
+                      <span class="font-mono text-xs text-outline">14 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="World & Ideas" data-sub="Network Dynamics">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Scale-Free Networks</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Preferential Attachment</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Complex Adaptive Systems</span>
+                  </div>
+                </div>
+
+                <div class="category-node flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15" data-sub="Macroeconomics">
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2">
+                      <span class="text-sm font-medium text-on-surface">Macroeconomics &amp; Geopolitics</span>
+                      <span class="font-mono text-xs text-outline">14 topics</span>
+                    </div>
+                    <label class="relative inline-flex items-center cursor-pointer">
+                      <input type="checkbox" checked class="cat-switch sr-only peer" data-group="World & Ideas" data-sub="Macroeconomics">
+                      <div class="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
+                    </label>
+                  </div>
+                  <div class="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Liquidity Cycles</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Bretton Woods III</span>
+                    <span class="px-1.5 py-0.5 rounded bg-surface-container">Energy Arbitrage</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Direct Spin Shortcut Button (No separate Apply needed) -->
+          <div class="pt-2">
+            <button id="filter-spin-shortcut-btn" class="w-full h-11 bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm">
+              <span class="material-symbols-outlined text-[18px]">cached</span>
+              <span>Spin Active Pool (<span id="filter-active-spin-count">156</span> topics)</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 3: PROGRESS & STATS -->
+      <!-- ============================================== -->
+      <div id="tab-progress" class="tab-content">
+        <div class="flex flex-col w-full max-w-2xl mx-auto pb-8 space-y-6">
+          
+          <!-- Overview Card -->
+          <div class="flex flex-col space-y-2 pt-1">
+            <span class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Overview Metrics</span>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-surface-container-low p-5 rounded-xl border border-outline-variant/20 shadow-sm">
+              <div>
+                <div class="flex items-baseline space-x-1.5">
+                  <span class="text-4xl font-bold text-on-surface tracking-tight" id="stats-completed-count">42</span>
+                  <span class="text-lg text-on-surface-variant font-normal">/ 156</span>
+                </div>
+                <p class="text-xs text-on-surface-variant mt-1" id="stats-percentage-text">Topics completed (27% mastered)</p>
+              </div>
+              <div class="sm:text-right border-t sm:border-t-0 sm:border-l border-outline-variant/20 pt-3 sm:pt-0 sm:pl-4">
+                <span class="text-2xl sm:text-3xl font-bold text-tertiary" id="stats-streak-count">5 days</span>
+                <p class="text-xs text-on-surface-variant mt-1">Current daily streak · Longest: 14d</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Activity Heatmap (90 Days) -->
+          <div class="flex flex-col space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Activity (Last 90 Days)</span>
+              <div class="flex items-center space-x-1.5 text-xs text-on-surface-variant font-mono">
+                <span>Less</span>
+                <div class="w-2.5 h-2.5 rounded bg-surface-container-high"></div>
+                <div class="w-2.5 h-2.5 rounded bg-secondary-container"></div>
+                <div class="w-2.5 h-2.5 rounded bg-primary-container"></div>
+                <span>More</span>
+              </div>
+            </div>
+            
+            <div class="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 overflow-x-auto shadow-sm">
+              <div class="flex space-x-2 min-w-[320px]">
+                <div class="flex flex-col justify-between py-1 text-on-surface-variant font-mono text-[10px] h-20 pr-1 select-none">
+                  <span>Mon</span>
+                  <span>Wed</span>
+                  <span>Fri</span>
+                </div>
+                <div class="grid grid-flow-col grid-rows-5 gap-1.5 flex-1" id="activity-heatmap">
+                  <!-- Generated dynamically via JS -->
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Category Coverage Breakdown -->
+          <div class="flex flex-col space-y-3">
+            <span class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Category Mastery Coverage</span>
+            <div class="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 space-y-3.5">
+              
+              <!-- Tech -->
+              <div class="flex flex-col space-y-1">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="font-medium text-on-surface">Tech</span>
+                  <span class="font-mono text-xs text-on-surface-variant">18 / 48 (38%)</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-primary-container h-full rounded-full transition-all duration-500" style="width: 38%"></div>
+                </div>
+              </div>
+
+              <!-- Money & Career -->
+              <div class="flex flex-col space-y-1">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="font-medium text-on-surface">Money &amp; Career</span>
+                  <span class="font-mono text-xs text-on-surface-variant">8 / 24 (33%)</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-tertiary-container h-full rounded-full transition-all duration-500" style="width: 33%"></div>
+                </div>
+              </div>
+
+              <!-- Mind & Growth -->
+              <div class="flex flex-col space-y-1">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="font-medium text-on-surface">Mind &amp; Growth</span>
+                  <span class="font-mono text-xs text-on-surface-variant">12 / 44 (27%)</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-secondary-container h-full rounded-full transition-all duration-500" style="width: 27%"></div>
+                </div>
+              </div>
+
+              <!-- World & Ideas -->
+              <div class="flex flex-col space-y-1">
+                <div class="flex justify-between items-center text-sm">
+                  <span class="font-medium text-on-surface">World &amp; Ideas</span>
+                  <span class="font-mono text-xs text-on-surface-variant">4 / 40 (10%)</span>
+                </div>
+                <div class="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <div class="bg-primary/50 h-full rounded-full transition-all duration-500" style="width: 10%"></div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+          <!-- Spaced Repetition / Up Next for Review -->
+          <div class="flex flex-col space-y-3">
+            <span class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Spaced Repetition Review Queue</span>
+            <div class="flex flex-col space-y-2">
+              
+              <div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/15 hover:bg-surface-container transition-colors">
+                <div class="flex flex-col space-y-0.5 min-w-0 pr-3">
+                  <span class="text-sm font-semibold text-on-surface truncate">Bloom Filters</span>
+                  <span class="text-xs text-on-surface-variant truncate">Tech / Data Structures · Learned 18 days ago</span>
+                </div>
+                <button class="review-queue-btn px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface hover:bg-primary-container hover:text-white font-medium text-xs transition-colors shrink-0" data-topic="Bloom Filters">
+                  Review
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/15 hover:bg-surface-container transition-colors">
+                <div class="flex flex-col space-y-0.5 min-w-0 pr-3">
+                  <span class="text-sm font-semibold text-on-surface truncate">Implementation Intentions</span>
+                  <span class="text-xs text-on-surface-variant truncate">Mind &amp; Growth / Habits · Learned 14 days ago</span>
+                </div>
+                <button class="review-queue-btn px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface hover:bg-primary-container hover:text-white font-medium text-xs transition-colors shrink-0" data-topic="Implementation Intentions">
+                  Review
+                </button>
+              </div>
+
+              <div class="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/15 hover:bg-surface-container transition-colors">
+                <div class="flex flex-col space-y-0.5 min-w-0 pr-3">
+                  <span class="text-sm font-semibold text-on-surface truncate">Preferential Attachment</span>
+                  <span class="text-xs text-on-surface-variant truncate">World &amp; Ideas / Network Dynamics · Learned 11 days ago</span>
+                </div>
+                <button class="review-queue-btn px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface hover:bg-primary-container hover:text-white font-medium text-xs transition-colors shrink-0" data-topic="Preferential Attachment">
+                  Review
+                </button>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ============================================== -->
+      <!-- TAB 4: SETTINGS & PREFERENCES -->
+      <!-- ============================================== -->
+      <div id="tab-settings" class="tab-content">
+        <div class="flex flex-col w-full max-w-2xl mx-auto pb-8 space-y-6">
+          
+          <!-- 1. NOTIFICATIONS & REMINDERS -->
+          <section class="flex flex-col space-y-2">
+            <div class="flex items-center justify-between px-1">
+              <h2 class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">Notifications &amp; Reminders</h2>
+              <span id="reminder-status-pill" class="inline-flex items-center gap-1 text-[11px] font-mono text-primary bg-primary-container/10 px-2 py-0.5 rounded border border-primary-container/20">
+                <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                <span id="reminder-status-text">App: Disabled</span>
+              </span>
+            </div>
+
+            <div class="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
+              
+              <!-- OS Level Permission Status Row -->
+              <div class="flex items-center justify-between bg-surface-container-low border border-outline-variant/20 px-3.5 py-2.5 rounded-lg">
+                <div class="flex items-center gap-2.5">
+                  <span class="material-symbols-outlined text-[18px] text-primary">security</span>
+                  <div>
+                    <div class="text-xs font-semibold text-on-surface">Browser &amp; OS Permission</div>
+                    <div class="text-[11px] text-on-surface-variant" id="os-permission-desc">System notification delivery status</div>
+                  </div>
+                </div>
+                <span id="os-permission-pill" class="inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded bg-surface-container-high border border-outline-variant/30 text-on-surface-variant">
+                  <span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span>
+                  <span id="os-permission-text">Default</span>
+                </span>
+              </div>
+
+              <!-- App-Level Daily Learning Reminder Switch -->
+              <div class="flex items-start justify-between gap-4 pt-1">
+                <div class="space-y-1">
+                  <div class="font-medium text-sm sm:text-base text-on-surface">Daily learning reminder (App schedule)</div>
+                  <p class="text-xs text-on-surface-variant">In-app prompt when active around your preferred time to spin a new topic and maintain your streak.</p>
+                </div>
+                <button id="toggle-reminder" role="switch" aria-checked="false" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full bg-surface-container-highest transition-colors duration-200">
+                  <span id="toggle-reminder-thumb" class="pointer-events-none inline-block h-5 w-5 transform translate-x-0.5 translate-y-0.5 rounded-full bg-white shadow transition duration-200"></span>
+                </button>
+              </div>
+
+              <div class="h-[1px] w-full bg-surface-container-highest"></div>
+
+              <!-- Scheduled Time Selector -->
+              <div class="space-y-2">
+                <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-2 text-on-surface text-sm">
+                    <span class="material-symbols-outlined text-[16px] text-on-surface-variant">schedule</span>
+                    <span>Scheduled time</span>
+                  </div>
+                  <span id="active-time-label" class="font-mono text-xs text-primary font-semibold">09:00 AM</span>
+                </div>
+
+                <div class="flex items-center gap-2 pt-1 flex-wrap">
+                  <button class="time-preset-btn px-3 py-1 rounded-lg bg-primary-container/20 border border-primary-container/50 text-primary font-mono text-xs transition-colors cursor-pointer" data-time="09:00 AM">
+                    Morning 09:00 AM
+                  </button>
+                  <button class="time-preset-btn px-3 py-1 rounded-lg bg-surface-container-high border border-outline-variant/40 text-on-surface-variant font-mono text-xs hover:text-on-surface transition-colors cursor-pointer" data-time="01:00 PM">
+                    Noon 01:00 PM
+                  </button>
+                  <button class="time-preset-btn px-3 py-1 rounded-lg bg-surface-container-high border border-outline-variant/40 text-on-surface-variant font-mono text-xs hover:text-on-surface transition-colors cursor-pointer" data-time="08:00 PM">
+                    Evening 08:00 PM
+                  </button>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 2. OFFLINE & STORAGE -->
+          <section class="flex flex-col space-y-2">
+            <h2 class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">Offline &amp; Storage</h2>
+            <div class="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-3.5 shadow-sm">
+              <div class="flex items-start gap-3.5">
+                <div class="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
+                  <span class="material-symbols-outlined text-[20px]">cloud_done</span>
+                </div>
+                <div>
+                  <div class="flex items-center gap-2">
+                    <span class="font-medium text-sm sm:text-base text-on-surface">Ready for offline use</span>
+                    <span id="offline-network-badge" class="inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20">
+                      <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
+                      <span id="offline-network-text">Online</span>
+                    </span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-1">Topic catalogue and summaries are cached locally via Service Worker. Reads work completely offline.</p>
+                </div>
+              </div>
+
+              <div class="h-[1px] w-full bg-surface-container-highest"></div>
+
+              <!-- Dynamic PWA Installation Tile -->
+              <div id="pwa-install-tile" class="flex items-center justify-between bg-surface-container-low border border-outline-variant/30 px-3.5 py-2.5 rounded-lg">
+                <div class="flex items-center gap-2.5">
+                  <span class="material-symbols-outlined text-[18px] text-primary">install_mobile</span>
+                  <div>
+                    <div id="pwa-install-title" class="text-xs font-semibold text-on-surface">Web App Status</div>
+                    <div id="pwa-install-subtitle" class="font-mono text-[10px] text-on-surface-variant">Checking environment...</div>
+                  </div>
+                </div>
+                <div id="pwa-install-action">
+                  <!-- Injected via updatePWAInstallUI() -->
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- 3. SOUND & HAPTICS -->
+          <section class="flex flex-col space-y-2">
+            <h2 class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">Sound &amp; Haptics</h2>
+            <div class="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="font-medium text-sm sm:text-base text-on-surface">Sound effects</div>
+                  <p class="text-xs text-on-surface-variant">Interactive wheel clicks and tactile ticking audio synthesis</p>
+                </div>
+                <button id="toggle-sound" role="switch" aria-checked="true" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full bg-primary-container transition-colors duration-200">
+                  <span id="toggle-sound-thumb" class="pointer-events-none inline-block h-5 w-5 transform translate-x-5 translate-y-0.5 rounded-full bg-white shadow transition duration-200"></span>
+                </button>
+              </div>
+
+              <div class="h-[1px] w-full bg-surface-container-highest"></div>
+
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="font-medium text-sm sm:text-base text-on-surface">Haptic feedback</div>
+                  <p class="text-xs text-on-surface-variant">Gentle device vibration when wheel settles on a selected topic</p>
+                </div>
+                <button id="toggle-haptics" role="switch" aria-checked="true" class="relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full bg-primary-container transition-colors duration-200">
+                  <span id="toggle-haptics-thumb" class="pointer-events-none inline-block h-5 w-5 transform translate-x-5 translate-y-0.5 rounded-full bg-white shadow transition duration-200"></span>
+                </button>
+              </div>
+            </div>
+          </section>
+
+          <!-- 4. DATA & BACKUP -->
+          <section class="flex flex-col space-y-2">
+            <h2 class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">Data &amp; Backup</h2>
+            <div class="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
+              
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="font-medium text-sm sm:text-base text-on-surface">Export backup</div>
+                  <p class="text-xs text-on-surface-variant">Download all streaks, history, and custom weights as a single JSON file.</p>
+                </div>
+                <button id="export-btn" class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-white text-xs font-semibold transition-all shrink-0 cursor-pointer shadow-sm">
+                  <span class="material-symbols-outlined text-[15px]">download</span>
+                  <span>Export JSON</span>
+                </button>
+              </div>
+
+              <div class="h-[1px] w-full bg-surface-container-highest"></div>
+
+              <div class="flex items-start justify-between gap-4">
+                <div>
+                  <div class="font-medium text-sm sm:text-base text-on-surface">Import backup</div>
+                  <p class="text-xs text-on-surface-variant">Restore previous progress from a JSON file.</p>
+                </div>
+                <label class="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-semibold border border-outline-variant/40 transition-colors shrink-0 cursor-pointer">
+                  <span class="material-symbols-outlined text-[15px]">upload</span>
+                  <span>Import JSON</span>
+                  <input type="file" id="import-input" accept=".json" class="hidden">
+                </label>
+              </div>
+
+              <div class="h-[1px] w-full bg-surface-container-highest"></div>
+
+              <!-- Reset Data Alert Box -->
+              <div class="rounded-lg border border-error/30 bg-error-container/10 p-3.5 flex items-start justify-between gap-3">
+                <div>
+                  <div class="font-semibold text-sm text-error flex items-center gap-1.5">
+                    <span class="material-symbols-outlined text-[16px]">warning</span>
+                    <span>Reset All Data</span>
+                  </div>
+                  <p class="text-xs text-on-surface-variant mt-0.5">Clear all streaks, learning history, and progress records.</p>
+                </div>
+                <button id="open-reset-modal-btn" class="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-error/20 border border-error/40 text-error text-xs font-semibold transition-colors shrink-0 cursor-pointer">
+                  Reset Data...
+                </button>
+              </div>
+
+            </div>
+          </section>
+
+          <!-- 5. ABOUT & VERSION -->
+          <section class="flex flex-col space-y-2">
+            <h2 class="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">About</h2>
+            <div class="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-3.5 shadow-sm">
+              <div class="flex items-center justify-between">
+                <div class="flex items-center gap-3">
+                  <div class="w-9 h-9 rounded-lg bg-primary-container/20 border border-primary-container/30 flex items-center justify-center text-primary shrink-0">
+                    <span class="material-symbols-outlined text-[20px]">token</span>
+                  </div>
+                  <div>
+                    <div class="font-semibold text-sm sm:text-base text-on-surface">Life Learning Roulette</div>
+                    <div class="text-xs text-on-surface-variant">Distraction-free lifelong learning for modern polymaths</div>
+                  </div>
+                </div>
+                <span class="font-mono text-xs text-on-surface-variant bg-surface-container-high border border-outline-variant/30 px-2.5 py-1 rounded-lg">v2.1.0</span>
+              </div>
+              <div class="h-[1px] w-full bg-surface-container-highest"></div>
+              <div class="flex items-center justify-between text-xs font-mono text-on-surface-variant">
+                <span>Privacy: Zero tracking · 100% on-device</span>
+                <span class="text-primary hover:underline cursor-pointer">MIT License</span>
+              </div>
+            </div>
+          </section>
+
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <!-- MOBILE FIXED BOTTOM TAB BAR (Hidden on Desktop md+) -->
+  <nav class="md:hidden fixed bottom-0 w-full z-40 pb-safe bg-surface/90 backdrop-blur-xl border-t border-outline-variant/30 shadow-2xl">
+    <div class="h-16 px-3 flex items-center justify-around">
+      
+      <button class="nav-item-mobile min-w-[56px] min-h-[48px] flex flex-col items-center justify-center gap-1 transition-colors text-primary font-medium" data-target="tab-spin">
+        <span class="material-symbols-outlined text-[22px]">cached</span>
+        <span class="text-[11px] font-medium tracking-wide">Spin</span>
+      </button>
+
+      <button class="nav-item-mobile min-w-[56px] min-h-[48px] flex flex-col items-center justify-center gap-1 transition-colors text-on-surface-variant hover:text-on-surface" data-target="tab-filter">
+        <span class="material-symbols-outlined text-[22px]">tune</span>
+        <span class="text-[11px] font-medium tracking-wide">Filter</span>
+      </button>
+
+      <button class="nav-item-mobile min-w-[56px] min-h-[48px] flex flex-col items-center justify-center gap-1 transition-colors text-on-surface-variant hover:text-on-surface" data-target="tab-progress">
+        <span class="material-symbols-outlined text-[22px]">analytics</span>
+        <span class="text-[11px] font-medium tracking-wide">Progress</span>
+      </button>
+
+      <button class="nav-item-mobile min-w-[56px] min-h-[48px] flex flex-col items-center justify-center gap-1 transition-colors text-on-surface-variant hover:text-on-surface" data-target="tab-settings">
+        <span class="material-symbols-outlined text-[22px]">settings</span>
+        <span class="text-[11px] font-medium tracking-wide">Settings</span>
+      </button>
+
+    </div>
+  </nav>
+
+  <!-- RESET CONFIRMATION MODAL -->
+  <div id="reset-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm px-4">
+    <div class="w-full max-w-sm rounded-xl bg-surface-container border border-error/40 p-5 shadow-2xl space-y-4">
+      <div class="flex items-start gap-3">
+        <div class="w-9 h-9 rounded-full bg-error-container/20 border border-error/40 flex items-center justify-center text-error shrink-0 mt-0.5">
+          <span class="material-symbols-outlined text-[20px]">warning</span>
+        </div>
+        <div class="space-y-1">
+          <h3 class="font-semibold text-base text-on-surface">Reset All Local Data?</h3>
+          <p class="text-xs text-on-surface-variant leading-relaxed">This will permanently delete all 156 topic progress records, review history, and streaks. This cannot be undone.</p>
+        </div>
+      </div>
+      <div class="flex items-center justify-end gap-2.5 pt-2">
+        <button id="cancel-reset-btn" type="button" class="px-3.5 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-semibold border border-outline-variant/40 transition-colors cursor-pointer">
+          Cancel
+        </button>
+        <button id="confirm-reset-btn" type="button" class="px-3.5 py-1.5 rounded-lg bg-error text-on-error hover:opacity-90 text-xs font-semibold transition-opacity cursor-pointer shadow-sm">
+          Yes, delete everything
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- SUPABASE CONNECTION SETTINGS MODAL -->
+  <div id="supabase-config-modal" class="fixed inset-0 z-50 hidden items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm px-4">
+    <div class="w-full max-w-md rounded-2xl bg-surface-container-low border border-outline-variant/40 p-6 shadow-2xl space-y-4">
+      <div class="flex items-start justify-between">
+        <div class="flex items-center gap-2.5">
+          <div class="w-8 h-8 rounded-lg bg-primary-container/20 text-primary flex items-center justify-center">
+            <span class="material-symbols-outlined text-[20px]">key</span>
+          </div>
+          <div>
+            <h3 class="font-semibold text-sm text-on-surface">Supabase Configuration</h3>
+            <p class="text-[11px] text-outline font-mono">Environment variables & credentials</p>
+          </div>
+        </div>
+        <button id="close-config-modal-btn" type="button" class="text-outline hover:text-on-surface cursor-pointer">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+
+      <div class="space-y-3 text-xs">
+        <div>
+          <label class="block text-[11px] font-mono uppercase text-on-surface-variant mb-1">VITE_SUPABASE_URL</label>
+          <input type="text" id="config-supabase-url" placeholder="https://your-project.supabase.co" class="w-full h-9 px-3 rounded-lg bg-surface-container-high border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs font-mono focus:outline-none focus:border-primary">
+        </div>
+        <div>
+          <label class="block text-[11px] font-mono uppercase text-on-surface-variant mb-1">VITE_SUPABASE_ANON_KEY</label>
+          <input type="password" id="config-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full h-9 px-3 rounded-lg bg-surface-container-high border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs font-mono focus:outline-none focus:border-primary">
+        </div>
+        <p class="text-[11px] text-outline leading-relaxed">Reading from <code class="font-mono text-primary">VITE_SUPABASE_URL</code> &amp; <code class="font-mono text-primary">VITE_SUPABASE_ANON_KEY</code>. You can also persist credentials directly in local browser storage.</p>
+      </div>
+
+      <div class="flex items-center justify-end gap-2 pt-2">
+        <button id="cancel-config-btn" type="button" class="px-3.5 py-1.5 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-medium border border-outline-variant/40 transition-colors cursor-pointer">
+          Cancel
+        </button>
+        <button id="save-config-btn" type="button" class="px-4 py-1.5 rounded-lg bg-primary-container text-white hover:opacity-90 text-xs font-medium transition-opacity cursor-pointer shadow-sm">
+          Save &amp; Reconnect
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- JAVASCRIPT APPLICATION LOGIC -->
+  <script>
+    (function () {
+      "use strict";
+
+      // 0. Supabase Auth & Configuration
+      const SUPABASE_DEFAULT_URL = "https://your-project.supabase.co";
+      const SUPABASE_DEFAULT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_anon_key";
+
+      const SupabaseConfig = {
+        url: window.__ENV__?.VITE_SUPABASE_URL ||
+             window.process?.env?.VITE_SUPABASE_URL ||
+             localStorage.getItem('llr_supabase_url') ||
+             SUPABASE_DEFAULT_URL,
+        anonKey: window.__ENV__?.VITE_SUPABASE_ANON_KEY ||
+                 window.process?.env?.VITE_SUPABASE_ANON_KEY ||
+                 localStorage.getItem('llr_supabase_key') ||
+                 SUPABASE_DEFAULT_KEY
+      };
+
+      let supabaseClient = null;
+      function initSupabaseClient() {
+        try {
+          if (window.supabase && typeof window.supabase.createClient === 'function') {
+            supabaseClient = window.supabase.createClient(SupabaseConfig.url, SupabaseConfig.anonKey, {
+              auth: {
+                persistSession: true,
+                autoRefreshToken: true,
+                detectSessionInUrl: true,
+                storage: window.localStorage
+              }
+            });
+            const statusDot = document.getElementById('supabase-status-dot');
+            const statusLabel = document.getElementById('supabase-status-label');
+            if (statusDot) statusDot.className = "w-1.5 h-1.5 rounded-full bg-emerald-400";
+            if (statusLabel) statusLabel.textContent = "Supabase Auth Active";
+          }
+        } catch (e) {
+          console.warn("Supabase initialization:", e);
+        }
+      }
+      initSupabaseClient();
+
+      // Error Message Normalizer (Non-technical friendly strings)
+      function getFriendlyErrorMessage(err) {
+        if (!err) return "An unexpected error occurred. Please try again.";
+        const msg = (err.message || String(err)).toLowerCase();
+
+        if (msg.includes("invalid login credentials") || msg.includes("invalid claim") || msg.includes("invalid_grant")) {
+          return "Incorrect email or password. Please verify your credentials and try again.";
+        }
+        if (msg.includes("user already registered") || msg.includes("already exists")) {
+          return "An account with this email address already exists. Try logging in instead.";
+        }
+        if (msg.includes("email not confirmed")) {
+          return "Please check your email inbox to confirm your account before logging in.";
+        }
+        if (msg.includes("password should be at least") || msg.includes("weak_password")) {
+          return "Password must be at least 6 characters long.";
+        }
+        if (msg.includes("invalid email") || msg.includes("unable to validate email")) {
+          return "Please enter a valid email address.";
+        }
+        if (msg.includes("network") || msg.includes("failed to fetch")) {
+          return "Network connection issue. Please check your internet connection.";
+        }
+        if (msg.includes("rate limit") || msg.includes("too many requests")) {
+          return "Too many attempts. Please wait a few moments before trying again.";
+        }
+        return "Unable to complete request. Please verify your details and try again.";
+      }
+
+      // Global Auth State Manager
+      const Auth = {
+        user: null,
+        session: null,
+        loading: true,
+        mode: 'login',
+
+        setMode(newMode) {
+          this.mode = newMode;
+          const isSignup = newMode === 'signup';
+          const heading = document.getElementById('auth-heading');
+          const subheading = document.getElementById('auth-subheading');
+          const submitText = document.getElementById('auth-submit-text');
+          const submitIcon = document.getElementById('auth-submit-icon');
+          const switchPrompt = document.getElementById('auth-switch-prompt');
+          const switchBtn = document.getElementById('auth-switch-btn');
+          const loginTab = document.getElementById('auth-tab-login-btn');
+          const signupTab = document.getElementById('auth-tab-signup-btn');
+          const alertBox = document.getElementById('auth-alert-box');
+
+          if (alertBox) alertBox.classList.add('hidden');
+
+          if (heading) heading.textContent = isSignup ? 'Create your account' : 'Welcome to Life Learning';
+          if (subheading) subheading.textContent = isSignup 
+            ? 'Start spinning daily micro-learning topics and building streaks' 
+            : 'Sign in to access your topics, streaks, and progress';
+          if (submitText) submitText.textContent = isSignup ? 'Create Account' : 'Sign In';
+          if (submitIcon) submitIcon.textContent = isSignup ? 'person_add' : 'login';
+          if (switchPrompt) switchPrompt.textContent = isSignup ? 'Already have an account?' : "Don't have an account?";
+          if (switchBtn) switchBtn.textContent = isSignup ? 'Log in' : 'Sign up';
+
+          if (loginTab && signupTab) {
+            if (isSignup) {
+              signupTab.className = "flex-1 py-2 text-xs font-semibold rounded-lg transition-all text-primary bg-surface shadow-sm cursor-pointer";
+              loginTab.className = "flex-1 py-2 text-xs font-semibold rounded-lg transition-all text-on-surface-variant hover:text-on-surface cursor-pointer";
+            } else {
+              loginTab.className = "flex-1 py-2 text-xs font-semibold rounded-lg transition-all text-primary bg-surface shadow-sm cursor-pointer";
+              signupTab.className = "flex-1 py-2 text-xs font-semibold rounded-lg transition-all text-on-surface-variant hover:text-on-surface cursor-pointer";
+            }
+          }
+        },
+
+        showAlert(message, type = 'error') {
+          const alertBox = document.getElementById('auth-alert-box');
+          const alertIcon = document.getElementById('auth-alert-icon');
+          const alertText = document.getElementById('auth-alert-text');
+          if (!alertBox || !alertText) return;
+
+          alertBox.classList.remove('hidden');
+          alertText.textContent = message;
+
+          if (type === 'error') {
+            alertBox.className = "mb-4 p-3 rounded-xl bg-error-container/20 border border-error/30 text-error text-xs flex items-start gap-2.5 transition-all";
+            if (alertIcon) {
+              alertIcon.textContent = "error";
+              alertIcon.className = "material-symbols-outlined text-[18px] text-error shrink-0 mt-0.5";
+            }
+          } else {
+            alertBox.className = "mb-4 p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-300 text-xs flex items-start gap-2.5 transition-all";
+            if (alertIcon) {
+              alertIcon.textContent = "check_circle";
+              alertIcon.className = "material-symbols-outlined text-[18px] text-emerald-400 shrink-0 mt-0.5";
+            }
+          }
+        },
+
+        hideAlert() {
+          const alertBox = document.getElementById('auth-alert-box');
+          if (alertBox) alertBox.classList.add('hidden');
+        },
+
+        updateUIForUser(user) {
+          this.user = user;
+          const avatarIcon = document.getElementById('avatar-icon');
+          const avatarInitials = document.getElementById('avatar-initials');
+          const dropdownEmail = document.getElementById('dropdown-user-email');
+          const dropdownProvider = document.getElementById('dropdown-auth-provider');
+          const connectionStatus = document.getElementById('header-connection-status');
+
+          if (user) {
+            const email = user.email || 'user@roulette.app';
+            const initial = email.charAt(0).toUpperCase();
+            if (avatarIcon) avatarIcon.classList.add('hidden');
+            if (avatarInitials) {
+              avatarInitials.textContent = initial;
+              avatarInitials.classList.remove('hidden');
+            }
+            if (dropdownEmail) dropdownEmail.textContent = email;
+            if (dropdownProvider) {
+              const provider = user.app_metadata?.provider || 'Email';
+              dropdownProvider.textContent = `${provider.charAt(0).toUpperCase() + provider.slice(1)} Auth`;
+            }
+            if (connectionStatus) connectionStatus.textContent = "Supabase Synced";
+          } else {
+            if (avatarIcon) avatarIcon.classList.remove('hidden');
+            if (avatarInitials) avatarInitials.classList.add('hidden');
+            if (dropdownEmail) dropdownEmail.textContent = 'Not logged in';
+            if (dropdownProvider) dropdownProvider.textContent = 'Guest';
+            if (connectionStatus) connectionStatus.textContent = "Unauthenticated";
+          }
+        }
+      };
+
+      // 1. Comprehensive Topics Database
+      const ALL_TOPICS = [
+        // TECH: AI & ML
+        {
+          id: "rag-llms",
+          group: "Tech",
+          sub: "AI & ML",
+          tags: ["rag", "llms", "vectors"],
+          title: "Retrieval-Augmented Generation (RAG)",
+          desc: "Combines pre-trained parametric models with dense vector retrieval across external knowledge stores to eliminate hallucinations and ground responses in private enterprise data.",
+          links: [
+            { type: "Paper", title: "Lewis et al. — Original RAG Paper (arXiv)", desc: "Foundational paper introducing parametric & non-parametric neural memory", url: "https://arxiv.org/abs/2005.11401" },
+            { type: "Guide", title: "Pinecone — Dense Retrieval & Vector Indices", desc: "Architecture guide to semantic search pipelines and embeddings", url: "https://www.pinecone.io/learn/vector-database/" },
+            { type: "Docs", title: "LangChain — Advanced Chunking & Re-ranking", desc: "Production patterns for multi-stage document retrieval", url: "https://python.langchain.com" }
+          ]
+        },
+        {
+          id: "lora-finetuning",
+          group: "Tech",
+          sub: "AI & ML",
+          tags: ["finetuning", "lora", "transformers"],
+          title: "LoRA & Low-Rank Model Adaptation",
+          desc: "Decomposes weight update matrices into rank decomposition matrices, reducing trainable parameter footprints by 99% while preserving model fidelity.",
+          links: [
+            { type: "Paper", title: "Hu et al. — LoRA: Low-Rank Adaptation of LLMs", desc: "Original Microsoft research paper on parameter-efficient adaptation", url: "https://arxiv.org/abs/2106.09685" },
+            { type: "Guide", title: "Hugging Face — PEFT Documentation", desc: "State-of-the-art Parameter-Efficient Fine-Tuning library guide", url: "https://huggingface.co/docs/peft" }
+          ]
+        },
+        {
+          id: "transformer-attention",
+          group: "Tech",
+          sub: "AI & ML",
+          tags: ["transformers", "attention", "nlp"],
+          title: "Multi-Head Self-Attention Mechanisms",
+          desc: "Allows neural representations to jointly attend to information from different representation subspaces at different positions.",
+          links: [
+            { type: "Paper", title: "Vaswani et al. — Attention Is All You Need", desc: "Seminal 2017 Transformer architecture paper", url: "https://arxiv.org/abs/1706.03762" },
+            { type: "Guide", title: "The Illustrated Transformer by Jay Alammar", desc: "Visual step-by-step breakdown of query, key, and value vectors", url: "https://jalammar.github.io/illustrated-transformer/" }
+          ]
+        },
+
+        // TECH: Cloud & Infra
+        {
+          id: "k8s-control-plane",
+          group: "Tech",
+          sub: "Cloud & Infra",
+          tags: ["k8s", "containers", "orchestration"],
+          title: "Kubernetes Control Plane & Raft Etcd Consensus",
+          desc: "How kube-apiserver, controller-manager, scheduler, and distributed etcd maintain declarative cluster reconciliation loops under network partitions.",
+          links: [
+            { type: "Docs", title: "Kubernetes Architecture & Core Concepts", desc: "Official deep dive into master nodes and controller reconciliation loops", url: "https://kubernetes.io/docs/concepts/overview/components/" },
+            { type: "Guide", title: "Etcd Raft Algorithm in Practice", desc: "Distributed key-value store architecture behind modern cloud platforms", url: "https://etcd.io/docs/" }
+          ]
+        },
+        {
+          id: "terraform-iac",
+          group: "Tech",
+          sub: "Cloud & Infra",
+          tags: ["terraform", "iac", "devops"],
+          title: "Infrastructure as Code & State Locking Patterns",
+          desc: "Managing declarative cloud resources with DAG dependency graphs, plan/apply lifecycles, and distributed state lock concurrency controls.",
+          links: [
+            { type: "Docs", title: "HashiCorp Terraform State Internals", desc: "State backend locking, remote state migration, and graph calculation", url: "https://developer.hashicorp.com/terraform/docs" }
+          ]
+        },
+
+        // TECH: Web Dev
+        {
+          id: "rsc-architecture",
+          group: "Tech",
+          sub: "Web Dev",
+          tags: ["react", "nextjs", "streaming"],
+          title: "React Server Components & Streaming SSR",
+          desc: "Decouples component execution between build/server time and client browser hydration, eliminating client bundle footprint while enabling async Suspense streaming.",
+          links: [
+            { type: "Docs", title: "React RFC — Server Components Specification", desc: "Core RFC explaining protocol streams and boundary serialization", url: "https://react.dev/reference/rsc/server-components" },
+            { type: "Guide", title: "Next.js App Router Architecture Guide", desc: "Server Actions, route caching, and selective hydration", url: "https://nextjs.org/docs" }
+          ]
+        },
+        {
+          id: "webassembly-simd",
+          group: "Tech",
+          sub: "Web Dev",
+          tags: ["wasm", "performance", "rust"],
+          title: "WebAssembly (Wasm) & Native Browser Compute",
+          desc: "Executing compiled C/Rust bytecode at near-native speed within sandboxed browser runtimes with SIMD vector extensions and shared memory threads.",
+          links: [
+            { type: "Docs", title: "MDN WebAssembly Concepts & API", desc: "Memory linear addressing, module instantiation, and JavaScript interop", url: "https://developer.mozilla.org/en-US/docs/WebAssembly" }
+          ]
+        },
+
+        // TECH: Data Structures & Algorithms
+        {
+          id: "bloom-filters",
+          group: "Tech",
+          sub: "Data Structures & Algorithms",
+          tags: ["algorithms", "probabilistic", "caching"],
+          title: "Bloom Filters & Probabilistic Data Structures",
+          desc: "Space-efficient probabilistic structure that tests whether an element is definitely not in a set or possibly in a set using multiple bit-array hash functions.",
+          links: [
+            { type: "Guide", title: "Mining of Massive Datasets — Filtering Streams", desc: "Stanford CS246 mathematical foundation for hash collision bounds", url: "http://www.mmds.org/" }
+          ]
+        },
+
+        // MONEY & CAREER
+        {
+          id: "83b-election",
+          group: "Money & Career",
+          sub: "Finance & Equity",
+          tags: ["equity", "tax", "startups"],
+          title: "83(b) Election & QSBS Exemption",
+          desc: "Filing an 83(b) election notifies the IRS to tax restricted stock at grant date values rather than future vesting dates, potentially shielding capital gains under Section 1202.",
+          links: [
+            { type: "Guide", title: "IRS Section 83(b) Detailed Tax Guide", desc: "Timelines, safe harbors, and early-stage startup tax planning strategies", url: "https://www.investopedia.com/terms/1/83b-election.asp" },
+            { type: "Article", title: "Holloway Guide to Equity Compensation", desc: "Stock options, ISOs, RSUs, and liquidity event tax structuring", url: "https://www.holloway.com/g/equity-compensation" }
+          ]
+        },
+        {
+          id: "network-effects-moats",
+          group: "Money & Career",
+          sub: "Business & Strategy",
+          tags: ["strategy", "moats", "business"],
+          title: "7 Powers & Enduring Business Moats",
+          desc: "Hamilton Helmer's framework for sustainable differential returns: Scale Economies, Network Economies, Counter-Positioning, Switching Costs, Branding, Cornered Resource, and Process Power.",
+          links: [
+            { type: "Book", title: "7 Powers: The Foundations of Business Strategy", desc: "Definitive guide to creating structural company value and margins", url: "https://7powers.com" }
+          ]
+        },
+
+        // MIND & GROWTH
+        {
+          id: "inversion-premortem",
+          group: "Mind & Growth",
+          sub: "Decision Systems",
+          tags: ["mental-models", "decision-making"],
+          title: "Inversion & Pre-Mortem Analysis",
+          desc: "Structuring decisions backwards by listing failure vectors and systematically eliminating fragility factors before launching operational initiatives.",
+          links: [
+            { type: "Essay", title: "Farnam Street — Mental Model: Inversion", desc: "Charlie Munger's algebra of avoiding stupidity over seeking brilliance", url: "https://fs.blog/inversion/" }
+          ]
+        },
+        {
+          id: "implementation-intentions",
+          group: "Mind & Growth",
+          sub: "Habits & Focus",
+          tags: ["psychology", "habits", "productivity"],
+          title: "Implementation Intentions & Cue-Action Loops",
+          desc: "Pre-committing to specific 'If [Situation X] occurs, then I will execute [Action Y]' mental triggers doubles habitual follow-through across high-friction tasks.",
+          links: [
+            { type: "Research", title: "Gollwitzer — Implementation Intentions (1999)", desc: "Empirical psychological trials on automated action initiation", url: "https://psycnet.apa.org" }
+          ]
+        },
+
+        // WORLD & IDEAS
+        {
+          id: "preferential-attachment",
+          group: "World & Ideas",
+          sub: "Network Dynamics",
+          tags: ["networks", "power-laws", "systems"],
+          title: "Preferential Attachment & Scale-Free Networks",
+          desc: "Mechanisms where resource distribution skew increases non-linearly over time, generating Barabási-Albert power-law degree distributions across open protocols and social platforms.",
+          links: [
+            { type: "Book", title: "Network Science by Albert-László Barabási", desc: "Interactive textbook on graph topology and scale-free connectivity", url: "http://networksciencebook.com/" }
+          ]
+        },
+        {
+          id: "bretton-woods-liquidity",
+          group: "World & Ideas",
+          sub: "Macroeconomics",
+          tags: ["macro", "economics", "currency"],
+          title: "Triffin's Dilemma & Global Reserve Currency Cycles",
+          desc: "The inherent conflict of economic interests between short-term domestic objectives and long-term international obligations for countries whose currencies serve as global reserves.",
+          links: [
+            { type: "Guide", title: "IMF Economic Forum — The Triffin Paradox", desc: "Historical analysis of balance of payments and sovereign debt dynamics", url: "https://www.imf.org" }
+          ]
+        }
+      ];
+
+      // 2. Audio Web Synth for authentic roulette clicks
+      const AudioController = {
+        ctx: null,
+        soundEnabled: true,
+        init() {
+          try {
+            const AudioCtx = window.AudioContext || window.webkitAudioContext;
+            if (AudioCtx) this.ctx = new AudioCtx();
+          } catch (e) {}
+        },
+        playTick() {
+          if (!this.soundEnabled) return;
+          try {
+            if (!this.ctx) this.init();
+            if (this.ctx && this.ctx.state === 'suspended') this.ctx.resume();
+            if (!this.ctx) return;
+
+            const osc = this.ctx.createOscillator();
+            const gain = this.ctx.createGain();
+            osc.type = 'triangle';
+            osc.frequency.setValueAtTime(440 + Math.random() * 80, this.ctx.currentTime);
+            gain.gain.setValueAtTime(0.08, this.ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.0001, this.ctx.currentTime + 0.04);
+            osc.connect(gain);
+            gain.connect(this.ctx.destination);
+            osc.start();
+            osc.stop(this.ctx.currentTime + 0.04);
+          } catch (e) {}
+        },
+        playSuccess() {
+          if (!this.soundEnabled) return;
+          try {
+            if (!this.ctx) this.init();
+            if (!this.ctx) return;
+            const now = this.ctx.currentTime;
+            [523.25, 659.25, 783.99].forEach((freq, i) => {
+              const osc = this.ctx.createOscillator();
+              const gain = this.ctx.createGain();
+              osc.type = 'sine';
+              osc.frequency.setValueAtTime(freq, now + i * 0.08);
+              gain.gain.setValueAtTime(0.1, now + i * 0.08);
+              gain.gain.exponentialRampToValueAtTime(0.0001, now + i * 0.08 + 0.3);
+              osc.connect(gain);
+              gain.connect(this.ctx.destination);
+              osc.start(now + i * 0.08);
+              osc.stop(now + i * 0.08 + 0.3);
+            });
+          } catch (e) {}
+        }
+      };
+
+      // 3. Pure Weighted Random Roulette Selection & Streak Logic
+      function selectWeightedTopic(topicList, progressMap = {}, enabledCats = {}) {
+        if (!topicList || topicList.length === 0) return null;
+
+        const eligible = topicList.filter(t => {
+          const group = t.group_name || t.group;
+          const cat = t.category || t.sub;
+          if (enabledCats[group] === false) return false;
+          if (enabledCats[`${group}::${cat}`] === false || enabledCats[cat] === false) return false;
+          return true;
+        });
+
+        if (eligible.length === 0) return null;
+
+        const now = Date.now();
+        const ONE_DAY_MS = 86400000;
+
+        const weightedList = eligible.map(topic => {
+          const progress = progressMap[topic.id];
+          let weight = 100; // Unseen topics receive highest base weight
+
+          if (progress && progress.times_seen > 0) {
+            const lastSeenTime = progress.last_seen ? new Date(progress.last_seen).getTime() : 0;
+            const daysSinceSeen = Math.max(0, (now - lastSeenTime) / ONE_DAY_MS);
+
+            // Recency curve: very low chance if seen today, scales up over days
+            const recencyWeight = Math.min(50, 2 + daysSinceSeen * 1.8);
+            const frequencyPenalty = 1 + Math.log2(progress.times_seen + 1) * 0.4;
+            weight = Math.max(1, Math.round(recencyWeight / frequencyPenalty));
+          }
+
+          return { topic, weight };
+        });
+
+        const totalWeight = weightedList.reduce((sum, item) => sum + item.weight, 0);
+        if (totalWeight <= 0) {
+          return eligible[Math.floor(Math.random() * eligible.length)];
+        }
+
+        let randomVal = Math.random() * totalWeight;
+        for (const item of weightedList) {
+          if (randomVal < item.weight) return item.topic;
+          randomVal -= item.weight;
+        }
+
+        return weightedList[weightedList.length - 1].topic;
+      }
+
+      function calculateStreakUpdate(currentStreakData = {}, nowDate = new Date()) {
+        const todayStr = nowDate.toISOString().slice(0, 10);
+        const yesterday = new Date(nowDate.getTime() - 86400000);
+        const yesterdayStr = yesterday.toISOString().slice(0, 10);
+
+        const prevDate = currentStreakData.last_active_date;
+        let currentStreak = currentStreakData.current_streak || 0;
+        let longestStreak = currentStreakData.longest_streak || 0;
+
+        if (prevDate === todayStr) {
+          return {
+            current_streak: Math.max(1, currentStreak),
+            longest_streak: Math.max(longestStreak, currentStreak),
+            last_active_date: todayStr
+          };
+        }
+
+        if (prevDate === yesterdayStr) {
+          currentStreak += 1;
+        } else {
+          currentStreak = 1;
+        }
+
+        longestStreak = Math.max(longestStreak, currentStreak);
+
+        return {
+          current_streak: currentStreak,
+          longest_streak: longestStreak,
+          last_active_date: todayStr
+        };
+      }
+
+      // 4. In-Memory Application State (Single source of truth: Supabase)
+      const State = {
+        activeTab: "tab-spin",
+        topics: ALL_TOPICS.map(t => ({
+          ...t,
+          group_name: t.group,
+          category: t.sub,
+          description: t.desc,
+          resources: (t.links || []).map(l => ({ label: l.title, url: l.url, type: l.type, desc: l.desc }))
+        })),
+        userProgressMap: {},
+        userStreaks: { current_streak: 0, longest_streak: 0, last_active_date: null },
+        userSettings: {
+          enabled_categories: {},
+          reminder_time: "09:00 AM",
+          notifications_enabled: false,
+          sound_enabled: true,
+          haptics_enabled: true
+        },
+        currentTopic: null,
+
+        getEligibleTopics() {
+          return this.topics.filter(t => {
+            const group = t.group_name || t.group;
+            const cat = t.category || t.sub;
+            if (this.userSettings.enabled_categories[group] === false) return false;
+            if (this.userSettings.enabled_categories[`${group}::${cat}`] === false ||
+                this.userSettings.enabled_categories[cat] === false) return false;
+            return true;
+          });
+        }
+      };
+
+      State.currentTopic = State.topics[0];
+
+      // 5. Tab Navigation Controller
+      function switchTab(tabId) {
+        tabId = tabId || 'tab-spin';
+        State.activeTab = tabId;
+
+        document.querySelectorAll('.tab-content').forEach(el => {
+          el.classList.remove('active');
+        });
+
+        const target = document.getElementById(tabId);
+        if (target) {
+          target.classList.add('active');
+        }
+
+        document.querySelectorAll('.nav-item').forEach(btn => {
+          const isMatch = btn.dataset.target === tabId;
+          if (isMatch) {
+            btn.className = "nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all text-primary bg-primary-container/20 border border-primary-container/30";
+          } else {
+            btn.className = "nav-item flex items-center gap-3 px-3.5 py-2.5 rounded-lg text-sm font-medium transition-all text-on-surface-variant hover:text-on-surface hover:bg-surface-container border border-transparent";
+          }
+        });
+
+        document.querySelectorAll('.nav-item-mobile').forEach(btn => {
+          const isMatch = btn.dataset.target === tabId;
+          if (isMatch) {
+            btn.className = "nav-item-mobile min-w-[56px] min-h-[48px] flex flex-col items-center justify-center gap-1 transition-colors text-primary font-semibold";
+          } else {
+            btn.className = "nav-item-mobile min-w-[56px] min-h-[48px] flex flex-col items-center justify-center gap-1 transition-colors text-on-surface-variant hover:text-on-surface";
+          }
+        });
+
+        const titles = {
+          "tab-auth": "Account Access",
+          "tab-spin": "Spin Roulette",
+          "tab-filter": "Category Filters",
+          "tab-progress": "Progress & Metrics",
+          "tab-settings": "Settings & Preferences"
+        };
+        const headerTitle = document.getElementById('header-title');
+        if (headerTitle && titles[tabId]) {
+          headerTitle.textContent = titles[tabId];
+        }
+
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      document.querySelectorAll('.nav-item, .nav-item-mobile').forEach(btn => {
+        btn.addEventListener('click', () => {
+          switchTab(btn.dataset.target);
+        });
+      });
+
+      // User Profile Menu Handlers
+      const userDropdownMenu = document.getElementById('user-dropdown-menu');
+      const avatarBtn = document.getElementById('quick-avatar-btn');
+
+      avatarBtn?.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (!Auth.user) {
+          switchTab('tab-auth');
+        } else {
+          userDropdownMenu?.classList.toggle('hidden');
+        }
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!userDropdownMenu?.contains(e.target) && e.target !== avatarBtn) {
+          userDropdownMenu?.classList.add('hidden');
+        }
+      });
+
+      document.getElementById('menu-settings-btn')?.addEventListener('click', () => {
+        userDropdownMenu?.classList.add('hidden');
+        switchTab('tab-settings');
+      });
+
+      document.getElementById('menu-config-btn')?.addEventListener('click', () => {
+        userDropdownMenu?.classList.add('hidden');
+        openConfigModal();
+      });
+
+      document.getElementById('menu-logout-btn')?.addEventListener('click', async () => {
+        userDropdownMenu?.classList.add('hidden');
+        await handleLogout();
+      });
+
+      // 6. Spin Roulette Animation & Weighted Selection Engine
+      let currentRotation = 0;
+      let isSpinning = false;
+      const wheelSvg = document.getElementById('spin-wheel-svg');
+      const spinBtn = document.getElementById('spin-btn');
+      const spinAgainBtn = document.getElementById('spin-again-btn');
+      const tickerStatus = document.getElementById('ticker-status');
+      const tickerDot = document.getElementById('ticker-dot');
+      const learnedBtn = document.getElementById('mark-learned-btn');
+      const learnedText = document.getElementById('mark-learned-text');
+
+      function updateCardWithTopic(topic) {
+        if (!topic) return;
+        State.currentTopic = topic;
+        const group = topic.group_name || topic.group || 'General';
+        const category = topic.category || topic.sub || '';
+        const title = topic.title || '';
+        const desc = topic.description || topic.desc || '';
+        const tags = topic.tags || [];
+        const resources = topic.resources || topic.links || [];
+
+        document.getElementById('card-group').textContent = group;
+        document.getElementById('card-sub').textContent = category;
+        document.getElementById('topic-title').textContent = title;
+        document.getElementById('topic-desc').textContent = desc;
+
+        // Tags
+        const tagsContainer = document.getElementById('card-tags-container');
+        if (tagsContainer) {
+          tagsContainer.innerHTML = tags.map(tag => 
+            `<span class="px-2 py-0.5 rounded bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-tight uppercase">${tag}</span>`
+          ).join('');
+        }
+
+        // References
+        const refContainer = document.getElementById('references-container');
+        if (refContainer) {
+          refContainer.innerHTML = resources.map(res => `
+            <a class="group flex items-start justify-between p-2.5 -mx-2 rounded-lg hover:bg-surface-container transition-colors" href="${res.url || '#'}" rel="noopener noreferrer" target="_blank">
+              <div class="flex flex-col pr-2">
+                <div class="flex items-center gap-2">
+                  <span class="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[10px] uppercase font-semibold">${res.type || 'Link'}</span>
+                  <span class="text-xs sm:text-sm text-on-surface group-hover:text-primary transition-colors font-medium">${res.label || res.title || 'Resource'}</span>
+                </div>
+                <span class="text-[12px] text-outline leading-tight mt-1">${res.desc || ''}</span>
+              </div>
+              <span class="material-symbols-outlined text-[16px] text-outline group-hover:text-primary transition-colors mt-0.5 shrink-0">north_east</span>
+            </a>
+          `).join('');
+        }
+
+        // Update Learned Button State
+        const progress = State.userProgressMap[topic.id];
+        const isDone = progress && progress.times_seen > 0;
+        if (isDone) {
+          learnedText.textContent = `Learned (${progress.times_seen}x)`;
+          learnedBtn.classList.remove("bg-primary-container", "text-white");
+          learnedBtn.classList.add("bg-surface-container", "text-on-surface-variant");
+        } else {
+          learnedText.textContent = "Mark as learned";
+          learnedBtn.classList.remove("bg-surface-container", "text-on-surface-variant");
+          learnedBtn.classList.add("bg-primary-container", "text-white");
+        }
+      }
+
+      function executeSpin() {
+        if (isSpinning) return;
+        const pool = State.getEligibleTopics();
+        if (pool.length === 0) {
+          alert("All topics are currently filtered out! Please enable at least one category in the Filter tab.");
+          switchTab('tab-filter');
+          return;
+        }
+
+        isSpinning = true;
+        AudioController.init();
+
+        // Weighted random selection based on discovery and recency
+        const selectedTopic = selectWeightedTopic(State.topics, State.userProgressMap, State.userSettings.enabled_categories);
+        const randomTopic = selectedTopic || pool[Math.floor(Math.random() * pool.length)];
+
+        const spinRounds = 4 + Math.floor(Math.random() * 3);
+        const spinDegrees = spinRounds * 360 + Math.floor(Math.random() * 360);
+        currentRotation += spinDegrees;
+
+        wheelSvg.style.transition = 'transform 2.6s cubic-bezier(0.12, 0.9, 0.2, 1)';
+        wheelSvg.style.transform = `rotate(${currentRotation}deg)`;
+
+        tickerStatus.textContent = "DECELERATING READOUT...";
+        tickerStatus.classList.add("text-primary");
+        tickerDot.classList.add("bg-tertiary");
+
+        // Audio ticks during deceleration
+        let tickInterval = 60;
+        let elapsed = 0;
+        function tickStep() {
+          if (elapsed < 2400 && isSpinning) {
+            AudioController.playTick();
+            elapsed += tickInterval;
+            tickInterval += 18;
+            setTimeout(tickStep, tickInterval);
+          }
+        }
+        tickStep();
+
+        setTimeout(() => {
+          isSpinning = false;
+          const groupName = (randomTopic.group_name || randomTopic.group || '').toUpperCase();
+          tickerStatus.textContent = `SETTLED — ${groupName}`;
+          tickerStatus.classList.remove("text-primary");
+          tickerDot.classList.remove("bg-tertiary");
+          tickerDot.classList.add("bg-primary");
+
+          updateCardWithTopic(randomTopic);
+          AudioController.playSuccess();
+
+          if (State.userSettings.haptics_enabled && navigator.vibrate) {
+            try { navigator.vibrate([40, 60, 80]); } catch (e) {}
+          }
+        }, 2600);
+      }
+
+      spinBtn?.addEventListener('click', executeSpin);
+      spinAgainBtn?.addEventListener('click', executeSpin);
+      wheelSvg?.addEventListener('click', executeSpin);
+
+      // Keyboard space trigger
+      window.addEventListener('keydown', (e) => {
+        if (e.code === 'Space' && e.target === document.body) {
+          e.preventDefault();
+          executeSpin();
+        } else if (e.key === '1') {
+          switchTab('tab-spin');
+        } else if (e.key === '2') {
+          switchTab('tab-filter');
+        } else if (e.key === '3') {
+          switchTab('tab-progress');
+        } else if (e.key === '4') {
+          switchTab('tab-settings');
+        }
+      });
+
+      // ==============================================
+      // PWA, NOTIFICATIONS & OFFLINE ENGINE
+      // ==============================================
+
+      // 1. Toast Notification System
+      function showToast(message, type = 'info') {
+        const toast = document.createElement('div');
+        const bg = type === 'error' ? 'bg-error-container text-on-error-container border-error/40' :
+                   type === 'warning' ? 'bg-tertiary-container text-on-tertiary-container border-tertiary/40' :
+                   type === 'success' ? 'bg-emerald-950 text-emerald-200 border-emerald-500/40' :
+                   'bg-surface-container-high text-on-surface border-outline-variant/40';
+        
+        const iconName = type === 'error' ? 'error' :
+                         type === 'warning' ? 'wifi_off' :
+                         type === 'success' ? 'check_circle' : 'info';
+
+        toast.className = `fixed bottom-20 md:bottom-8 right-4 z-50 px-4 py-3 rounded-xl border shadow-2xl flex items-center gap-2.5 font-medium text-xs transition-all duration-300 transform translate-y-4 opacity-0 ${bg}`;
+        toast.innerHTML = `<span class="material-symbols-outlined text-[18px]">${iconName}</span><span>${message}</span>`;
+        document.body.appendChild(toast);
+        
+        setTimeout(() => {
+          toast.classList.remove('translate-y-4', 'opacity-0');
+        }, 10);
+
+        setTimeout(() => {
+          toast.classList.add('translate-y-4', 'opacity-0');
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
+      // 2. Service Worker Registration & Offline Network Detection
+      if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+          navigator.serviceWorker.register('./sw.js')
+            .then(reg => {
+              console.log('[PWA] Service Worker registered:', reg.scope);
+            })
+            .catch(err => {
+              console.warn('[PWA] Service Worker registration failed:', err);
+            });
+        });
+      }
+
+      function updateNetworkUI() {
+        const isOnline = navigator.onLine;
+        const badgeText = document.getElementById('offline-network-text');
+        const badge = document.getElementById('offline-network-badge');
+        if (badgeText && badge) {
+          if (isOnline) {
+            badgeText.textContent = 'Online';
+            badge.className = 'inline-flex items-center gap-1 text-[10px] font-mono text-emerald-400 bg-emerald-500/10 px-2 py-0.5 rounded border border-emerald-500/20';
+          } else {
+            badgeText.textContent = 'Offline';
+            badge.className = 'inline-flex items-center gap-1 text-[10px] font-mono text-tertiary bg-tertiary-container/10 px-2 py-0.5 rounded border border-tertiary/30';
+          }
+        }
+      }
+
+      window.addEventListener('online', () => {
+        updateNetworkUI();
+        showToast("Connected to network", "success");
+      });
+
+      window.addEventListener('offline', () => {
+        updateNetworkUI();
+        showToast("You're offline — topics are available offline", "warning");
+      });
+
+      // 3. Dynamic PWA Installation Prompt & Indicator
+      let deferredInstallPrompt = null;
+      window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredInstallPrompt = e;
+        updatePWAInstallUI();
+      });
+
+      window.addEventListener('appinstalled', () => {
+        deferredInstallPrompt = null;
+        updatePWAInstallUI();
+        showToast("Life Learning Roulette installed!", "success");
+      });
+
+      function updatePWAInstallUI() {
+        const isStandalone = window.matchMedia('(display-mode: standalone)').matches || window.navigator.standalone === true;
+        const title = document.getElementById('pwa-install-title');
+        const subtitle = document.getElementById('pwa-install-subtitle');
+        const actionContainer = document.getElementById('pwa-install-action');
+        if (!title || !subtitle || !actionContainer) return;
+
+        if (isStandalone) {
+          title.textContent = 'Installed as Web App';
+          subtitle.textContent = 'Running in standalone window';
+          actionContainer.innerHTML = '<span class="inline-flex items-center gap-1 text-emerald-400 font-mono text-[11px] bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20"><span class="material-symbols-outlined text-[14px]">check_circle</span>Installed</span>';
+        } else if (deferredInstallPrompt) {
+          title.textContent = 'Install Web App';
+          subtitle.textContent = 'Add to Home Screen for fast offline & standalone access';
+          actionContainer.innerHTML = '<button id="pwa-install-btn" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container hover:bg-primary-container/90 active:scale-95 text-white font-medium text-xs transition-all cursor-pointer shadow-sm"><span class="material-symbols-outlined text-[15px]">download</span>Install App</button>';
+          
+          document.getElementById('pwa-install-btn')?.addEventListener('click', async () => {
+            if (deferredInstallPrompt) {
+              deferredInstallPrompt.prompt();
+              const { outcome } = await deferredInstallPrompt.userChoice;
+              if (outcome === 'accepted') {
+                deferredInstallPrompt = null;
+                updatePWAInstallUI();
+              }
+            }
+          });
+        } else {
+          title.textContent = 'Web Browser Mode';
+          subtitle.textContent = 'Use browser menu to Add to Home Screen';
+          actionContainer.innerHTML = '<span class="inline-flex items-center gap-1 text-on-surface-variant font-mono text-[11px] bg-surface-container-high px-2 py-1 rounded border border-outline-variant/30"><span class="material-symbols-outlined text-[14px]">public</span>Browser</span>';
+        }
+      }
+
+      /**
+       * 4. Notification Scheduling Engine
+       * 
+       * NOTE: True background push notifications without an external Web Push server / VAPID keys
+       * are unreliable on iOS Safari and when browser processes are killed.
+       * This implementation provides best-effort local in-app / service worker scheduling
+       * when the application or tab is active.
+       */
+      let reminderTimerId = null;
+
+      function scheduleDailyReminder(timeStr = '09:00 AM') {
+        if (reminderTimerId) {
+          clearTimeout(reminderTimerId);
+          reminderTimerId = null;
+        }
+
+        if (!State.userSettings.notifications_enabled) return;
+        if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+        // Parse time string e.g. "09:00 AM" or "08:00 PM"
+        const [timePart, meridiem] = timeStr.split(' ');
+        let [hours, minutes] = (timePart || '09:00').split(':').map(Number);
+        if (meridiem === 'PM' && hours < 12) hours += 12;
+        if (meridiem === 'AM' && hours === 12) hours = 0;
+
+        const now = new Date();
+        const target = new Date();
+        target.setHours(hours, minutes || 0, 0, 0);
+
+        if (target.getTime() <= now.getTime()) {
+          target.setDate(target.getDate() + 1);
+        }
+
+        const delayMs = target.getTime() - now.getTime();
+        console.log(`[PWA] Reminder scheduled in ${Math.round(delayMs / 60000)} minutes for ${timeStr}`);
+
+        reminderTimerId = setTimeout(() => {
+          if (Notification.permission === 'granted') {
+            const notif = new Notification('Life Learning Roulette', {
+              body: "Time for your daily learning spin! Discover a new micro-concept and maintain your streak.",
+              icon: './icons/icon-192.png',
+              badge: './icons/icon-192.png'
+            });
+            notif.onclick = () => {
+              window.focus();
+              switchTab('tab-spin');
+            };
+          }
+          scheduleDailyReminder(timeStr);
+        }, delayMs);
+      }
+
+      // Mark as Learned Action (Real Supabase Upsert + Streaks Update)
+      learnedBtn?.addEventListener('click', async () => {
+        if (!State.currentTopic || !Auth.user) return;
+
+        // Check offline state
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          return;
+        }
+
+        const topic = State.currentTopic;
+        const origHtml = learnedBtn.innerHTML;
+        learnedBtn.disabled = true;
+        learnedBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>Saving to cloud...</span>';
+
+        try {
+          const currentProgress = State.userProgressMap[topic.id] || { times_seen: 0, last_seen: null };
+          const newTimesSeen = (currentProgress.times_seen || 0) + 1;
+          const nowIso = new Date().toISOString();
+
+          // 1. Supabase Progress Upsert
+          if (supabaseClient) {
+            const { error: progressErr } = await supabaseClient
+              .from('user_progress')
+              .upsert({
+                user_id: Auth.user.id,
+                topic_id: topic.id,
+                times_seen: newTimesSeen,
+                last_seen: nowIso
+              });
+            if (progressErr) throw progressErr;
+
+            // 2. Supabase Streaks Update
+            const updatedStreak = calculateStreakUpdate(State.userStreaks);
+            const { error: streakErr } = await supabaseClient
+              .from('user_streaks')
+              .upsert({
+                user_id: Auth.user.id,
+                current_streak: updatedStreak.current_streak,
+                longest_streak: updatedStreak.longest_streak,
+                last_active_date: updatedStreak.last_active_date
+              });
+            if (streakErr) throw streakErr;
+
+            State.userStreaks = updatedStreak;
+          }
+
+          // Update in-memory state
+          State.userProgressMap[topic.id] = { times_seen: newTimesSeen, last_seen: nowIso };
+
+          // Update UI
+          updateCardWithTopic(topic);
+          updateStats();
+          renderActivityHeatmap();
+          renderCategoryCoverage();
+          renderReviewQueue();
+          showToast("Marked as learned! Streak updated.", "success");
+        } catch (err) {
+          console.error("Mark as learned error:", err);
+          showToast("Could not save progress: " + getFriendlyErrorMessage(err), 'error');
+          learnedBtn.innerHTML = origHtml;
+        } finally {
+          learnedBtn.disabled = false;
+        }
+      });
+
+      // 7. Filter Tab Controller (Real Supabase user_settings update)
+      function updatePoolCounts() {
+        const eligible = State.getEligibleTopics().length;
+        const total = State.topics.length;
+        const masterLabel = document.getElementById('master-pool-label');
+        if (masterLabel) {
+          masterLabel.textContent = `${eligible} active topics across categories`;
+        }
+        const sidebarCount = document.getElementById('sidebar-active-count');
+        if (sidebarCount) {
+          sidebarCount.textContent = `${eligible} / ${total}`;
+        }
+        const spinSub = document.getElementById('spin-sub-info');
+        if (spinSub) {
+          spinSub.textContent = `Random selection from ${eligible} eligible topics across active categories`;
+        }
+        const filterActiveSpinCount = document.getElementById('filter-active-spin-count');
+        if (filterActiveSpinCount) {
+          filterActiveSpinCount.textContent = eligible;
+        }
+        const tickerStatus = document.getElementById('ticker-status');
+        if (tickerStatus && !isSpinning) {
+          tickerStatus.textContent = eligible > 0
+            ? `Ready to spin · ${eligible} topics active in pool`
+            : `No topics active · Enable categories in Filter`;
+        }
+      }
+
+      // Filter Direct Spin Shortcut (No separate Apply needed)
+      document.getElementById('filter-spin-shortcut-btn')?.addEventListener('click', () => {
+        switchTab('tab-spin');
+        executeSpin();
+      });
+
+      async function syncFilterSettingsToSupabase() {
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          return;
+        }
+        if (!supabaseClient || !Auth.user) return;
+        try {
+          await supabaseClient
+            .from('user_settings')
+            .upsert({
+              user_id: Auth.user.id,
+              enabled_categories: State.userSettings.enabled_categories
+            });
+        } catch (e) {
+          console.error("Failed to sync filter settings:", e);
+        }
+      }
+
+      function updateFilterUIFromSettings() {
+        const enabled = State.userSettings.enabled_categories || {};
+        document.querySelectorAll('.group-switch').forEach(sw => {
+          const group = sw.dataset.group;
+          sw.checked = enabled[group] !== false;
+        });
+
+        document.querySelectorAll('.cat-switch').forEach(sw => {
+          const group = sw.dataset.group;
+          const sub = sw.dataset.sub;
+          const key = `${group}::${sub}`;
+          sw.checked = enabled[key] !== false && enabled[sub] !== false && enabled[group] !== false;
+        });
+
+        updatePoolCounts();
+      }
+
+      document.querySelectorAll('.group-switch').forEach(sw => {
+        sw.addEventListener('change', async (e) => {
+          if (!navigator.onLine) {
+            showToast("You're offline — reconnect to save this", "warning");
+            e.target.checked = !e.target.checked;
+            return;
+          }
+          const group = sw.dataset.group;
+          State.userSettings.enabled_categories[group] = e.target.checked;
+
+          const groupNode = sw.closest('.group-node');
+          groupNode?.querySelectorAll('.cat-switch').forEach(catSw => {
+            catSw.checked = e.target.checked;
+            State.userSettings.enabled_categories[`${group}::${catSw.dataset.sub}`] = e.target.checked;
+          });
+
+          updatePoolCounts();
+          await syncFilterSettingsToSupabase();
+        });
+      });
+
+      document.querySelectorAll('.cat-switch').forEach(sw => {
+        sw.addEventListener('change', async (e) => {
+          if (!navigator.onLine) {
+            showToast("You're offline — reconnect to save this", "warning");
+            e.target.checked = !e.target.checked;
+            return;
+          }
+          const group = sw.dataset.group;
+          const sub = sw.dataset.sub;
+          State.userSettings.enabled_categories[`${group}::${sub}`] = e.target.checked;
+          updatePoolCounts();
+          await syncFilterSettingsToSupabase();
+        });
+      });
+
+      document.getElementById('master-toggle')?.addEventListener('change', async (e) => {
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          e.target.checked = !e.target.checked;
+          return;
+        }
+        const checked = e.target.checked;
+        document.querySelectorAll('.group-switch, .cat-switch').forEach(sw => {
+          sw.checked = checked;
+        });
+        document.querySelectorAll('.group-switch').forEach(sw => {
+          State.userSettings.enabled_categories[sw.dataset.group] = checked;
+        });
+        document.querySelectorAll('.cat-switch').forEach(sw => {
+          State.userSettings.enabled_categories[`${sw.dataset.group}::${sw.dataset.sub}`] = checked;
+        });
+        updatePoolCounts();
+        await syncFilterSettingsToSupabase();
+      });
+
+      document.getElementById('reset-filter-btn')?.addEventListener('click', async () => {
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          return;
+        }
+        document.querySelectorAll('.group-switch, .cat-switch, #master-toggle').forEach(sw => {
+          sw.checked = true;
+        });
+        State.userSettings.enabled_categories = {};
+        updatePoolCounts();
+        await syncFilterSettingsToSupabase();
+      });
+
+      document.querySelectorAll('.group-header-row').forEach(header => {
+        header.addEventListener('click', () => {
+          const groupNode = header.closest('.group-node');
+          const body = groupNode?.querySelector('.group-body');
+          const chevron = groupNode?.querySelector('.chevron-btn');
+          if (body?.classList.contains('hidden')) {
+            body.classList.remove('hidden');
+            chevron?.classList.remove('-rotate-90');
+          } else {
+            body?.classList.add('hidden');
+            chevron?.classList.add('-rotate-90');
+          }
+        });
+      });
+
+      // 8. Progress Screen Metrics, Heatmap & Coverage
+      function updateStats() {
+        const learnedCount = Object.keys(State.userProgressMap).length;
+        const total = State.topics.length || 1;
+        const percent = Math.round((learnedCount / total) * 100);
+
+        const compElem = document.getElementById('stats-completed-count');
+        if (compElem) compElem.textContent = learnedCount;
+
+        const percElem = document.getElementById('stats-percentage-text');
+        if (percElem) percElem.textContent = `Topics completed (${percent}% mastered)`;
+
+        const currentStreak = State.userStreaks.current_streak || 0;
+        const longestStreak = State.userStreaks.longest_streak || 0;
+
+        const streakElem = document.getElementById('stats-streak-count');
+        if (streakElem) streakElem.textContent = `${currentStreak} days`;
+
+        const headerStreak = document.getElementById('header-streak-text');
+        if (headerStreak) headerStreak.textContent = `${currentStreak}d streak`;
+
+        const sidebarProgress = document.getElementById('sidebar-progress-bar');
+        if (sidebarProgress) sidebarProgress.style.width = `${percent}%`;
+      }
+
+      function renderActivityHeatmap() {
+        const container = document.getElementById('activity-heatmap');
+        if (!container) return;
+        container.innerHTML = "";
+
+        // Build a date frequency map for last 90 days from user_progress
+        const activityCounts = {};
+        Object.values(State.userProgressMap).forEach(prog => {
+          if (prog.last_seen) {
+            const dateKey = prog.last_seen.slice(0, 10);
+            activityCounts[dateKey] = (activityCounts[dateKey] || 0) + 1;
+          }
+        });
+
+        const today = new Date();
+        const colors = [
+          "bg-surface-container-high",
+          "bg-secondary-container",
+          "bg-primary-container",
+          "bg-primary"
+        ];
+
+        for (let i = 89; i >= 0; i--) {
+          const d = new Date(today.getTime() - i * 86400000);
+          const key = d.toISOString().slice(0, 10);
+          const count = activityCounts[key] || 0;
+
+          let colorIdx = 0;
+          if (count >= 4) colorIdx = 3;
+          else if (count >= 2) colorIdx = 2;
+          else if (count >= 1) colorIdx = 1;
+
+          const div = document.createElement('div');
+          div.className = `w-3 h-3 rounded-sm ${colors[colorIdx]} hover:ring-2 ring-primary transition-all cursor-pointer`;
+          div.title = `${key}: ${count} topics learned`;
+          container.appendChild(div);
+        }
+      }
+
+      function renderCategoryCoverage() {
+        const groupCoverageMap = {
+          'Tech': { total: 0, learned: 0 },
+          'Money & Career': { total: 0, learned: 0 },
+          'Mind & Growth': { total: 0, learned: 0 },
+          'World & Ideas': { total: 0, learned: 0 }
+        };
+
+        State.topics.forEach(t => {
+          const g = t.group_name || t.group || 'Tech';
+          if (!groupCoverageMap[g]) groupCoverageMap[g] = { total: 0, learned: 0 };
+          groupCoverageMap[g].total += 1;
+          if (State.userProgressMap[t.id]) {
+            groupCoverageMap[g].learned += 1;
+          }
+        });
+      }
+
+      function renderReviewQueue() {
+        const reviewQueueTopics = State.topics
+          .filter(t => State.userProgressMap[t.id]?.times_seen > 0)
+          .sort((a, b) => {
+            const aTime = new Date(State.userProgressMap[a.id]?.last_seen || 0).getTime();
+            const bTime = new Date(State.userProgressMap[b.id]?.last_seen || 0).getTime();
+            return aTime - bTime;
+          })
+          .slice(0, 5);
+      }
+
+      // Review Queue Action
+      document.querySelectorAll('.review-queue-btn').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const topicTitle = btn.dataset.topic;
+          const found = State.topics.find(t => t.title.toLowerCase().includes(topicTitle.toLowerCase()));
+          if (found) {
+            updateCardWithTopic(found);
+            switchTab('tab-spin');
+          }
+        });
+      });
+
+      // 9. Settings Screen Real-Time Supabase Sync
+      async function syncUserSettingsToSupabase() {
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          return;
+        }
+        if (!supabaseClient || !Auth.user) return;
+        try {
+          await supabaseClient
+            .from('user_settings')
+            .upsert({
+              user_id: Auth.user.id,
+              reminder_time: State.userSettings.reminder_time,
+              notifications_enabled: State.userSettings.notifications_enabled,
+              sound_enabled: State.userSettings.sound_enabled,
+              haptics_enabled: State.userSettings.haptics_enabled
+            });
+        } catch (e) {
+          console.error("Failed to sync settings:", e);
+        }
+      }
+
+      function updateSettingsUIFromSettings() {
+        const s = State.userSettings;
+        AudioController.soundEnabled = s.sound_enabled;
+
+        // 1. OS Notification Permission Indicator
+        const osPill = document.getElementById('os-permission-pill');
+        const osText = document.getElementById('os-permission-text');
+        const osDesc = document.getElementById('os-permission-desc');
+        if ('Notification' in window) {
+          const perm = Notification.permission;
+          if (perm === 'granted') {
+            if (osText) osText.textContent = 'Granted';
+            if (osPill) osPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span class="text-emerald-400">Granted</span>';
+            if (osDesc) osDesc.textContent = 'System permission active · Notifications will appear';
+          } else if (perm === 'denied') {
+            if (osText) osText.textContent = 'Denied';
+            if (osPill) osPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-error"></span><span class="text-error">Blocked</span>';
+            if (osDesc) osDesc.textContent = 'Blocked by browser permissions';
+          } else {
+            if (osText) osText.textContent = 'Prompt / Default';
+            if (osPill) osPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span><span>Default</span>';
+            if (osDesc) osDesc.textContent = 'Will request on reminder activation';
+          }
+        } else {
+          if (osText) osText.textContent = 'Unsupported';
+          if (osPill) osPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span><span>Unsupported</span>';
+          if (osDesc) osDesc.textContent = 'Browser does not support notifications';
+        }
+
+        // 2. App-Level Daily Reminder Switch
+        const reminderBtn = document.getElementById('toggle-reminder');
+        const reminderThumb = document.getElementById('toggle-reminder-thumb');
+        const reminderPillText = document.getElementById('reminder-status-text');
+        const reminderPill = document.getElementById('reminder-status-pill');
+
+        if (reminderBtn && reminderThumb) {
+          reminderBtn.setAttribute('aria-checked', String(s.notifications_enabled));
+          if (s.notifications_enabled) {
+            reminderBtn.classList.add('bg-primary-container');
+            reminderBtn.classList.remove('bg-surface-container-highest');
+            reminderThumb.classList.add('translate-x-5');
+            reminderThumb.classList.remove('translate-x-0.5');
+            if (reminderPillText) reminderPillText.textContent = 'App: Active';
+            if (reminderPill) reminderPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-emerald-400"></span><span class="text-emerald-400">App: Active</span>';
+          } else {
+            reminderBtn.classList.remove('bg-primary-container');
+            reminderBtn.classList.add('bg-surface-container-highest');
+            reminderThumb.classList.remove('translate-x-5');
+            reminderThumb.classList.add('translate-x-0.5');
+            if (reminderPillText) reminderPillText.textContent = 'App: Disabled';
+            if (reminderPill) reminderPill.innerHTML = '<span class="w-1.5 h-1.5 rounded-full bg-slate-400"></span><span>App: Disabled</span>';
+          }
+        }
+
+        const soundBtn = document.getElementById('toggle-sound');
+        const soundThumb = document.getElementById('toggle-sound-thumb');
+        if (soundBtn && soundThumb) {
+          soundBtn.setAttribute('aria-checked', String(s.sound_enabled));
+          if (s.sound_enabled) {
+            soundBtn.classList.add('bg-primary-container');
+            soundBtn.classList.remove('bg-surface-container-highest');
+            soundThumb.classList.add('translate-x-5');
+            soundThumb.classList.remove('translate-x-0.5');
+          } else {
+            soundBtn.classList.remove('bg-primary-container');
+            soundBtn.classList.add('bg-surface-container-highest');
+            soundThumb.classList.remove('translate-x-5');
+            soundThumb.classList.add('translate-x-0.5');
+          }
+        }
+
+        const hapticsBtn = document.getElementById('toggle-haptics');
+        const hapticsThumb = document.getElementById('toggle-haptics-thumb');
+        if (hapticsBtn && hapticsThumb) {
+          hapticsBtn.setAttribute('aria-checked', String(s.haptics_enabled));
+          if (s.haptics_enabled) {
+            hapticsBtn.classList.add('bg-primary-container');
+            hapticsBtn.classList.remove('bg-surface-container-highest');
+            hapticsThumb.classList.add('translate-x-5');
+            hapticsThumb.classList.remove('translate-x-0.5');
+          } else {
+            hapticsBtn.classList.remove('bg-primary-container');
+            hapticsBtn.classList.add('bg-surface-container-highest');
+            hapticsThumb.classList.remove('translate-x-5');
+            hapticsThumb.classList.add('translate-x-0.5');
+          }
+        }
+
+        const timeLabel = document.getElementById('active-time-label');
+        if (timeLabel) timeLabel.textContent = s.reminder_time || '09:00 AM';
+
+        updatePWAInstallUI();
+        updateNetworkUI();
+      }
+
+      document.getElementById('toggle-reminder')?.addEventListener('click', async () => {
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          return;
+        }
+
+        const willEnable = !State.userSettings.notifications_enabled;
+
+        // Request notification permission ONLY when user enables
+        if (willEnable) {
+          if ('Notification' in window) {
+            if (Notification.permission === 'default') {
+              const result = await Notification.requestPermission();
+              if (result !== 'granted') {
+                showToast("Notification permission was not granted.", "info");
+                updateSettingsUIFromSettings();
+                return;
+              }
+            } else if (Notification.permission === 'denied') {
+              showToast("Notifications are blocked in your browser settings.", "error");
+              updateSettingsUIFromSettings();
+              return;
+            }
+          } else {
+            showToast("Notifications are not supported in this browser.", "info");
+          }
+        }
+
+        State.userSettings.notifications_enabled = willEnable;
+        updateSettingsUIFromSettings();
+        if (willEnable) {
+          scheduleDailyReminder(State.userSettings.reminder_time);
+          showToast("Daily reminder scheduled for " + State.userSettings.reminder_time, "success");
+        }
+        await syncUserSettingsToSupabase();
+      });
+
+      document.getElementById('toggle-sound')?.addEventListener('click', async () => {
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          return;
+        }
+        State.userSettings.sound_enabled = !State.userSettings.sound_enabled;
+        updateSettingsUIFromSettings();
+        await syncUserSettingsToSupabase();
+      });
+
+      document.getElementById('toggle-haptics')?.addEventListener('click', async () => {
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to save this", "warning");
+          return;
+        }
+        State.userSettings.haptics_enabled = !State.userSettings.haptics_enabled;
+        updateSettingsUIFromSettings();
+        await syncUserSettingsToSupabase();
+      });
+
+      document.querySelectorAll('.time-preset-btn').forEach(btn => {
+        btn.addEventListener('click', async () => {
+          if (!navigator.onLine) {
+            showToast("You're offline — reconnect to save this", "warning");
+            return;
+          }
+          document.querySelectorAll('.time-preset-btn').forEach(b => {
+            b.classList.remove('bg-primary-container/20', 'border-primary-container/50', 'text-primary');
+            b.classList.add('bg-surface-container-high', 'border-outline-variant/40', 'text-on-surface-variant');
+          });
+          btn.classList.add('bg-primary-container/20', 'border-primary-container/50', 'text-primary');
+          btn.classList.remove('bg-surface-container-high', 'border-outline-variant/40', 'text-on-surface-variant');
+
+          const time = btn.dataset.time;
+          State.userSettings.reminder_time = time;
+          const label = document.getElementById('active-time-label');
+          if (label) label.textContent = time;
+
+          if (State.userSettings.notifications_enabled) {
+            scheduleDailyReminder(time);
+          }
+          await syncUserSettingsToSupabase();
+        });
+      });
+
+      // Data Reset Modal & Confirmation Engine
+      const resetModal = document.getElementById('reset-modal');
+      document.getElementById('open-reset-modal-btn')?.addEventListener('click', () => {
+        resetModal?.classList.remove('hidden');
+        resetModal?.classList.add('flex');
+      });
+
+      document.getElementById('cancel-reset-btn')?.addEventListener('click', () => {
+        resetModal?.classList.add('hidden');
+        resetModal?.classList.remove('flex');
+      });
+
+      document.getElementById('confirm-reset-btn')?.addEventListener('click', async () => {
+        const confirmBtn = document.getElementById('confirm-reset-btn');
+        const origText = confirmBtn?.innerHTML;
+
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to reset cloud data", "warning");
+          resetModal?.classList.add('hidden');
+          resetModal?.classList.remove('flex');
+          return;
+        }
+
+        if (confirmBtn) {
+          confirmBtn.disabled = true;
+          confirmBtn.innerHTML = '<span class="material-symbols-outlined text-[16px] animate-spin">sync</span><span>Deleting...</span>';
+        }
+
+        try {
+          if (supabaseClient && Auth.user) {
+            // Delete all user_progress
+            const { error: progDelErr } = await supabaseClient
+              .from('user_progress')
+              .delete()
+              .eq('user_id', Auth.user.id);
+            if (progDelErr) throw progDelErr;
+
+            // Reset user_streaks
+            const { error: streakResetErr } = await supabaseClient
+              .from('user_streaks')
+              .upsert({
+                user_id: Auth.user.id,
+                current_streak: 0,
+                longest_streak: 0,
+                last_active_date: null
+              });
+            if (streakResetErr) throw streakResetErr;
+          }
+
+          State.userProgressMap = {};
+          State.userStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
+          
+          updateStats();
+          renderActivityHeatmap();
+          renderCategoryCoverage();
+          renderReviewQueue();
+          if (State.topics.length > 0) {
+            updateCardWithTopic(State.topics[0]);
+          }
+
+          resetModal?.classList.add('hidden');
+          resetModal?.classList.remove('flex');
+          showToast("All progress and streak records have been reset.", "success");
+        } catch (err) {
+          console.error("Reset data error:", err);
+          showToast("Failed to reset data: " + getFriendlyErrorMessage(err), "error");
+        } finally {
+          if (confirmBtn) {
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = origText;
+          }
+        }
+      });
+
+      // Data Backup: Export & Import Handlers
+      document.getElementById('export-btn')?.addEventListener('click', () => {
+        const backupData = {
+          version: '2.1.0',
+          exported_at: new Date().toISOString(),
+          user_progress: State.userProgressMap,
+          user_streaks: State.userStreaks,
+          user_settings: State.userSettings
+        };
+
+        const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = `life-learning-backup-${new Date().toISOString().slice(0, 10)}.json`;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+        showToast("Backup exported successfully", "success");
+      });
+
+      document.getElementById('import-input')?.addEventListener('change', async (e) => {
+        const file = e.target.files?.[0];
+        if (!file) return;
+
+        if (!navigator.onLine) {
+          showToast("You're offline — reconnect to restore cloud data", "warning");
+          e.target.value = '';
+          return;
+        }
+
+        try {
+          const text = await file.text();
+          const parsed = JSON.parse(text);
+
+          if (parsed.user_progress && typeof parsed.user_progress === 'object') {
+            State.userProgressMap = parsed.user_progress;
+          }
+          if (parsed.user_streaks && typeof parsed.user_streaks === 'object') {
+            State.userStreaks = parsed.user_streaks;
+          }
+          if (parsed.user_settings && typeof parsed.user_settings === 'object') {
+            State.userSettings = Object.assign(State.userSettings, parsed.user_settings);
+          }
+
+          // Sync to Supabase if connected
+          if (supabaseClient && Auth.user) {
+            // Upsert progress rows
+            const progressRows = Object.entries(State.userProgressMap).map(([topicId, val]) => ({
+              user_id: Auth.user.id,
+              topic_id: topicId,
+              times_seen: val.times_seen || 1,
+              last_seen: val.last_seen || new Date().toISOString()
+            }));
+
+            if (progressRows.length > 0) {
+              await supabaseClient.from('user_progress').upsert(progressRows);
+            }
+
+            await supabaseClient.from('user_streaks').upsert({
+              user_id: Auth.user.id,
+              current_streak: State.userStreaks.current_streak || 0,
+              longest_streak: State.userStreaks.longest_streak || 0,
+              last_active_date: State.userStreaks.last_active_date
+            });
+
+            await syncUserSettingsToSupabase();
+          }
+
+          updateSettingsUIFromSettings();
+          updateStats();
+          renderActivityHeatmap();
+          renderCategoryCoverage();
+          renderReviewQueue();
+          if (State.topics.length > 0) {
+            updateCardWithTopic(State.topics[0]);
+          }
+
+          showToast("Backup imported and synced successfully", "success");
+        } catch (err) {
+          console.error("Import error:", err);
+          showToast("Failed to import backup file: invalid format.", "error");
+        } finally {
+          e.target.value = '';
+        }
+      });
+
+      // 10. Data Fetching & Sync from Supabase
+      async function loadSupabaseAppData(userId) {
+        if (!supabaseClient || !userId) return;
+
+        try {
+          // 1. Fetch Topics
+          const { data: dbTopics, error: topicsErr } = await supabaseClient
+            .from('topics')
+            .select('*');
+
+          if (!topicsErr && dbTopics && dbTopics.length > 0) {
+            State.topics = dbTopics;
+          }
+
+          // 2. Fetch User Progress
+          const { data: dbProgress, error: progErr } = await supabaseClient
+            .from('user_progress')
+            .select('topic_id, times_seen, last_seen')
+            .eq('user_id', userId);
+
+          if (!progErr && dbProgress) {
+            const progMap = {};
+            dbProgress.forEach(r => {
+              progMap[r.topic_id] = { times_seen: r.times_seen, last_seen: r.last_seen };
+            });
+            State.userProgressMap = progMap;
+          }
+
+          // 3. Fetch User Streaks
+          const { data: dbStreaks, error: streakErr } = await supabaseClient
+            .from('user_streaks')
+            .select('*')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+          if (!streakErr && dbStreaks) {
+            State.userStreaks = dbStreaks;
+          }
+
+          // 4. Fetch User Settings
+          const { data: dbSettings, error: settErr } = await supabaseClient
+            .from('user_settings')
+            .select('*')
+            .eq('user_id', userId)
+            .maybeSingle();
+
+          if (!settErr && dbSettings) {
+            State.userSettings = {
+              enabled_categories: dbSettings.enabled_categories || {},
+              reminder_time: dbSettings.reminder_time || '09:00 AM',
+              notifications_enabled: Boolean(dbSettings.notifications_enabled),
+              sound_enabled: dbSettings.sound_enabled !== false,
+              haptics_enabled: dbSettings.haptics_enabled !== false
+            };
+          }
+
+          // Update all UI elements
+          updateFilterUIFromSettings();
+          updateSettingsUIFromSettings();
+          updateStats();
+          renderActivityHeatmap();
+          renderCategoryCoverage();
+          renderReviewQueue();
+
+          if (State.userSettings.notifications_enabled) {
+            scheduleDailyReminder(State.userSettings.reminder_time);
+          }
+
+          const initial = selectWeightedTopic(State.topics, State.userProgressMap, State.userSettings.enabled_categories);
+          updateCardWithTopic(initial || State.topics[0]);
+        } catch (err) {
+          console.error("Error loading app data from Supabase:", err);
+        }
+      }
+
+      // 11. Auth Actions & Listeners
+      const authForm = document.getElementById('auth-form');
+      authForm?.addEventListener('submit', handleAuthFormSubmit);
+
+      document.getElementById('auth-tab-login-btn')?.addEventListener('click', () => Auth.setMode('login'));
+      document.getElementById('auth-tab-signup-btn')?.addEventListener('click', () => Auth.setMode('signup'));
+      document.getElementById('auth-switch-btn')?.addEventListener('click', () => {
+        Auth.setMode(Auth.mode === 'login' ? 'signup' : 'login');
+      });
+      document.getElementById('auth-alert-close')?.addEventListener('click', () => Auth.hideAlert());
+
+      document.getElementById('toggle-pwd-btn')?.addEventListener('click', () => {
+        const pwdInput = document.getElementById('auth-password');
+        const pwdIcon = document.getElementById('toggle-pwd-icon');
+        if (!pwdInput) return;
+        if (pwdInput.type === 'password') {
+          pwdInput.type = 'text';
+          if (pwdIcon) pwdIcon.textContent = 'visibility_off';
+        } else {
+          pwdInput.type = 'password';
+          if (pwdIcon) pwdIcon.textContent = 'visibility';
+        }
+      });
+
+      document.getElementById('google-auth-btn')?.addEventListener('click', handleGoogleOAuth);
+
+      async function handleAuthFormSubmit(e) {
+        e.preventDefault();
+        Auth.hideAlert();
+
+        const emailInput = document.getElementById('auth-email');
+        const pwdInput = document.getElementById('auth-password');
+        const emailValidation = document.getElementById('email-validation-msg');
+        const pwdValidation = document.getElementById('pwd-validation-msg');
+        const submitBtn = document.getElementById('auth-submit-btn');
+
+        if (emailValidation) emailValidation.classList.add('hidden');
+        if (pwdValidation) pwdValidation.classList.add('hidden');
+
+        const email = emailInput?.value.trim() || '';
+        const password = pwdInput?.value || '';
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        let hasError = false;
+
+        if (!email || !emailRegex.test(email)) {
+          if (emailValidation) emailValidation.classList.remove('hidden');
+          hasError = true;
+        }
+
+        if (!password || password.length < 6) {
+          if (pwdValidation) pwdValidation.classList.remove('hidden');
+          hasError = true;
+        }
+
+        if (hasError) return;
+
+        const origSubmitHtml = submitBtn?.innerHTML;
+        if (submitBtn) {
+          submitBtn.disabled = true;
+          submitBtn.innerHTML = '<span class="material-symbols-outlined text-[18px] animate-spin">sync</span><span>Authenticating...</span>';
+        }
+
+        try {
+          if (!supabaseClient) {
+            throw new Error("Supabase client not initialized. Please configure credentials in Connection Settings.");
+          }
+
+          if (Auth.mode === 'signup') {
+            const { data, error } = await supabaseClient.auth.signUp({
+              email,
+              password,
+              options: {
+                emailRedirectTo: window.location.origin + window.location.pathname
+              }
+            });
+            if (error) throw error;
+
+            if (data?.user && !data?.session) {
+              Auth.showAlert("Account created! Please check your email for a verification link.", "success");
+            } else if (data?.user && data?.session) {
+              Auth.showAlert("Account created and signed in successfully!", "success");
+              await loadSupabaseAppData(data.user.id);
+            }
+          } else {
+            const { data, error } = await supabaseClient.auth.signInWithPassword({
+              email,
+              password
+            });
+            if (error) throw error;
+            if (data?.user) {
+              await loadSupabaseAppData(data.user.id);
+            }
+          }
+        } catch (err) {
+          Auth.showAlert(getFriendlyErrorMessage(err), 'error');
+        } finally {
+          if (submitBtn) {
+            submitBtn.disabled = false;
+            submitBtn.innerHTML = origSubmitHtml;
+          }
+        }
+      }
+
+      async function handleGoogleOAuth() {
+        Auth.hideAlert();
+        try {
+          if (!supabaseClient) {
+            throw new Error("Supabase client not initialized.");
+          }
+          const { error } = await supabaseClient.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+              redirectTo: window.location.origin + window.location.pathname
+            }
+          });
+          if (error) throw error;
+        } catch (err) {
+          Auth.showAlert(getFriendlyErrorMessage(err), 'error');
+        }
+      }
+
+      async function handleLogout() {
+        try {
+          if (supabaseClient) {
+            await supabaseClient.auth.signOut();
+          }
+          Auth.updateUIForUser(null);
+          State.userProgressMap = {};
+          State.userStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
+          switchTab('tab-auth');
+        } catch (err) {
+          console.error("Logout failed:", err);
+        }
+      }
+
+      // Supabase Configuration Modal Logic
+      const configModal = document.getElementById('supabase-config-modal');
+      function openConfigModal() {
+        const urlInput = document.getElementById('config-supabase-url');
+        const keyInput = document.getElementById('config-supabase-key');
+        if (urlInput) urlInput.value = SupabaseConfig.url;
+        if (keyInput) keyInput.value = SupabaseConfig.anonKey;
+        configModal?.classList.remove('hidden');
+        configModal?.classList.add('flex');
+      }
+
+      function closeConfigModal() {
+        configModal?.classList.add('hidden');
+        configModal?.classList.remove('flex');
+      }
+
+      document.getElementById('open-config-btn')?.addEventListener('click', openConfigModal);
+      document.getElementById('close-config-modal-btn')?.addEventListener('click', closeConfigModal);
+      document.getElementById('cancel-config-btn')?.addEventListener('click', closeConfigModal);
+
+      document.getElementById('save-config-btn')?.addEventListener('click', async () => {
+        const urlInput = document.getElementById('config-supabase-url');
+        const keyInput = document.getElementById('config-supabase-key');
+        if (urlInput && keyInput) {
+          SupabaseConfig.url = urlInput.value.trim();
+          SupabaseConfig.anonKey = keyInput.value.trim();
+          localStorage.setItem('llr_supabase_url', SupabaseConfig.url);
+          localStorage.setItem('llr_supabase_key', SupabaseConfig.anonKey);
+          initSupabaseClient();
+          await initAuthSession();
+          closeConfigModal();
+          showToast("Supabase credentials saved successfully", "success");
+        }
+      });
+
+      // 12. Session Initialization & Real-Time Sync
+      async function initAuthSession() {
+        const loadingOverlay = document.getElementById('auth-loading-overlay');
+
+        if (!supabaseClient) {
+          if (loadingOverlay) {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => loadingOverlay.classList.add('hidden'), 300);
+          }
+          switchTab('tab-spin');
+          return;
+        }
+
+        try {
+          const { data: { session } } = await supabaseClient.auth.getSession();
+          if (session?.user) {
+            Auth.session = session;
+            Auth.updateUIForUser(session.user);
+            await loadSupabaseAppData(session.user.id);
+            switchTab('tab-spin');
+          } else {
+            Auth.updateUIForUser(null);
+            switchTab('tab-spin');
+          }
+        } catch (e) {
+          console.warn("Session check exception:", e);
+          Auth.updateUIForUser(null);
+          switchTab('tab-spin');
+        } finally {
+          Auth.loading = false;
+          if (loadingOverlay) {
+            loadingOverlay.style.opacity = '0';
+            setTimeout(() => loadingOverlay.classList.add('hidden'), 300);
+          }
+        }
+
+        // Real-time auth state listener
+        supabaseClient.auth.onAuthStateChange(async (event, session) => {
+          Auth.session = session;
+          if (session?.user) {
+            Auth.updateUIForUser(session.user);
+            await loadSupabaseAppData(session.user.id);
+            if (State.activeTab === 'tab-auth') {
+              switchTab('tab-spin');
+            }
+          } else {
+            Auth.updateUIForUser(null);
+          }
+        });
+      }
+
+      // Initial View Setup
+      updatePoolCounts();
+      updateStats();
+      renderActivityHeatmap();
+      updateCardWithTopic(State.topics[0]);
+      updatePWAInstallUI();
+      updateNetworkUI();
+      initAuthSession();
+
+    })();
+  </script>
+</body>
+</html>
