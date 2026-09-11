@@ -2,9 +2,132 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { AudioController } from '../../lib/audio';
-import { RotateCw, Check, BookOpen, ExternalLink, Cloud, FilterX } from 'lucide-react';
+import { CATEGORY_TREE } from '../../lib/roulette';
+import {
+  RotateCw,
+  BookOpen,
+  ExternalLink,
+  FilterX,
+  Bot,
+  Cloud,
+  Binary,
+  Cpu,
+  Globe,
+  Wallet,
+  MessageSquare,
+  Compass,
+  Brain,
+  Check
+} from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from '../UI/Button';
+
+// Category metadata: icons, short display labels, and group token styles
+const CATEGORY_META = {
+  'ai-ml': {
+    icon: Bot,
+    shortLabel: 'AI & ML',
+    groupColor: 'text-primary',
+    bgBadge: 'bg-primary/10 text-primary border-primary/20',
+    borderActive: 'border-primary',
+    glow: 'shadow-primary/30'
+  },
+  'cloud-infra': {
+    icon: Cloud,
+    shortLabel: 'Cloud & Infra',
+    groupColor: 'text-primary',
+    bgBadge: 'bg-primary/10 text-primary border-primary/20',
+    borderActive: 'border-primary',
+    glow: 'shadow-primary/30'
+  },
+  'data-structures-algorithms': {
+    icon: Binary,
+    shortLabel: 'DSA',
+    groupColor: 'text-primary',
+    bgBadge: 'bg-primary/10 text-primary border-primary/20',
+    borderActive: 'border-primary',
+    glow: 'shadow-primary/30'
+  },
+  'systems-distributed-computing': {
+    icon: Cpu,
+    shortLabel: 'Systems',
+    groupColor: 'text-primary',
+    bgBadge: 'bg-primary/10 text-primary border-primary/20',
+    borderActive: 'border-primary',
+    glow: 'shadow-primary/30'
+  },
+  'web-dev': {
+    icon: Globe,
+    shortLabel: 'Web Dev',
+    groupColor: 'text-primary',
+    bgBadge: 'bg-primary/10 text-primary border-primary/20',
+    borderActive: 'border-primary',
+    glow: 'shadow-primary/30'
+  },
+  'finance': {
+    icon: Wallet,
+    shortLabel: 'Finance',
+    groupColor: 'text-tertiary',
+    bgBadge: 'bg-tertiary/10 text-tertiary border-tertiary/20',
+    borderActive: 'border-tertiary',
+    glow: 'shadow-tertiary/30'
+  },
+  'communication': {
+    icon: MessageSquare,
+    shortLabel: 'Communication',
+    groupColor: 'text-secondary',
+    bgBadge: 'bg-secondary/10 text-secondary border-secondary/20',
+    borderActive: 'border-secondary',
+    glow: 'shadow-secondary/30'
+  },
+  'philosophy-critical-thinking': {
+    icon: Compass,
+    shortLabel: 'Philosophy',
+    groupColor: 'text-secondary',
+    bgBadge: 'bg-secondary/10 text-secondary border-secondary/20',
+    borderActive: 'border-secondary',
+    glow: 'shadow-secondary/30'
+  },
+  'psychology': {
+    icon: Brain,
+    shortLabel: 'Psychology',
+    groupColor: 'text-secondary',
+    bgBadge: 'bg-secondary/10 text-secondary border-secondary/20',
+    borderActive: 'border-secondary',
+    glow: 'shadow-secondary/30'
+  }
+};
+
+// Dynamically derived list of real categories from CATEGORY_TREE
+const REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
+  groupDef.categories.map(cat => {
+    const meta = CATEGORY_META[cat.name] || {
+      icon: Cpu,
+      shortLabel: cat.label,
+      groupColor: 'text-primary',
+      bgBadge: 'bg-primary/10 text-primary border-primary/20',
+      borderActive: 'border-primary',
+      glow: 'shadow-primary/30'
+    };
+    return {
+      group: groupDef.group,
+      groupLabel: groupDef.label,
+      name: cat.name,
+      label: cat.label,
+      ...meta
+    };
+  })
+);
+
+// Repeated sequence to create a long horizontal reel strip
+const REPEAT_COUNT = 12;
+const REEL_STRIP = Array.from({ length: REPEAT_COUNT }, (_, r) =>
+  REEL_CATEGORIES.map(cat => ({ ...cat, repeatIdx: r }))
+).flat();
+
+const ITEM_WIDTH = 148;
+const ITEM_GAP = 12;
+const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 160px
 
 export const SpinScreen = ({ onNavigateFilter }) => {
   const {
@@ -19,13 +142,41 @@ export const SpinScreen = ({ onNavigateFilter }) => {
     showToast
   } = useData();
 
-  const [rotation, setRotation] = useState(0);
+  const containerRef = useRef(null);
+  const [containerWidth, setContainerWidth] = useState(580);
   const [isSpinning, setIsSpinning] = useState(false);
   const [showResult, setShowResult] = useState(false);
-  const [tickerText, setTickerText] = useState(`Ready to spin · ${eligibleTopics.length} topics active in pool`);
+  const [isLanded, setIsLanded] = useState(false);
+  const [reelIndex, setReelIndex] = useState(() => {
+    const initCat = currentTopic?.category || currentTopic?.sub;
+    const foundIdx = REEL_CATEGORIES.findIndex(c => c.name === initCat);
+    return (2 * REEL_CATEGORIES.length) + (foundIdx >= 0 ? foundIdx : 0);
+  });
+  const [tickerText, setTickerText] = useState(`Ready to spin · ${eligibleTopics?.length ?? 0} topics active in pool`);
   const [tickerActive, setTickerActive] = useState(false);
 
-  const wheelRef = useRef(null);
+  // Keep ticker text in sync with active pool size when idle
+  useEffect(() => {
+    if (!isSpinning && !isLanded) {
+      setTickerText(`Ready to spin · ${eligibleTopics?.length ?? 0} topics active in pool`);
+    }
+  }, [eligibleTopics?.length, isSpinning, isLanded]);
+
+  // Measure container width for pixel-perfect centering under marker
+  useEffect(() => {
+    const updateWidth = () => {
+      if (containerRef.current) {
+        setContainerWidth(containerRef.current.clientWidth);
+      }
+    };
+    updateWidth();
+    const ro = new ResizeObserver(updateWidth);
+    if (containerRef.current) ro.observe(containerRef.current);
+    return () => ro.disconnect();
+  }, []);
+
+  // Center translateX formula: centers card at reelIndex under center marker
+  const translateX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
 
   // Spacebar triggers spin shortcut
   useEffect(() => {
@@ -52,64 +203,35 @@ export const SpinScreen = ({ onNavigateFilter }) => {
 
     setIsSpinning(true);
     setShowResult(false);
+    setIsLanded(false);
     setTickerActive(true);
     setTickerText("DECELERATING READOUT...");
+
     AudioController.init();
+    AudioController.playWhoosh(2600);
 
     const selected = spinNextTopic();
 
-    // Map selected topic to its quadrant and target landing angle under top needle (0 deg).
-    // Wheel geometry (unrotated, 0 deg):
-    //   Quadrant 1 (Top-Right, 0° to 90°): Tech
-    //   Quadrant 2 (Bottom-Right, 90° to 180°): Money & Career
-    //   Quadrant 3 (Bottom-Left, 180° to 270°): Mind & Growth
-    //   Quadrant 4 (Top-Left, 270° to 360°): World & Ideas
-    //
-    // Since the needle is at the top (12 o'clock / 0°), when wheel rotates clockwise by R degrees:
-    // the point on the wheel under the needle is originally at (-R mod 360) = (360 - (R mod 360)) mod 360.
-    // Therefore, to place angle A of the wheel under the needle, target (R mod 360) = (360 - A) mod 360.
-    //
-    // Quadrant angular ranges (center of each quadrant is 45°, 135°, 225°, 315°):
-    // Tech: arc 10° to 80° -> target resting R in [280°, 350°] (center ~ 315°)
-    // Money: arc 100° to 170° -> target resting R in [190°, 260°] (center ~ 225°)
-    // Mind: arc 190° to 260° -> target resting R in [100°, 170°] (center ~ 135°)
-    // World: arc 280° to 350° -> target resting R in [10°, 80°] (center ~ 45°)
-    const groupRaw = (selected?.group_name || selected?.group || '').toLowerCase();
-    
-    // Target resting angle range [minR, maxR] with padding away from sector dividers:
-    let minR = 285;
-    let maxR = 345; // Default: Tech
-    
-    if (groupRaw.includes('money') || groupRaw.includes('career') || groupRaw.includes('finance')) {
-      minR = 195;
-      maxR = 255;
-    } else if (groupRaw.includes('mind') || groupRaw.includes('growth')) {
-      minR = 105;
-      maxR = 165;
-    } else if (groupRaw.includes('world') || groupRaw.includes('idea')) {
-      minR = 15;
-      maxR = 75;
-    }
+    // Map selected topic to its category card in REEL_CATEGORIES
+    const targetCat = selected?.category || selected?.sub;
+    const foundIdx = REEL_CATEGORIES.findIndex(c => c.name === targetCat);
+    const baseIndex = foundIdx >= 0 ? foundIdx : 0;
 
-    // Pick a random resting angle inside the quadrant's safe zone
-    const targetRestingAngle = minR + Math.random() * (maxR - minR);
+    // Compute forward landing index (ensure moving right-to-left with 4 full cycles)
+    const currentBase = reelIndex % REEL_CATEGORIES.length;
+    let forwardOffset = baseIndex - currentBase;
+    if (forwardOffset <= 0) forwardOffset += REEL_CATEGORIES.length;
+    const travelCards = (4 * REEL_CATEGORIES.length) + forwardOffset;
+    const targetIndex = reelIndex + travelCards;
+    setReelIndex(targetIndex);
 
-    // Keep 4 to 6 full rotations for visual effect
-    const spinRounds = 4 + Math.floor(Math.random() * 3);
-    const currentModulo = ((rotation % 360) + 360) % 360;
-    let deltaAngle = targetRestingAngle - currentModulo;
-    if (deltaAngle <= 0) {
-      deltaAngle += 360;
-    }
-    const nextRotation = rotation + (spinRounds * 360) + deltaAngle;
-    setRotation(nextRotation);
-
-    // Play ticking sound with progressive deceleration
+    // Play ticking sound with progressive deceleration & rising pitch
     let tickInterval = 60;
     let elapsed = 0;
     const playNextTick = () => {
       if (elapsed < 2400) {
-        AudioController.playTick();
+        const progress = Math.min(1, elapsed / 2300);
+        AudioController.playTick(progress);
         elapsed += tickInterval;
         tickInterval += 18;
         setTimeout(playNextTick, tickInterval);
@@ -120,16 +242,33 @@ export const SpinScreen = ({ onNavigateFilter }) => {
     setTimeout(() => {
       setIsSpinning(false);
       setShowResult(true);
+      setIsLanded(true);
       setTickerActive(false);
 
       const groupName = (selected?.group_name || selected?.group || 'TOPIC').toUpperCase();
-      setTickerText(`SETTLED — ${groupName}`);
+      const catLabel = (REEL_CATEGORIES[baseIndex]?.label || selected?.category || '').toUpperCase();
+      setTickerText(`SETTLED — ${groupName} · ${catLabel}`);
 
-      AudioController.playSuccess();
+      AudioController.playLanding();
+
+      // Trigger confetti celebration burst
+      try {
+        confetti({
+          particleCount: 45,
+          spread: 65,
+          origin: { y: 0.65 },
+          colors: ['#b5502e', '#e07a5f', '#f59e0b']
+        });
+      } catch (e) {}
 
       if (userSettings?.haptics_enabled && navigator.vibrate) {
         try { navigator.vibrate([40, 60, 80]); } catch (e) {}
       }
+
+      // Silently normalize reel index back to repetition 2 without animation so strip never runs out
+      setTimeout(() => {
+        setReelIndex(prev => (prev % REEL_CATEGORIES.length) + (2 * REEL_CATEGORIES.length));
+      }, 500);
     }, 2600);
   };
 
@@ -155,61 +294,86 @@ export const SpinScreen = ({ onNavigateFilter }) => {
   return (
     <div className="flex flex-col w-full max-w-2xl mx-auto pb-6">
       
-      {/* Minimalist Precision Wheel Dial */}
-      <div className="flex flex-col items-center justify-center py-2 relative">
-        
-        {/* Top Indicator Needle */}
-        <div className="z-20 mb-[-8px] flex flex-col items-center drop-shadow-md">
-          <div className="w-2 h-2 bg-primary-container rotate-45 mb-0.5 shadow-sm border border-primary/50"></div>
-          <div className="w-1 h-3 bg-primary-container rounded-full"></div>
-        </div>
+      {/* Horizontal Precision Reel Component */}
+      <div className="w-full max-w-2xl mx-auto py-2 relative flex flex-col items-center">
+        {/* Outer Reel Track Frame */}
+        <div
+          ref={containerRef}
+          className="relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-inner flex items-center select-none"
+        >
+          {/* Top & Bottom Center Marker Needles & Hairline Guideline */}
+          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-between pointer-events-none w-8">
+            {/* Top Indicator Pip */}
+            <div className="flex flex-col items-center -mt-1 drop-shadow-md">
+              <div className="w-2.5 h-2.5 bg-primary rotate-45 shadow-[0_0_10px_rgba(var(--color-primary),0.8)] border border-white/50"></div>
+              <div className="w-1 h-2 bg-primary rounded-full"></div>
+            </div>
 
-        {/* Dial Ring Container */}
-        <div className="relative w-[clamp(11rem,26vw,15rem)] h-[clamp(11rem,26vw,15rem)] flex items-center justify-center">
-          <div className="absolute inset-0 rounded-full border border-outline-variant/40 shadow-[0_0_20px_rgba(181,80,46,0.15)]"></div>
-          
-          {/* Segmented Wheel SVG */}
-          <svg
-            ref={wheelRef}
-            onClick={handleSpin}
-            style={{
-              transform: `rotate(${rotation}deg)`,
-              transition: isSpinning ? 'transform 2.6s cubic-bezier(0.12, 0.9, 0.2, 1)' : 'none'
-            }}
-            className="w-[clamp(10rem,24vw,14rem)] h-[clamp(10rem,24vw,14rem)] select-none cursor-pointer"
-            viewBox="0 0 160 160"
+            {/* Glowing Vertical Center Line */}
+            <div className="w-[2px] flex-1 bg-gradient-to-b from-primary/90 via-primary/40 to-primary/90 shadow-[0_0_10px_rgba(var(--color-primary),0.6)]"></div>
+
+            {/* Bottom Indicator Pip */}
+            <div className="flex flex-col items-center -mb-1 drop-shadow-md">
+              <div className="w-1 h-2 bg-primary rounded-full"></div>
+              <div className="w-2.5 h-2.5 bg-primary rotate-45 shadow-[0_0_10px_rgba(var(--color-primary),0.8)] border border-white/50"></div>
+            </div>
+          </div>
+
+          {/* Left & Right Fade Vignettes */}
+          <div className="absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-surface-container-lowest via-surface-container-lowest/80 to-transparent z-20 pointer-events-none"></div>
+          <div className="absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-surface-container-lowest via-surface-container-lowest/80 to-transparent z-20 pointer-events-none"></div>
+
+          {/* Animated Horizontal Strip */}
+          <motion.div
+            className="flex items-center absolute left-0"
+            style={{ gap: `${ITEM_GAP}px` }}
+            animate={{ x: translateX }}
+            transition={
+              isSpinning
+                ? { duration: 2.6, ease: [0.12, 0.9, 0.2, 1] }
+                : { duration: 0 }
+            }
           >
-            <circle cx="80" cy="80" fill="rgb(var(--color-surface-container-lowest))" r="74" stroke="rgb(var(--color-surface-container-high))" strokeWidth="1.5"></circle>
-            
-            {/* Quadrant 1: TECH (Top Right) */}
-            <path d="M 80,6 A 74,74 0 0,1 154,80 L 80,80 Z" fill="rgb(var(--color-surface-container-high))" opacity="0.9"></path>
-            {/* Quadrant 2: MONEY & CAREER (Bottom Right) */}
-            <path d="M 154,80 A 74,74 0 0,1 80,154 L 80,80 Z" fill="rgb(var(--color-surface-container))" opacity="0.75"></path>
-            {/* Quadrant 3: MIND & GROWTH (Bottom Left) */}
-            <path d="M 80,154 A 74,74 0 0,1 6,80 L 80,80 Z" fill="rgb(var(--color-surface-container-high))" opacity="0.55"></path>
-            {/* Quadrant 4: WORLD & IDEAS (Top Left) */}
-            <path d="M 6,80 A 74,74 0 0,1 80,6 L 80,80 Z" fill="rgb(var(--color-surface-container))" opacity="0.85"></path>
+            {REEL_STRIP.map((item, idx) => {
+              const Icon = item.icon;
+              const isSelectedTarget = isLanded && (idx === reelIndex);
 
-            {/* Dividers */}
-            <line stroke="rgb(var(--color-outline-variant))" strokeWidth="1" x1="80" x2="80" y1="6" y2="154"></line>
-            <line stroke="rgb(var(--color-outline-variant))" strokeWidth="1" x1="6" x2="154" y1="80" y2="80"></line>
-
-            {/* Labels */}
-            <text fill="rgb(var(--color-primary))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="116" y="46">TECH</text>
-            <text fill="rgb(var(--color-tertiary))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="116" y="118">MONEY</text>
-            <text fill="rgb(var(--color-secondary))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="44" y="118">MIND</text>
-            <text fill="rgb(var(--color-on-surface-variant))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="44" y="46">WORLD</text>
-
-            {/* Center Hub */}
-            <circle cx="80" cy="80" fill="rgb(var(--color-surface-container-lowest))" r="16" stroke="rgb(var(--color-outline-variant))" strokeWidth="1.5"></circle>
-            <circle cx="80" cy="80" fill="rgb(var(--color-primary-container))" r="4.5" stroke="rgb(var(--color-surface))" strokeWidth="0.75"></circle>
-          </svg>
+              return (
+                <motion.div
+                  key={`${item.name}-${idx}`}
+                  animate={isSelectedTarget ? { scale: [1, 1.07, 1] } : { scale: 1 }}
+                  transition={{ duration: 0.4, ease: 'easeOut' }}
+                  style={{ width: `${ITEM_WIDTH}px` }}
+                  className={`h-22 shrink-0 rounded-xl p-3 flex flex-col justify-between border transition-all duration-200 ${
+                    isSelectedTarget
+                      ? `bg-surface-container-high ${item.borderActive} ring-2 ring-primary/60 shadow-lg ${item.glow}`
+                      : 'bg-surface-container-low/75 border-outline-variant/30 hover:border-outline-variant/60'
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <span className={`text-[10px] font-mono uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded border ${item.bgBadge}`}>
+                      {item.groupLabel}
+                    </span>
+                    <Icon size={16} className={item.groupColor} />
+                  </div>
+                  <div className="mt-1">
+                    <div className="text-xs font-semibold text-on-surface truncate leading-tight">
+                      {item.shortLabel}
+                    </div>
+                    <div className="text-[10px] text-on-surface-variant font-mono truncate">
+                      {item.label}
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </motion.div>
         </div>
 
         {/* Ticker Readout */}
         <div className="mt-3 flex items-center gap-2 font-mono text-xs text-on-surface-variant">
           <span className={`w-2 h-2 rounded-full ${tickerActive ? 'bg-tertiary animate-pulse' : 'bg-primary'}`}></span>
-          <span className={`tracking-tight ${tickerActive ? 'text-primary' : ''}`}>
+          <span className={`tracking-tight ${tickerActive ? 'text-primary font-semibold' : ''}`}>
             {tickerText}
           </span>
         </div>
