@@ -4,6 +4,22 @@
 
 @layer base {
   :root {
+    /* ── Typography Tokens (Phase 9) ── */
+    --font-display: 'Newsreader', Georgia, Cambria, 'Times New Roman', serif;
+    --font-body: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+
+    /* Type Scale Tokens */
+    --text-display: clamp(2.25rem, 4vw + 1rem, 3.5rem);
+    --text-heading-xl: clamp(1.65rem, 2.5vw + 0.5rem, 2.25rem);
+    --text-heading-lg: 1.5rem;
+    --text-heading-md: 1.25rem;
+    --text-heading-sm: 1.125rem;
+    --text-body-lg: 1.125rem;
+    --text-body: 1rem;
+    --text-body-sm: 0.875rem;
+    --text-caption: 0.75rem;
+
     /* ── Light Theme: Warm Oat / Beige (#f7f3ec) with Terracotta Accents ── */
     --color-surface: 247 243 236;
     --color-background: 247 243 236;
@@ -134,7 +150,7 @@
     padding: 0;
     background-color: rgb(var(--color-surface));
     color: rgb(var(--color-on-surface));
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
   }
   .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem); }
   .pt-safe { padding-top: max(env(safe-area-inset-top, 0px), 0.5rem); }
@@ -146,6 +162,43 @@
   textarea:focus-visible {
     outline: 2px solid rgb(var(--color-primary));
     outline-offset: 2px;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+  }
+  .font-body {
+    font-family: var(--font-body);
+  }
+  .text-display {
+    font-size: var(--text-display);
+    line-height: 1.15;
+    letter-spacing: -0.025em;
+  }
+  .text-heading-xl {
+    font-size: var(--text-heading-xl);
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+  }
+  .text-heading-lg {
+    font-size: var(--text-heading-lg);
+    line-height: 1.25;
+    letter-spacing: -0.015em;
+  }
+  .text-heading-md {
+    font-size: var(--text-heading-md);
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+  .text-heading-sm {
+    font-size: var(--text-heading-sm);
+    line-height: 1.35;
+  }
+  .text-caption {
+    font-size: var(--text-caption);
+    line-height: 1.4;
   }
 }
 

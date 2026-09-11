@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import {
   Shield,
@@ -14,6 +15,28 @@ import {
 } from 'lucide-react';
 import { ResetConfirmationModal } from '../Modals/ResetConfirmationModal';
 import { Toggle } from '../UI/Toggle';
+import { Button } from '../UI/Button';
+
+// Motion variants for staggered settings entrance
+const settingsContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.04
+    }
+  }
+};
+
+const settingsSectionVariants = {
+  hidden: { opacity: 0, y: 14 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.35, ease: 'easeOut' }
+  }
+};
 
 // Convert 12-hour string (e.g. "09:00 AM", "02:37 PM") to 24-hour "HH:MM"
 const formatTo24Hour = (time12) => {
@@ -189,12 +212,17 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-2xl mx-auto pb-8 space-y-6">
+    <motion.div
+      variants={settingsContainerVariants}
+      initial="hidden"
+      animate="visible"
+      className="flex flex-col w-full max-w-2xl mx-auto pb-8 space-y-6"
+    >
       
       {/* 1. NOTIFICATIONS & REMINDERS */}
-      <section className="flex flex-col space-y-2">
+      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
         <div className="flex items-center justify-between px-1">
-          <h2 className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">
+          <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold">
             Notifications &amp; Reminders
           </h2>
           <span className={`inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded border ${
@@ -271,9 +299,11 @@ export const SettingsScreen = () => {
                 const label = time === '09:00 AM' ? 'Morning 09:00 AM' : time === '01:00 PM' ? 'Noon 01:00 PM' : 'Evening 08:00 PM';
                 const isSelected = userSettings.reminder_time === time;
                 return (
-                  <button
+                  <motion.button
                     key={time}
                     type="button"
+                    whileTap={{ scale: 0.95 }}
+                    transition={{ duration: 0.12 }}
                     onClick={() => handleTimePreset(time)}
                     className={`px-3 py-1 rounded-lg font-mono text-xs transition-colors cursor-pointer border ${
                       isSelected
@@ -282,7 +312,7 @@ export const SettingsScreen = () => {
                     }`}
                   >
                     {label}
-                  </button>
+                  </motion.button>
                 );
               })}
             </div>
@@ -300,11 +330,11 @@ export const SettingsScreen = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 2. OFFLINE & STORAGE */}
-      <section className="flex flex-col space-y-2">
-        <h2 className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">
+      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
+        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
           Offline &amp; Storage
         </h2>
         <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-3.5 shadow-sm">
@@ -354,14 +384,14 @@ export const SettingsScreen = () => {
                   <span>Installed</span>
                 </span>
               ) : deferredPrompt ? (
-                <button
-                  type="button"
+                <Button
+                  variant="primary"
                   onClick={handleInstallPwa}
-                  className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-primary-container hover:bg-primary-container/90 active:scale-95 text-white font-medium text-xs transition-all cursor-pointer shadow-sm"
+                  className="px-3 py-1.5 text-xs font-medium"
                 >
                   <Download size={15} />
                   <span>Install App</span>
-                </button>
+                </Button>
               ) : (
                 <span className="inline-flex items-center gap-1 text-on-surface-variant font-mono text-[11px] bg-surface-container-high px-2 py-1 rounded border border-outline-variant/30">
                   <Globe size={14} />
@@ -371,11 +401,11 @@ export const SettingsScreen = () => {
             </div>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 3. SOUND & HAPTICS */}
-      <section className="flex flex-col space-y-2">
-        <h2 className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">
+      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
+        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
           Sound &amp; Haptics
         </h2>
         <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
@@ -407,11 +437,11 @@ export const SettingsScreen = () => {
             />
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* 4. DATA & BACKUP */}
-      <section className="flex flex-col space-y-2">
-        <h2 className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">
+      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
+        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
           Data &amp; Backup
         </h2>
         <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
@@ -421,14 +451,14 @@ export const SettingsScreen = () => {
               <div className="font-medium text-sm sm:text-base text-on-surface">Export backup</div>
               <p className="text-xs text-on-surface-variant">Download all streaks, history, and custom weights as a single JSON file.</p>
             </div>
-            <button
-              type="button"
+            <Button
+              variant="secondary"
               onClick={handleExportBackup}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-white text-xs font-semibold transition-all shrink-0 cursor-pointer shadow-sm"
+              className="px-3.5 py-2 text-xs font-semibold shrink-0"
             >
               <Download size={15} />
               <span>Export JSON</span>
-            </button>
+            </Button>
           </div>
 
           <div className="h-[1px] w-full bg-surface-container-highest"></div>
@@ -438,11 +468,15 @@ export const SettingsScreen = () => {
               <div className="font-medium text-sm sm:text-base text-on-surface">Import backup</div>
               <p className="text-xs text-on-surface-variant">Restore previous progress from a JSON file.</p>
             </div>
-            <label className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-lg bg-surface-container-high hover:bg-surface-container-highest text-on-surface text-xs font-semibold border border-outline-variant/40 transition-colors shrink-0 cursor-pointer">
+            <Button
+              as="label"
+              variant="outline"
+              className="px-3.5 py-2 text-xs font-semibold shrink-0"
+            >
               <Upload size={15} />
               <span>Import JSON</span>
               <input type="file" accept=".json" onChange={handleImportBackup} className="hidden" />
-            </label>
+            </Button>
           </div>
 
           <div className="h-[1px] w-full bg-surface-container-highest"></div>
@@ -456,21 +490,21 @@ export const SettingsScreen = () => {
               </div>
               <p className="text-xs text-on-surface-variant mt-0.5">Clear all streaks, learning history, and progress records.</p>
             </div>
-            <button
-              type="button"
+            <Button
+              variant="danger"
               onClick={() => setIsResetModalOpen(true)}
-              className="px-3 py-1.5 rounded-lg bg-surface-container-high hover:bg-error/20 border border-error/40 text-error text-xs font-semibold transition-colors shrink-0 cursor-pointer"
+              className="px-3 py-1.5 text-xs font-semibold shrink-0"
             >
               Reset Data...
-            </button>
+            </Button>
           </div>
 
         </div>
-      </section>
+      </motion.section>
 
       {/* 5. ABOUT & VERSION */}
-      <section className="flex flex-col space-y-2">
-        <h2 className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold px-1">
+      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
+        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
           About
         </h2>
         <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-3.5 shadow-sm">
@@ -494,15 +528,19 @@ export const SettingsScreen = () => {
             <span className="text-primary hover:underline cursor-pointer">MIT License</span>
           </div>
         </div>
-      </section>
+      </motion.section>
 
       {/* Reset Modal */}
-      <ResetConfirmationModal
-        isOpen={isResetModalOpen}
-        onClose={() => setIsResetModalOpen(false)}
-        onConfirm={resetAllData}
-      />
+      <AnimatePresence>
+        {isResetModalOpen && (
+          <ResetConfirmationModal
+            isOpen={isResetModalOpen}
+            onClose={() => setIsResetModalOpen(false)}
+            onConfirm={resetAllData}
+          />
+        )}
+      </AnimatePresence>
 
-    </div>
+    </motion.div>
   );
 };

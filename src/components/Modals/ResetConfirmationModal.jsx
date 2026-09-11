@@ -1,10 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
-export const ResetConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
+export const ResetConfirmationModal = ({ isOpen = true, onClose, onConfirm }) => {
   const [deleting, setDeleting] = useState(false);
 
-  if (!isOpen) return null;
+  // Escape key handler to close modal smoothly
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      if (e.key === 'Escape' && !deleting) {
+        onClose();
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [onClose, deleting]);
 
   const handleConfirm = async () => {
     setDeleting(true);
@@ -19,14 +29,31 @@ export const ResetConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm px-4">
-      <div className="w-full max-w-sm rounded-xl bg-surface-container border border-error/40 p-5 shadow-2xl space-y-4">
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+      onClick={deleting ? undefined : onClose}
+      className="fixed inset-0 z-50 flex items-center justify-center bg-surface-container-lowest/80 backdrop-blur-sm px-4"
+    >
+      <motion.div
+        initial={{ opacity: 0, scale: 0.95, y: 8 }}
+        animate={{ opacity: 1, scale: 1, y: 0 }}
+        exit={{ opacity: 0, scale: 0.95, y: 8 }}
+        transition={{ duration: 0.2, ease: 'easeOut' }}
+        onClick={(e) => e.stopPropagation()}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="reset-modal-title"
+        className="w-full max-w-sm rounded-xl bg-surface-container border border-error/40 p-5 shadow-2xl space-y-4"
+      >
         <div className="flex items-start gap-3">
           <div className="w-9 h-9 rounded-full bg-error-container/20 border border-error/40 flex items-center justify-center text-error shrink-0 mt-0.5">
             <AlertTriangle size={20} />
           </div>
           <div className="space-y-1">
-            <h3 className="font-semibold text-base text-on-surface">Reset All Local Data?</h3>
+            <h3 id="reset-modal-title" className="font-display font-bold text-lg text-on-surface">Reset All Local Data?</h3>
             <p className="text-xs text-on-surface-variant leading-relaxed">
               This will permanently delete all topic progress records, review history, and streaks. This cannot be undone.
             </p>
@@ -51,7 +78,7 @@ export const ResetConfirmationModal = ({ isOpen, onClose, onConfirm }) => {
             <span>{deleting ? 'Deleting...' : 'Yes, delete everything'}</span>
           </button>
         </div>
-      </div>
-    </div>
+      </motion.div>
+    </motion.div>
   );
 };

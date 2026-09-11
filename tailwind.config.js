@@ -64,8 +64,18 @@ export default {
         "full": "9999px"
       },
       fontFamily: {
-        "sans": ["Inter", "sans-serif"],
-        "mono": ["JetBrains Mono", "monospace"]
+        "display": ["var(--font-display)"],
+        "body": ["var(--font-body)"],
+        "sans": ["var(--font-body)"],
+        "mono": ["var(--font-mono)"]
+      },
+      fontSize: {
+        "display": ["var(--text-display)", { lineHeight: "1.15", letterSpacing: "-0.025em" }],
+        "heading-xl": ["var(--text-heading-xl)", { lineHeight: "1.2", letterSpacing: "-0.02em" }],
+        "heading-lg": ["var(--text-heading-lg)", { lineHeight: "1.25", letterSpacing: "-0.015em" }],
+        "heading-md": ["var(--text-heading-md)", { lineHeight: "1.3", letterSpacing: "-0.01em" }],
+        "heading-sm": ["var(--text-heading-sm)", { lineHeight: "1.35" }],
+        "caption": ["var(--text-caption)", { lineHeight: "1.4" }]
       }
     },
   },

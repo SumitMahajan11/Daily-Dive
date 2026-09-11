@@ -1,4 +1,5 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
 const SIZES = {
   sm: {
@@ -36,7 +37,9 @@ export const Toggle = ({
   };
 
   return (
-    <label
+    <motion.label
+      whileTap={disabled ? undefined : { scale: 0.92 }}
+      transition={{ duration: 0.15, ease: 'easeOut' }}
       className={`relative inline-flex items-center cursor-pointer shrink-0 select-none ${disabled ? 'opacity-50 cursor-not-allowed' : ''} ${className}`}
       {...props}
     >
@@ -53,6 +56,6 @@ export const Toggle = ({
       <span
         className={`rounded-full bg-surface-container-highest transition-all peer-checked:bg-primary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface after:content-[''] after:absolute after:bg-white after:rounded-full after:shadow-sm after:transition-all ${sizeConfig.track} ${sizeConfig.knob}`}
       />
-    </label>
+    </motion.label>
   );
 };

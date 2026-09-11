@@ -5,13 +5,36 @@ import { CATEGORY_TREE } from '../../lib/roulette';
 import { RotateCcw, ChevronDown, RotateCw } from 'lucide-react';
 import { Toggle } from '../UI/Toggle';
 import { Button } from '../UI/Button';
+import { Skeleton } from '../UI/Skeleton';
+
+// Motion variants for staggered entrance
+const listContainerVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.08,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const listItemVariants = {
+  hidden: { opacity: 0, y: 12 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.32, ease: 'easeOut' }
+  }
+};
 
 export const FilterScreen = ({ onSpinActivePool }) => {
   const {
     topics,
     eligibleTopics,
     userSettings,
-    updateSettings
+    updateSettings,
+    loadingData
   } = useData();
 
   const enabled = userSettings?.enabled_categories || {};
@@ -104,7 +127,7 @@ export const FilterScreen = ({ onSpinActivePool }) => {
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-primary animate-pulse"></span>
-            <span className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">
+            <span className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold">
               Pool Configuration
             </span>
             <span className="font-mono text-[11px] text-outline hidden sm:inline">(auto-saved)</span>
@@ -120,12 +143,20 @@ export const FilterScreen = ({ onSpinActivePool }) => {
         </div>
 
         {/* Master Switch Row */}
-        <div className="w-full bg-surface-container-low rounded-xl p-4 flex items-center justify-between border border-outline-variant/30">
+        <motion.div
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.12 }}
+          className="w-full bg-surface-container-low rounded-xl p-4 flex items-center justify-between border border-outline-variant/30"
+        >
           <div className="flex flex-col">
-            <span className="font-medium text-sm sm:text-base text-on-surface">Master Topic Switch</span>
-            <span className="font-mono text-xs text-on-surface-variant">
-              {eligibleTopics.length} active topics across categories
-            </span>
+            <span className="font-display font-semibold text-base sm:text-lg text-on-surface">Master Topic Switch</span>
+            {loadingData ? (
+              <Skeleton className="h-3.5 w-44 rounded mt-1" />
+            ) : (
+              <span className="font-mono text-xs text-on-surface-variant">
+                {eligibleTopics.length} active topics across categories
+              </span>
+            )}
           </div>
           <Toggle
             checked={isMasterChecked}
@@ -133,25 +164,58 @@ export const FilterScreen = ({ onSpinActivePool }) => {
             size="lg"
             aria-label="Master Topic Switch"
           />
-        </div>
+        </motion.div>
       </div>
 
-      {/* Hierarchical Category Trees */}
-      <div className="flex flex-col space-y-3">
-        {CATEGORY_TREE.map(groupDef => {
+      {/* Hierarchical Category Trees or Loading Skeletons */}
+      {loadingData ? (
+        <div className="flex flex-col space-y-3">
+          {[1, 2, 3].map(i => (
+            <div
+              key={i}
+              className="flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20 p-4"
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <Skeleton className="w-6 h-6 rounded" />
+                  <div className="flex items-center gap-2">
+                    <Skeleton className="h-5 w-28 rounded" />
+                    <Skeleton className="h-4 w-12 rounded-full" />
+                  </div>
+                </div>
+                <Skeleton className="w-9 h-5 rounded-full" />
+              </div>
+              <div className="mt-3 pt-3 border-t border-outline-variant/10 space-y-2 pl-9 pr-2">
+                <Skeleton className="h-3.5 w-3/4 rounded" />
+                <Skeleton className="h-3.5 w-1/2 rounded" />
+              </div>
+            </div>
+          ))}
+        </div>
+      ) : (
+        <motion.div
+          variants={listContainerVariants}
+          initial="hidden"
+          animate="visible"
+          className="flex flex-col space-y-3"
+        >
+          {CATEGORY_TREE.map(groupDef => {
           const groupName = groupDef.group;
           const isGroupExpanded = Boolean(expandedGroups[groupName]);
           const isGroupEnabled = enabled[groupName] !== false;
 
           return (
-            <div
+            <motion.div
               key={groupName}
-              className="flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20"
+              variants={listItemVariants}
+              className="flex flex-col bg-surface-container-lowest rounded-xl overflow-hidden border border-outline-variant/20 shadow-sm"
             >
               {/* Group Header */}
-              <div
+              <motion.div
+                whileTap={{ scale: 0.98 }}
+                transition={{ duration: 0.12 }}
                 onClick={() => toggleGroupAccordion(groupName)}
-                className="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-low transition-colors"
+                className="flex items-center justify-between p-4 cursor-pointer hover:bg-surface-container-low transition-colors select-none"
               >
                 <div className="flex items-center gap-3 min-w-0">
                   <button
@@ -166,7 +230,7 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                   </button>
                   <div className="flex flex-col truncate">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-base text-on-surface truncate">{groupDef.label || groupName}</span>
+                      <span className="font-display font-bold text-base text-on-surface truncate">{groupDef.label || groupName}</span>
                       <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-mono">
                         {groupDef.badge}
                       </span>
@@ -182,7 +246,7 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                   onClick={(e) => e.stopPropagation()}
                   aria-label={`Toggle group ${groupDef.label || groupName}`}
                 />
-              </div>
+              </motion.div>
 
               {/* Group Categories Body */}
               <AnimatePresence initial={false}>
@@ -203,9 +267,11 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                           enabled[cat.name] !== false;
 
                         return (
-                          <div
+                          <motion.div
                             key={cat.name}
-                            className="flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15"
+                            whileTap={{ scale: 0.98 }}
+                            transition={{ duration: 0.12 }}
+                            className="flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15 select-none"
                           >
                             <div className="flex items-center justify-between">
                               <div className="flex items-center gap-2">
@@ -228,17 +294,18 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                                 </span>
                               ))}
                             </div>
-                          </div>
+                          </motion.div>
                         );
                       })}
                     </div>
                   </motion.div>
                 )}
               </AnimatePresence>
-            </div>
+            </motion.div>
           );
         })}
-      </div>
+      </motion.div>
+      )}
 
       {/* Direct Spin Shortcut Button */}
       <div className="pt-2">

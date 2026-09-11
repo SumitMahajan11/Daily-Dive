@@ -11,6 +11,7 @@ import { SettingsScreen } from './components/Screens/SettingsScreen';
 import { AuthScreen } from './components/Auth/AuthScreen';
 import { Hero } from './components/Landing/Hero';
 import { ToastContainer } from './components/UI/Toast';
+import { Skeleton } from './components/UI/Skeleton';
 import { RotateCw, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
 
 const SECTIONS = [
@@ -26,7 +27,7 @@ const SectionDivider = ({ label, icon: Icon }) => (
   <div className="flex items-center gap-3 mb-6">
     <div className="flex items-center gap-2 text-primary">
       <Icon size={18} />
-      <h2 className="text-sm font-semibold uppercase tracking-widest text-primary/80">{label}</h2>
+      <h2 className="font-display text-sm font-bold uppercase tracking-widest text-primary/90">{label}</h2>
     </div>
     <div className="flex-1 h-px bg-outline-variant/20" />
   </div>
@@ -40,7 +41,7 @@ const HorizontalSeparator = () => (
 
 const MainLayout = () => {
   const { user } = useAuth();
-  const { topics, eligibleTopics, userProgressMap } = useData();
+  const { topics, eligibleTopics, userProgressMap, loadingData } = useData();
   const [activeSection, setActiveSection] = useState('spin');
 
   const sectionRefs = useRef({});
@@ -144,17 +145,25 @@ const MainLayout = () => {
           <div className="mt-auto p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/30 space-y-2">
             <div className="flex items-center justify-between text-xs font-mono text-on-surface-variant">
               <span>Active Topics:</span>
-              <span className="text-primary font-semibold">
-                {eligibleTopics.length} / {topics.length}
-              </span>
+              {loadingData ? (
+                <Skeleton className="h-3.5 w-14 rounded" />
+              ) : (
+                <span className="text-primary font-semibold">
+                  {eligibleTopics.length} / {topics.length}
+                </span>
+              )}
             </div>
             <div className="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-              <motion.div
-                className="bg-primary-container h-full rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPercent}%` }}
-                transition={{ duration: 0.6, ease: 'easeOut' }}
-              />
+              {loadingData ? (
+                <Skeleton className="h-full w-full rounded-full" />
+              ) : (
+                <motion.div
+                  className="bg-primary-container h-full rounded-full"
+                  initial={{ width: 0 }}
+                  animate={{ width: `${progressPercent}%` }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                />
+              )}
             </div>
             <p className="text-[11px] text-outline">
               Press <kbd className="px-1 py-0.5 bg-surface-container rounded border border-outline-variant/40 font-mono">Space</kbd> anywhere to spin instantly.

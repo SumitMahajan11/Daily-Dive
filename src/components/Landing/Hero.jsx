@@ -26,9 +26,9 @@ export const Hero = ({ onGetStarted }) => {
               <span>Bite-sized knowledge daily</span>
             </div>
 
-            <h1 className="text-2xl sm:text-4xl font-bold tracking-tight text-on-surface leading-tight">
+            <h1 className="font-display text-3xl sm:text-5xl font-bold tracking-tight text-on-surface leading-[1.12]">
               Learn something new, <br className="hidden sm:inline" />
-              <span className="text-primary">one spin at a time.</span>
+              <span className="text-primary italic">one spin at a time.</span>
             </h1>
 
             <p className="text-sm sm:text-base text-on-surface-variant leading-relaxed max-w-lg">
@@ -88,10 +88,10 @@ export const Hero = ({ onGetStarted }) => {
                 <line stroke="rgb(var(--color-outline-variant))" strokeWidth="1" x1="6" x2="154" y1="80" y2="80" />
 
                 {/* Quadrant Labels */}
-                <text fill="rgb(var(--color-primary))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="116" y="46">TECH</text>
-                <text fill="rgb(var(--color-tertiary))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="116" y="118">MONEY</text>
-                <text fill="rgb(var(--color-secondary))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="44" y="118">MIND</text>
-                <text fill="rgb(var(--color-on-surface-variant))" fontFamily="Inter" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="44" y="46">WORLD</text>
+                <text fill="rgb(var(--color-primary))" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="116" y="46">TECH</text>
+                <text fill="rgb(var(--color-tertiary))" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="116" y="118">MONEY</text>
+                <text fill="rgb(var(--color-secondary))" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="44" y="118">MIND</text>
+                <text fill="rgb(var(--color-on-surface-variant))" fontSize="9.5" fontWeight="700" letterSpacing="0.08em" textAnchor="middle" x="44" y="46">WORLD</text>
 
                 {/* Center Hub */}
                 <circle cx="80" cy="80" r="16" fill="rgb(var(--color-surface-container-lowest))" stroke="rgb(var(--color-outline-variant))" strokeWidth="1.5" />

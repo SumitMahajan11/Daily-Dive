@@ -33,7 +33,7 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
             <Disc size={19} />
           </div>
           <div className="flex flex-col">
-            <span className="font-semibold text-base text-on-surface tracking-tight">
+            <span className="font-display font-bold text-base sm:text-lg text-on-surface tracking-tight">
               {getScreenTitle()}
             </span>
             <span className="text-[11px] font-mono text-on-surface-variant hidden sm:inline">

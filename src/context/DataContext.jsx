@@ -8,7 +8,7 @@ import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications
 const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
-  const { user } = useAuth();
+  const { user, loading: authLoading } = useAuth();
   
   const [topics, setTopics] = useState(INITIAL_TOPICS);
   const [userProgressMap, setUserProgressMap] = useState({});
@@ -82,11 +82,23 @@ export const DataProvider = ({ children }) => {
     setLoadingData(true);
     try {
       if (!userId) {
-        setTopics(INITIAL_TOPICS);
-        setUserProgressMap({});
-        setUserStreaks({ current_streak: 0, longest_streak: 0, last_active_date: null });
-        setCurrentTopic(INITIAL_TOPICS[0]);
-        setLoadingData(false);
+        const dbTopics = await DataService.fetchTopics().catch(() => INITIAL_TOPICS);
+        const effectiveTopics = (dbTopics && dbTopics.length > 0) ? dbTopics : INITIAL_TOPICS;
+        setTopics(effectiveTopics);
+        
+        let guestProgress = {};
+        let guestStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
+        try {
+          const savedProgress = localStorage.getItem('daily_dive_guest_progress');
+          if (savedProgress) guestProgress = JSON.parse(savedProgress);
+          const savedStreaks = localStorage.getItem('daily_dive_guest_streaks');
+          if (savedStreaks) guestStreaks = JSON.parse(savedStreaks);
+        } catch (e) {}
+
+        setUserProgressMap(guestProgress);
+        setUserStreaks(guestStreaks);
+        const initialSelected = selectWeightedTopic(effectiveTopics, guestProgress, userSettings.enabled_categories || {});
+        setCurrentTopic(initialSelected || effectiveTopics[0]);
         return;
       }
 
@@ -119,11 +131,12 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoadingData(false);
     }
-  }, [showToast]);
+  }, [showToast, userSettings.enabled_categories]);
 
   useEffect(() => {
+    if (authLoading) return;
     loadData(user?.id);
-  }, [user, loadData]);
+  }, [user, authLoading, loadData]);
 
   // Filtered / eligible topics
   const eligibleTopics = useMemo(() => {

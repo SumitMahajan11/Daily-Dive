@@ -21,6 +21,7 @@ import {
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from '../UI/Button';
+import { Skeleton } from '../UI/Skeleton';
 
 // Category metadata: icons, short display labels, per-subcategory tonal variations, and accent tokens
 const CATEGORY_META = {
@@ -206,7 +207,8 @@ export const SpinScreen = ({ onNavigateFilter }) => {
     spinNextTopic,
     markCurrentTopicLearned,
     isMarkingLearned,
-    showToast
+    showToast,
+    loadingData
   } = useData();
 
   const containerRef = useRef(null);
@@ -243,10 +245,12 @@ export const SpinScreen = ({ onNavigateFilter }) => {
 
   // Keep ticker text in sync with active pool size when idle
   useEffect(() => {
-    if (!isSpinning && !isLanded) {
+    if (loadingData) {
+      setTickerText('Loading topic catalogue...');
+    } else if (!isSpinning && !isLanded) {
       setTickerText(`Ready to spin · ${eligibleTopics?.length ?? 0} topics active in pool`);
     }
-  }, [eligibleTopics?.length, isSpinning, isLanded]);
+  }, [eligibleTopics?.length, isSpinning, isLanded, loadingData]);
 
   // Measure container width for pixel-perfect centering under marker
   useEffect(() => {
@@ -474,11 +478,15 @@ export const SpinScreen = ({ onNavigateFilter }) => {
         </div>
 
         {/* Ticker Readout */}
-        <div className="mt-3 flex items-center gap-2 font-mono text-xs text-on-surface-variant">
-          <span className={`w-2 h-2 rounded-full ${tickerActive ? 'bg-tertiary animate-pulse' : 'bg-primary'}`}></span>
-          <span className={`tracking-tight ${tickerActive ? 'text-primary font-semibold' : ''}`}>
-            {tickerText}
-          </span>
+        <div className="mt-3 flex items-center gap-2 font-mono text-xs text-on-surface-variant min-h-[20px]">
+          <span className={`w-2 h-2 rounded-full ${tickerActive ? 'bg-tertiary animate-pulse' : loadingData ? 'bg-primary/50 animate-pulse' : 'bg-primary'}`}></span>
+          {loadingData ? (
+            <Skeleton className="h-4 w-48 rounded" />
+          ) : (
+            <span className={`tracking-tight ${tickerActive ? 'text-primary font-semibold' : ''}`}>
+              {tickerText}
+            </span>
+          )}
         </div>
       </div>
 
@@ -487,21 +495,44 @@ export const SpinScreen = ({ onNavigateFilter }) => {
         <Button
           variant="primary"
           onClick={handleSpin}
-          disabled={isSpinning}
+          disabled={isSpinning || loadingData}
           className="w-full max-w-sm h-11 text-sm shadow-lg shadow-primary-container/20"
         >
           <RotateCw size={18} className={isSpinning ? 'animate-spin' : ''} />
           <span>Spin Roulette</span>
           <kbd className="ml-1.5 px-1.5 py-0.5 text-[10px] font-mono bg-white/20 text-white rounded border border-white/30">Space</kbd>
         </Button>
-        <div className="flex items-center justify-center gap-1.5 font-mono text-[11px] tracking-tight text-on-surface-variant">
-          <span className="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
-          <span>Random selection from {eligibleTopics.length} eligible topics across active categories</span>
-        </div>
+        {loadingData ? (
+          <Skeleton className="h-3.5 w-64 rounded my-0.5" />
+        ) : (
+          <div className="flex items-center justify-center gap-1.5 font-mono text-[11px] tracking-tight text-on-surface-variant">
+            <span className="w-1.5 h-1.5 rounded-full bg-primary/60"></span>
+            <span>Random selection from {eligibleTopics.length} eligible topics across active categories</span>
+          </div>
+        )}
       </div>
 
-      {/* Active Result Card or Filtered Out Empty State */}
-      {eligibleTopics.length === 0 ? (
+      {/* Active Result Card, Loading Skeleton, or Filtered Out Empty State */}
+      {loadingData ? (
+        <div className="mt-4 w-full bg-surface-container-low rounded-xl p-5 sm:p-6 shadow-sm border border-outline-variant/30 space-y-4">
+          <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
+            <Skeleton className="h-4 w-32 rounded" />
+            <div className="flex gap-1.5">
+              <Skeleton className="h-4 w-12 rounded" />
+              <Skeleton className="h-4 w-16 rounded" />
+            </div>
+          </div>
+          <Skeleton className="h-8 w-3/4 rounded" />
+          <div className="space-y-2 pt-1">
+            <Skeleton className="h-4 w-full rounded" />
+            <Skeleton className="h-4 w-5/6 rounded" />
+          </div>
+          <div className="pt-4 border-t border-outline-variant/20 flex gap-3">
+            <Skeleton className="h-10 flex-1 rounded-lg" />
+            <Skeleton className="h-10 w-24 rounded-lg" />
+          </div>
+        </div>
+      ) : eligibleTopics.length === 0 ? (
         <div className="mt-4 w-full bg-surface-container-low rounded-xl p-6 border border-outline-variant/30 text-center flex flex-col items-center justify-center shadow-sm">
           <FilterX size={44} className="text-outline/40 mb-2.5" strokeWidth={1.5} />
           <p className="text-xs sm:text-sm text-on-surface-variant max-w-md leading-relaxed">
@@ -537,7 +568,7 @@ export const SpinScreen = ({ onNavigateFilter }) => {
               </div>
 
               {/* Topic Title */}
-              <h2 className="text-xl sm:text-2xl text-on-surface font-semibold tracking-tight">
+              <h2 className="font-display text-2xl sm:text-3xl text-on-surface font-bold tracking-tight leading-snug">
                 {currentTopic.title}
               </h2>
 
@@ -549,7 +580,7 @@ export const SpinScreen = ({ onNavigateFilter }) => {
               {/* Curated External Sources Header */}
               {resources.length > 0 && (
                 <div className="mt-5 pt-4 border-t border-outline-variant/20">
-                  <div className="text-xs text-outline uppercase tracking-wider mb-2.5 font-medium flex items-center justify-between">
+                  <div className="font-display text-xs text-outline uppercase tracking-wider mb-2.5 font-bold flex items-center justify-between">
                     <span>Primary References &amp; Deep Dives</span>
                     <BookOpen size={14} />
                   </div>

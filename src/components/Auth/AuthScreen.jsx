@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useAuth } from '../../context/AuthContext';
 import { Disc, Mail, Lock, Eye, EyeOff, LogIn, UserPlus, AlertCircle, CheckCircle, X } from 'lucide-react';
 
@@ -80,27 +81,44 @@ export const AuthScreen = ({ onAuthSuccess }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-md mx-auto py-4">
       {/* Auth Card Container */}
-      <div className="w-full bg-surface-container-low rounded-2xl p-6 sm:p-8 border border-outline-variant/40 shadow-xl shadow-black/10 dark:shadow-black/50 relative">
+      <motion.div
+        initial={{ opacity: 0, y: 24, scale: 0.98 }}
+        animate={{ opacity: 1, y: 0, scale: 1 }}
+        transition={{ duration: 0.35, ease: 'easeOut' }}
+        className="w-full bg-surface-container-low rounded-2xl p-6 sm:p-8 border border-outline-variant/40 shadow-xl shadow-black/10 dark:shadow-black/50 relative"
+      >
         
-        {/* App Logo Badge & Title */}
+        {/* App Logo Badge & Title with Mode Cross-fade */}
         <div className="flex flex-col items-center text-center mb-6">
           <div className="w-12 h-12 rounded-xl bg-primary-container/20 border border-primary-container/40 text-primary flex items-center justify-center mb-3 shadow-inner">
             <Disc size={28} />
           </div>
-          <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-on-surface">
-            {isSignup ? 'Create your account' : 'Welcome to Life Learning'}
-          </h2>
-          <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
-            {isSignup
-              ? 'Start spinning daily micro-learning topics and building streaks'
-              : 'Sign in to spin topics and build your daily learning streak'}
-          </p>
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={mode}
+              initial={{ opacity: 0, y: 6 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -6 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              className="flex flex-col items-center text-center"
+            >
+              <h2 className="font-display text-2xl sm:text-3xl font-bold tracking-tight text-on-surface">
+                {isSignup ? 'Create your account' : 'Welcome to Life Learning'}
+              </h2>
+              <p className="text-xs sm:text-sm text-on-surface-variant mt-1">
+                {isSignup
+                  ? 'Start spinning daily micro-learning topics and building streaks'
+                  : 'Sign in to spin topics and build your daily learning streak'}
+              </p>
+            </motion.div>
+          </AnimatePresence>
         </div>
 
         {/* Tab Switcher */}
         <div className="flex p-1 rounded-xl bg-surface-container-highest border border-outline-variant/30 mb-5">
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.97 }}
             onClick={() => { setMode('login'); setAlert(null); }}
             className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               !isSignup
@@ -109,9 +127,10 @@ export const AuthScreen = ({ onAuthSuccess }) => {
             }`}
           >
             Log In
-          </button>
-          <button
+          </motion.button>
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.97 }}
             onClick={() => { setMode('signup'); setAlert(null); }}
             className={`flex-1 py-2 text-xs font-semibold rounded-lg transition-all cursor-pointer ${
               isSignup
@@ -120,39 +139,47 @@ export const AuthScreen = ({ onAuthSuccess }) => {
             }`}
           >
             Sign Up
-          </button>
+          </motion.button>
         </div>
 
         {/* Alert Message Banner */}
-        {alert && (
-          <div
-            className={`mb-4 p-3 rounded-xl text-xs flex items-start gap-2.5 transition-all ${
-              alert.type === 'error'
-                ? 'bg-error-container/20 border border-error/30 text-error'
-                : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'
-            }`}
-          >
-            {alert.type === 'error' ? (
-              <AlertCircle size={18} className="shrink-0 mt-0.5 text-error" />
-            ) : (
-              <CheckCircle size={18} className="shrink-0 mt-0.5 text-emerald-400" />
-            )}
-            <div className="flex-1 text-[12px] leading-snug">{alert.message}</div>
-            <button
-              type="button"
-              onClick={() => setAlert(null)}
-              className="text-on-surface-variant hover:text-on-surface cursor-pointer"
+        <AnimatePresence>
+          {alert && (
+            <motion.div
+              initial={{ opacity: 0, y: -8, scale: 0.98 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: -8, scale: 0.98 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className={`mb-4 p-3 rounded-xl text-xs flex items-start gap-2.5 ${
+                alert.type === 'error'
+                  ? 'bg-error-container/20 border border-error/30 text-error'
+                  : 'bg-emerald-500/10 border border-emerald-500/30 text-emerald-300'
+              }`}
             >
-              <X size={14} />
-            </button>
-          </div>
-        )}
+              {alert.type === 'error' ? (
+                <AlertCircle size={18} className="shrink-0 mt-0.5 text-error" />
+              ) : (
+                <CheckCircle size={18} className="shrink-0 mt-0.5 text-emerald-400" />
+              )}
+              <div className="flex-1 text-[12px] leading-snug">{alert.message}</div>
+              <button
+                type="button"
+                onClick={() => setAlert(null)}
+                className="text-on-surface-variant hover:text-on-surface cursor-pointer"
+              >
+                <X size={14} />
+              </button>
+            </motion.div>
+          )}
+        </AnimatePresence>
 
         {/* Google OAuth Button */}
-        <button
+        <motion.button
           type="button"
+          whileTap={{ scale: 0.98 }}
+          transition={{ duration: 0.12 }}
           onClick={handleGoogleSignIn}
-          className="w-full h-11 bg-surface-container-high hover:bg-surface-bright active:scale-[0.99] border border-outline-variant/40 rounded-xl text-xs sm:text-sm font-medium text-on-surface flex items-center justify-center gap-3 transition-all cursor-pointer shadow-sm"
+          className="w-full h-11 bg-surface-container-high hover:bg-surface-bright border border-outline-variant/40 rounded-xl text-xs sm:text-sm font-medium text-on-surface flex items-center justify-center gap-3 transition-colors cursor-pointer shadow-sm"
         >
           <svg className="w-4 h-4" viewBox="0 0 24 24">
             <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/>
@@ -161,7 +188,7 @@ export const AuthScreen = ({ onAuthSuccess }) => {
             <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.06l3.66 2.84c.87-2.6 3.3-4.52 6.16-4.52z"/>
           </svg>
           <span>Continue with Google</span>
-        </button>
+        </motion.button>
 
         {/* Divider */}
         <div className="flex items-center gap-3 my-4">
@@ -229,10 +256,12 @@ export const AuthScreen = ({ onAuthSuccess }) => {
           </div>
 
           {/* Submit Button */}
-          <button
+          <motion.button
             type="submit"
+            whileTap={{ scale: 0.98 }}
+            transition={{ duration: 0.12 }}
             disabled={submitting}
-            className="w-full h-11 mt-2 bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-white rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-lg shadow-primary-container/20 disabled:opacity-50"
+            className="w-full h-11 mt-2 bg-primary-container hover:bg-primary-container/90 text-white rounded-xl font-medium text-xs sm:text-sm flex items-center justify-center gap-2 transition-colors cursor-pointer shadow-lg shadow-primary-container/20 disabled:opacity-50"
           >
             {submitting ? (
               <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin"></div>
@@ -242,7 +271,7 @@ export const AuthScreen = ({ onAuthSuccess }) => {
               <LogIn size={18} />
             )}
             <span>{submitting ? 'Authenticating...' : isSignup ? 'Create Account' : 'Sign In'}</span>
-          </button>
+          </motion.button>
         </form>
 
         {/* Bottom Toggle Text */}
@@ -259,8 +288,7 @@ export const AuthScreen = ({ onAuthSuccess }) => {
             {isSignup ? 'Log in' : 'Sign up'}
           </button>
         </div>
-
-      </div>
+      </motion.div>
     </div>
   );
 };

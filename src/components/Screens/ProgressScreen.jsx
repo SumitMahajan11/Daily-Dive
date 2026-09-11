@@ -3,13 +3,36 @@ import { motion } from 'framer-motion';
 import { BookOpen } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { Button } from '../UI/Button';
+import { Skeleton } from '../UI/Skeleton';
+
+// Motion variants for heatmap cells
+const heatmapGridVariants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: {
+      staggerChildren: 0.006,
+      delayChildren: 0.05
+    }
+  }
+};
+
+const cellVariants = {
+  hidden: { opacity: 0, scale: 0.4 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.18, ease: 'easeOut' }
+  }
+};
 
 export const ProgressScreen = ({ onReviewTopic }) => {
   const {
     topics,
     userProgressMap,
     userStreaks,
-    setCurrentTopic
+    setCurrentTopic,
+    loadingData
   } = useData();
 
   const learnedCount = Object.keys(userProgressMap).length;
@@ -118,35 +141,55 @@ export const ProgressScreen = ({ onReviewTopic }) => {
     <div className="flex flex-col w-full max-w-2xl mx-auto pb-8 space-y-6">
       
       {/* Overview Card */}
-      <div className="flex flex-col space-y-2 pt-1">
-        <span className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className="flex flex-col space-y-2 pt-1"
+      >
+        <span className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold">
           Overview Metrics
         </span>
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-surface-container-low p-5 rounded-xl border border-outline-variant/20 shadow-sm">
           <div>
-            <div className="flex items-baseline space-x-1.5">
-              <span className="text-4xl font-bold text-on-surface tracking-tight">{learnedCount}</span>
-              <span className="text-lg text-on-surface-variant font-normal">/ {totalTopics}</span>
-            </div>
+            {loadingData ? (
+              <Skeleton className="h-10 w-28 rounded-lg mb-2" />
+            ) : (
+              <div className="flex items-baseline space-x-1.5">
+                <span className="font-display text-4xl sm:text-5xl font-bold text-on-surface tracking-tight">{learnedCount}</span>
+                <span className="text-lg text-on-surface-variant font-normal">/ {totalTopics}</span>
+              </div>
+            )}
             <p className="text-xs text-on-surface-variant mt-1">
               Topics completed ({percentageMastered}% mastered)
             </p>
           </div>
           <div className="sm:text-right border-t sm:border-t-0 sm:border-l border-outline-variant/20 pt-3 sm:pt-0 sm:pl-4">
-            <span className="text-2xl sm:text-3xl font-bold text-tertiary">
-              {currentStreak} {currentStreak === 1 ? 'day' : 'days'}
-            </span>
+            {loadingData ? (
+              <Skeleton className="h-8 w-24 rounded-lg mb-2 sm:ml-auto" />
+            ) : (
+              <span className="font-display text-2xl sm:text-3xl font-bold text-tertiary">
+                {currentStreak} {currentStreak === 1 ? 'day' : 'days'}
+              </span>
+            )}
             <p className="text-xs text-on-surface-variant mt-1">
               Current daily streak · Longest: {longestStreak}d
             </p>
           </div>
         </div>
-      </div>
+      </motion.div>
 
       {/* Activity Heatmap (90 Days) */}
-      <div className="flex flex-col space-y-3">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.4, ease: 'easeOut', delay: 0.05 }}
+        className="flex flex-col space-y-3"
+      >
         <div className="flex items-center justify-between">
-          <span className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">
+          <span className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold">
             Activity (Last 90 Days)
           </span>
           <div className="flex items-center space-x-1.5 text-xs text-on-surface-variant font-mono">
@@ -159,78 +202,131 @@ export const ProgressScreen = ({ onReviewTopic }) => {
           </div>
         </div>
         
-        <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 overflow-x-auto shadow-sm">
-          <div className="flex space-x-2 min-w-[320px]">
-            <div className="flex flex-col">
-              <div className="h-4 mb-1"></div>
-              <div className="flex flex-col justify-between py-1 text-on-surface-variant font-mono text-[10px] h-20 pr-1 select-none">
-                <span>Mon</span>
-                <span>Wed</span>
-                <span>Fri</span>
+        {loadingData ? (
+          <Skeleton className="w-full h-32 rounded-xl" />
+        ) : (
+          <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 overflow-x-auto shadow-sm">
+            <div className="flex space-x-2 min-w-[320px]">
+              <div className="flex flex-col">
+                <div className="h-4 mb-1"></div>
+                <div className="flex flex-col justify-between py-1 text-on-surface-variant font-mono text-[10px] h-20 pr-1 select-none">
+                  <span>Mon</span>
+                  <span>Wed</span>
+                  <span>Fri</span>
+                </div>
               </div>
-            </div>
-            <div className="flex flex-col flex-1">
-              {/* Month labels along top of grid */}
-              <div className="grid grid-flow-col gap-1.5 h-4 mb-1 select-none">
-                {monthLabels.map(({ col, label }) => (
-                  <div
-                    key={col}
-                    className="w-3 text-[10px] font-mono text-on-surface-variant overflow-visible whitespace-nowrap leading-none"
-                  >
-                    {label}
-                  </div>
-                ))}
-              </div>
+              <div className="flex flex-col flex-1">
+                {/* Month labels along top of grid */}
+                <div className="grid grid-flow-col gap-1.5 h-4 mb-1 select-none">
+                  {monthLabels.map(({ col, label }) => (
+                    <div
+                      key={col}
+                      className="w-3 text-[10px] font-mono text-on-surface-variant overflow-visible whitespace-nowrap leading-none"
+                    >
+                      {label}
+                    </div>
+                  ))}
+                </div>
 
-              {/* Heatmap cells */}
-              <div className="grid grid-flow-col grid-rows-5 gap-1.5 flex-1">
-                {heatmapCells.map((cell) => (
-                  <div
-                    key={cell.key}
-                    title={`${cell.key}: ${cell.count} topics learned`}
-                    className={`w-3 h-3 rounded-sm ${cell.colorClass} hover:ring-2 ring-primary transition-all cursor-pointer`}
-                  />
-                ))}
+                {/* Heatmap cells with staggered entrance */}
+                <motion.div
+                  variants={heatmapGridVariants}
+                  initial="hidden"
+                  whileInView="visible"
+                  viewport={{ once: true, amount: 0.2 }}
+                  className="grid grid-flow-col grid-rows-5 gap-1.5 flex-1"
+                >
+                  {heatmapCells.map((cell) => (
+                    <motion.div
+                      key={cell.key}
+                      variants={cellVariants}
+                      whileHover={{ scale: 1.25 }}
+                      title={`${cell.key}: ${cell.count} topics learned`}
+                      className={`w-3 h-3 rounded-sm ${cell.colorClass} hover:ring-2 ring-primary transition-colors cursor-pointer`}
+                    />
+                  ))}
+                </motion.div>
               </div>
             </div>
           </div>
-        </div>
-      </div>
+        )}
+      </motion.div>
 
       {/* Category Coverage Breakdown */}
-      <div className="flex flex-col space-y-3">
-        <span className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.4, ease: 'easeOut', delay: 0.08 }}
+        className="flex flex-col space-y-3"
+      >
+        <span className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold">
           Category Mastery Coverage
         </span>
-        <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 space-y-3.5">
-          {categoryCoverage.map((cat, index) => (
-            <div key={cat.name} className="flex flex-col space-y-1">
-              <div className="flex justify-between items-center text-sm">
-                <span className="font-medium text-on-surface">{cat.name}</span>
-                <span className="font-mono text-xs text-on-surface-variant">
-                  {cat.learned} / {cat.total} ({cat.pct}%)
-                </span>
+        {loadingData ? (
+          <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 space-y-3.5">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="flex flex-col space-y-2">
+                <div className="flex justify-between items-center">
+                  <Skeleton className="h-4 w-28 rounded" />
+                  <Skeleton className="h-3.5 w-16 rounded" />
+                </div>
+                <Skeleton className="w-full h-2 rounded-full" />
               </div>
-              <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-                <motion.div
-                  className={`${cat.barColor} h-full rounded-full`}
-                  initial={{ width: 0 }}
-                  animate={{ width: `${cat.pct}%` }}
-                  transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.05 }}
-                />
+            ))}
+          </div>
+        ) : (
+          <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 space-y-3.5">
+            {categoryCoverage.map((cat, index) => (
+              <div key={cat.name} className="flex flex-col space-y-1">
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-medium text-on-surface">{cat.name}</span>
+                  <span className="font-mono text-xs text-on-surface-variant">
+                    {cat.learned} / {cat.total} ({cat.pct}%)
+                  </span>
+                </div>
+                <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
+                  <motion.div
+                    className={`${cat.barColor} h-full rounded-full`}
+                    initial={{ width: 0 }}
+                    animate={{ width: `${cat.pct}%` }}
+                    transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.05 }}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      </div>
+            ))}
+          </div>
+        )}
+      </motion.div>
 
       {/* Spaced Repetition / Up Next for Review */}
-      <div className="flex flex-col space-y-3">
-        <span className="font-mono text-xs text-on-surface-variant uppercase tracking-wider font-semibold">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        whileInView={{ opacity: 1, y: 0 }}
+        viewport={{ once: true, amount: 0.2 }}
+        transition={{ duration: 0.4, ease: 'easeOut', delay: 0.12 }}
+        className="flex flex-col space-y-3"
+      >
+        <span className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold">
           Spaced Repetition Review Queue
         </span>
         <div className="flex flex-col space-y-2">
-          {reviewQueue.length === 0 ? (
+          {loadingData ? (
+            <div className="space-y-2">
+              {[1, 2].map(i => (
+                <div
+                  key={i}
+                  className="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/15"
+                >
+                  <div className="space-y-1.5 flex-1 pr-4">
+                    <Skeleton className="h-4 w-1/2 rounded" />
+                    <Skeleton className="h-3 w-1/3 rounded" />
+                  </div>
+                  <Skeleton className="h-7 w-16 rounded-lg" />
+                </div>
+              ))}
+            </div>
+          ) : reviewQueue.length === 0 ? (
             <div className="p-6 rounded-xl bg-surface-container-low border border-outline-variant/15 text-center text-xs text-on-surface-variant flex flex-col items-center justify-center">
               <BookOpen size={42} className="text-outline/40 mb-2.5" strokeWidth={1.5} />
               <p className="max-w-md leading-relaxed">
@@ -245,8 +341,10 @@ export const ProgressScreen = ({ onReviewTopic }) => {
                 : 0;
 
               return (
-                <div
+                <motion.div
                   key={topic.id}
+                  whileHover={{ y: -1 }}
+                  transition={{ duration: 0.15 }}
                   className="flex items-center justify-between p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/15 hover:bg-surface-container transition-colors"
                 >
                   <div className="flex flex-col space-y-0.5 min-w-0 pr-3">
@@ -262,12 +360,12 @@ export const ProgressScreen = ({ onReviewTopic }) => {
                   >
                     Review
                   </Button>
-                </div>
+                </motion.div>
               );
             })
           )}
         </div>
-      </div>
+      </motion.div>
 
     </div>
   );
