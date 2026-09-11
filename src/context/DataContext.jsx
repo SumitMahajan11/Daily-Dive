@@ -88,16 +88,22 @@ export const DataProvider = ({ children }) => {
         
         let guestProgress = {};
         let guestStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
+        let guestCategories = {};
         try {
           const savedProgress = localStorage.getItem('daily_dive_guest_progress');
           if (savedProgress) guestProgress = JSON.parse(savedProgress);
           const savedStreaks = localStorage.getItem('daily_dive_guest_streaks');
           if (savedStreaks) guestStreaks = JSON.parse(savedStreaks);
+          const savedSettings = localStorage.getItem('daily_dive_guest_settings');
+          if (savedSettings) {
+            const parsed = JSON.parse(savedSettings);
+            guestCategories = parsed?.enabled_categories || {};
+          }
         } catch (e) {}
 
         setUserProgressMap(guestProgress);
         setUserStreaks(guestStreaks);
-        const initialSelected = selectWeightedTopic(effectiveTopics, guestProgress, userSettings.enabled_categories || {});
+        const initialSelected = selectWeightedTopic(effectiveTopics, guestProgress, guestCategories);
         setCurrentTopic(initialSelected || effectiveTopics[0]);
         return;
       }
@@ -131,12 +137,12 @@ export const DataProvider = ({ children }) => {
     } finally {
       setLoadingData(false);
     }
-  }, [showToast, userSettings.enabled_categories]);
+  }, [showToast]);
 
   useEffect(() => {
     if (authLoading) return;
     loadData(user?.id);
-  }, [user, authLoading, loadData]);
+  }, [user?.id, authLoading, loadData]);
 
   // Filtered / eligible topics
   const eligibleTopics = useMemo(() => {
