@@ -1,7 +1,7 @@
 import React from 'react';
 
 const VARIANTS = {
-  primary: 'bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-on-primary font-medium shadow-sm disabled:opacity-75 disabled:cursor-not-allowed',
+  primary: 'bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-on-primary-container font-medium shadow-sm disabled:opacity-75 disabled:cursor-not-allowed',
   ghost: 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container font-medium disabled:opacity-50 disabled:cursor-not-allowed',
 };
 

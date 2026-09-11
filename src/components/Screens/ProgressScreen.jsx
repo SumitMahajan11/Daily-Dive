@@ -1,5 +1,6 @@
 import React, { useMemo } from 'react';
 import { motion } from 'framer-motion';
+import { BookOpen } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { Button } from '../UI/Button';
 
@@ -17,8 +18,8 @@ export const ProgressScreen = ({ onReviewTopic }) => {
   const currentStreak = userStreaks?.current_streak || 0;
   const longestStreak = userStreaks?.longest_streak || 0;
 
-  // Build 90-day activity heatmap data
-  const heatmapCells = useMemo(() => {
+  // Build 90-day activity heatmap data with relative intensity
+  const { heatmapCells, monthLabels } = useMemo(() => {
     const activityCounts = {};
     Object.values(userProgressMap).forEach(prog => {
       if (prog.last_seen) {
@@ -27,21 +28,53 @@ export const ProgressScreen = ({ onReviewTopic }) => {
       }
     });
 
-    const cells = [];
+    const rawCells = [];
     const today = new Date();
+    let maxCount = 0;
+
     for (let i = 89; i >= 0; i--) {
       const d = new Date(today.getTime() - i * 86400000);
       const key = d.toISOString().slice(0, 10);
       const count = activityCounts[key] || 0;
-
-      let colorClass = 'bg-surface-container-high';
-      if (count >= 4) colorClass = 'bg-primary';
-      else if (count >= 2) colorClass = 'bg-primary-container';
-      else if (count >= 1) colorClass = 'bg-secondary-container';
-
-      cells.push({ key, count, colorClass });
+      if (count > maxCount) {
+        maxCount = count;
+      }
+      rawCells.push({ key, count });
     }
-    return cells;
+
+    const cells = rawCells.map(cell => {
+      let colorClass = 'bg-surface-container-high';
+      if (maxCount > 0 && cell.count > 0) {
+        const ratio = cell.count / maxCount;
+        if (ratio >= 0.75) colorClass = 'bg-primary';
+        else if (ratio >= 0.4) colorClass = 'bg-primary-container';
+        else colorClass = 'bg-secondary-container';
+      }
+      return { ...cell, colorClass };
+    });
+
+    // 90 cells in grid-rows-5 gives 18 columns (weeks)
+    // For each column, check first cell's date to determine if it starts a new calendar month
+    const MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    const labels = [];
+    const numColumns = Math.ceil(cells.length / 5);
+
+    let prevMonth = null;
+    for (let col = 0; col < numColumns; col++) {
+      const firstCell = cells[col * 5];
+      if (firstCell) {
+        const monthNum = parseInt(firstCell.key.split('-')[1], 10) - 1;
+        const currentMonth = MONTHS[monthNum];
+        if (currentMonth !== prevMonth) {
+          labels.push({ col, label: currentMonth });
+          prevMonth = currentMonth;
+        } else {
+          labels.push({ col, label: '' });
+        }
+      }
+    }
+
+    return { heatmapCells: cells, monthLabels: labels };
   }, [userProgressMap]);
 
   // Category coverage breakdown
@@ -126,19 +159,37 @@ export const ProgressScreen = ({ onReviewTopic }) => {
         
         <div className="bg-surface-container-lowest p-4 rounded-xl border border-outline-variant/20 overflow-x-auto shadow-sm">
           <div className="flex space-x-2 min-w-[320px]">
-            <div className="flex flex-col justify-between py-1 text-on-surface-variant font-mono text-[10px] h-20 pr-1 select-none">
-              <span>Mon</span>
-              <span>Wed</span>
-              <span>Fri</span>
+            <div className="flex flex-col">
+              <div className="h-4 mb-1"></div>
+              <div className="flex flex-col justify-between py-1 text-on-surface-variant font-mono text-[10px] h-20 pr-1 select-none">
+                <span>Mon</span>
+                <span>Wed</span>
+                <span>Fri</span>
+              </div>
             </div>
-            <div className="grid grid-flow-col grid-rows-5 gap-1.5 flex-1">
-              {heatmapCells.map((cell) => (
-                <div
-                  key={cell.key}
-                  title={`${cell.key}: ${cell.count} topics learned`}
-                  className={`w-3 h-3 rounded-sm ${cell.colorClass} hover:ring-2 ring-primary transition-all cursor-pointer`}
-                />
-              ))}
+            <div className="flex flex-col flex-1">
+              {/* Month labels along top of grid */}
+              <div className="grid grid-flow-col gap-1.5 h-4 mb-1 select-none">
+                {monthLabels.map(({ col, label }) => (
+                  <div
+                    key={col}
+                    className="w-3 text-[10px] font-mono text-on-surface-variant overflow-visible whitespace-nowrap leading-none"
+                  >
+                    {label}
+                  </div>
+                ))}
+              </div>
+
+              {/* Heatmap cells */}
+              <div className="grid grid-flow-col grid-rows-5 gap-1.5 flex-1">
+                {heatmapCells.map((cell) => (
+                  <div
+                    key={cell.key}
+                    title={`${cell.key}: ${cell.count} topics learned`}
+                    className={`w-3 h-3 rounded-sm ${cell.colorClass} hover:ring-2 ring-primary transition-all cursor-pointer`}
+                  />
+                ))}
+              </div>
             </div>
           </div>
         </div>
@@ -178,8 +229,11 @@ export const ProgressScreen = ({ onReviewTopic }) => {
         </span>
         <div className="flex flex-col space-y-2">
           {reviewQueue.length === 0 ? (
-            <div className="p-4 rounded-xl bg-surface-container-low border border-outline-variant/15 text-center text-xs text-on-surface-variant">
-              No learned topics yet. Spin the roulette and mark topics as learned to populate your spaced repetition review queue!
+            <div className="p-6 rounded-xl bg-surface-container-low border border-outline-variant/15 text-center text-xs text-on-surface-variant flex flex-col items-center justify-center">
+              <BookOpen size={42} className="text-outline/40 mb-2.5" strokeWidth={1.5} />
+              <p className="max-w-md leading-relaxed">
+                No learned topics yet. Spin the roulette and mark topics as learned to populate your spaced repetition review queue!
+              </p>
             </div>
           ) : (
             reviewQueue.map(topic => {
