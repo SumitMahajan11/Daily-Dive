@@ -21,6 +21,7 @@ export const SpinScreen = ({ onNavigateFilter }) => {
 
   const [rotation, setRotation] = useState(0);
   const [isSpinning, setIsSpinning] = useState(false);
+  const [showResult, setShowResult] = useState(false);
   const [tickerText, setTickerText] = useState(`Ready to spin · ${eligibleTopics.length} topics active in pool`);
   const [tickerActive, setTickerActive] = useState(false);
 
@@ -50,6 +51,7 @@ export const SpinScreen = ({ onNavigateFilter }) => {
     }
 
     setIsSpinning(true);
+    setShowResult(false);
     setTickerActive(true);
     setTickerText("DECELERATING READOUT...");
     AudioController.init();
@@ -117,6 +119,7 @@ export const SpinScreen = ({ onNavigateFilter }) => {
 
     setTimeout(() => {
       setIsSpinning(false);
+      setShowResult(true);
       setTickerActive(false);
 
       const groupName = (selected?.group_name || selected?.group || 'TOPIC').toUpperCase();
@@ -240,7 +243,7 @@ export const SpinScreen = ({ onNavigateFilter }) => {
         </div>
       ) : (
         <AnimatePresence mode="wait">
-          {currentTopic && (
+          {showResult && currentTopic && (
             <motion.div
               key={currentTopic.id}
               initial={{ opacity: 0, y: 16, scale: 0.98 }}

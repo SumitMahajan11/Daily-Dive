@@ -80,14 +80,16 @@ export const ProgressScreen = ({ onReviewTopic }) => {
   // Category coverage breakdown
   const categoryCoverage = useMemo(() => {
     const groups = [
-      { name: 'Tech', total: 48, barColor: 'bg-primary-container' },
-      { name: 'Money & Career', total: 24, barColor: 'bg-tertiary-container' },
-      { name: 'Mind & Growth', total: 24, barColor: 'bg-secondary-container' },
-      { name: 'World & Ideas', total: 28, barColor: 'bg-primary/50' }
+      { id: 'tech', name: 'Tech', total: 313, barColor: 'bg-primary-container' },
+      { id: 'money-career', name: 'Money & Career', total: 68, barColor: 'bg-tertiary-container' },
+      { id: 'mind-growth', name: 'Mind & Growth', total: 176, barColor: 'bg-secondary-container' }
     ];
 
     return groups.map(g => {
-      const groupTopics = topics.filter(t => (t.group_name || t.group) === g.name);
+      const groupTopics = topics.filter(t => {
+        const group = (t.group_name || t.group || '').toLowerCase();
+        return group === g.id || group === g.name.toLowerCase();
+      });
       const total = groupTopics.length || g.total;
       const learned = groupTopics.filter(t => userProgressMap[t.id]?.times_seen > 0).length;
       const pct = Math.round((learned / total) * 100);

@@ -6,8 +6,8 @@ export const INITIAL_TOPICS = [
   // TECH: AI & ML
   {
     id: "rag-llms",
-    group_name: "Tech",
-    category: "AI & ML",
+    group_name: "tech",
+    category: "ai-ml",
     tags: ["rag", "llms", "vectors"],
     title: "Retrieval-Augmented Generation (RAG)",
     description: "Combines pre-trained parametric models with dense vector retrieval across external knowledge stores to eliminate hallucinations and ground responses in private enterprise data.",
@@ -19,8 +19,8 @@ export const INITIAL_TOPICS = [
   },
   {
     id: "lora-finetuning",
-    group_name: "Tech",
-    category: "AI & ML",
+    group_name: "tech",
+    category: "ai-ml",
     tags: ["finetuning", "lora", "transformers"],
     title: "LoRA & Low-Rank Model Adaptation",
     description: "Decomposes weight update matrices into rank decomposition matrices, reducing trainable parameter footprints by 99% while preserving model fidelity.",
@@ -31,8 +31,8 @@ export const INITIAL_TOPICS = [
   },
   {
     id: "transformer-attention",
-    group_name: "Tech",
-    category: "AI & ML",
+    group_name: "tech",
+    category: "ai-ml",
     tags: ["transformers", "attention", "nlp"],
     title: "Multi-Head Self-Attention Mechanisms",
     description: "Allows neural representations to jointly attend to information from different representation subspaces at different sequence positions.",
@@ -45,8 +45,8 @@ export const INITIAL_TOPICS = [
   // TECH: Cloud & Infra
   {
     id: "k8s-control-plane",
-    group_name: "Tech",
-    category: "Cloud & Infra",
+    group_name: "tech",
+    category: "cloud-infra",
     tags: ["k8s", "containers", "orchestration"],
     title: "Kubernetes Control Plane & Raft Etcd Consensus",
     description: "How kube-apiserver, controller-manager, scheduler, and distributed etcd maintain declarative cluster reconciliation loops under network partitions.",
@@ -57,8 +57,8 @@ export const INITIAL_TOPICS = [
   },
   {
     id: "terraform-iac",
-    group_name: "Tech",
-    category: "Cloud & Infra",
+    group_name: "tech",
+    category: "cloud-infra",
     tags: ["terraform", "iac", "devops"],
     title: "Infrastructure as Code & State Locking Patterns",
     description: "Managing declarative cloud resources with DAG dependency graphs, plan/apply lifecycles, and distributed state lock concurrency controls.",
@@ -70,8 +70,8 @@ export const INITIAL_TOPICS = [
   // TECH: Web Dev
   {
     id: "rsc-architecture",
-    group_name: "Tech",
-    category: "Web Dev",
+    group_name: "tech",
+    category: "web-dev",
     tags: ["react", "nextjs", "streaming"],
     title: "React Server Components & Streaming SSR",
     description: "Decouples component execution between build/server time and client browser hydration, eliminating client bundle footprint while enabling async Suspense streaming.",
@@ -82,8 +82,8 @@ export const INITIAL_TOPICS = [
   },
   {
     id: "webassembly-simd",
-    group_name: "Tech",
-    category: "Web Dev",
+    group_name: "tech",
+    category: "web-dev",
     tags: ["wasm", "performance", "rust"],
     title: "WebAssembly (Wasm) & Native Browser Compute",
     description: "Executing compiled C/Rust bytecode at near-native speed within sandboxed browser runtimes with SIMD vector extensions and shared memory threads.",
@@ -95,8 +95,8 @@ export const INITIAL_TOPICS = [
   // TECH: Data Structures & Algorithms
   {
     id: "bloom-filters",
-    group_name: "Tech",
-    category: "Data Structures & Algorithms",
+    group_name: "tech",
+    category: "data-structures-algorithms",
     tags: ["algorithms", "probabilistic", "caching"],
     title: "Bloom Filters & Probabilistic Data Structures",
     description: "Space-efficient probabilistic structure that tests whether an element is definitely not in a set or possibly in a set using multiple bit-array hash functions.",
@@ -108,8 +108,8 @@ export const INITIAL_TOPICS = [
   // TECH: Systems & Distributed Computing
   {
     id: "raft-consensus",
-    group_name: "Tech",
-    category: "Systems & Distributed Computing",
+    group_name: "tech",
+    category: "systems-distributed-computing",
     tags: ["distributed-systems", "raft", "consensus"],
     title: "Raft Distributed Consensus & Leader Election",
     description: "Deconstructs distributed state machine replication into leader election, log replication, and safety guarantees with strict term numbers and quorum voting.",
@@ -119,11 +119,11 @@ export const INITIAL_TOPICS = [
     ]
   },
 
-  // MONEY & CAREER
+  // MONEY & CAREER: Finance
   {
     id: "83b-election",
-    group_name: "Money & Career",
-    category: "Finance & Equity",
+    group_name: "money-career",
+    category: "finance",
     tags: ["equity", "tax", "startups"],
     title: "83(b) Election & QSBS Exemption",
     description: "Filing an 83(b) election notifies the IRS to tax restricted stock at grant date values rather than future vesting dates, potentially shielding capital gains under Section 1202.",
@@ -134,8 +134,8 @@ export const INITIAL_TOPICS = [
   },
   {
     id: "network-effects-moats",
-    group_name: "Money & Career",
-    category: "Business & Strategy",
+    group_name: "money-career",
+    category: "finance",
     tags: ["strategy", "moats", "business"],
     title: "7 Powers & Enduring Business Moats",
     description: "Hamilton Helmer's framework for sustainable differential returns: Scale Economies, Network Economies, Counter-Positioning, Switching Costs, Branding, Cornered Resource, and Process Power.",
@@ -144,11 +144,11 @@ export const INITIAL_TOPICS = [
     ]
   },
 
-  // MIND & GROWTH
+  // MIND & GROWTH: Philosophy & Critical Thinking
   {
     id: "inversion-premortem",
-    group_name: "Mind & Growth",
-    category: "Decision Systems",
+    group_name: "mind-growth",
+    category: "philosophy-critical-thinking",
     tags: ["mental-models", "decision-making"],
     title: "Inversion & Pre-Mortem Analysis",
     description: "Structuring decisions backwards by listing failure vectors and systematically eliminating fragility factors before launching operational initiatives.",
@@ -156,10 +156,12 @@ export const INITIAL_TOPICS = [
       { type: "Essay", label: "Farnam Street — Mental Model: Inversion", desc: "Charlie Munger's algebra of avoiding stupidity over seeking brilliance", url: "https://fs.blog/inversion/" }
     ]
   },
+
+  // MIND & GROWTH: Psychology
   {
     id: "implementation-intentions",
-    group_name: "Mind & Growth",
-    category: "Habits & Focus",
+    group_name: "mind-growth",
+    category: "psychology",
     tags: ["psychology", "habits", "productivity"],
     title: "Implementation Intentions & Cue-Action Loops",
     description: "Pre-committing to specific 'If [Situation X] occurs, then I will execute [Action Y]' mental triggers doubles habitual follow-through across high-friction tasks.",
@@ -168,65 +170,49 @@ export const INITIAL_TOPICS = [
     ]
   },
 
-  // WORLD & IDEAS
+  // MIND & GROWTH: Communication
   {
-    id: "preferential-attachment",
-    group_name: "World & Ideas",
-    category: "Network Dynamics",
-    tags: ["networks", "power-laws", "systems"],
-    title: "Preferential Attachment & Scale-Free Networks",
-    description: "Mechanisms where resource distribution skew increases non-linearly over time, generating Barabási-Albert power-law degree distributions across open protocols and social platforms.",
+    id: "aristotelian-rhetorical-triangle-ethos-pathos-logos",
+    group_name: "mind-growth",
+    category: "communication",
+    tags: ["rhetoric", "persuasion", "classical-rhetoric"],
+    title: "The Aristotelian Rhetorical Triangle: Ethos, Pathos & Logos in Modern Discourse",
+    description: "Aristotle's Rhetoric establishes that durable persuasion requires balancing three appeals: Ethos (authority and character), Pathos (emotional resonance), and Logos (logical evidence).",
     resources: [
-      { type: "Book", label: "Network Science by Albert-László Barabási", desc: "Interactive textbook on graph topology and scale-free connectivity", url: "http://networksciencebook.com/" }
-    ]
-  },
-  {
-    id: "bretton-woods-liquidity",
-    group_name: "World & Ideas",
-    category: "Macroeconomics",
-    tags: ["macro", "economics", "currency"],
-    title: "Triffin's Dilemma & Global Reserve Currency Cycles",
-    description: "The inherent conflict of economic interests between short-term domestic objectives and long-term international obligations for countries whose currencies serve as global reserves.",
-    resources: [
-      { type: "Guide", label: "IMF Economic Forum — The Triffin Paradox", desc: "Historical analysis of balance of payments and sovereign debt dynamics", url: "https://www.imf.org" }
+      { type: "Paper", label: "Aristotle: Rhetoric (MIT Classics)", desc: "Foundational classical treatise on persuasive speech", url: "http://classics.mit.edu/Aristotle/rhetoric.html" }
     ]
   }
 ];
 
 export const CATEGORY_TREE = [
   {
-    group: "Tech",
-    badge: "5 sub-categories · 48 topics",
+    group: "tech",
+    label: "Tech",
+    badge: "5 sub-categories · 313 topics",
     categories: [
-      { name: "AI & ML", label: "AI & Machine Learning", topicsCount: 12, tags: ["LLMs", "RAG", "LoRA", "Transformers"] },
-      { name: "Cloud & Infra", label: "Cloud & Infrastructure", topicsCount: 9, tags: ["Kubernetes", "Terraform", "Docker"] },
-      { name: "Web Dev", label: "Web Architecture & Performance", topicsCount: 9, tags: ["React Server Components", "WebAssembly", "IndexedDB"] },
-      { name: "Data Structures & Algorithms", label: "Data Structures & Algorithms", topicsCount: 10, tags: ["Bloom Filters", "Trie", "Dynamic Programming"] },
-      { name: "Systems & Distributed Computing", label: "Systems & Distributed Computing", topicsCount: 8, tags: ["Raft Consensus", "Kafka Log Partitioning", "CAP Theorem"] }
+      { name: "ai-ml", label: "AI & Machine Learning", topicsCount: 63, tags: ["Deep Learning", "Transformers", "NLP", "Computer Vision"] },
+      { name: "cloud-infra", label: "Cloud & Infrastructure", topicsCount: 64, tags: ["Kubernetes", "Networking", "Security", "Distributed Systems"] },
+      { name: "data-structures-algorithms", label: "Data Structures & Algorithms", topicsCount: 73, tags: ["Trees", "Algorithms", "Data Structures", "Graphs"] },
+      { name: "systems-distributed-computing", label: "Systems & Distributed Computing", topicsCount: 57, tags: ["Replication", "Distributed Systems", "Sharding", "Kafka"] },
+      { name: "web-dev", label: "Web Architecture & Performance", topicsCount: 56, tags: ["Performance", "JavaScript", "CSS", "Rendering"] }
     ]
   },
   {
-    group: "Money & Career",
-    badge: "2 sub-categories · 24 topics",
+    group: "money-career",
+    label: "Money & Career",
+    badge: "1 sub-category · 68 topics",
     categories: [
-      { name: "Finance & Equity", label: "Finance & Equity Compensation", topicsCount: 12, tags: ["83(b) Elections", "QSBS Exemptions", "ISO vs NSO Options"] },
-      { name: "Business & Strategy", label: "Business Strategy & Growth", topicsCount: 12, tags: ["Network Effects", "Unit Economics", "Pricing Power"] }
+      { name: "finance", label: "Finance & Wealth Strategy", topicsCount: 68, tags: ["Corporate Finance", "Personal Finance", "DeFi", "Tax Strategy"] }
     ]
   },
   {
-    group: "Mind & Growth",
-    badge: "2 sub-categories · 24 topics",
+    group: "mind-growth",
+    label: "Mind & Growth",
+    badge: "3 sub-categories · 176 topics",
     categories: [
-      { name: "Decision Systems", label: "Decision Systems & Mental Models", topicsCount: 12, tags: ["Inversion Thinking", "First Principles", "Pre-Mortem Analysis"] },
-      { name: "Habits & Focus", label: "Habits, Focus & Deep Work", topicsCount: 12, tags: ["Implementation Intentions", "Dopamine Baseline Reset", "Spaced Repetition"] }
-    ]
-  },
-  {
-    group: "World & Ideas",
-    badge: "2 sub-categories · 28 topics",
-    categories: [
-      { name: "Network Dynamics", label: "Network Dynamics & Systems", topicsCount: 14, tags: ["Scale-Free Networks", "Preferential Attachment", "Complex Adaptive Systems"] },
-      { name: "Macroeconomics", label: "Macroeconomics & Geopolitics", topicsCount: 14, tags: ["Liquidity Cycles", "Bretton Woods III", "Energy Arbitrage"] }
+      { name: "communication", label: "Communication & Rhetoric", topicsCount: 54, tags: ["Persuasion", "Cross-Cultural", "Public Speaking", "Negotiation"] },
+      { name: "philosophy-critical-thinking", label: "Philosophy & Critical Thinking", topicsCount: 42, tags: ["Critical Thinking", "Epistemology", "Fallacies", "Ethics"] },
+      { name: "psychology", label: "Psychology & Decision Making", topicsCount: 80, tags: ["Cognitive Biases", "Social Psychology", "Memory", "Decision Systems"] }
     ]
   }
 ];

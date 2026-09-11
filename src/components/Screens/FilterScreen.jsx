@@ -18,10 +18,9 @@ export const FilterScreen = ({ onSpinActivePool }) => {
 
   // Track expanded accordion groups (Tech open by default)
   const [expandedGroups, setExpandedGroups] = useState({
-    Tech: true,
-    'Money & Career': false,
-    'Mind & Growth': false,
-    'World & Ideas': false
+    tech: true,
+    'money-career': false,
+    'mind-growth': false
   });
 
   const toggleGroupAccordion = (group) => {
@@ -157,7 +156,7 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                 <div className="flex items-center gap-3 min-w-0">
                   <button
                     type="button"
-                    aria-label={`${isGroupExpanded ? 'Collapse' : 'Expand'} ${groupName} category group`}
+                    aria-label={`${isGroupExpanded ? 'Collapse' : 'Expand'} ${groupDef.label || groupName} category group`}
                     aria-expanded={isGroupExpanded}
                     className={`w-6 h-6 flex items-center justify-center text-on-surface-variant transition-transform duration-200 ${
                       isGroupExpanded ? '' : '-rotate-90'
@@ -167,7 +166,7 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                   </button>
                   <div className="flex flex-col truncate">
                     <div className="flex items-center gap-2">
-                      <span className="font-semibold text-base text-on-surface truncate">{groupName}</span>
+                      <span className="font-semibold text-base text-on-surface truncate">{groupDef.label || groupName}</span>
                       <span className="px-2 py-0.5 rounded-full bg-surface-container-high text-on-surface-variant text-[10px] font-mono">
                         {groupDef.badge}
                       </span>
@@ -181,7 +180,7 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                   size="md"
                   className="ml-2"
                   onClick={(e) => e.stopPropagation()}
-                  aria-label={`Toggle group ${groupName}`}
+                  aria-label={`Toggle group ${groupDef.label || groupName}`}
                 />
               </div>
 

@@ -15,6 +15,37 @@ import {
 import { ResetConfirmationModal } from '../Modals/ResetConfirmationModal';
 import { Toggle } from '../UI/Toggle';
 
+// Convert 12-hour string (e.g. "09:00 AM", "02:37 PM") to 24-hour "HH:MM"
+const formatTo24Hour = (time12) => {
+  if (!time12 || typeof time12 !== 'string') return '09:00';
+  const match = time12.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
+  if (!match) return '09:00';
+  let hours = parseInt(match[1], 10);
+  const minutes = match[2];
+  const period = match[3].toUpperCase();
+
+  if (period === 'PM' && hours < 12) hours += 12;
+  if (period === 'AM' && hours === 12) hours = 0;
+
+  return `${String(hours).padStart(2, '0')}:${minutes}`;
+};
+
+// Convert 24-hour "HH:MM" (e.g. "14:37", "09:00") to 12-hour "HH:MM AM/PM"
+const formatTo12Hour = (time24) => {
+  if (!time24 || typeof time24 !== 'string') return '09:00 AM';
+  const parts = time24.split(':');
+  if (parts.length < 2) return '09:00 AM';
+  let hours = parseInt(parts[0], 10);
+  const minutes = parts[1].slice(0, 2);
+  if (isNaN(hours)) return '09:00 AM';
+
+  const period = hours >= 12 ? 'PM' : 'AM';
+  hours = hours % 12;
+  if (hours === 0) hours = 12;
+
+  return `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
+};
+
 export const SettingsScreen = () => {
   const {
     userSettings,
@@ -95,6 +126,16 @@ export const SettingsScreen = () => {
     await updateSettings({ reminder_time: time });
     if (userSettings.notifications_enabled) {
       showToast(`Reminder time updated to ${time}`, 'success');
+    }
+  };
+
+  const handleCustomTimeChange = async (e) => {
+    const val24 = e.target.value;
+    if (!val24) return;
+    const time12 = formatTo12Hour(val24);
+    await updateSettings({ reminder_time: time12 });
+    if (userSettings.notifications_enabled) {
+      showToast(`Reminder time updated to ${time12}`, 'success');
     }
   };
 
@@ -244,6 +285,18 @@ export const SettingsScreen = () => {
                   </button>
                 );
               })}
+            </div>
+
+            {/* Custom Time Picker */}
+            <div className="pt-2 flex items-center gap-2.5">
+              <span className="text-xs text-on-surface-variant font-medium">Custom time:</span>
+              <input
+                type="time"
+                value={formatTo24Hour(userSettings.reminder_time)}
+                onChange={handleCustomTimeChange}
+                aria-label="Custom reminder time"
+                className="px-2.5 py-1 rounded-lg font-mono text-xs bg-surface-container-high border border-outline-variant/40 text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
+              />
             </div>
           </div>
         </div>

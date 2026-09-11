@@ -13,12 +13,20 @@ export const DataProvider = ({ children }) => {
   const [topics, setTopics] = useState(INITIAL_TOPICS);
   const [userProgressMap, setUserProgressMap] = useState({});
   const [userStreaks, setUserStreaks] = useState({ current_streak: 0, longest_streak: 0, last_active_date: null });
-  const [userSettings, setUserSettings] = useState({
-    enabled_categories: {},
-    reminder_time: '09:00 AM',
-    notifications_enabled: false,
-    sound_enabled: true,
-    haptics_enabled: true
+  const [userSettings, setUserSettings] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_guest_settings');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return {
+      enabled_categories: {},
+      reminder_time: '09:00 AM',
+      notifications_enabled: false,
+      sound_enabled: true,
+      haptics_enabled: true
+    };
   });
 
   const [loadingData, setLoadingData] = useState(true);
@@ -210,6 +218,12 @@ export const DataProvider = ({ children }) => {
     const newSettings = { ...userSettings, ...patch };
     setUserSettings(newSettings);
 
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.setItem('daily_dive_guest_settings', JSON.stringify(newSettings));
+      } catch (e) {}
+    }
+
     if (user) {
       try {
         await DataService.updateUserSettings(user.id, patch);
@@ -229,6 +243,12 @@ export const DataProvider = ({ children }) => {
 
     if (user) {
       await DataService.resetUserData(user.id);
+    }
+
+    if (typeof window !== 'undefined') {
+      try {
+        localStorage.removeItem('daily_dive_guest_settings');
+      } catch (e) {}
     }
 
     setUserProgressMap({});
