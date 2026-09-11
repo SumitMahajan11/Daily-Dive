@@ -3,17 +3,150 @@
 @tailwind utilities;
 
 @layer base {
+  :root {
+    /* ── Light Theme: Warm Oat / Beige (#f7f3ec) with Terracotta Accents ── */
+    --color-surface: 247 243 236;
+    --color-background: 247 243 236;
+    --color-surface-dim: 238 233 224;
+    --color-surface-bright: 253 250 245;
+    --color-surface-container-lowest: 255 255 255;
+    --color-surface-container-low: 242 237 230;
+    --color-surface-container: 237 231 222;
+    --color-surface-container-high: 231 224 214;
+    --color-surface-container-highest: 224 216 205;
+    --color-surface-variant: 231 224 214;
+    --color-surface-tint: 181 80 46;
+
+    --color-on-surface: 43 38 32;
+    --color-on-background: 43 38 32;
+    --color-on-surface-variant: 108 100 90;
+    --color-outline: 160 150 138;
+    --color-outline-variant: 218 210 198;
+
+    /* Terracotta accent (#b5502e) */
+    --color-primary: 181 80 46;
+    --color-primary-container: 181 80 46;
+    --color-on-primary: 255 255 255;
+    --color-on-primary-container: 255 255 255;
+    --color-inverse-primary: 232 122 82;
+    --color-primary-fixed: 255 218 206;
+    --color-primary-fixed-dim: 232 122 82;
+    --color-on-primary-fixed: 59 15 0;
+    --color-on-primary-fixed-variant: 140 54 24;
+
+    /* Secondary: Warm Sage / Olive Taupe */
+    --color-secondary: 92 99 82;
+    --color-secondary-container: 216 224 210;
+    --color-on-secondary: 255 255 255;
+    --color-on-secondary-container: 26 36 22;
+    --color-secondary-fixed: 216 224 210;
+    --color-secondary-fixed-dim: 178 188 172;
+    --color-on-secondary-fixed: 26 36 22;
+    --color-on-secondary-fixed-variant: 65 74 58;
+
+    /* Tertiary: Warm Amber / Caramel */
+    --color-tertiary: 180 83 9;
+    --color-tertiary-container: 254 243 199;
+    --color-on-tertiary: 255 255 255;
+    --color-on-tertiary-container: 69 34 0;
+    --color-tertiary-fixed: 255 221 187;
+    --color-tertiary-fixed-dim: 255 184 103;
+    --color-on-tertiary-fixed: 43 23 0;
+    --color-on-tertiary-fixed-variant: 103 61 0;
+
+    /* Error */
+    --color-error: 186 26 26;
+    --color-error-container: 255 218 214;
+    --color-on-error: 255 255 255;
+    --color-on-error-container: 65 0 2;
+
+    /* Inverse */
+    --color-inverse-surface: 43 38 32;
+    --color-inverse-on-surface: 247 243 236;
+  }
+
+  .dark {
+    /* ── Dark Theme: Warm Charcoal (#1c1a17) with Terracotta Accents ── */
+    --color-surface: 28 26 23;
+    --color-background: 28 26 23;
+    --color-surface-dim: 20 18 16;
+    --color-surface-bright: 56 52 48;
+    --color-surface-container-lowest: 16 15 13;
+    --color-surface-container-low: 36 33 29;
+    --color-surface-container: 44 41 36;
+    --color-surface-container-high: 52 48 43;
+    --color-surface-container-highest: 62 58 52;
+    --color-surface-variant: 62 58 52;
+    --color-surface-tint: 232 122 82;
+
+    --color-on-surface: 237 232 224;
+    --color-on-background: 237 232 224;
+    --color-on-surface-variant: 179 171 161;
+    --color-outline: 140 132 122;
+    --color-outline-variant: 72 67 60;
+
+    /* Terracotta accent (vibrant terracotta text/icons, deep terracotta container) */
+    --color-primary: 232 122 82;
+    --color-primary-container: 181 80 46;
+    --color-on-primary: 67 21 3;
+    --color-on-primary-container: 255 218 206;
+    --color-inverse-primary: 181 80 46;
+    --color-primary-fixed: 255 218 206;
+    --color-primary-fixed-dim: 232 122 82;
+    --color-on-primary-fixed: 59 15 0;
+    --color-on-primary-fixed-variant: 140 54 24;
+
+    /* Secondary: Warm Muted Sage */
+    --color-secondary: 182 196 174;
+    --color-secondary-container: 56 68 50;
+    --color-on-secondary: 35 47 30;
+    --color-on-secondary-container: 216 224 210;
+    --color-secondary-fixed: 216 224 210;
+    --color-secondary-fixed-dim: 178 188 172;
+    --color-on-secondary-fixed: 26 36 22;
+    --color-on-secondary-fixed-variant: 65 74 58;
+
+    /* Tertiary: Warm Amber */
+    --color-tertiary: 245 158 11;
+    --color-tertiary-container: 120 53 15;
+    --color-on-tertiary: 45 23 0;
+    --color-on-tertiary-container: 254 243 199;
+    --color-tertiary-fixed: 255 221 187;
+    --color-tertiary-fixed-dim: 255 184 103;
+    --color-on-tertiary-fixed: 43 23 0;
+    --color-on-tertiary-fixed-variant: 103 61 0;
+
+    /* Error */
+    --color-error: 255 180 171;
+    --color-error-container: 147 0 10;
+    --color-on-error: 105 0 5;
+    --color-on-error-container: 255 218 214;
+
+    /* Inverse */
+    --color-inverse-surface: 237 232 224;
+    --color-inverse-on-surface: 28 26 23;
+  }
+
   html, body {
     width: 100%;
     min-height: 100%;
     margin: 0;
     padding: 0;
-    background-color: #11131b;
-    color: #e2e1ed;
+    background-color: rgb(var(--color-surface));
+    color: rgb(var(--color-on-surface));
     font-family: 'Inter', sans-serif;
   }
   .pb-safe { padding-bottom: max(env(safe-area-inset-bottom, 0px), 1rem); }
   .pt-safe { padding-top: max(env(safe-area-inset-top, 0px), 0.5rem); }
+
+  button:focus-visible,
+  a:focus-visible,
+  input:focus-visible,
+  select:focus-visible,
+  textarea:focus-visible {
+    outline: 2px solid rgb(var(--color-primary));
+    outline-offset: 2px;
+  }
 }
 
 /* Custom Scrollbar for desktop */
@@ -22,17 +155,12 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #11131b;
+  background: rgb(var(--color-surface));
 }
 ::-webkit-scrollbar-thumb {
-  background: #282a32;
+  background: rgb(var(--color-surface-container-high));
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #454652;
-}
-
-/* Smooth Category Accordion */
-.category-accordion {
-  transition: max-height 0.3s cubic-bezier(0, 1, 0, 1), opacity 0.25s ease;
+  background: rgb(var(--color-outline));
 }

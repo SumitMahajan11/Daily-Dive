@@ -13,6 +13,7 @@ import {
   Disc
 } from 'lucide-react';
 import { ResetConfirmationModal } from '../Modals/ResetConfirmationModal';
+import { Toggle } from '../UI/Toggle';
 
 export const SettingsScreen = () => {
   const {
@@ -204,21 +205,12 @@ export const SettingsScreen = () => {
                 In-app prompt when active around your preferred time to spin a new topic and maintain your streak.
               </p>
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={userSettings.notifications_enabled}
-              onClick={handleToggleReminder}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
-                userSettings.notifications_enabled ? 'bg-primary-container' : 'bg-surface-container-highest'
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${
-                  userSettings.notifications_enabled ? 'translate-x-5 translate-y-0.5' : 'translate-x-0.5 translate-y-0.5'
-                }`}
-              />
-            </button>
+            <Toggle
+              checked={userSettings.notifications_enabled}
+              onChange={handleToggleReminder}
+              size="lg"
+              aria-label="Daily learning reminder"
+            />
           </div>
 
           <div className="h-[1px] w-full bg-surface-container-highest"></div>
@@ -339,21 +331,12 @@ export const SettingsScreen = () => {
               <div className="font-medium text-sm sm:text-base text-on-surface">Sound effects</div>
               <p className="text-xs text-on-surface-variant">Interactive wheel clicks and tactile ticking audio synthesis</p>
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={userSettings.sound_enabled}
-              onClick={() => updateSettings({ sound_enabled: !userSettings.sound_enabled })}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
-                userSettings.sound_enabled ? 'bg-primary-container' : 'bg-surface-container-highest'
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${
-                  userSettings.sound_enabled ? 'translate-x-5 translate-y-0.5' : 'translate-x-0.5 translate-y-0.5'
-                }`}
-              />
-            </button>
+            <Toggle
+              checked={userSettings.sound_enabled}
+              onChange={() => updateSettings({ sound_enabled: !userSettings.sound_enabled })}
+              size="lg"
+              aria-label="Sound effects"
+            />
           </div>
 
           <div className="h-[1px] w-full bg-surface-container-highest"></div>
@@ -363,21 +346,12 @@ export const SettingsScreen = () => {
               <div className="font-medium text-sm sm:text-base text-on-surface">Haptic feedback</div>
               <p className="text-xs text-on-surface-variant">Gentle device vibration when wheel settles on a selected topic</p>
             </div>
-            <button
-              type="button"
-              role="switch"
-              aria-checked={userSettings.haptics_enabled}
-              onClick={() => updateSettings({ haptics_enabled: !userSettings.haptics_enabled })}
-              className={`relative inline-flex h-6 w-11 shrink-0 cursor-pointer rounded-full transition-colors duration-200 ${
-                userSettings.haptics_enabled ? 'bg-primary-container' : 'bg-surface-container-highest'
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow transition duration-200 ${
-                  userSettings.haptics_enabled ? 'translate-x-5 translate-y-0.5' : 'translate-x-0.5 translate-y-0.5'
-                }`}
-              />
-            </button>
+            <Toggle
+              checked={userSettings.haptics_enabled}
+              onChange={() => updateSettings({ haptics_enabled: !userSettings.haptics_enabled })}
+              size="lg"
+              aria-label="Haptic feedback"
+            />
           </div>
         </div>
       </section>

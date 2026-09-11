@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react';
+import { motion } from 'framer-motion';
 import { useData } from '../../context/DataContext';
+import { Button } from '../UI/Button';
 
 export const ProgressScreen = ({ onReviewTopic }) => {
   const {
@@ -148,7 +150,7 @@ export const ProgressScreen = ({ onReviewTopic }) => {
           Category Mastery Coverage
         </span>
         <div className="bg-surface-container-low p-4 rounded-xl border border-outline-variant/20 space-y-3.5">
-          {categoryCoverage.map((cat) => (
+          {categoryCoverage.map((cat, index) => (
             <div key={cat.name} className="flex flex-col space-y-1">
               <div className="flex justify-between items-center text-sm">
                 <span className="font-medium text-on-surface">{cat.name}</span>
@@ -157,9 +159,11 @@ export const ProgressScreen = ({ onReviewTopic }) => {
                 </span>
               </div>
               <div className="w-full bg-surface-container-high h-2 rounded-full overflow-hidden">
-                <div
-                  className={`${cat.barColor} h-full rounded-full transition-all duration-500`}
-                  style={{ width: `${cat.pct}%` }}
+                <motion.div
+                  className={`${cat.barColor} h-full rounded-full`}
+                  initial={{ width: 0 }}
+                  animate={{ width: `${cat.pct}%` }}
+                  transition={{ duration: 0.6, ease: 'easeOut', delay: index * 0.05 }}
                 />
               </div>
             </div>
@@ -195,13 +199,13 @@ export const ProgressScreen = ({ onReviewTopic }) => {
                       {topic.group_name || topic.group} / {topic.category || topic.sub} · Learned {daysAgo === 0 ? 'today' : `${daysAgo}d ago`}
                     </span>
                   </div>
-                  <button
-                    type="button"
+                  <Button
+                    variant="ghost"
                     onClick={() => handleReviewClick(topic)}
-                    className="px-3 py-1.5 rounded-lg bg-surface-container-highest text-on-surface hover:bg-primary-container hover:text-white font-medium text-xs transition-colors shrink-0 cursor-pointer"
+                    className="px-3 py-1.5 text-xs bg-surface-container-highest text-on-surface hover:bg-primary-container hover:text-white shrink-0"
                   >
                     Review
-                  </button>
+                  </Button>
                 </div>
               );
             })

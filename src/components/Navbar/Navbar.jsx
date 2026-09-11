@@ -1,12 +1,14 @@
 import React from 'react';
-import { Flame, Disc } from 'lucide-react';
+import { Flame, Disc, Sun, Moon } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
+import { useTheme } from '../../context/ThemeContext';
 import { UserMenu } from './UserMenu';
 
 export const Navbar = ({ activeTab, onNavigateTab }) => {
   const { user } = useAuth();
   const { userStreaks, isOnline } = useData();
+  const { theme, toggleTheme } = useTheme();
 
   const streak = userStreaks?.current_streak || 0;
 
@@ -41,12 +43,27 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
         </div>
         
         {/* Top Actions / Stats Pill */}
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Streak Counter */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant text-xs shadow-inner">
             <Flame size={15} className="text-tertiary" />
             <span className="font-mono font-medium text-on-surface">{streak}d streak</span>
           </div>
+
+          {/* Theme Toggle Button */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            title={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
+            className="w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center bg-surface-container-high border border-outline-variant/30 text-on-surface-variant hover:text-on-surface hover:bg-surface-container-highest transition-all active:scale-95 cursor-pointer shadow-inner"
+          >
+            {theme === 'dark' ? (
+              <Sun size={15} className="text-tertiary" />
+            ) : (
+              <Moon size={15} className="text-primary" />
+            )}
+          </button>
           
           {/* Offline / Online Sync Indicator */}
           <div className={`hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono text-[11px] ${

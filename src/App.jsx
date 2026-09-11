@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
+import { motion } from 'framer-motion';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
 import { Navbar } from './components/Navbar/Navbar';
@@ -8,6 +9,7 @@ import { FilterScreen } from './components/Screens/FilterScreen';
 import { ProgressScreen } from './components/Screens/ProgressScreen';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
 import { AuthScreen } from './components/Auth/AuthScreen';
+import { Hero } from './components/Landing/Hero';
 import { ToastContainer } from './components/UI/Toast';
 import { RotateCw, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
 
@@ -147,9 +149,11 @@ const MainLayout = () => {
               </span>
             </div>
             <div className="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden">
-              <div
-                className="bg-primary-container h-full rounded-full transition-all duration-300"
-                style={{ width: `${progressPercent}%` }}
+              <motion.div
+                className="bg-primary-container h-full rounded-full"
+                initial={{ width: 0 }}
+                animate={{ width: `${progressPercent}%` }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
               />
             </div>
             <p className="text-[11px] text-outline">
@@ -161,14 +165,27 @@ const MainLayout = () => {
         {/* Scrollable Content — all sections stacked vertically */}
         <main className="flex-1 w-full overflow-x-hidden">
 
+          {/* Introductory Hero (only when not signed in) */}
+          {!user && (
+            <Hero onGetStarted={() => scrollToSection('auth')} />
+          )}
+
           {/* Auth section (only when not signed in) */}
           {!user && (
             <section
               id="auth"
               data-section="auth"
-              className="px-4 sm:px-8 py-8 max-w-4xl mx-auto"
+              ref={setSectionRef('auth')}
+              className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
             >
-              <AuthScreen onAuthSuccess={() => scrollToSection('spin')} />
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, amount: 0.2 }}
+                transition={{ duration: 0.5, ease: 'easeOut' }}
+              >
+                <AuthScreen onAuthSuccess={() => scrollToSection('spin')} />
+              </motion.div>
             </section>
           )}
 
@@ -179,8 +196,15 @@ const MainLayout = () => {
             ref={setSectionRef('spin')}
             className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
           >
-            <SectionDivider label="Spin Roulette" icon={RotateCw} />
-            <SpinScreen onNavigateFilter={() => scrollToSection('filter')} />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <SectionDivider label="Spin Roulette" icon={RotateCw} />
+              <SpinScreen onNavigateFilter={() => scrollToSection('filter')} />
+            </motion.div>
           </section>
 
           <HorizontalSeparator />
@@ -192,8 +216,15 @@ const MainLayout = () => {
             ref={setSectionRef('filter')}
             className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
           >
-            <SectionDivider label="Category Filter" icon={SlidersHorizontal} />
-            <FilterScreen onSpinActivePool={() => scrollToSection('spin')} />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <SectionDivider label="Category Filter" icon={SlidersHorizontal} />
+              <FilterScreen onSpinActivePool={() => scrollToSection('spin')} />
+            </motion.div>
           </section>
 
           <HorizontalSeparator />
@@ -205,8 +236,15 @@ const MainLayout = () => {
             ref={setSectionRef('progress')}
             className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
           >
-            <SectionDivider label="Progress & Stats" icon={BarChart3} />
-            <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <SectionDivider label="Progress & Stats" icon={BarChart3} />
+              <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+            </motion.div>
           </section>
 
           <HorizontalSeparator />
@@ -218,8 +256,15 @@ const MainLayout = () => {
             ref={setSectionRef('settings')}
             className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
           >
-            <SectionDivider label="Settings" icon={Settings} />
-            <SettingsScreen />
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <SectionDivider label="Settings" icon={Settings} />
+              <SettingsScreen />
+            </motion.div>
           </section>
 
           {/* Bottom breathing room */}

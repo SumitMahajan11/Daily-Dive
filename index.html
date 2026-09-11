@@ -1,10 +1,33 @@
 <!DOCTYPE html>
-<html class="dark" lang="en">
+<html lang="en">
 <head>
   <meta charset="utf-8">
-  <meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" name="viewport">
+  <script>
+    (function() {
+      try {
+        var t = localStorage.getItem('daily-dive-theme');
+        if (t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+          document.documentElement.classList.add('dark');
+        } else {
+          document.documentElement.classList.remove('dark');
+        }
+      } catch (e) {}
+    })();
+  </script>
+  <meta content="width=device-width, initial-scale=1.0, viewport-fit=cover" name="viewport">
   <title>Daily Dive — Micro-learning on Demand</title>
   <meta name="description" content="A distraction-free, privacy-first single-page roulette application for daily micro-learning across tech, career, mental models, and world ideas.">
+  
+  <!-- Social Share Preview Metadata (Open Graph & Twitter Cards) -->
+  <meta property="og:title" content="Daily Dive — Micro-learning on Demand">
+  <meta property="og:description" content="A distraction-free, privacy-first single-page roulette application for daily micro-learning across tech, career, mental models, and world ideas.">
+  <meta property="og:image" content="/og-image.png">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="/">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Daily Dive — Micro-learning on Demand">
+  <meta name="twitter:description" content="A distraction-free, privacy-first single-page roulette application for daily micro-learning across tech, career, mental models, and world ideas.">
+  <meta name="twitter:image" content="/og-image.png">
   
   <!-- PWA Manifest & App Icons -->
   <link rel="manifest" href="/manifest.json">

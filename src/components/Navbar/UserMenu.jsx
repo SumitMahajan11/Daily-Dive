@@ -44,6 +44,9 @@ export const UserMenu = ({ onNavigateSettings, onNavigateAuth }) => {
       <button
         type="button"
         onClick={handleAvatarClick}
+        aria-label={user ? `User profile menu (${email})` : 'Sign in to your account'}
+        aria-haspopup={user ? 'true' : undefined}
+        aria-expanded={user ? isOpen : undefined}
         className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-on-primary hover:opacity-90 transition-opacity ring-2 ring-primary/20 cursor-pointer shadow-sm"
         title={user ? 'Profile & Account' : 'Sign In'}
       >

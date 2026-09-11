@@ -80,7 +80,7 @@ export const AuthScreen = ({ onAuthSuccess }) => {
   return (
     <div className="flex flex-col items-center justify-center min-h-[70vh] w-full max-w-md mx-auto py-4">
       {/* Auth Card Container */}
-      <div className="w-full bg-surface-container-low rounded-2xl p-6 sm:p-8 border border-[#2d3148] shadow-[0_12px_40px_rgba(0,0,0,0.55)] relative">
+      <div className="w-full bg-surface-container-low rounded-2xl p-6 sm:p-8 border border-outline-variant/40 shadow-xl shadow-black/10 dark:shadow-black/50 relative">
         
         {/* App Logo Badge & Title */}
         <div className="flex flex-col items-center text-center mb-6">
@@ -216,6 +216,7 @@ export const AuthScreen = ({ onAuthSuccess }) => {
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
                 className="absolute right-3 text-outline hover:text-on-surface cursor-pointer"
                 title={showPassword ? 'Hide password' : 'Show password'}
               >

@@ -1,7 +1,10 @@
 import React, { useState } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { CATEGORY_TREE } from '../../lib/roulette';
 import { RotateCcw, ChevronDown, RotateCw } from 'lucide-react';
+import { Toggle } from '../UI/Toggle';
+import { Button } from '../UI/Button';
 
 export const FilterScreen = ({ onSpinActivePool }) => {
   const {
@@ -107,14 +110,14 @@ export const FilterScreen = ({ onSpinActivePool }) => {
             </span>
             <span className="font-mono text-[11px] text-outline hidden sm:inline">(auto-saved)</span>
           </div>
-          <button
-            type="button"
+          <Button
+            variant="ghost"
             onClick={handleResetDefault}
-            className="font-mono text-xs text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 cursor-pointer"
+            className="font-mono text-xs hover:text-primary !p-0 !gap-1"
           >
             <RotateCcw size={14} />
             <span>Reset to default</span>
-          </button>
+          </Button>
         </div>
 
         {/* Master Switch Row */}
@@ -125,15 +128,12 @@ export const FilterScreen = ({ onSpinActivePool }) => {
               {eligibleTopics.length} active topics across categories
             </span>
           </div>
-          <label className="relative inline-flex items-center cursor-pointer">
-            <input
-              type="checkbox"
-              checked={isMasterChecked}
-              onChange={(e) => handleMasterToggle(e.target.checked)}
-              className="sr-only peer"
-            />
-            <div className="w-11 h-6 bg-surface-container-highest peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-primary-container"></div>
-          </label>
+          <Toggle
+            checked={isMasterChecked}
+            onChange={(e) => handleMasterToggle(e.target.checked)}
+            size="lg"
+            aria-label="Master Topic Switch"
+          />
         </div>
       </div>
 
@@ -157,6 +157,8 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                 <div className="flex items-center gap-3 min-w-0">
                   <button
                     type="button"
+                    aria-label={`${isGroupExpanded ? 'Collapse' : 'Expand'} ${groupName} category group`}
+                    aria-expanded={isGroupExpanded}
                     className={`w-6 h-6 flex items-center justify-center text-on-surface-variant transition-transform duration-200 ${
                       isGroupExpanded ? '' : '-rotate-90'
                     }`}
@@ -173,64 +175,67 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                   </div>
                 </div>
 
-                <label
-                  className="relative inline-flex items-center cursor-pointer ml-2"
+                <Toggle
+                  checked={isGroupEnabled}
+                  onChange={(e) => handleGroupToggle(groupName, e.target.checked)}
+                  size="md"
+                  className="ml-2"
                   onClick={(e) => e.stopPropagation()}
-                >
-                  <input
-                    type="checkbox"
-                    checked={isGroupEnabled}
-                    onChange={(e) => handleGroupToggle(groupName, e.target.checked)}
-                    className="sr-only peer"
-                  />
-                  <div className="w-9 h-5 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-4 after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:rounded-full after:h-4 after:w-4 after:transition-all peer-checked:bg-primary-container"></div>
-                </label>
+                  aria-label={`Toggle group ${groupName}`}
+                />
               </div>
 
               {/* Group Categories Body */}
-              {isGroupExpanded && (
-                <div className="flex flex-col px-4 pb-3 space-y-2">
-                  {groupDef.categories.map(cat => {
-                    const key = `${groupName}::${cat.name}`;
-                    const isCatEnabled =
-                      isGroupEnabled &&
-                      enabled[key] !== false &&
-                      enabled[cat.name] !== false;
+              <AnimatePresence initial={false}>
+                {isGroupExpanded && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.25, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="flex flex-col px-4 pb-3 space-y-2">
+                      {groupDef.categories.map(cat => {
+                        const key = `${groupName}::${cat.name}`;
+                        const isCatEnabled =
+                          isGroupEnabled &&
+                          enabled[key] !== false &&
+                          enabled[cat.name] !== false;
 
-                    return (
-                      <div
-                        key={cat.name}
-                        className="flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15"
-                      >
-                        <div className="flex items-center justify-between">
-                          <div className="flex items-center gap-2">
-                            <span className="text-sm font-medium text-on-surface">{cat.label}</span>
-                            <span className="font-mono text-xs text-outline">{cat.topicsCount} topics</span>
+                        return (
+                          <div
+                            key={cat.name}
+                            className="flex flex-col bg-surface-container-low/70 rounded-lg p-3 border border-outline-variant/15"
+                          >
+                            <div className="flex items-center justify-between">
+                              <div className="flex items-center gap-2">
+                                <span className="text-sm font-medium text-on-surface">{cat.label}</span>
+                                <span className="font-mono text-xs text-outline">{cat.topicsCount} topics</span>
+                              </div>
+                              <Toggle
+                                checked={isCatEnabled}
+                                onChange={(e) => handleCategoryToggle(groupName, cat.name, e.target.checked)}
+                                size="sm"
+                                aria-label={`Toggle category ${cat.label}`}
+                              />
+                            </div>
+
+                            {/* Tags Preview */}
+                            <div className="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
+                              {cat.tags.map(tag => (
+                                <span key={tag} className="px-1.5 py-0.5 rounded bg-surface-container">
+                                  {tag}
+                                </span>
+                              ))}
+                            </div>
                           </div>
-                          <label className="relative inline-flex items-center cursor-pointer">
-                            <input
-                              type="checkbox"
-                              checked={isCatEnabled}
-                              onChange={(e) => handleCategoryToggle(groupName, cat.name, e.target.checked)}
-                              className="sr-only peer"
-                            />
-                            <div className="w-8 h-4 bg-surface-container-highest rounded-full peer peer-checked:after:translate-x-3.5 after:content-[''] after:absolute after:top-[1px] after:left-[1px] after:bg-white after:rounded-full after:h-3.5 after:w-3.5 after:transition-all peer-checked:bg-primary-container"></div>
-                          </label>
-                        </div>
-
-                        {/* Tags Preview */}
-                        <div className="flex flex-wrap gap-1.5 mt-2 font-mono text-[11px] text-on-surface-variant">
-                          {cat.tags.map(tag => (
-                            <span key={tag} className="px-1.5 py-0.5 rounded bg-surface-container">
-                              {tag}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              )}
+                        );
+                      })}
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           );
         })}
@@ -238,14 +243,14 @@ export const FilterScreen = ({ onSpinActivePool }) => {
 
       {/* Direct Spin Shortcut Button */}
       <div className="pt-2">
-        <button
-          type="button"
+        <Button
+          variant="primary"
           onClick={onSpinActivePool}
-          className="w-full h-11 bg-primary-container hover:bg-primary-container/90 active:scale-[0.98] text-white rounded-lg font-medium text-sm flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
+          className="w-full h-11 text-sm shadow-sm"
         >
           <RotateCw size={18} />
           <span>Spin Active Pool ({eligibleTopics.length} topics)</span>
-        </button>
+        </Button>
       </div>
 
     </div>
