@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { AudioController } from '../../lib/audio';
 import { CATEGORY_TREE } from '../../lib/roulette';
@@ -22,79 +22,93 @@ import {
 import confetti from 'canvas-confetti';
 import { Button } from '../UI/Button';
 
-// Category metadata: icons, short display labels, and group token styles
+// Category metadata: icons, short display labels, per-subcategory tonal variations, and accent tokens
 const CATEGORY_META = {
+  // ── Tech: 5 distinct tonal variations within the primary family ──
   'ai-ml': {
     icon: Bot,
     shortLabel: 'AI & ML',
-    groupColor: 'text-primary',
-    bgBadge: 'bg-primary/10 text-primary border-primary/20',
+    groupColor: 'text-primary font-semibold',
+    bgBadge: 'bg-primary/15 text-primary border-primary/30',
     borderActive: 'border-primary',
-    glow: 'shadow-primary/30'
+    glow: 'shadow-primary/40',
+    accentBg: 'bg-primary'
   },
   'cloud-infra': {
     icon: Cloud,
     shortLabel: 'Cloud & Infra',
-    groupColor: 'text-primary',
-    bgBadge: 'bg-primary/10 text-primary border-primary/20',
-    borderActive: 'border-primary',
-    glow: 'shadow-primary/30'
+    groupColor: 'text-primary/90',
+    bgBadge: 'bg-primary/10 text-primary/90 border-primary/25',
+    borderActive: 'border-primary/90',
+    glow: 'shadow-primary/30',
+    accentBg: 'bg-primary/90'
   },
   'data-structures-algorithms': {
     icon: Binary,
     shortLabel: 'DSA',
-    groupColor: 'text-primary',
-    bgBadge: 'bg-primary/10 text-primary border-primary/20',
-    borderActive: 'border-primary',
-    glow: 'shadow-primary/30'
+    groupColor: 'text-inverse-primary',
+    bgBadge: 'bg-primary-fixed-dim/25 text-inverse-primary border-inverse-primary/30',
+    borderActive: 'border-inverse-primary',
+    glow: 'shadow-primary/45',
+    accentBg: 'bg-inverse-primary'
   },
   'systems-distributed-computing': {
     icon: Cpu,
     shortLabel: 'Systems',
-    groupColor: 'text-primary',
-    bgBadge: 'bg-primary/10 text-primary border-primary/20',
-    borderActive: 'border-primary',
-    glow: 'shadow-primary/30'
+    groupColor: 'text-primary/75',
+    bgBadge: 'bg-primary/5 text-primary/80 border-primary/20',
+    borderActive: 'border-primary/75',
+    glow: 'shadow-primary/25',
+    accentBg: 'bg-primary/75'
   },
   'web-dev': {
     icon: Globe,
     shortLabel: 'Web Dev',
-    groupColor: 'text-primary',
-    bgBadge: 'bg-primary/10 text-primary border-primary/20',
-    borderActive: 'border-primary',
-    glow: 'shadow-primary/30'
+    groupColor: 'text-primary-fixed-dim font-medium',
+    bgBadge: 'bg-primary-fixed/30 text-primary-fixed-dim border-primary-fixed-dim/40',
+    borderActive: 'border-primary-fixed-dim',
+    glow: 'shadow-primary/35',
+    accentBg: 'bg-primary-fixed-dim'
   },
+
+  // ── Money & Career: Warm Amber Accent ──
   'finance': {
     icon: Wallet,
     shortLabel: 'Finance',
     groupColor: 'text-tertiary',
     bgBadge: 'bg-tertiary/10 text-tertiary border-tertiary/20',
     borderActive: 'border-tertiary',
-    glow: 'shadow-tertiary/30'
+    glow: 'shadow-tertiary/30',
+    accentBg: 'bg-tertiary'
   },
+
+  // ── Mind & Growth: 3 distinct tonal variations within the secondary family ──
   'communication': {
     icon: MessageSquare,
     shortLabel: 'Communication',
-    groupColor: 'text-secondary',
-    bgBadge: 'bg-secondary/10 text-secondary border-secondary/20',
+    groupColor: 'text-secondary font-semibold',
+    bgBadge: 'bg-secondary/15 text-secondary border-secondary/30',
     borderActive: 'border-secondary',
-    glow: 'shadow-secondary/30'
+    glow: 'shadow-secondary/40',
+    accentBg: 'bg-secondary'
   },
   'philosophy-critical-thinking': {
     icon: Compass,
     shortLabel: 'Philosophy',
-    groupColor: 'text-secondary',
-    bgBadge: 'bg-secondary/10 text-secondary border-secondary/20',
-    borderActive: 'border-secondary',
-    glow: 'shadow-secondary/30'
+    groupColor: 'text-secondary-fixed-dim',
+    bgBadge: 'bg-secondary-fixed-dim/20 text-secondary-fixed-dim border-secondary-fixed-dim/30',
+    borderActive: 'border-secondary-fixed-dim',
+    glow: 'shadow-secondary/35',
+    accentBg: 'bg-secondary-fixed-dim'
   },
   'psychology': {
     icon: Brain,
     shortLabel: 'Psychology',
-    groupColor: 'text-secondary',
-    bgBadge: 'bg-secondary/10 text-secondary border-secondary/20',
-    borderActive: 'border-secondary',
-    glow: 'shadow-secondary/30'
+    groupColor: 'text-secondary/75',
+    bgBadge: 'bg-secondary/10 text-secondary/80 border-secondary/20',
+    borderActive: 'border-secondary/75',
+    glow: 'shadow-secondary/25',
+    accentBg: 'bg-secondary/75'
   }
 };
 
@@ -129,6 +143,59 @@ const ITEM_WIDTH = 148;
 const ITEM_GAP = 12;
 const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 160px
 
+// Precision Card with Continuous 3D Depth Transforms
+const ReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarget }) => {
+  const Icon = item.icon;
+  const cardCenter = idx * ITEM_STEP + ITEM_WIDTH / 2;
+
+  // Continuous depth transforms based on real-time distance to center marker
+  const scale = useTransform(motionX, (curX) => {
+    const dist = Math.abs(curX + cardCenter - containerWidth / 2);
+    // At dist = 0 -> 1.0; at dist >= 2 * ITEM_STEP (320px) -> 0.85, clamped
+    const t = Math.min(1, dist / (2 * ITEM_STEP));
+    return 1.0 - (t * 0.15);
+  });
+
+  const opacity = useTransform(motionX, (curX) => {
+    const dist = Math.abs(curX + cardCenter - containerWidth / 2);
+    // At dist = 0 -> 1.0; at dist >= 2.2 * ITEM_STEP -> 0.4, clamped
+    const t = Math.min(1, dist / (2.2 * ITEM_STEP));
+    return 1.0 - (t * 0.6);
+  });
+
+  return (
+    <motion.div
+      style={{ width: `${ITEM_WIDTH}px`, scale, opacity }}
+      className="shrink-0 flex items-center justify-center"
+    >
+      <motion.div
+        animate={isSelectedTarget ? { scale: [1, 1.07, 1] } : { scale: 1 }}
+        transition={{ duration: 0.4, ease: 'easeOut' }}
+        className={`w-full h-22 rounded-xl p-3 flex flex-col justify-between border transition-all duration-200 ${
+          isSelectedTarget
+            ? `bg-surface-container-high ${item.borderActive} ring-2 ring-primary/60 shadow-lg ${item.glow}`
+            : 'bg-surface-container-low/75 border-outline-variant/30 hover:border-outline-variant/60'
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <span className={`text-[10px] font-mono uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded border ${item.bgBadge}`}>
+            {item.groupLabel}
+          </span>
+          <Icon size={16} className={item.groupColor} />
+        </div>
+        <div className="mt-1">
+          <div className="text-xs font-semibold text-on-surface truncate leading-tight">
+            {item.shortLabel}
+          </div>
+          <div className="text-[10px] text-on-surface-variant font-mono truncate">
+            {item.label}
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
+
 export const SpinScreen = ({ onNavigateFilter }) => {
   const {
     topics,
@@ -147,6 +214,9 @@ export const SpinScreen = ({ onNavigateFilter }) => {
   const [isSpinning, setIsSpinning] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [isLanded, setIsLanded] = useState(false);
+  const [showLandingGlow, setShowLandingGlow] = useState(false);
+  const [landedAccentBg, setLandedAccentBg] = useState('bg-primary');
+
   const [reelIndex, setReelIndex] = useState(() => {
     const initCat = currentTopic?.category || currentTopic?.sub;
     const foundIdx = REEL_CATEGORIES.findIndex(c => c.name === initCat);
@@ -154,6 +224,22 @@ export const SpinScreen = ({ onNavigateFilter }) => {
   });
   const [tickerText, setTickerText] = useState(`Ready to spin · ${eligibleTopics?.length ?? 0} topics active in pool`);
   const [tickerActive, setTickerActive] = useState(false);
+
+  // Center translateX formula: centers card at reelIndex under center marker
+  const translateX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
+  const motionX = useMotionValue(translateX);
+
+  // Synchronize motionX with translateX when idle / resized
+  useEffect(() => {
+    if (!isSpinning) {
+      motionX.set(translateX);
+    }
+  }, [translateX, isSpinning, motionX]);
+
+  // Exact card-crossing sound sync tracking refs
+  const lastFiredIndexRef = useRef(-1);
+  const spinStartTimeRef = useRef(0);
+  const isSpinningRef = useRef(false);
 
   // Keep ticker text in sync with active pool size when idle
   useEffect(() => {
@@ -174,9 +260,6 @@ export const SpinScreen = ({ onNavigateFilter }) => {
     if (containerRef.current) ro.observe(containerRef.current);
     return () => ro.disconnect();
   }, []);
-
-  // Center translateX formula: centers card at reelIndex under center marker
-  const translateX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
 
   // Spacebar triggers spin shortcut
   useEffect(() => {
@@ -201,9 +284,14 @@ export const SpinScreen = ({ onNavigateFilter }) => {
       return;
     }
 
+    isSpinningRef.current = true;
+    spinStartTimeRef.current = Date.now();
+    lastFiredIndexRef.current = Math.round(((containerWidth - ITEM_WIDTH) / 2 - translateX) / ITEM_STEP);
+
     setIsSpinning(true);
     setShowResult(false);
     setIsLanded(false);
+    setShowLandingGlow(false);
     setTickerActive(true);
     setTickerText("DECELERATING READOUT...");
 
@@ -225,31 +313,24 @@ export const SpinScreen = ({ onNavigateFilter }) => {
     const targetIndex = reelIndex + travelCards;
     setReelIndex(targetIndex);
 
-    // Play ticking sound with progressive deceleration & rising pitch
-    let tickInterval = 60;
-    let elapsed = 0;
-    const playNextTick = () => {
-      if (elapsed < 2400) {
-        const progress = Math.min(1, elapsed / 2300);
-        AudioController.playTick(progress);
-        elapsed += tickInterval;
-        tickInterval += 18;
-        setTimeout(playNextTick, tickInterval);
-      }
-    };
-    playNextTick();
-
     setTimeout(() => {
+      isSpinningRef.current = false;
       setIsSpinning(false);
       setShowResult(true);
       setIsLanded(true);
       setTickerActive(false);
 
       const groupName = (selected?.group_name || selected?.group || 'TOPIC').toUpperCase();
-      const catLabel = (REEL_CATEGORIES[baseIndex]?.label || selected?.category || '').toUpperCase();
+      const landedCatDef = REEL_CATEGORIES[baseIndex];
+      const catLabel = (landedCatDef?.label || selected?.category || '').toUpperCase();
       setTickerText(`SETTLED — ${groupName} · ${catLabel}`);
 
       AudioController.playLanding();
+
+      // Trigger landing glow burst
+      setLandedAccentBg(landedCatDef?.accentBg || 'bg-primary');
+      setShowLandingGlow(true);
+      setTimeout(() => setShowLandingGlow(false), 700);
 
       // Trigger confetti celebration burst
       try {
@@ -301,6 +382,35 @@ export const SpinScreen = ({ onNavigateFilter }) => {
           ref={containerRef}
           className="relative w-full h-28 sm:h-32 overflow-hidden rounded-2xl bg-surface-container-lowest border border-outline-variant/30 shadow-inner flex items-center select-none"
         >
+          {/* Center Landing Radial Glow Burst */}
+          <AnimatePresence>
+            {showLandingGlow && (
+              <motion.div
+                key="landing-glow"
+                initial={{ opacity: 0.65, scale: 0.5 }}
+                animate={{ opacity: 0, scale: 2.5 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.6, ease: 'easeOut' }}
+                className={`absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-36 h-36 rounded-full blur-2xl pointer-events-none z-10 ${landedAccentBg}`}
+              />
+            )}
+          </AnimatePresence>
+
+          {/* Idle Shimmer: sweeps across strip before first spin */}
+          {!isSpinning && !isLanded && (
+            <motion.div
+              initial={{ x: '-150%' }}
+              animate={{ x: '350%' }}
+              transition={{
+                repeat: Infinity,
+                duration: 3.0,
+                ease: 'easeInOut',
+                repeatDelay: 0.6
+              }}
+              className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/8 dark:via-white/5 to-transparent pointer-events-none z-25 skew-x-[-20deg]"
+            />
+          )}
+
           {/* Top & Bottom Center Marker Needles & Hairline Guideline */}
           <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-between pointer-events-none w-8">
             {/* Top Indicator Pip */}
@@ -333,40 +443,33 @@ export const SpinScreen = ({ onNavigateFilter }) => {
                 ? { duration: 2.6, ease: [0.12, 0.9, 0.2, 1] }
                 : { duration: 0 }
             }
-          >
-            {REEL_STRIP.map((item, idx) => {
-              const Icon = item.icon;
-              const isSelectedTarget = isLanded && (idx === reelIndex);
+            onUpdate={(latest) => {
+              const curX = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x);
+              if (isNaN(curX)) return;
+              motionX.set(curX);
 
-              return (
-                <motion.div
-                  key={`${item.name}-${idx}`}
-                  animate={isSelectedTarget ? { scale: [1, 1.07, 1] } : { scale: 1 }}
-                  transition={{ duration: 0.4, ease: 'easeOut' }}
-                  style={{ width: `${ITEM_WIDTH}px` }}
-                  className={`h-22 shrink-0 rounded-xl p-3 flex flex-col justify-between border transition-all duration-200 ${
-                    isSelectedTarget
-                      ? `bg-surface-container-high ${item.borderActive} ring-2 ring-primary/60 shadow-lg ${item.glow}`
-                      : 'bg-surface-container-low/75 border-outline-variant/30 hover:border-outline-variant/60'
-                  }`}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className={`text-[10px] font-mono uppercase tracking-wider font-semibold px-1.5 py-0.5 rounded border ${item.bgBadge}`}>
-                      {item.groupLabel}
-                    </span>
-                    <Icon size={16} className={item.groupColor} />
-                  </div>
-                  <div className="mt-1">
-                    <div className="text-xs font-semibold text-on-surface truncate leading-tight">
-                      {item.shortLabel}
-                    </div>
-                    <div className="text-[10px] text-on-surface-variant font-mono truncate">
-                      {item.label}
-                    </div>
-                  </div>
-                </motion.div>
-              );
-            })}
+              if (isSpinningRef.current) {
+                // Exact card index whose center is closest to center marker
+                const nearestIdx = Math.round(((containerWidth - ITEM_WIDTH) / 2 - curX) / ITEM_STEP);
+                if (nearestIdx !== lastFiredIndexRef.current) {
+                  lastFiredIndexRef.current = nearestIdx;
+                  const elapsed = Date.now() - spinStartTimeRef.current;
+                  const progress = Math.min(1, Math.max(0, elapsed / 2600));
+                  AudioController.playTick(progress);
+                }
+              }
+            }}
+          >
+            {REEL_STRIP.map((item, idx) => (
+              <ReelCard
+                key={`${item.name}-${idx}`}
+                item={item}
+                idx={idx}
+                motionX={motionX}
+                containerWidth={containerWidth}
+                isSelectedTarget={isLanded && (idx === reelIndex)}
+              />
+            ))}
           </motion.div>
         </div>
 
