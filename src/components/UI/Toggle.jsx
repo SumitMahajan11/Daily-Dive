@@ -51,7 +51,7 @@ export const Toggle = ({
         className="sr-only peer"
       />
       <span
-        className={`rounded-full bg-surface-container-highest peer-focus:outline-none transition-all peer-checked:bg-primary-container after:content-[''] after:absolute after:bg-white after:rounded-full after:shadow-sm after:transition-all ${sizeConfig.track} ${sizeConfig.knob}`}
+        className={`rounded-full bg-surface-container-highest transition-all peer-checked:bg-primary-container peer-focus-visible:ring-2 peer-focus-visible:ring-primary peer-focus-visible:ring-offset-2 peer-focus-visible:ring-offset-surface after:content-[''] after:absolute after:bg-white after:rounded-full after:shadow-sm after:transition-all ${sizeConfig.track} ${sizeConfig.knob}`}
       />
     </label>
   );
