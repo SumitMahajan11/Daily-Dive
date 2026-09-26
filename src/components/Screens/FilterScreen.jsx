@@ -154,17 +154,33 @@ export const FilterScreen = ({ onSpinActivePool }) => {
         patch[g.group] = isTech;
         g.categories.forEach(c => { patch[`${g.group}::${c.name}`] = isTech; });
       });
+      patch['custom'] = true;
     } else if (presetName === 'mind-growth') {
       CATEGORY_TREE.forEach(g => {
         const isMindOrMoney = g.group === 'mind-growth' || g.group === 'money-career';
         patch[g.group] = isMindOrMoney;
         g.categories.forEach(c => { patch[`${g.group}::${c.name}`] = isMindOrMoney; });
       });
+      patch['custom'] = true;
     } else if (presetName === 'world-ideas') {
       CATEGORY_TREE.forEach(g => {
         const isWorld = g.group === 'world-ideas';
         patch[g.group] = isWorld;
         g.categories.forEach(c => { patch[`${g.group}::${c.name}`] = isWorld; });
+      });
+      patch['custom'] = true;
+    } else if (presetName === 'custom') {
+      CATEGORY_TREE.forEach(g => {
+        patch[g.group] = false;
+        g.categories.forEach(c => { patch[`${g.group}::${c.name}`] = false; });
+      });
+      patch['custom'] = true;
+      patch['custom::custom-notes'] = true;
+      (customTopics || []).forEach(ct => {
+        if (ct.category) {
+          patch[`custom::${ct.category}`] = true;
+          patch[ct.category] = true;
+        }
       });
     }
     updateSettings({ enabled_categories: patch });
@@ -283,6 +299,16 @@ export const FilterScreen = ({ onSpinActivePool }) => {
             >
               World &amp; Ideas ({topics.filter(t => (t.group_name || t.group) === 'world-ideas').length})
             </button>
+            {customTopics && customTopics.length > 0 && (
+              <button
+                type="button"
+                onClick={() => applyPreset('custom')}
+                className="px-3 py-1 rounded-lg bg-primary/15 hover:bg-primary/25 border border-primary/40 text-xs font-medium text-primary transition-all cursor-pointer flex items-center gap-1.5"
+              >
+                <Sparkles size={12} />
+                <span>Custom Uploads ({customTopics.length})</span>
+              </button>
+            )}
           </div>
         </div>
 
@@ -490,6 +516,11 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                     let patch = { ...enabled };
                     patch['custom'] = isChecked;
                     patch['custom::custom-notes'] = isChecked;
+                    (customTopics || []).forEach(ct => {
+                      if (ct.category) {
+                        patch[`custom::${ct.category}`] = isChecked;
+                      }
+                    });
                     updateSettings({ enabled_categories: patch });
                   }}
                   size="md"

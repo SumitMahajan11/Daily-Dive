@@ -150,8 +150,7 @@ const CATEGORY_META = {
   }
 };
 
-// Derived categories from CATEGORY_TREE
-const REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
+const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
   groupDef.categories.map(cat => {
     const meta = CATEGORY_META[cat.name] || {
       icon: Cpu,
@@ -171,6 +170,23 @@ const REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
     };
   })
 );
+
+const REEL_CATEGORIES = [
+  ...BASE_REEL_CATEGORIES,
+  {
+    group: 'custom',
+    groupLabel: 'Custom',
+    name: 'custom-notes',
+    label: 'Custom Uploads',
+    icon: Sparkles,
+    shortLabel: 'Custom Uploads',
+    groupColor: 'text-primary font-semibold',
+    bgBadge: 'bg-primary/15 text-primary border-primary/30',
+    borderActive: 'border-primary',
+    glow: 'shadow-primary/40',
+    accentColor: '#e06841'
+  }
+];
 
 // Strip geometry constants
 const REPEAT_COUNT = 14;
@@ -378,7 +394,10 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
 
     // Map selected topic to its category card in REEL_CATEGORIES
     const targetCat = selected?.category || selected?.sub;
-    const foundIdx = REEL_CATEGORIES.findIndex(c => c.name === targetCat);
+    let foundIdx = REEL_CATEGORIES.findIndex(c => c.name === targetCat);
+    if (foundIdx < 0 && selected?.is_custom) {
+      foundIdx = REEL_CATEGORIES.findIndex(c => c.name === 'custom-notes');
+    }
     const baseIndex = foundIdx >= 0 ? foundIdx : 0;
 
     // Advance forward 4 full cycles + offset for satisfying suspense

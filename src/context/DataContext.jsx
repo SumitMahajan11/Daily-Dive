@@ -387,6 +387,13 @@ export const DataProvider = ({ children }) => {
     // Automatically enable categories for the new topics so they are spinnable immediately
     const currentEnabled = userSettings?.enabled_categories || {};
     const patch = { ...currentEnabled };
+
+    // Always ensure the Custom Uploads master/group category is active
+    delete patch['custom'];
+    delete patch['custom::custom-notes'];
+    patch['custom'] = true;
+    patch['custom::custom-notes'] = true;
+
     newTopics.forEach(t => {
       const group = t.group_name || 'custom';
       const cat = t.category || 'custom-notes';
@@ -394,8 +401,11 @@ export const DataProvider = ({ children }) => {
       delete patch[group];
       delete patch[`${group}::${cat}`];
       delete patch[cat];
+      delete patch[`custom::${cat}`];
       patch[group] = true;
       patch[`${group}::${cat}`] = true;
+      patch[cat] = true;
+      patch[`custom::${cat}`] = true;
     });
     updateSettings({ enabled_categories: patch });
 

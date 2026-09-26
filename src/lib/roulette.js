@@ -58,22 +58,38 @@ export function isTopicEligible(topic, enabledCategories = {}) {
   if (!topic) return false;
 
   const isCustom = Boolean(topic.is_custom);
-  const group = isCustom ? 'custom' : (topic.group_name || topic.group || 'custom');
-  const cat = topic.category || topic.sub || 'custom-notes';
 
-  // Group explicitly disabled
-  if (enabledCategories[group] === false) return false;
+  // 1. If user explicitly disabled the "Custom Uploads" group
+  if (isCustom && enabledCategories['custom'] === false) {
+    return false;
+  }
 
-  // Subcategory explicitly disabled
-  const catKey = `${group}::${cat}`;
-  if (enabledCategories[catKey] === false || (!isCustom && enabledCategories[cat] === false)) return false;
+  // 2. Identify taxonomic group and category
+  const group = topic.group_name || topic.group || (isCustom ? 'custom' : null);
+  const cat = topic.category || topic.sub || (isCustom ? 'custom-notes' : null);
+
+  // 3. If taxonomic group is explicitly disabled (e.g. user toggled off "tech")
+  if (group && group !== 'custom' && enabledCategories[group] === false) {
+    return false;
+  }
+
+  // 4. If category or subcategory is explicitly disabled
+  if (group && cat && enabledCategories[`${group}::${cat}`] === false) {
+    return false;
+  }
+  if (cat && enabledCategories[cat] === false) {
+    return false;
+  }
+  if (isCustom && cat && enabledCategories[`custom::${cat}`] === false) {
+    return false;
+  }
 
   return true;
 }
 
 /**
  * Pure weighted random topic selection.
- * Unseen topics receive high base weight (100).
+ * Unseen topics receive high base weight (100 for built-in, 500 for custom).
  * Seen topics receive recency-decayed weight based on days since last seen.
  */
 export function selectWeightedTopic(topics = [], userProgressMap = {}, enabledCategories = {}) {
@@ -88,13 +104,16 @@ export function selectWeightedTopic(topics = [], userProgressMap = {}, enabledCa
 
   const weightedList = eligible.map(topic => {
     const progress = userProgressMap[topic.id];
-    let weight = 100; // Base weight for completely unseen topics
+    const isCustom = Boolean(topic.is_custom);
+    // Fresh unseen custom topics get 10,000 base weight (100x boost over built-in 100)
+    // so they are prioritized right after extraction even in a full 700+ topic pool!
+    let weight = isCustom ? 10000 : 100;
 
     if (progress && progress.times_seen > 0) {
       const lastSeenTime = progress.last_seen ? new Date(progress.last_seen).getTime() : 0;
       const daysSinceSeen = Math.max(0, (now - lastSeenTime) / ONE_DAY_MS);
 
-      const recencyWeight = Math.min(50, 2 + daysSinceSeen * 1.8);
+      const recencyWeight = Math.min(isCustom ? 300 : 50, (isCustom ? 15 : 2) + daysSinceSeen * (isCustom ? 8 : 1.8));
       const frequencyPenalty = 1 + Math.log2(progress.times_seen + 1) * 0.4;
       weight = Math.max(1, Math.round(recencyWeight / frequencyPenalty));
     }
