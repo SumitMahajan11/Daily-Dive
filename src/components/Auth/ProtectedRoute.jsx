@@ -13,7 +13,7 @@ export const ProtectedRoute = ({ children, fallback }) => {
           <div className="w-12 h-12 rounded-full border-2 border-primary-container/30 border-t-primary animate-spin"></div>
           <Disc size={20} className="text-primary absolute" />
         </div>
-        <p className="font-mono text-xs text-on-surface-variant tracking-tight">Verifying Supabase session...</p>
+        <p className="font-mono text-xs text-on-surface-variant tracking-tight">Loading session...</p>
       </div>
     );
   }

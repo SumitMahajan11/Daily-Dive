@@ -50,6 +50,28 @@ export const CATEGORY_TREE = [
 ];
 
 /**
+ * Evaluates whether a topic is eligible / active given the category filter map.
+ * Topics are enabled by default (opt-out semantics), so they remain active unless
+ * their group or subcategory is explicitly toggled false.
+ */
+export function isTopicEligible(topic, enabledCategories = {}) {
+  if (!topic) return false;
+
+  const isCustom = Boolean(topic.is_custom);
+  const group = isCustom ? 'custom' : (topic.group_name || topic.group || 'custom');
+  const cat = topic.category || topic.sub || 'custom-notes';
+
+  // Group explicitly disabled
+  if (enabledCategories[group] === false) return false;
+
+  // Subcategory explicitly disabled
+  const catKey = `${group}::${cat}`;
+  if (enabledCategories[catKey] === false || (!isCustom && enabledCategories[cat] === false)) return false;
+
+  return true;
+}
+
+/**
  * Pure weighted random topic selection.
  * Unseen topics receive high base weight (100).
  * Seen topics receive recency-decayed weight based on days since last seen.
@@ -57,14 +79,7 @@ export const CATEGORY_TREE = [
 export function selectWeightedTopic(topics = [], userProgressMap = {}, enabledCategories = {}) {
   if (!topics || topics.length === 0) return null;
 
-  const eligible = topics.filter(t => {
-    const group = t.group_name || t.group;
-    const cat = t.category || t.sub;
-
-    if (enabledCategories[group] === false) return false;
-    if (enabledCategories[`${group}::${cat}`] === false || enabledCategories[cat] === false) return false;
-    return true;
-  });
+  const eligible = topics.filter(t => isTopicEligible(t, enabledCategories));
 
   if (eligible.length === 0) return null;
 

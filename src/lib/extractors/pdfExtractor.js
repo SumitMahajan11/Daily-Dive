@@ -74,12 +74,26 @@ export async function extractFromPdf(file, onProgress = () => {}) {
       const page = await pdfDocument.getPage(i);
       const textContent = await page.getTextContent();
       
-      const pageText = textContent.items
-        .map(item => item.str)
-        .join(' ')
-        .replace(/\s+/g, ' ')
-        .trim();
+      let lines = [];
+      let currentLine = '';
+      let lastY = null;
 
+      for (const item of textContent.items) {
+        if (!item.str && !item.hasEOL) continue;
+        const currentY = item.transform ? Math.round(item.transform[5]) : null;
+        const isNewLine = item.hasEOL || (lastY !== null && currentY !== null && Math.abs(currentY - lastY) > 4);
+
+        if (isNewLine) {
+          if (currentLine.trim()) lines.push(currentLine.trim());
+          currentLine = item.str || '';
+        } else {
+          currentLine += (currentLine ? ' ' : '') + (item.str || '');
+        }
+        lastY = currentY;
+      }
+      if (currentLine.trim()) lines.push(currentLine.trim());
+
+      const pageText = lines.join('\n');
       rawPages.push(pageText);
       totalExtractedLength += pageText.length;
     } catch (pageErr) {

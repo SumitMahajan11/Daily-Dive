@@ -67,16 +67,6 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
             )}
           </button>
           
-          {/* Offline / Online Sync Indicator */}
-          <div className={`hidden sm:inline-flex items-center gap-1 px-2 py-0.5 rounded font-mono text-[11px] ${
-            isOnline 
-              ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400' 
-              : 'bg-tertiary-container/10 border border-tertiary/30 text-tertiary'
-          }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-tertiary'}`}></span>
-            <span>{isOnline ? (user ? 'Supabase Sync' : 'Online') : 'Offline Mode'}</span>
-          </div>
-
           {/* User Profile Avatar Dropdown */}
           <UserMenu 
             onNavigateSettings={() => onNavigateTab('settings')}

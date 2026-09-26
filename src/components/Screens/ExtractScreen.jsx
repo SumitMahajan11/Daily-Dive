@@ -52,6 +52,83 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
   const [useByok, setUseByok] = useState(false);
   const [showByokSettings, setShowByokSettings] = useState(false);
 
+  // Manual Add Topic State
+  const [showManualForm, setShowManualForm] = useState(false);
+  const [manualTitle, setManualTitle] = useState('');
+  const [manualCategory, setManualCategory] = useState('cloud-infra');
+  const [manualCustomCategory, setManualCustomCategory] = useState('');
+  const [manualDescription, setManualDescription] = useState('');
+  const [manualTags, setManualTags] = useState('');
+
+  const CATEGORY_OPTIONS = [
+    { value: 'cloud-infra', label: 'Cloud & Infrastructure (Tech)', group: 'tech' },
+    { value: 'systems-distributed-computing', label: 'Systems & Distributed Computing (Tech)', group: 'tech' },
+    { value: 'ai-ml', label: 'AI & Machine Learning (Tech)', group: 'tech' },
+    { value: 'data-structures-algorithms', label: 'Data Structures & Algorithms (Tech)', group: 'tech' },
+    { value: 'web-dev', label: 'Web Architecture & Performance (Tech)', group: 'tech' },
+    { value: 'finance', label: 'Finance & Wealth Strategy (Money & Career)', group: 'money-career' },
+    { value: 'career-strategy', label: 'Career Strategy & Leadership (Money & Career)', group: 'money-career' },
+    { value: 'communication', label: 'Communication & Rhetoric (Mind & Growth)', group: 'mind-growth' },
+    { value: 'philosophy-critical-thinking', label: 'Philosophy & Critical Thinking (Mind & Growth)', group: 'mind-growth' },
+    { value: 'psychology', label: 'Psychology & Decision Making (Mind & Growth)', group: 'mind-growth' },
+    { value: 'science-nature', label: 'Science & Natural World (World & Ideas)', group: 'world-ideas' },
+    { value: 'history-innovation', label: 'History of Innovation (World & Ideas)', group: 'world-ideas' },
+    { value: 'custom', label: 'Custom Category...', group: 'custom' },
+  ];
+
+  const handleCreateManualTopic = (e) => {
+    e?.preventDefault();
+    if (!manualTitle.trim()) {
+      showToast('Please enter a topic title', 'warning');
+      return;
+    }
+    if (!manualDescription.trim()) {
+      showToast('Please enter a brief topic description', 'warning');
+      return;
+    }
+
+    const selectedOption = CATEGORY_OPTIONS.find(c => c.value === manualCategory);
+    const finalCategory = manualCategory === 'custom' 
+      ? (manualCustomCategory.trim() || 'custom-notes') 
+      : manualCategory;
+    const finalGroup = selectedOption ? selectedOption.group : 'custom';
+
+    const tagsList = manualTags.trim() 
+      ? manualTags.split(',').map(t => t.trim()).filter(Boolean) 
+      : ['Custom', finalCategory];
+
+    const newTopic = {
+      id: `manual_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      title: manualTitle.trim(),
+      category: finalCategory,
+      group_name: finalGroup,
+      description: manualDescription.trim(),
+      source: 'Manual Entry',
+      tags: tagsList,
+      difficulty: 'intermediate',
+      read_time_minutes: 3,
+      is_custom: true
+    };
+
+    if (processingState === 'review') {
+      // Append to candidate list and auto-select
+      setCandidateTopics(prev => [newTopic, ...prev]);
+      setSelectedTopicIds(prev => new Set([newTopic.id, ...prev]));
+      showToast(`Added "${newTopic.title}" to review list`, 'success');
+    } else {
+      // Direct add to personal spin pool
+      addCustomTopics([newTopic]);
+      showToast(`Added "${newTopic.title}" directly to your spin pool!`, 'success');
+    }
+
+    // Reset form
+    setManualTitle('');
+    setManualDescription('');
+    setManualTags('');
+    setManualCustomCategory('');
+    setShowManualForm(false);
+  };
+
   const fileInputRef = useRef(null);
 
   // Save BYOK Key
@@ -383,6 +460,172 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
               </span>
             </div>
           </div>
+
+          {/* Local NLP Quality Notice & BYOK Recommendation */}
+          <div className="flex items-start gap-3 p-4 rounded-2xl bg-surface-container-low border border-outline-variant/30 text-xs text-on-surface-variant">
+            <Sparkles size={16} className="text-amber-500 shrink-0 mt-0.5" />
+            <div className="space-y-1">
+              <p className="font-semibold text-on-surface">
+                Local NLP Engine Notice:
+              </p>
+              <p className="leading-relaxed">
+                Topic synthesis runs 100% on-device inside your browser using heuristic phrase extraction. For dense research papers or unstructured slides, extraction results improve significantly with your own free Gemini API key configured above.
+              </p>
+            </div>
+          </div>
+
+          {/* Manual Add Topic Section */}
+          <div className="p-5 sm:p-6 rounded-2xl bg-surface-container-low border border-outline-variant/30 space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2.5">
+                <div className="w-8 h-8 rounded-lg bg-primary/10 text-primary flex items-center justify-center">
+                  <Plus size={18} />
+                </div>
+                <div>
+                  <h3 className="font-display text-sm font-bold text-on-surface">
+                    Manually Add a Topic
+                  </h3>
+                  <p className="text-xs text-on-surface-variant">
+                    Add custom study cards directly into your roulette spin pool without uploading a file.
+                  </p>
+                </div>
+              </div>
+
+              <Button
+                variant={showManualForm ? "ghost" : "secondary"}
+                size="sm"
+                onClick={() => setShowManualForm(!showManualForm)}
+                className="flex items-center gap-1.5"
+              >
+                {showManualForm ? (
+                  <>
+                    <X size={14} />
+                    <span>Cancel</span>
+                  </>
+                ) : (
+                  <>
+                    <Plus size={14} />
+                    <span>Add Manually</span>
+                  </>
+                )}
+              </Button>
+            </div>
+
+            {/* Expandable Manual Topic Form */}
+            <AnimatePresence>
+              {showManualForm && (
+                <motion.form
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  onSubmit={handleCreateManualTopic}
+                  className="space-y-3 pt-3 border-t border-outline-variant/20 overflow-hidden"
+                >
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                        Topic Title *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g., Paxos Consensus Protocol"
+                        value={manualTitle}
+                        onChange={(e) => setManualTitle(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                      />
+                    </div>
+
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                        Category *
+                      </label>
+                      <select
+                        value={manualCategory}
+                        onChange={(e) => setManualCategory(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                      >
+                        {CATEGORY_OPTIONS.map((opt) => (
+                          <option key={opt.value} value={opt.value}>
+                            {opt.label}
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+
+                  {manualCategory === 'custom' && (
+                    <div className="space-y-1">
+                      <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                        Custom Category Name *
+                      </label>
+                      <input
+                        type="text"
+                        required
+                        placeholder="e.g., Distributed Databases"
+                        value={manualCustomCategory}
+                        onChange={(e) => setManualCustomCategory(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                      />
+                    </div>
+                  )}
+
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-between">
+                      <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                        Card Description (1–2 sentences) *
+                      </label>
+                      <span className="text-[10px] font-mono text-outline">
+                        {manualDescription.length} / 165 chars recommended
+                      </span>
+                    </div>
+                    <textarea
+                      required
+                      rows={2}
+                      maxLength={280}
+                      placeholder="e.g., A distributed consensus algorithm that ensures multiple nodes agree on a single data value even in the presence of node failures and network delays."
+                      value={manualDescription}
+                      onChange={(e) => setManualDescription(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-xs leading-relaxed focus:outline-none focus:border-primary resize-none"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                      Tags (optional, comma-separated)
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., consensus, replication, fault-tolerance"
+                      value={manualTags}
+                      onChange={(e) => setManualTags(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-xs focus:outline-none focus:border-primary"
+                    />
+                  </div>
+
+                  <div className="flex justify-end gap-2 pt-2">
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => setShowManualForm(false)}
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      type="submit"
+                      variant="primary"
+                      size="sm"
+                      className="flex items-center gap-1.5"
+                    >
+                      <Plus size={14} />
+                      <span>Add to Spin Pool</span>
+                    </Button>
+                  </div>
+                </motion.form>
+              )}
+            </AnimatePresence>
+          </div>
         </div>
       )}
 
@@ -470,6 +713,15 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
             </div>
 
             <div className="flex items-center gap-2 self-end sm:self-auto">
+              <Button
+                variant="secondary"
+                size="sm"
+                onClick={() => setShowManualForm(!showManualForm)}
+                className="flex items-center gap-1.5 text-xs"
+              >
+                <Plus size={14} />
+                <span>Add Missing Topic</span>
+              </Button>
               <button
                 type="button"
                 onClick={handleSelectAll}
@@ -487,6 +739,117 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
               </button>
             </div>
           </div>
+
+          {/* Optional Inline Manual Topic Add in Review */}
+          <AnimatePresence>
+            {showManualForm && (
+              <motion.form
+                initial={{ height: 0, opacity: 0 }}
+                animate={{ height: 'auto', opacity: 1 }}
+                exit={{ height: 0, opacity: 0 }}
+                onSubmit={handleCreateManualTopic}
+                className="p-5 rounded-2xl bg-surface-container-low border border-primary/30 space-y-3 overflow-hidden shadow-sm"
+              >
+                <div className="flex items-center justify-between pb-1">
+                  <h4 className="font-display text-sm font-bold text-on-surface flex items-center gap-1.5">
+                    <Plus size={16} className="text-primary" />
+                    Add a Topic Missed by the Extractor
+                  </h4>
+                  <button
+                    type="button"
+                    onClick={() => setShowManualForm(false)}
+                    className="text-outline hover:text-on-surface p-1 cursor-pointer"
+                  >
+                    <X size={15} />
+                  </button>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                      Topic Title *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g., Multi-Tenancy Isolation Patterns"
+                      value={manualTitle}
+                      onChange={(e) => setManualTitle(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                    />
+                  </div>
+
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                      Category *
+                    </label>
+                    <select
+                      value={manualCategory}
+                      onChange={(e) => setManualCategory(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                    >
+                      {CATEGORY_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                </div>
+
+                {manualCategory === 'custom' && (
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                      Custom Category Name *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g., Cloud Architecture"
+                      value={manualCustomCategory}
+                      onChange={(e) => setManualCustomCategory(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                    />
+                  </div>
+                )}
+
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                    Description *
+                  </label>
+                  <textarea
+                    required
+                    rows={2}
+                    maxLength={280}
+                    placeholder="Short 1–2 sentence explanation of the concept..."
+                    value={manualDescription}
+                    onChange={(e) => setManualDescription(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-xs leading-relaxed focus:outline-none focus:border-primary resize-none"
+                  />
+                </div>
+
+                <div className="flex justify-end gap-2 pt-1">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => setShowManualForm(false)}
+                  >
+                    Cancel
+                  </Button>
+                  <Button
+                    type="submit"
+                    variant="primary"
+                    size="sm"
+                    className="flex items-center gap-1.5"
+                  >
+                    <Plus size={14} />
+                    <span>Add to Candidate List</span>
+                  </Button>
+                </div>
+              </motion.form>
+            )}
+          </AnimatePresence>
 
           {/* Candidate Topic Cards */}
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

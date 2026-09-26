@@ -4,6 +4,7 @@ import { DataService } from '../lib/dataService';
 import {
   INITIAL_TOPICS,
   selectWeightedTopic,
+  isTopicEligible,
   calculateUpdatedStreak,
   getEffectiveStreak,
   appendHistoryEntry
@@ -185,8 +186,7 @@ export const DataProvider = ({ children }) => {
       const initialSelected = selectWeightedTopic(effectiveTopics, progress || {}, settings?.enabled_categories || {});
       setCurrentTopic(initialSelected || effectiveTopics[0]);
     } catch (err) {
-      console.error('Error loading data:', err);
-      showToast('Could not load data from Supabase', 'error');
+      console.warn('Local topic data loaded as default fallback:', err);
     } finally {
       setLoadingData(false);
     }
@@ -199,22 +199,7 @@ export const DataProvider = ({ children }) => {
 
   // Filtered / eligible topics
   const eligibleTopics = useMemo(() => {
-    const ec = userSettings.enabled_categories;
-    const hasExplicitSettings = Object.keys(ec).length > 0;
-
-    // If no settings have been explicitly saved yet → all topics are eligible (default open state)
-    if (!hasExplicitSettings) return topics;
-
-    return topics.filter(t => {
-      const group = t.group_name || t.group;
-      const cat = t.category || t.sub;
-      // Group must be explicitly true (not just "not false")
-      if (ec[group] !== true) return false;
-      // Category must also be explicitly true
-      const catKey = `${group}::${cat}`;
-      if (ec[catKey] !== true && ec[cat] !== true) return false;
-      return true;
-    });
+    return topics.filter(t => isTopicEligible(t, userSettings.enabled_categories));
   }, [topics, userSettings.enabled_categories]);
 
   // Pure weighted selection call & history/streak tracking
@@ -338,50 +323,50 @@ export const DataProvider = ({ children }) => {
       try {
         await DataService.updateUserSettings(user.id, patch);
       } catch (err) {
-        console.error('Failed to sync settings:', err);
-        showToast("Failed to sync settings with cloud", 'error');
+        console.warn('Could not sync user settings with server:', err);
       }
     }
-  }, [isOnline, userSettings, user, showToast]);
+  }, [isOnline, userSettings, user]);
 
   // Reset all data
   const resetAllData = useCallback(async () => {
-    if (!isOnline) {
-      showToast("You're offline — reconnect to reset cloud data", 'warning');
-      return;
-    }
-
     if (user) {
-      await DataService.resetUserData(user.id);
+      try {
+        await DataService.resetUserData(user.id);
+      } catch (err) {
+        console.warn('Could not reset server data:', err);
+      }
     }
 
     if (typeof window !== 'undefined') {
       try {
         localStorage.removeItem('daily_dive_guest_settings');
+        localStorage.removeItem('daily_dive_guest_progress');
+        localStorage.removeItem('daily_dive_guest_streaks');
+        localStorage.removeItem('daily_dive_history');
       } catch (e) {}
     }
 
     setUserProgressMap({});
     setUserStreaks({ current_streak: 0, longest_streak: 0, last_active_date: null });
     showToast('All progress and streak records have been reset.', 'success');
-  }, [isOnline, user, showToast]);
+  }, [user, showToast]);
 
   // Import JSON backup
   const importDataBackup = useCallback(async (parsedBackup) => {
-    if (!isOnline) {
-      showToast("You're offline — reconnect to restore cloud data", 'warning');
-      return;
-    }
-
     if (parsedBackup.user_progress) setUserProgressMap(parsedBackup.user_progress);
     if (parsedBackup.user_streaks) setUserStreaks(parsedBackup.user_streaks);
     if (parsedBackup.user_settings) setUserSettings(prev => ({ ...prev, ...parsedBackup.user_settings }));
 
     if (user) {
-      await DataService.importUserData(user.id, parsedBackup);
+      try {
+        await DataService.importUserData(user.id, parsedBackup);
+      } catch (err) {
+        console.warn('Could not sync backup to server:', err);
+      }
     }
-    showToast('Backup imported and synced successfully', 'success');
-  }, [isOnline, user, showToast]);
+    showToast('Backup imported successfully', 'success');
+  }, [user, showToast]);
 
   // Add newly extracted custom topics
   const addCustomTopics = useCallback((newTopics) => {
@@ -405,9 +390,12 @@ export const DataProvider = ({ children }) => {
     newTopics.forEach(t => {
       const group = t.group_name || 'custom';
       const cat = t.category || 'custom-notes';
+      // Ensure these categories are active (not false)
+      delete patch[group];
+      delete patch[`${group}::${cat}`];
+      delete patch[cat];
       patch[group] = true;
       patch[`${group}::${cat}`] = true;
-      patch[cat] = true;
     });
     updateSettings({ enabled_categories: patch });
 

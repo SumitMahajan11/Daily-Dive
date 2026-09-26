@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
-import { CATEGORY_TREE } from '../../lib/roulette';
+import { CATEGORY_TREE, isTopicEligible } from '../../lib/roulette';
 import {
   RotateCcw,
   ChevronDown,
@@ -33,7 +33,8 @@ const GROUP_ICONS = {
   'tech': Terminal,
   'money-career': TrendingUp,
   'mind-growth': Compass,
-  'world-ideas': Globe
+  'world-ideas': Globe,
+  'custom': Sparkles
 };
 
 const CATEGORY_ICONS = {
@@ -48,12 +49,14 @@ const CATEGORY_ICONS = {
   'philosophy-critical-thinking': Compass,
   'psychology': Brain,
   'science-nature': Atom,
-  'history-innovation': Landmark
+  'history-innovation': Landmark,
+  'custom-notes': Sparkles
 };
 
 export const FilterScreen = ({ onSpinActivePool }) => {
   const {
     topics,
+    customTopics,
     eligibleTopics,
     userSettings,
     updateSettings,
@@ -68,7 +71,8 @@ export const FilterScreen = ({ onSpinActivePool }) => {
     tech: true,
     'money-career': true,
     'mind-growth': true,
-    'world-ideas': true
+    'world-ideas': true,
+    custom: true
   });
 
   const toggleGroupAccordion = (group) => {
@@ -129,6 +133,8 @@ export const FilterScreen = ({ onSpinActivePool }) => {
         patch[`${groupDef.group}::${cat.name}`] = isChecked;
       });
     });
+    patch['custom'] = isChecked;
+    patch['custom::custom-notes'] = isChecked;
     updateSettings({ enabled_categories: patch });
   };
 
@@ -140,6 +146,8 @@ export const FilterScreen = ({ onSpinActivePool }) => {
         patch[g.group] = true;
         g.categories.forEach(c => { patch[`${g.group}::${c.name}`] = true; });
       });
+      patch['custom'] = true;
+      patch['custom::custom-notes'] = true;
     } else if (presetName === 'tech') {
       CATEGORY_TREE.forEach(g => {
         const isTech = g.group === 'tech';
@@ -436,6 +444,95 @@ export const FilterScreen = ({ onSpinActivePool }) => {
               </div>
             );
           })}
+
+          {/* Custom Uploads Accordion Card if user has custom topics */}
+          {customTopics && customTopics.length > 0 && (
+            <div className="journal-card rounded-2xl overflow-hidden transition-all duration-200">
+              <div
+                onClick={() => toggleGroupAccordion('custom')}
+                className="flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-surface-container-high/40 transition-colors select-none"
+              >
+                <div className="flex items-center gap-3 min-w-0">
+                  <button
+                    type="button"
+                    aria-label={`${expandedGroups['custom'] ? 'Collapse' : 'Expand'} Custom Uploads`}
+                    aria-expanded={expandedGroups['custom']}
+                    className={`w-7 h-7 rounded-lg bg-surface-container flex items-center justify-center text-on-surface-variant transition-transform duration-200 ${
+                      expandedGroups['custom'] ? '' : '-rotate-90'
+                    }`}
+                  >
+                    <ChevronDown size={17} />
+                  </button>
+
+                  <div className="w-8 h-8 rounded-xl flex items-center justify-center bg-primary/10 text-primary border border-primary/20 shrink-0">
+                    <Sparkles size={17} />
+                  </div>
+
+                  <div className="flex flex-col truncate">
+                    <div className="flex items-center gap-2">
+                      <span className="font-display font-bold text-base text-on-surface truncate">
+                        Custom Uploads
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[10px] font-mono font-medium">
+                        {customTopics.length} topic{customTopics.length > 1 ? 's' : ''}
+                      </span>
+                    </div>
+                    <span className="text-[11px] font-mono text-outline">
+                      {customTopics.filter(t => isTopicEligible(t, enabled)).length} active in pool
+                    </span>
+                  </div>
+                </div>
+
+                <Toggle
+                  checked={enabled['custom'] !== false}
+                  onChange={(e) => {
+                    const isChecked = e.target.checked;
+                    let patch = { ...enabled };
+                    patch['custom'] = isChecked;
+                    patch['custom::custom-notes'] = isChecked;
+                    updateSettings({ enabled_categories: patch });
+                  }}
+                  size="md"
+                  className="ml-3"
+                  onClick={(e) => e.stopPropagation()}
+                  aria-label="Toggle Custom Uploads group"
+                />
+              </div>
+
+              {/* Subcategories / Topics preview */}
+              <AnimatePresence initial={false}>
+                {expandedGroups['custom'] && (
+                  <motion.div
+                    initial={{ height: 0, opacity: 0 }}
+                    animate={{ height: 'auto', opacity: 1 }}
+                    exit={{ height: 0, opacity: 0 }}
+                    transition={{ duration: 0.28, ease: 'easeInOut' }}
+                    className="overflow-hidden"
+                  >
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-1 space-y-2 border-t border-outline-variant/15">
+                      <div className="flex items-center justify-between text-xs text-on-surface-variant py-1 font-mono">
+                        <span>Uploaded / Extracted Study Topics:</span>
+                        <span className="text-primary font-semibold">
+                          {customTopics.filter(t => isTopicEligible(t, enabled)).length} of {customTopics.length} ready
+                        </span>
+                      </div>
+                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                        {customTopics.slice(0, 6).map(ct => (
+                          <div
+                            key={ct.id}
+                            className="p-2.5 rounded-lg bg-surface-container/60 border border-outline-variant/20 text-xs truncate"
+                          >
+                            <span className="font-semibold text-on-surface block truncate">{ct.title}</span>
+                            <span className="text-[10px] text-outline font-mono block truncate mt-0.5">{ct.category || 'custom'} · {ct.source || 'uploaded'}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
+          )}
         </div>
       )}
 
