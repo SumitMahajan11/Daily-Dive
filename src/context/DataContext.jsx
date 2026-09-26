@@ -7,7 +7,8 @@ import {
   isTopicEligible,
   calculateUpdatedStreak,
   getEffectiveStreak,
-  appendHistoryEntry
+  appendHistoryEntry,
+  STARTER_ENABLED_CATEGORIES
 } from '../lib/roulette';
 import { AudioController } from '../lib/audio';
 import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications';
@@ -59,7 +60,7 @@ export const DataProvider = ({ children }) => {
       } catch (e) {}
     }
     return {
-      enabled_categories: {},
+      enabled_categories: STARTER_ENABLED_CATEGORIES,
       reminder_time: '09:00 AM',
       notifications_enabled: false,
       sound_enabled: true,
@@ -132,7 +133,7 @@ export const DataProvider = ({ children }) => {
         
         let guestProgress = {};
         let guestStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
-        let guestCategories = {};
+        let guestCategories = STARTER_ENABLED_CATEGORIES;
         let guestHistory = [];
         try {
           const savedProgress = localStorage.getItem('daily_dive_guest_progress');
@@ -417,6 +418,21 @@ export const DataProvider = ({ children }) => {
     showToast(`Added ${newTopics.length} topic${newTopics.length > 1 ? 's' : ''} to your spin pool!`, 'success');
   }, [userSettings, updateSettings, showToast]);
 
+  // Update an existing custom topic
+  const updateCustomTopic = useCallback((topicId, updatedFields) => {
+    setCustomTopics(prev => {
+      const updated = prev.map(t => t.id === topicId ? { ...t, ...updatedFields } : t);
+      try {
+        localStorage.setItem('daily_dive_custom_topics', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    setTopics(prev => prev.map(t => t.id === topicId ? { ...t, ...updatedFields } : t));
+    setCurrentTopic(prev => prev?.id === topicId ? { ...prev, ...updatedFields } : prev);
+    showToast('Topic updated successfully', 'success');
+  }, [showToast]);
+
   // Remove a custom topic
   const deleteCustomTopic = useCallback((topicId) => {
     setCustomTopics(prev => {
@@ -429,6 +445,16 @@ export const DataProvider = ({ children }) => {
 
     setTopics(prev => prev.filter(t => t.id !== topicId));
     showToast('Topic removed from your pool', 'info');
+  }, [showToast]);
+
+  // Clear all custom topics
+  const clearCustomTopics = useCallback(() => {
+    setCustomTopics([]);
+    try {
+      localStorage.removeItem('daily_dive_custom_topics');
+    } catch (e) {}
+    setTopics(prev => prev.filter(t => !t.is_custom));
+    showToast('All custom topics removed from your pool', 'info');
   }, [showToast]);
 
   return (
@@ -455,7 +481,9 @@ export const DataProvider = ({ children }) => {
       resetAllData,
       importDataBackup,
       addCustomTopics,
-      deleteCustomTopic
+      deleteCustomTopic,
+      updateCustomTopic,
+      clearCustomTopics
     }}>
       {children}
     </DataContext.Provider>

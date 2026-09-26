@@ -49,6 +49,46 @@ export const CATEGORY_TREE = [
   }
 ];
 
+export const STARTER_ENABLED_CATEGORIES = {
+  // Core starter focus: AI & Web + Psychology & Philosophy (~241 topics)
+  tech: true,
+  'tech::ai-ml': true,
+  'tech::web-dev': true,
+  'tech::cloud-infra': false,
+  'tech::data-structures-algorithms': false,
+  'tech::systems-distributed-computing': false,
+  'ai-ml': true,
+  'web-dev': true,
+  'cloud-infra': false,
+  'data-structures-algorithms': false,
+  'systems-distributed-computing': false,
+
+  'mind-growth': true,
+  'mind-growth::psychology': true,
+  'mind-growth::philosophy-critical-thinking': true,
+  'mind-growth::communication': false,
+  'psychology': true,
+  'philosophy-critical-thinking': true,
+  'communication': false,
+
+  // Off by default to avoid overwhelming new users on first launch
+  'money-career': false,
+  'money-career::finance': false,
+  'money-career::career-strategy': false,
+  'finance': false,
+  'career-strategy': false,
+
+  'world-ideas': false,
+  'world-ideas::science-nature': false,
+  'world-ideas::history-innovation': false,
+  'science-nature': false,
+  'history-innovation': false,
+
+  // Custom topics always eligible
+  custom: true,
+  'custom::custom-notes': true
+};
+
 /**
  * Evaluates whether a topic is eligible / active given the category filter map.
  * Topics are enabled by default (opt-out semantics), so they remain active unless

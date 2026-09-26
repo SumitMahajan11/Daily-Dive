@@ -146,12 +146,12 @@ const MainLayout = () => {
           {/* Sidebar Footer Card */}
           <div className="mt-auto p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/30 space-y-2">
             <div className="flex items-center justify-between text-xs font-mono text-on-surface-variant">
-              <span>Active Topics:</span>
+              <span>Active Pool:</span>
               {loadingData ? (
                 <Skeleton className="h-3.5 w-14 rounded" />
               ) : (
                 <span className="text-primary font-semibold">
-                  {eligibleTopics.length} / {topics.length}
+                  {eligibleTopics.length} topics
                 </span>
               )}
             </div>
@@ -222,7 +222,10 @@ const MainLayout = () => {
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <SectionDivider label="Extract Topics from Uploads" icon={UploadCloud} />
-              <ExtractScreen onNavigateSpin={() => scrollToSection('spin')} />
+              <ExtractScreen
+                onNavigateSpin={() => scrollToSection('spin')}
+                onNavigateFilter={() => scrollToSection('filter')}
+              />
             </motion.div>
           </section>
 

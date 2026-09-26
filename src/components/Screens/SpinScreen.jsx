@@ -25,7 +25,9 @@ import {
   Target,
   Briefcase,
   Atom,
-  Landmark
+  Landmark,
+  X,
+  Sliders
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from '../UI/Button';
@@ -290,12 +292,43 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     currentTopic,
     userProgressMap,
     userSettings,
+    updateSettings,
     spinNextTopic,
     markCurrentTopicLearned,
     isMarkingLearned,
     showToast,
     loadingData
   } = useData();
+
+  const [showFirstRunPicker, setShowFirstRunPicker] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return !localStorage.getItem('daily_dive_first_run_dismissed');
+  });
+
+  const toggleBroadGroup = (groupKey) => {
+    const groupDef = CATEGORY_TREE.find(g => g.group === groupKey);
+    if (!groupDef) return;
+    const currentCategories = { ...(userSettings?.enabled_categories || {}) };
+    
+    // Check if group is currently active
+    const isCurrentlyOn = currentCategories[groupKey] !== false;
+    const nextState = !isCurrentlyOn;
+    
+    currentCategories[groupKey] = nextState;
+    groupDef.categories.forEach(cat => {
+      currentCategories[`${groupKey}::${cat.name}`] = nextState;
+      currentCategories[cat.name] = nextState;
+    });
+
+    updateSettings({ enabled_categories: currentCategories });
+  };
+
+  const handleDismissFirstRun = () => {
+    setShowFirstRunPicker(false);
+    try {
+      localStorage.setItem('daily_dive_first_run_dismissed', 'true');
+    } catch (e) {}
+  };
 
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(580);
@@ -311,7 +344,7 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     return (3 * REEL_CATEGORIES.length) + (foundIdx >= 0 ? foundIdx : 0);
   });
 
-  const [tickerText, setTickerText] = useState(`SYSTEM READY · ${eligibleTopics?.length ?? 0} TOPICS IN ACTIVE REEL`);
+  const [tickerText, setTickerText] = useState('DAILY DIVE · READY TO SPIN');
   const [tickerActive, setTickerActive] = useState(false);
 
   // Exact center coordinate formula
@@ -335,9 +368,9 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     if (loadingData) {
       setTickerText('SYNCHRONIZING TOPIC ARCHIVE...');
     } else if (!isSpinning && !isLanded) {
-      setTickerText(`READY · ${eligibleTopics?.length ?? 0} TOPICS ACTIVE IN CURRENT POOL`);
+      setTickerText('DAILY DIVE · READY TO SPIN');
     }
-  }, [eligibleTopics?.length, isSpinning, isLanded, loadingData]);
+  }, [isSpinning, isLanded, loadingData]);
 
   // Measure container width for center alignment
   useEffect(() => {
@@ -490,6 +523,101 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
   return (
     <div className="flex flex-col w-full max-w-2xl mx-auto pb-6">
       
+      {/* ── LIGHTWEIGHT FIRST-RUN WELCOME & STARTER PICKER ── */}
+      <AnimatePresence>
+        {showFirstRunPicker && (
+          <motion.div
+            data-testid="first-run-picker"
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.3, ease: 'easeOut' }}
+            className="w-full mb-4"
+          >
+            <div className="journal-card rounded-2xl p-4 sm:p-5 border border-primary/30 bg-surface-container-low shadow-lg relative">
+              <button
+                type="button"
+                onClick={handleDismissFirstRun}
+                className="absolute top-3.5 right-3.5 p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                title="Dismiss welcome guide"
+                aria-label="Dismiss welcome guide"
+              >
+                <X size={16} />
+              </button>
+
+              <div className="flex items-center gap-2 mb-1.5">
+                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-primary/10 text-primary border border-primary/25">
+                  <Sparkles size={11} /> Starter Focus Active
+                </span>
+                <span className="text-[11px] font-mono text-outline">
+                  {eligibleTopics.length} topics selected
+                </span>
+              </div>
+
+              <h2 className="font-display text-base sm:text-lg font-bold text-on-surface">
+                Welcome to Daily Dive
+              </h2>
+              <p className="text-xs sm:text-sm text-on-surface-variant mt-1 leading-relaxed max-w-xl">
+                To keep learning bite-sized and approachable, we’ve started you with a curated focus in Tech &amp; Cognition. Tap any broad area to customize your roulette:
+              </p>
+
+              {/* 4 Broad Category Toggles */}
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3.5">
+                {CATEGORY_TREE.map(groupDef => {
+                  const isGroupActive = userSettings?.enabled_categories?.[groupDef.group] !== false;
+                  return (
+                    <button
+                      key={groupDef.group}
+                      type="button"
+                      onClick={() => toggleBroadGroup(groupDef.group)}
+                      className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                        isGroupActive
+                          ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
+                          : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
+                      }`}
+                    >
+                      <div className="flex items-center justify-between w-full mb-1">
+                        <span className={`text-[10px] font-mono uppercase font-bold tracking-wider ${isGroupActive ? 'text-primary' : 'text-outline'}`}>
+                          {groupDef.label}
+                        </span>
+                        <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${isGroupActive ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
+                          {isGroupActive ? '✓' : ''}
+                        </div>
+                      </div>
+                      <span className="text-[11px] leading-tight font-medium line-clamp-1">
+                        {groupDef.group === 'tech' && 'AI & Web Architecture'}
+                        {groupDef.group === 'money-career' && 'Finance & Strategy'}
+                        {groupDef.group === 'mind-growth' && 'Psychology & Logic'}
+                        {groupDef.group === 'world-ideas' && 'Science & History'}
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <div className="flex items-center justify-between flex-wrap gap-2.5 mt-4 pt-3 border-t border-outline-variant/20">
+                <Button
+                  variant="primary"
+                  onClick={handleDismissFirstRun}
+                  className="h-9 px-4 text-xs font-semibold cursor-pointer"
+                >
+                  Start Exploring ({eligibleTopics.length} Topics Ready)
+                </Button>
+
+                <button
+                  type="button"
+                  onClick={onNavigateFilter}
+                  className="flex items-center gap-1.5 text-xs font-mono text-on-surface-variant hover:text-primary transition-colors cursor-pointer ml-auto"
+                >
+                  <Sliders size={13} />
+                  <span>Fine-tune in Category Filter</span>
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
       {/* ── PRECISION INSTRUMENT DIAL CHASSIS ── */}
       <div className="w-full py-2 relative flex flex-col items-center">
         
@@ -651,7 +779,7 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
           <Skeleton className="h-3.5 w-60 rounded" />
         ) : (
           <p className="font-mono text-[11px] text-on-surface-variant text-center">
-            Weighted roulette from <span className="font-semibold text-primary">{eligibleTopics.length}</span> active topics · Distraction-free
+            Curated roulette pool ready (<span className="font-semibold text-primary">{eligibleTopics.length} active topics</span>) · Distraction-free
           </p>
         )}
       </div>

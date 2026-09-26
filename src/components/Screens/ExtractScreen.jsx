@@ -29,7 +29,7 @@ import { extractFromVideo } from '../../lib/extractors/videoExtractor';
 import { extractTopicsLocally, extractTopicsWithGemini } from '../../lib/topicExtractor';
 import { Button } from '../UI/Button';
 
-export const ExtractScreen = ({ onNavigateSpin }) => {
+export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
   const { addCustomTopics, customTopics, deleteCustomTopic, showToast } = useData();
 
   // State
@@ -41,6 +41,7 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
   const [extractedRawText, setExtractedRawText] = useState('');
   const [candidateTopics, setCandidateTopics] = useState([]);
   const [selectedTopicIds, setSelectedTopicIds] = useState(new Set());
+  const [addedNotice, setAddedNotice] = useState(null);
   
   // BYOK State
   const [geminiApiKey, setGeminiApiKey] = useState(() => {
@@ -278,12 +279,15 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
     }
 
     addCustomTopics(approvedTopics);
+    setAddedNotice({
+      count: approvedTopics.length
+    });
     // Reset back to idle
     setProcessingState('idle');
     setSelectedFile(null);
     setCandidateTopics([]);
-    if (onNavigateSpin) {
-      onNavigateSpin();
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
@@ -292,6 +296,7 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
     setSelectedFile(null);
     setCandidateTopics([]);
     setErrorMessage('');
+    setAddedNotice(null);
     if (fileInputRef.current) {
       fileInputRef.current.value = '';
     }
@@ -411,6 +416,42 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
       {/* ── State: IDLE (Upload Dropzone) ── */}
       {processingState === 'idle' && (
         <div className="space-y-6">
+          {/* Post-add confirmation banner */}
+          {addedNotice && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="p-4 sm:p-5 rounded-2xl bg-emerald-500/10 border border-emerald-500/30 flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div className="flex items-start gap-3">
+                <div className="w-8 h-8 rounded-lg bg-emerald-500/20 text-emerald-500 flex items-center justify-center shrink-0 mt-0.5">
+                  <CheckCircle2 size={18} />
+                </div>
+                <div>
+                  <h4 className="font-display text-sm font-bold text-on-surface">
+                    {addedNotice.count} topic{addedNotice.count !== 1 ? 's' : ''} added to your active spin pool!
+                  </h4>
+                  <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
+                    Manage, edit, or delete them anytime in <span className="font-semibold text-on-surface">Category Filter → Custom Uploads</span>.
+                  </p>
+                </div>
+              </div>
+              <div className="flex items-center gap-2 shrink-0">
+                {onNavigateFilter && (
+                  <Button size="sm" variant="secondary" onClick={onNavigateFilter} className="text-xs">
+                    Category Filter
+                  </Button>
+                )}
+                {onNavigateSpin && (
+                  <Button size="sm" variant="primary" onClick={onNavigateSpin} className="text-xs flex items-center gap-1.5">
+                    <span>Spin Now</span>
+                    <ArrowRight size={13} />
+                  </Button>
+                )}
+              </div>
+            </motion.div>
+          )}
+
           <div
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
@@ -858,7 +899,7 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
               return (
                 <div
                   key={topic.id}
-                  className={`p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between gap-3 ${
+                  className={`candidate-topic-card p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between gap-3 ${
                     isSelected
                       ? 'bg-surface-container border-primary/40 shadow-sm'
                       : 'bg-surface-container-lowest/50 border-outline-variant/20 opacity-60'
@@ -935,60 +976,6 @@ export const ExtractScreen = ({ onNavigateSpin }) => {
               <CheckCircle2 size={18} />
               Add {selectedTopicIds.size} Topic{selectedTopicIds.size !== 1 ? 's' : ''} to Spin Pool
             </Button>
-          </div>
-        </div>
-      )}
-
-      {/* ── Active Custom Topics in Personal Spin Pool ── */}
-      {customTopics && customTopics.length > 0 && (
-        <div className="space-y-4 pt-6 border-t border-outline-variant/20">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <BookOpen size={18} className="text-primary" />
-              <h3 className="font-display text-base font-bold text-on-surface">
-                Your Personal Spin Pool ({customTopics.length} custom topic{customTopics.length !== 1 ? 's' : ''})
-              </h3>
-            </div>
-            {onNavigateSpin && (
-              <Button size="sm" variant="secondary" onClick={onNavigateSpin} className="flex items-center gap-1.5">
-                <span>Spin Now</span>
-                <ArrowRight size={14} />
-              </Button>
-            )}
-          </div>
-
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
-            {customTopics.map((topic) => (
-              <div
-                key={topic.id}
-                className="p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/30 flex flex-col justify-between gap-2.5"
-              >
-                <div>
-                  <div className="flex items-center justify-between text-[11px] font-mono text-outline mb-1">
-                    <span className="text-primary font-semibold uppercase">{topic.category}</span>
-                    <button
-                      type="button"
-                      onClick={() => deleteCustomTopic(topic.id)}
-                      className="text-outline hover:text-red-500 transition-colors p-1 cursor-pointer"
-                      title="Remove from spin pool"
-                    >
-                      <Trash2 size={13} />
-                    </button>
-                  </div>
-                  <h4 className="font-display text-sm font-bold text-on-surface line-clamp-1">
-                    {topic.title}
-                  </h4>
-                  <p className="text-xs text-on-surface-variant line-clamp-2 mt-1 leading-relaxed">
-                    {topic.description}
-                  </p>
-                </div>
-
-                <div className="flex items-center justify-between pt-1 border-t border-outline-variant/15 text-[10px] font-mono text-outline">
-                  <span>Source: {topic.source || 'Notes'}</span>
-                  <span className="px-1.5 py-0.5 rounded bg-primary/10 text-primary">Custom</span>
-                </div>
-              </div>
-            ))}
           </div>
         </div>
       )}

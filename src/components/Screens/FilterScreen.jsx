@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
-import { CATEGORY_TREE, isTopicEligible } from '../../lib/roulette';
+import { CATEGORY_TREE, isTopicEligible, STARTER_ENABLED_CATEGORIES } from '../../lib/roulette';
 import {
   RotateCcw,
   ChevronDown,
@@ -23,7 +23,11 @@ import {
   Brain,
   Briefcase,
   Atom,
-  Landmark
+  Landmark,
+  Trash2,
+  Edit2,
+  Check,
+  X
 } from 'lucide-react';
 import { Toggle } from '../UI/Toggle';
 import { Button } from '../UI/Button';
@@ -61,8 +65,37 @@ export const FilterScreen = ({ onSpinActivePool }) => {
     userSettings,
     updateSettings,
     loadingData,
-    showToast
+    showToast,
+    deleteCustomTopic,
+    updateCustomTopic,
+    clearCustomTopics
   } = useData();
+
+  const [editingTopicId, setEditingTopicId] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
+  const [editDesc, setEditDesc] = useState('');
+
+  const handleStartEdit = (topic) => {
+    setEditingTopicId(topic.id);
+    setEditTitle(topic.title);
+    setEditDesc(topic.description);
+  };
+
+  const handleSaveEdit = (topicId) => {
+    if (!editTitle.trim()) {
+      if (showToast) showToast('Title cannot be empty', 'warning');
+      return;
+    }
+    updateCustomTopic(topicId, {
+      title: editTitle.trim(),
+      description: editDesc.trim()
+    });
+    setEditingTopicId(null);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingTopicId(null);
+  };
 
   const enabled = userSettings?.enabled_categories || {};
 
@@ -169,6 +202,8 @@ export const FilterScreen = ({ onSpinActivePool }) => {
         g.categories.forEach(c => { patch[`${g.group}::${c.name}`] = isWorld; });
       });
       patch['custom'] = true;
+    } else if (presetName === 'starter') {
+      Object.assign(patch, STARTER_ENABLED_CATEGORIES);
     } else if (presetName === 'custom') {
       CATEGORY_TREE.forEach(g => {
         patch[g.group] = false;
@@ -188,8 +223,8 @@ export const FilterScreen = ({ onSpinActivePool }) => {
   };
 
   const handleResetDefault = () => {
-    updateSettings({ enabled_categories: {} });
-    if (showToast) showToast('Reset filter pool to default (all enabled)', 'info');
+    updateSettings({ enabled_categories: STARTER_ENABLED_CATEGORIES });
+    if (showToast) showToast('Reset filter pool to curated starter focus (~241 topics)', 'info');
   };
 
   const totalTopicsCount = topics.length || 1;
@@ -228,12 +263,12 @@ export const FilterScreen = ({ onSpinActivePool }) => {
         {/* Active Pool Meter Bar */}
         <div className="space-y-1.5 pt-1">
           <div className="flex items-center justify-between font-mono text-xs">
-            <span className="text-on-surface-variant">Active Pool Density:</span>
+            <span className="text-on-surface-variant">Active Spin Pool:</span>
             {loadingData ? (
               <Skeleton className="h-4 w-16 rounded" />
             ) : (
               <span className="font-semibold text-primary">
-                {activeTopicsCount} / {totalTopicsCount} topics ({poolPercentage}%)
+                {activeTopicsCount} topics active ({poolPercentage}% of library)
               </span>
             )}
           </div>
@@ -271,6 +306,14 @@ export const FilterScreen = ({ onSpinActivePool }) => {
             Quick Filter Presets
           </div>
           <div className="flex items-center gap-2 flex-wrap">
+            <button
+              type="button"
+              onClick={() => applyPreset('starter')}
+              className="px-3 py-1 rounded-lg bg-primary/10 hover:bg-primary/20 border border-primary/30 text-xs font-medium text-primary transition-all cursor-pointer flex items-center gap-1"
+            >
+              <Sparkles size={11} />
+              <span>Starter Focus</span>
+            </button>
             <button
               type="button"
               onClick={() => applyPreset('all')}
@@ -540,23 +583,144 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                     transition={{ duration: 0.28, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-1 space-y-2 border-t border-outline-variant/15">
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-1 space-y-3 border-t border-outline-variant/15">
                       <div className="flex items-center justify-between text-xs text-on-surface-variant py-1 font-mono">
                         <span>Uploaded / Extracted Study Topics:</span>
-                        <span className="text-primary font-semibold">
-                          {customTopics.filter(t => isTopicEligible(t, enabled)).length} of {customTopics.length} ready
-                        </span>
+                        <div className="flex items-center gap-3">
+                          <span className="text-primary font-semibold">
+                            {customTopics.filter(t => isTopicEligible(t, enabled)).length} of {customTopics.length} active
+                          </span>
+                          {customTopics.length > 0 && (
+                            <button
+                              type="button"
+                              onClick={() => {
+                                if (window.confirm('Are you sure you want to remove all uploaded custom topics?')) {
+                                  clearCustomTopics();
+                                }
+                              }}
+                              className="text-red-500 hover:text-red-600 hover:underline cursor-pointer"
+                            >
+                              Clear All
+                            </button>
+                          )}
+                        </div>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                        {customTopics.slice(0, 6).map(ct => (
-                          <div
-                            key={ct.id}
-                            className="p-2.5 rounded-lg bg-surface-container/60 border border-outline-variant/20 text-xs truncate"
-                          >
-                            <span className="font-semibold text-on-surface block truncate">{ct.title}</span>
-                            <span className="text-[10px] text-outline font-mono block truncate mt-0.5">{ct.category || 'custom'} · {ct.source || 'uploaded'}</span>
-                          </div>
-                        ))}
+
+                      <div className="max-h-96 overflow-y-auto space-y-2 pr-1">
+                        {customTopics.map(ct => {
+                          const isEligible = isTopicEligible(ct, enabled);
+                          const isEditing = editingTopicId === ct.id;
+
+                          if (isEditing) {
+                            return (
+                              <div
+                                key={ct.id}
+                                className="p-3.5 rounded-xl bg-surface border border-primary/40 space-y-2.5 shadow-sm"
+                              >
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
+                                    Topic Title
+                                  </label>
+                                  <input
+                                    type="text"
+                                    placeholder="Topic Title"
+                                    aria-label="Edit Topic Title"
+                                    value={editTitle}
+                                    onChange={(e) => setEditTitle(e.target.value)}
+                                    className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface font-semibold focus:outline-none focus:border-primary"
+                                  />
+                                </div>
+                                <div className="space-y-1">
+                                  <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
+                                    Description (1-2 sentences)
+                                  </label>
+                                  <textarea
+                                    rows={2}
+                                    value={editDesc}
+                                    onChange={(e) => setEditDesc(e.target.value)}
+                                    className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface leading-relaxed focus:outline-none focus:border-primary resize-none"
+                                  />
+                                </div>
+                                <div className="flex items-center justify-end gap-2 pt-1">
+                                  <Button
+                                    size="sm"
+                                    variant="ghost"
+                                    onClick={handleCancelEdit}
+                                    className="h-7 px-2.5 text-xs flex items-center gap-1"
+                                  >
+                                    <X size={12} />
+                                    <span>Cancel</span>
+                                  </Button>
+                                  <Button
+                                    size="sm"
+                                    variant="primary"
+                                    onClick={() => handleSaveEdit(ct.id)}
+                                    className="h-7 px-2.5 text-xs flex items-center gap-1"
+                                  >
+                                    <Check size={12} />
+                                    <span>Save</span>
+                                  </Button>
+                                </div>
+                              </div>
+                            );
+                          }
+
+                          return (
+                            <div
+                              key={ct.id}
+                              className={`p-3 rounded-xl border transition-all ${
+                                isEligible
+                                  ? 'bg-surface-container/60 border-outline-variant/20 hover:border-outline-variant/40'
+                                  : 'bg-surface-container-lowest/30 border-outline-variant/10 opacity-50'
+                              }`}
+                            >
+                              <div className="flex items-start justify-between gap-2">
+                                <div className="flex-1 min-w-0">
+                                  <div className="flex items-center gap-2 flex-wrap mb-1">
+                                    <h4 className="font-semibold text-xs text-on-surface">
+                                      {ct.title}
+                                    </h4>
+                                    <span className="px-1.5 py-0.2 rounded bg-primary/10 text-primary font-mono text-[9px]">
+                                      {ct.category || 'custom'}
+                                    </span>
+                                    {isEligible ? (
+                                      <span className="text-[9px] font-mono text-emerald-500">Active</span>
+                                    ) : (
+                                      <span className="text-[9px] font-mono text-outline">Paused</span>
+                                    )}
+                                  </div>
+                                  <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
+                                    {ct.description}
+                                  </p>
+                                  <div className="text-[10px] font-mono text-outline mt-1.5">
+                                    Source: {ct.source || 'Upload'}
+                                  </div>
+                                </div>
+
+                                <div className="flex items-center gap-1 shrink-0 pt-0.5">
+                                  <button
+                                    type="button"
+                                    onClick={() => handleStartEdit(ct)}
+                                    className="p-1 rounded text-outline hover:text-primary transition-colors cursor-pointer"
+                                    title="Edit topic"
+                                    aria-label={`Edit ${ct.title}`}
+                                  >
+                                    <Edit2 size={13} />
+                                  </button>
+                                  <button
+                                    type="button"
+                                    onClick={() => deleteCustomTopic(ct.id)}
+                                    className="p-1 rounded text-outline hover:text-red-500 transition-colors cursor-pointer"
+                                    title="Delete topic"
+                                    aria-label={`Delete ${ct.title}`}
+                                  >
+                                    <Trash2 size={13} />
+                                  </button>
+                                </div>
+                              </div>
+                            </div>
+                          );
+                        })}
                       </div>
                     </div>
                   </motion.div>
