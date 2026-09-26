@@ -160,11 +160,11 @@ function cleanText(text) {
 /**
  * Truncates string at a whole word boundary to avoid cutting words mid-token.
  */
-export function truncateAtWord(str, maxLen = 65) {
+export function truncateAtWord(str, maxLen = 38) {
   if (!str || str.length <= maxLen) return (str || '').trim();
   const sub = str.slice(0, maxLen);
   const lastSpace = sub.lastIndexOf(' ');
-  if (lastSpace > 15) {
+  if (lastSpace > 10) {
     return sub.slice(0, lastSpace).replace(/[\s,;:\-–—\.]+$/, '').trim();
   }
   return sub.trim();
@@ -409,45 +409,45 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       (lowerHead.length > 10 && docBaseLower.includes(lowerHead))
     );
 
-    // Contextualize generic headings without prepending raw filename
+    // Contextualize generic headings with short, punchy titles (~16-32 chars)
     if (lowerHead.includes('literature review')) {
-      synthesizedTitle = 'Thermal Comfort ML: Literature & Benchmarks';
+      synthesizedTitle = 'Thermal Comfort Benchmarks';
     } else if (lowerHead.includes('problem statement')) {
-      synthesizedTitle = 'Cross-Climate Thermal Comfort Generalization';
+      synthesizedTitle = 'Cross-Climate Generalization';
     } else if (lowerHead.includes('objective')) {
-      synthesizedTitle = 'Multi-Objective Comfort & Energy Optimization';
+      synthesizedTitle = 'Comfort & Energy Optimization';
     } else if (lowerHead.includes('research gap')) {
-      synthesizedTitle = 'Research Gaps in Climate-Adaptive Design';
+      synthesizedTitle = 'Climate Design Gaps';
     } else if (lowerHead.includes('methodology')) {
-      synthesizedTitle = 'Climate-Adaptive Shelter Methodology';
+      synthesizedTitle = 'Adaptive Shelter Methods';
     } else if (lowerHead.includes('architecture') || lowerHead.includes('proposed system')) {
-      synthesizedTitle = 'Proposed System Architecture & Workflow';
+      synthesizedTitle = 'Proposed System Architecture';
     } else if (lowerHead.includes('proposed contribution') || lowerHead.includes('contribution')) {
-      synthesizedTitle = 'Decision-Support Framework for Shelter Design';
+      synthesizedTitle = 'Shelter Design Framework';
     } else if (lowerHead.includes('conclusion')) {
-      synthesizedTitle = 'Key Takeaways: Climate-Adaptive Shelters';
+      synthesizedTitle = 'Key Seminar Takeaways';
     } else if (lowerHead.includes('introduction')) {
-      synthesizedTitle = 'Thermal Comfort & ML Foundations';
+      synthesizedTitle = 'Thermal Comfort & ML';
     } else if (lowerHead === 'aim' || lowerHead === 'objective') {
-      synthesizedTitle = 'Core Objective & Architectural Scope';
+      synthesizedTitle = 'Core Objectives';
     } else if (lowerHead === 'overview' || lowerHead === 'theory') {
-      synthesizedTitle = 'Theoretical Foundations & Architecture';
+      synthesizedTitle = 'Theoretical Foundations';
     } else if (lowerHead === 'applications') {
-      synthesizedTitle = 'Real-World Production Applications';
-    } else if (!isDocTitleRepeat && headingCandidate.length >= 5 && headingCandidate.length <= 60) {
+      synthesizedTitle = 'Production Applications';
+    } else if (!isDocTitleRepeat && headingCandidate.length >= 5 && headingCandidate.length <= 36) {
       synthesizedTitle = headingCandidate;
     } else {
       // Coherent Keyphrase synthesis from top distinct keywords
       const keywords = extractTopKeywords(unitText, 5).filter(w => !docBaseLower.includes(w) && w.length > 3);
       if (keywords.length >= 2) {
-        synthesizedTitle = keywords.slice(0, 2).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' & ') + ' Principles';
+        synthesizedTitle = keywords.slice(0, 2).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' & ');
       } else {
-        synthesizedTitle = 'Core Technical Architecture';
+        synthesizedTitle = 'Technical Architecture';
       }
     }
 
     // Standardize title length and ensure word-boundary truncation (NEVER truncate mid-word)
-    synthesizedTitle = truncateAtWord(synthesizedTitle, 60);
+    synthesizedTitle = truncateAtWord(synthesizedTitle, 36);
 
     // Dedup check
     if (seenTitles.has(synthesizedTitle.toLowerCase()) || synthesizedTitle.length < 4) {

@@ -143,8 +143,8 @@ def run_phase7_verification():
             # Check 2: No mid-token truncation
             assert not title.endswith("..."), f"Topic title '{title}' has trailing truncation dots"
             assert not re.search(r'\b[A-Za-z]{1,2}$', title) or title.endswith("AI") or title.endswith("ML") or title.endswith("RL") or title.endswith("HVAC"), f"Topic title '{title}' ends suspiciously mid-word"
-            # Check 3: Reasonable length
-            assert len(title) <= 65, f"Title too long ({len(title)}): '{title}'"
+            # Check 3: Short, concise title length (max <= 40 chars)
+            assert len(title) <= 40, f"Title too long ({len(title)}): '{title}'"
             assert len(title) >= 10, f"Title too short ({len(title)}): '{title}'"
             # Check 4: Description meets compiledTopics standard
             assert desc.endswith("."), f"Description does not end in period: '{desc}'"

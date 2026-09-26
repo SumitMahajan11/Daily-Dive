@@ -16,7 +16,7 @@ export const COMPILED_TOPICS = [
       "argumentation",
       "philosophy"
     ],
-    "title": "The Aristotelian Rhetorical Triangle: Ethos, Pathos & Logos in Modern Discourse",
+    "title": "The Aristotelian Rhetorical Triangle",
     "description": "Persuasion balances three core appeals: Ethos (credibility), Pathos (emotional resonance), and Logos (reasoning) to inspire lasting conviction.",
     "resources": [
       {
@@ -44,8 +44,8 @@ export const COMPILED_TOPICS = [
       "behavioral-psychology",
       "social-proof"
     ],
-    "title": "Cialdini's Six Principles of Influence: Psychological Triggers in Persuasion",
-    "description": "Six behavioral triggers—Reciprocity, Scarcity, Authority, Consistency, Liking, and Consensus—that guide human compliance and decision-making.",
+    "title": "Cialdini's Six Principles of Influence",
+    "description": "Six behavioral triggers\u2014Reciprocity, Scarcity, Authority, Consistency, Liking, and Consensus\u2014that guide human compliance and decision-making.",
     "resources": [
       {
         "label": "Robert B. Cialdini: Influence: The Psychology of Persuasion (Harper Business)",
@@ -72,7 +72,7 @@ export const COMPILED_TOPICS = [
       "persuasion",
       "decision-making"
     ],
-    "title": "Framing Effects & Prospect Theory in Argument Design",
+    "title": "Framing Effects",
     "description": "Identical choices produce different decisions based on framing: emphasizing loss activates far greater urgency than highlighting equivalent gain.",
     "resources": [
       {
@@ -100,7 +100,7 @@ export const COMPILED_TOPICS = [
       "cognitive-processing",
       "psychology"
     ],
-    "title": "The Elaboration Likelihood Model (ELM): Central vs Peripheral Persuasion Routes",
+    "title": "The Elaboration Likelihood Model (ELM)",
     "description": "Persuasion operates via two pathways: the Central Route using deep logical scrutiny for lasting change, and the Peripheral Route relying on surface cues.",
     "resources": [
       {
@@ -128,8 +128,8 @@ export const COMPILED_TOPICS = [
       "presentation-design",
       "rhetoric"
     ],
-    "title": "The Monroe Motivated Sequence: Structuring Action-Oriented Persuasion",
-    "description": "A five-step persuasive flow—Attention, Need, Satisfaction, Visualization, and Action—engineered to move an audience from curiosity to decisive action.",
+    "title": "The Monroe Motivated Sequence",
+    "description": "A five-step persuasive flow\u2014Attention, Need, Satisfaction, Visualization, and Action\u2014engineered to move an audience from curiosity to decisive action.",
     "resources": [
       {
         "label": "Alan H. Monroe: Principles and Types of Speech (Scott, Foresman and Company)",
@@ -156,7 +156,7 @@ export const COMPILED_TOPICS = [
       "critical-thinking",
       "rhetoric"
     ],
-    "title": "Inoculation Theory: Prebunking & Building Cognitive Resistance to Misinformation",
+    "title": "Inoculation Theory",
     "description": "Exposing people to weakened counter-arguments with refutations builds mental resilience, protecting their beliefs against subsequent persuasive attacks.",
     "resources": [
       {
@@ -184,7 +184,7 @@ export const COMPILED_TOPICS = [
       "critical-thinking",
       "rhetoric"
     ],
-    "title": "Enthymemes & Syllogistic Argumentation: The Mechanics of Implied Logic",
+    "title": "Enthymemes & Syllogistic Argumentation",
     "description": "An enthymeme is a rhetorical syllogism in which one of the premises is left unstated.",
     "resources": [
       {
@@ -212,7 +212,7 @@ export const COMPILED_TOPICS = [
       "interests-vs-positions",
       "conflict"
     ],
-    "title": "Principled Negotiation: The Harvard Program on Negotiation (PON) Model",
+    "title": "Principled Negotiation",
     "description": "Principled Negotiation moves parties away from positional bargaining toward integrative problem-solving by focusing on four core pillars.",
     "resources": [
       {
@@ -240,7 +240,7 @@ export const COMPILED_TOPICS = [
       "reservation-price",
       "game-theory"
     ],
-    "title": "Negotiation Calculus: BATNA, Reservation Price & The Zone of Possible Agreement (ZOPA)",
+    "title": "Negotiation Calculus",
     "description": "Power in negotiation stems directly from the strength of one's Best Alternative to a Negotiated Agreement (BATNA).",
     "resources": [
       {
@@ -268,7 +268,7 @@ export const COMPILED_TOPICS = [
       "behavioral-economics",
       "tactics"
     ],
-    "title": "First-Offer Anchoring & Strategic Concession Sequencing",
+    "title": "First-Offer Anchoring",
     "description": "The first numerical offer in a negotiation acts as a powerful cognitive anchor that disproportionately pulls the final settlement toward itself.",
     "resources": [
       {
@@ -296,7 +296,7 @@ export const COMPILED_TOPICS = [
       "calibrated-questions",
       "communication"
     ],
-    "title": "Tactical Empathy: Emotional Labeling, Mirroring & Calibrated 'How' Questions",
+    "title": "Tactical Empathy",
     "description": "Uses emotional labeling and calibrated open-ended questions to de-escalate tension and uncover the counterpart's underlying motivations.",
     "resources": [
       {
@@ -324,7 +324,7 @@ export const COMPILED_TOPICS = [
       "value-creation",
       "deal-structuring"
     ],
-    "title": "Multiple Equivalent Simultaneous Offers (MESO): Uncovering Hidden Preferences",
+    "title": "Multiple Equivalent Simultaneous Offers (MESO)",
     "description": "Presenting three distinct contract proposals of equal economic value to the seller simultaneously (MESO) prevents single-issue stalemates.",
     "resources": [
       {
@@ -352,7 +352,7 @@ export const COMPILED_TOPICS = [
       "value-creation",
       "dealmaking"
     ],
-    "title": "Logrolling: Expanding the Pie via Multi-Issue Asymmetric Valuation",
+    "title": "Logrolling",
     "description": "Single-issue negotiations inevitably degenerate into zero-sum distributive battles over price.",
     "resources": [
       {
@@ -380,7 +380,7 @@ export const COMPILED_TOPICS = [
       "empathy",
       "conflict-resolution"
     ],
-    "title": "Nonviolent Communication (NVC): Observations, Feelings, Needs & Requests",
+    "title": "Nonviolent Communication (NVC)",
     "description": "Marshall Rosenberg's Nonviolent Communication framework restructures interpersonal dialogue through four concrete steps.",
     "resources": [
       {
@@ -408,7 +408,7 @@ export const COMPILED_TOPICS = [
       "communication",
       "professional-development"
     ],
-    "title": "The SBI Feedback Model: Situation, Behavior & Impact Delivery",
+    "title": "The SBI Feedback Model",
     "description": "The SBI model eliminates defensive reactions by grounding feedback in objective reality.",
     "resources": [
       {
@@ -436,7 +436,7 @@ export const COMPILED_TOPICS = [
       "kim-scott",
       "workplace-culture"
     ],
-    "title": "Radical Candor: Balancing Personal Care with Direct Challenge",
+    "title": "Radical Candor in Feedback",
     "description": "Kim Scott's Radical Candor framework organizes feedback across two orthogonal axes: Caring Personally and Challenging Directly.",
     "resources": [
       {
@@ -464,7 +464,7 @@ export const COMPILED_TOPICS = [
       "dialogue",
       "listening-levels"
     ],
-    "title": "Active Listening Architecture: Internal, Focused & Global Listening Levels",
+    "title": "Active Listening Architecture",
     "description": "Effective listening progresses through three distinct depths: Level 1 Internal Listening , Level 2 Focused Listening.",
     "resources": [
       {
@@ -492,7 +492,7 @@ export const COMPILED_TOPICS = [
       "group-dynamics",
       "psychology"
     ],
-    "title": "The Johari Window: Expanding the Open Arena via Disclosure & Feedback",
+    "title": "The Johari Window",
     "description": "Created by Joseph Luft and Harrington Ingham, the Johari Window maps interpersonal knowledge across four quadrants.",
     "resources": [
       {
@@ -520,7 +520,7 @@ export const COMPILED_TOPICS = [
       "mentorship",
       "pedagogy"
     ],
-    "title": "The Ask-Tell-Ask Feedback Loop in Mentorship & Performance Coaching",
+    "title": "The Ask-Tell-Ask Feedback Loop",
     "description": "The Ask-Tell-Ask framework begins by asking the learner to self-assess their performance ('How did that go?').",
     "resources": [
       {
@@ -548,7 +548,7 @@ export const COMPILED_TOPICS = [
       "facs",
       "emotion-detection"
     ],
-    "title": "Facial Action Coding System (FACS) & Microexpression Analysis",
+    "title": "Facial Action Coding System (FACS)",
     "description": "Paul Ekman's Facial Action Coding System (FACS) anatomically classifies every human facial movement into discrete Action Units (AUs).",
     "resources": [
       {
@@ -576,8 +576,8 @@ export const COMPILED_TOPICS = [
       "paralinguistics",
       "status-signaling"
     ],
-    "title": "Vocal Prosody: Pitch, Pace, Pauses & Up-Talk vs Down-Tonal Authority",
-    "description": "Paralinguistic cues—including vocal pitch variation, tempo, resonant timbre, and strategic pausing—account for a massive share of emotional and status.",
+    "title": "Vocal Prosody",
+    "description": "Paralinguistic cues\u2014including vocal pitch variation, tempo, resonant timbre, and strategic pausing\u2014account for a massive share of emotional and status.",
     "resources": [
       {
         "label": "Albert Mehrabian: Silent Messages: Implicit Communication of Emotions and Attitudes (Wadsworth)",
@@ -604,7 +604,7 @@ export const COMPILED_TOPICS = [
       "nonverbal",
       "body-language"
     ],
-    "title": "Proxemics: Edward T. Hall's Four Interpersonal Distance Zones",
+    "title": "Proxemics",
     "description": "Studies how humans structure personal space across intimate, personal, social, and public zones, where violating boundaries triggers stress responses.",
     "resources": [
       {
@@ -632,7 +632,7 @@ export const COMPILED_TOPICS = [
       "body-language",
       "rapport"
     ],
-    "title": "Kinesics & The Chameleon Effect: Rapport Building via Postural Synchrony",
+    "title": "Kinesics & The Chameleon Effect",
     "description": "Subtle, unconscious mirroring of a conversation partner's posture, gestures, and breathing cadence creates measurable interpersonal rapport and trust.",
     "resources": [
       {
@@ -660,7 +660,7 @@ export const COMPILED_TOPICS = [
       "cross-cultural",
       "body-language"
     ],
-    "title": "Emblematic Gestures: Culture-Specific Meanings & Nonverbal Pitfalls",
+    "title": "Emblematic Gestures",
     "description": "Unlike universal facial expressions of basic emotion, emblematic gestures (such as the 'thumbs-up') are arbitrary linguistic symbols that carry wildly divergent.",
     "resources": [
       {
@@ -688,7 +688,7 @@ export const COMPILED_TOPICS = [
       "business-communication",
       "structured-thinking"
     ],
-    "title": "The Minto Pyramid Principle: Top-Down Deductive Storytelling & MECE Grouping",
+    "title": "The Minto Pyramid Principle",
     "description": "The Pyramid Principle requires communicators to state the core conclusion/recommendation first at the pyramid peak.",
     "resources": [
       {
@@ -716,7 +716,7 @@ export const COMPILED_TOPICS = [
       "sparkline",
       "presentations"
     ],
-    "title": "Duarte's Persuasive Sparkline: Juxtaposing 'What Is' vs 'What Could Be'",
+    "title": "Duarte's Persuasive Sparkline",
     "description": "Nancy Duarte's analysis of historic speeches (Steve Jobs, Martin Luther King Jr.) revealed a universal presentation architecture.",
     "resources": [
       {
@@ -744,7 +744,7 @@ export const COMPILED_TOPICS = [
       "performance-anxiety",
       "physiological-regulation"
     ],
-    "title": "Managing Stage Anxiety: The Yerkes-Dodson Law & Physiological Arousal Reappraisal",
+    "title": "Managing Stage Anxiety",
     "description": "The Yerkes-Dodson Law dictates that cognitive and speaking performance peaks under moderate physiological arousal.",
     "resources": [
       {
@@ -772,7 +772,7 @@ export const COMPILED_TOPICS = [
       "technical-communication",
       "pedagogy"
     ],
-    "title": "Verbal Signposting & Cognitive Scaffolding in Complex Technical Presentations",
+    "title": "Verbal Signposting",
     "description": "Signposting uses explicit verbal cues (previews) to map an audience's mental progress through dense material.",
     "resources": [
       {
@@ -800,7 +800,7 @@ export const COMPILED_TOPICS = [
       "crisis-communication",
       "public-speaking"
     ],
-    "title": "Handling Hostile Audience Q&A: The Acknowledge-Bridge-Deliver Protocol",
+    "title": "Handling Hostile Audience Q&A",
     "description": "When managing antagonistic questions in public forums, combative responses damage credibility while evasive dodges signal weakness.",
     "resources": [
       {
@@ -828,7 +828,7 @@ export const COMPILED_TOPICS = [
       "clarity",
       "efficiency"
     ],
-    "title": "Bottom Line Up Front (BLUF): Military Precision in Written Communications",
+    "title": "Bottom Line Up Front (BLUF)",
     "description": "Originally formulated in US military intelligence doctrines, the BLUF principle places the critical conclusion, decision request.",
     "resources": [
       {
@@ -856,7 +856,7 @@ export const COMPILED_TOPICS = [
       "narrative-structure",
       "minto"
     ],
-    "title": "The SCQA Narrative Architecture: Situation, Complication, Question, Answer",
+    "title": "The SCQA Narrative Architecture",
     "description": "Barbara Minto's SCQA framework structures problem-solving narratives: Situation establishes shared undisputed context.",
     "resources": [
       {
@@ -884,7 +884,7 @@ export const COMPILED_TOPICS = [
       "digital-communication",
       "written-clarity"
     ],
-    "title": "Email Tone Calibration: Mitigating Egocentrism Bias in Text",
+    "title": "Email Tone Calibration",
     "description": "Justin Kruger's research on egocentrism in communication revealed that email senders believe recipients correctly interpret their sarcastic, humorous.",
     "resources": [
       {
@@ -912,7 +912,7 @@ export const COMPILED_TOPICS = [
       "prose-craft",
       "plain-language"
     ],
-    "title": "Readability Metrics: Flesch-Kincaid Grading & Cognitive Fluency in Prose",
+    "title": "Readability Metrics",
     "description": "The Flesch Reading Ease and Flesch-Kincaid Grade Level formulas evaluate syntactic complexity based on average sentence length and syllables per word.",
     "resources": [
       {
@@ -940,7 +940,7 @@ export const COMPILED_TOPICS = [
       "editing",
       "business-communication"
     ],
-    "title": "George Orwell's Six Rules for Writing: Eliminating Jargon & Stale Metaphors",
+    "title": "George Orwell's Six Rules for Writing",
     "description": "In 'Politics and the English Language' (1946), George Orwell established six timeless editorial rules.",
     "resources": [
       {
@@ -968,7 +968,7 @@ export const COMPILED_TOPICS = [
       "assertiveness",
       "cooperativeness"
     ],
-    "title": "Thomas-Kilmann Conflict Modes (TKI): Assertiveness vs Cooperativeness",
+    "title": "Thomas-Kilmann Conflict Modes (TKI)",
     "description": "The Thomas-Kilmann Conflict Mode Instrument plots five behavioral responses across two dimensions (Assertiveness and Cooperativeness).",
     "resources": [
       {
@@ -996,7 +996,7 @@ export const COMPILED_TOPICS = [
       "harvard-pon",
       "mediation"
     ],
-    "title": "The Third Story: Mediating Disagreements from a Neutral Perspective",
+    "title": "The Third Story",
     "description": "From Harvard Negotiation Project's 'Difficult Conversations', initiating a sensitive discussion from one's own story instantly puts the other party on defense.",
     "resources": [
       {
@@ -1025,7 +1025,7 @@ export const COMPILED_TOPICS = [
       "contempt",
       "repair-attempts"
     ],
-    "title": "Gottman's Four Horsemen of Conflict & In-Flight Repair Attempts",
+    "title": "Gottman's Four Horsemen of Conflict",
     "description": "John Gottman's empirical relationship research identifies four lethal communication patterns that predict relationship dissolution.",
     "resources": [
       {
@@ -1052,7 +1052,7 @@ export const COMPILED_TOPICS = [
       "conflict-management",
       "crisis-communication"
     ],
-    "title": "Verbal De-escalation: Down-Regulating Amygdala Hijack in High-Stakes Hostility",
+    "title": "Verbal De-escalation",
     "description": "During intense confrontation, autonomic arousal (amygdala hijack) impairs prefrontal executive function and logical processing in counterparts.",
     "resources": [
       {
@@ -1080,7 +1080,7 @@ export const COMPILED_TOPICS = [
       "conflict",
       "cognitive-bias"
     ],
-    "title": "The Ladder of Inference: Dismantling Rapid Assumption Leaps in Conflict",
+    "title": "The Ladder of Inference",
     "description": "Chris Argyris' Ladder of Inference maps how individuals leap from observable data, through selected reality, attributed meanings, and unverified assumptions.",
     "resources": [
       {
@@ -1108,7 +1108,7 @@ export const COMPILED_TOPICS = [
       "edward-t-hall",
       "global-communication"
     ],
-    "title": "High-Context vs Low-Context Cultures: Decoding Explicit & Implicit Meaning",
+    "title": "High-Context vs Low-Context Cultures",
     "description": "Differentiates communication where meaning is explicit in words (low-context) versus embedded in shared cultural norms and subtle cues (high-context).",
     "resources": [
       {
@@ -1136,7 +1136,7 @@ export const COMPILED_TOPICS = [
       "global-teams",
       "management"
     ],
-    "title": "The Culture Map: Eight Scales for Cross-Cultural Communication & Feedback",
+    "title": "The Culture Map",
     "description": "Erin Meyer's Culture Map framework plots national working styles across 8 behavioral dimensions.",
     "resources": [
       {
@@ -1164,7 +1164,7 @@ export const COMPILED_TOPICS = [
       "cross-cultural",
       "organizational-behavior"
     ],
-    "title": "Hofstede's Cultural Dimensions: Power Distance & Hierarchy in Workplace Dialogue",
+    "title": "Hofstede's Cultural Dimensions",
     "description": "Geert Hofstede's seminal cross-cultural research identifies core dimensions governing societal norms, notably Power Distance Index (PDI).",
     "resources": [
       {
@@ -1192,7 +1192,7 @@ export const COMPILED_TOPICS = [
       "feedback",
       "indirect-communication"
     ],
-    "title": "The Dynamics of Face (Mianzi): Preserving Social Dignity in Asian Business Negotiations",
+    "title": "The Dynamics of Face (Mianzi)",
     "description": "In East Asian business cultures, 'Face' (Mianzi/Lian) represents social credit, dignity, and standing within a relational network.",
     "resources": [
       {
@@ -1220,7 +1220,7 @@ export const COMPILED_TOPICS = [
       "monochronic",
       "polychronic"
     ],
-    "title": "Chronemics: Monochronic Linear Time vs Polychronic Relational Time",
+    "title": "Chronemics",
     "description": "Chronemics examines how cultural time perception dictates communication rhythm.",
     "resources": [
       {
@@ -1248,7 +1248,7 @@ export const COMPILED_TOPICS = [
       "collaboration",
       "meeting-design"
     ],
-    "title": "Lean Coffee Facilitation: Democratic Agenda Building for Group Alignment",
+    "title": "Lean Coffee Facilitation",
     "description": "Lean Coffee is an agenda-less, democratic meeting framework where participants generate discussion topics on sticky notes, pitch them in 15 seconds.",
     "resources": [
       {
@@ -1276,7 +1276,7 @@ export const COMPILED_TOPICS = [
       "team-communication",
       "alignment"
     ],
-    "title": "Fist-to-Five Consensus Gauging: Granular Agreement in Team Deliberation",
+    "title": "Fist-to-Five Consensus Gauging",
     "description": "Fist-to-Five is a nonverbal consensus-gauging protocol where participants simultaneously display 0 to 5 fingers (0 = veto/blocking).",
     "resources": [
       {
@@ -1304,7 +1304,7 @@ export const COMPILED_TOPICS = [
       "group-dynamics",
       "collaboration"
     ],
-    "title": "Meeting Facilitation Protocols: Liberating Structures & The 1-2-4-All Method",
+    "title": "Meeting Facilitation Protocols",
     "description": "Traditional unstructured open meetings allow dominant extroverts to monopolize 80% of airtime while stifling quiet domain experts.",
     "resources": [
       {
@@ -1332,7 +1332,7 @@ export const COMPILED_TOPICS = [
       "project-management",
       "meeting-design"
     ],
-    "title": "Gary Klein's Pre-Mortem Protocol: Prospective Hindsight in Kickoff Meetings",
+    "title": "Gary Klein's Pre-Mortem Protocol",
     "description": "Gary Klein's Pre-Mortem protocol counters managerial optimism bias and social pressure by directing project teams at kickoff to imagine that the project has.",
     "resources": [
       {
@@ -1360,7 +1360,7 @@ export const COMPILED_TOPICS = [
       "meeting-facilitation",
       "decision-making"
     ],
-    "title": "Nominal Group Technique (NGT): Eliminating Production Blocking in Group Ideation",
+    "title": "Nominal Group Technique (NGT)",
     "description": "Traditional open brainstorming suffers from production blocking (only one person talking at a time) and evaluation apprehension.",
     "resources": [
       {
@@ -1387,7 +1387,7 @@ export const COMPILED_TOPICS = [
       "async-communication",
       "digital-collaboration"
     ],
-    "title": "Media Richness Theory: Matching Channel Bandwidth to Message Ambiguity",
+    "title": "Media Richness Theory",
     "description": "Daft and Lengel's Media Richness Theory classifies communication channels by their ability to convey multiple informational cues (body language).",
     "resources": [
       {
@@ -1415,7 +1415,7 @@ export const COMPILED_TOPICS = [
       "distributed-teams",
       "documentation"
     ],
-    "title": "Async-First Operating Models: Written RFC Culture & Deep Work Protection",
+    "title": "Async-First Operating Models",
     "description": "Asynchronous-first organizations replace low-density synchronous status meetings with high-fidelity long-form Request for Comments (RFC) written proposals.",
     "resources": [
       {
@@ -1443,7 +1443,7 @@ export const COMPILED_TOPICS = [
       "slack-hygiene",
       "remote-work"
     ],
-    "title": "The Online Disinhibition Effect: Preventing Digital Incivility & Text Friction",
+    "title": "The Online Disinhibition Effect",
     "description": "John Suler's research on the Online Disinhibition Effect explains how perceived anonymity, invisibility, asynchronous lag.",
     "resources": [
       {
@@ -1470,7 +1470,7 @@ export const COMPILED_TOPICS = [
       "attention-economy",
       "interruption-management"
     ],
-    "title": "Chat Channel Hygiene: Threading, Asynchronous Pings & Context Collapse",
+    "title": "Chat Channel Hygiene",
     "description": "Organizes team messaging into disciplined threads and public channels, preventing fragmented communication and context collapse.",
     "resources": [
       {
@@ -1498,7 +1498,7 @@ export const COMPILED_TOPICS = [
       "documentation",
       "knowledge-transfer"
     ],
-    "title": "Asynchronous Video Messaging: Screen-Share Walkthroughs & Meeting Replacement",
+    "title": "Asynchronous Video Messaging",
     "description": "Bridges text and meetings by conveying demonstrations and tone without scheduling, best kept under 5 minutes with clear action items.",
     "resources": [
       {
@@ -1526,7 +1526,7 @@ export const COMPILED_TOPICS = [
       "theory-of-knowledge",
       "philosophy"
     ],
-    "title": "The Gettier Problem: Challenging Justified True Belief (JTB)",
+    "title": "The Gettier Problem",
     "description": "Edmund Gettier's 1963 landmark paper demonstrated that having a justified true belief does not necessarily constitute knowledge.",
     "resources": [
       {
@@ -1554,8 +1554,8 @@ export const COMPILED_TOPICS = [
       "foundationalism",
       "skepticism"
     ],
-    "title": "Agrippa's Trilemma: The Regress Problem of Justification",
-    "description": "Agrippa's Trilemma (or the Münchhausen Trilemma) posits that every attempt to prove a claim must terminate in one of three unsatisfactory options.",
+    "title": "Agrippa's Trilemma",
+    "description": "Agrippa's Trilemma (or the M\u00fcnchhausen Trilemma) posits that every attempt to prove a claim must terminate in one of three unsatisfactory options.",
     "resources": [
       {
         "label": "Stanford Encyclopedia of Philosophy: Epistemic Justification and the Regress Problem",
@@ -1582,11 +1582,11 @@ export const COMPILED_TOPICS = [
       "cogito-ergo-sum",
       "skepticism"
     ],
-    "title": "Cartesian Doubt & Radical Skepticism: Finding the Archimedian Epistemic Point",
-    "description": "René Descartes employed methodical doubt to dismantle all sensory beliefs susceptible to deception.",
+    "title": "Cartesian Doubt & Radical Skepticism",
+    "description": "Ren\u00e9 Descartes employed methodical doubt to dismantle all sensory beliefs susceptible to deception.",
     "resources": [
       {
-        "label": "René Descartes: Meditations on First Philosophy (Translated by John Cottingham, Cambridge)",
+        "label": "Ren\u00e9 Descartes: Meditations on First Philosophy (Translated by John Cottingham, Cambridge)",
         "url": "https://www.cambridge.org/core/books/descartes-meditations-on-first-philosophy/0468E8E9FF5C1C8FFBAA5EAA47F35FA6"
       },
       {
@@ -1610,7 +1610,7 @@ export const COMPILED_TOPICS = [
       "conditionalization",
       "critical-thinking"
     ],
-    "title": "Bayesian Epistemology: Degrees of Belief & Rational Conditionalization",
+    "title": "Bayesian Epistemology",
     "description": "Bayesian epistemology models beliefs not as binary true/false states, but as continuous degrees of confidence (credences) governed by the axioms of probability.",
     "resources": [
       {
@@ -1638,7 +1638,7 @@ export const COMPILED_TOPICS = [
       "pragmatism",
       "epistemology"
     ],
-    "title": "Fallibilism & Epistemic Humility: Charles Sanders Peirce's Inquiry Model",
+    "title": "Fallibilism & Epistemic Humility",
     "description": "Fallibilism holds that empirical knowledge cannot achieve absolute certainty, meaning any claim could conceivably be mistaken.",
     "resources": [
       {
@@ -1666,7 +1666,7 @@ export const COMPILED_TOPICS = [
       "deductive-reasoning",
       "validity"
     ],
-    "title": "Propositional Logic: Modus Ponens, Modus Tollens & Deductive Validity",
+    "title": "Propositional Logic",
     "description": "Deductive validity ensures that if all premises are true, the conclusion must necessarily be true.",
     "resources": [
       {
@@ -1694,7 +1694,7 @@ export const COMPILED_TOPICS = [
       "affirming-consequent",
       "critical-thinking"
     ],
-    "title": "Formal Fallacies: Affirming the Consequent & Denying the Antecedent",
+    "title": "Formal Fallacies",
     "description": "Formal fallacies are structural defects in deductive arguments that render them invalid regardless of premise truth.",
     "resources": [
       {
@@ -1722,19 +1722,19 @@ export const COMPILED_TOPICS = [
       "metamathematics",
       "philosophy-of-math"
     ],
-    "title": "Gödel's Incompleteness Theorems: The Limits of Formal Axiomatic Systems",
-    "description": "Kurt Gödel proved that any consistent formal mathematical system capable of basic arithmetic contains true statements that cannot be proven within the system.",
+    "title": "G\u00f6del's Incompleteness Theorems",
+    "description": "Kurt G\u00f6del proved that any consistent formal mathematical system capable of basic arithmetic contains true statements that cannot be proven within the system.",
     "resources": [
       {
-        "label": "Kurt Gödel: On Formally Undecidable Propositions of Principia Mathematica (Monatshefte für Mathematik und Physik 1931)",
+        "label": "Kurt G\u00f6del: On Formally Undecidable Propositions of Principia Mathematica (Monatshefte f\u00fcr Mathematik und Physik 1931)",
         "url": "https://link.springer.com/article/10.1007/BF01700692"
       },
       {
-        "label": "Stanford Encyclopedia of Philosophy: Gödel's Incompleteness Theorems",
+        "label": "Stanford Encyclopedia of Philosophy: G\u00f6del's Incompleteness Theorems",
         "url": "https://plato.stanford.edu/entries/goedel-incompleteness/"
       },
       {
-        "label": "Douglas Hofstadter: Gödel, Escher, Bach: An Eternal Golden Braid (Basic Books)",
+        "label": "Douglas Hofstadter: G\u00f6del, Escher, Bach: An Eternal Golden Braid (Basic Books)",
         "url": "https://www.basicbooks.com/titles/douglas-r-hofstadter/godel-escher-bach/9780465026562/"
       }
     ]
@@ -1750,7 +1750,7 @@ export const COMPILED_TOPICS = [
       "argumentation",
       "philosophy"
     ],
-    "title": "Reductio Ad Absurdum: The Logic of Proof by Contradiction",
+    "title": "Reductio Ad Absurdum",
     "description": "Proves a proposition by demonstrating that assuming its opposite leads to an inescapable logical contradiction or absurdity.",
     "resources": [
       {
@@ -1778,7 +1778,7 @@ export const COMPILED_TOPICS = [
       "steelmanning",
       "argumentation"
     ],
-    "title": "The Straw Man Fallacy & The Epistemic Power of Steelmanning",
+    "title": "The Straw Man Fallacy",
     "description": "The Straw Man fallacy distorts an opponent's argument into an exaggerated, weak caricature that is easy to refute.",
     "resources": [
       {
@@ -1806,7 +1806,7 @@ export const COMPILED_TOPICS = [
       "critical-thinking",
       "argumentation"
     ],
-    "title": "Ad Hominem & Tu Quoque: Separating Argument Validity from Speaker Identity",
+    "title": "Ad Hominem & Tu Quoque",
     "description": "An Ad Hominem fallacy attacks the personal character, background, or motives of the arguer rather than evaluating the substantive validity of their claim.",
     "resources": [
       {
@@ -1834,7 +1834,7 @@ export const COMPILED_TOPICS = [
       "fallacies",
       "logic"
     ],
-    "title": "Begging the Question (Petitio Principii): Hidden Circularity in Arguments",
+    "title": "Begging the Question (Petitio Principii)",
     "description": "Begging the Question occurs when an argument's premises assume the truth of the conclusion they are purporting to prove.",
     "resources": [
       {
@@ -1862,7 +1862,7 @@ export const COMPILED_TOPICS = [
       "critical-thinking",
       "nuance"
     ],
-    "title": "The False Dilemma: Artificial Dichotomies & Nuance Erasure",
+    "title": "The False Dilemma",
     "description": "A False Dilemma (bifurcation fallacy) artificially limits complex scenarios to two mutually exclusive extremes.",
     "resources": [
       {
@@ -1890,7 +1890,7 @@ export const COMPILED_TOPICS = [
       "fallacies",
       "critical-thinking"
     ],
-    "title": "Post Hoc Ergo Propter Hoc: Conflating Temporal Sequence with Causation",
+    "title": "Post Hoc Ergo Propter Hoc",
     "description": "The Post Hoc fallacy ('after this) mistakenly concludes that because event Y occurred after event X.",
     "resources": [
       {
@@ -1918,7 +1918,7 @@ export const COMPILED_TOPICS = [
       "russell-teapot",
       "critical-thinking"
     ],
-    "title": "Argumentum Ad Ignorantiam & The Allocation of the Burden of Proof",
+    "title": "Argumentum Ad Ignorantiam",
     "description": "The Appeal to Ignorance claims that a proposition is true simply because it has not yet been proven false .",
     "resources": [
       {
@@ -1947,7 +1947,7 @@ export const COMPILED_TOPICS = [
       "john-stuart-mill",
       "moral-philosophy"
     ],
-    "title": "Utilitarianism: The Greatest Happiness Principle & Consequentialist Ethics",
+    "title": "Utilitarianism",
     "description": "An ethical framework holding that actions are morally right if they maximize overall happiness and well-being for the greatest number.",
     "resources": [
       {
@@ -1976,7 +1976,7 @@ export const COMPILED_TOPICS = [
       "moral-duty",
       "duty-ethics"
     ],
-    "title": "Kantian Deontology: The Categorical Imperative & Moral Duty",
+    "title": "Kantian Deontology",
     "description": "Immanuel Kant's deontological ethics asserts that actions are intrinsically right or wrong regardless of consequences, grounded in pure rational duty.",
     "resources": [
       {
@@ -2005,7 +2005,7 @@ export const COMPILED_TOPICS = [
       "moral-character",
       "ethics"
     ],
-    "title": "Aristotelian Virtue Ethics: Eudaimonia & The Doctrine of the Golden Mean",
+    "title": "Aristotelian Virtue Ethics",
     "description": "Aristotle's Nicomachean Ethics focuses on character cultivation rather than rigid rules or consequence calculations, aiming for Eudaimonia (human flourishing).",
     "resources": [
       {
@@ -2033,7 +2033,7 @@ export const COMPILED_TOPICS = [
       "judith-jarvis-thomson",
       "moral-intuition"
     ],
-    "title": "The Trolley Problem: Moral Dilemmas & The Doctrine of Double Effect",
+    "title": "The Trolley Problem",
     "description": "The Trolley Problem contrasts pulling a switch to redirect a train (killing one to save five) with pushing a heavy person onto the tracks.",
     "resources": [
       {
@@ -2061,7 +2061,7 @@ export const COMPILED_TOPICS = [
       "political-philosophy",
       "ethics"
     ],
-    "title": "Rawls' Veil of Ignorance: Designing Just Social Contracts Behind the Original Position",
+    "title": "Rawls' Veil of Ignorance",
     "description": "John Rawls proposed the 'Veil of Ignorance' thought experiment: designing a just society without knowing one's own future socioeconomic status, race, gender.",
     "resources": [
       {
@@ -2089,7 +2089,7 @@ export const COMPILED_TOPICS = [
       "metaethics",
       "moral-philosophy"
     ],
-    "title": "Hume's Is-Ought Problem: The Divide Between Facts and Moral Values",
+    "title": "Hume's Is-Ought Problem",
     "description": "Argues that one cannot logically deduce prescriptive moral values ('ought') purely from descriptive factual claims ('is').",
     "resources": [
       {
@@ -2117,7 +2117,7 @@ export const COMPILED_TOPICS = [
       "philosophy-of-science",
       "scientific-method"
     ],
-    "title": "Popper's Falsificationism: The Demarcation Problem in Scientific Theories",
+    "title": "Popper's Falsificationism",
     "description": "Karl Popper solved the Demarcation Problem by arguing that scientific theories cannot be definitively verified by induction, but must be empirically falsifiable.",
     "resources": [
       {
@@ -2145,7 +2145,7 @@ export const COMPILED_TOPICS = [
       "incommensurability",
       "philosophy-of-science"
     ],
-    "title": "Thomas Kuhn: Paradigm Shifts & The Structure of Scientific Revolutions",
+    "title": "Thomas Kuhn",
     "description": "Scientific progress is not a smooth, linear accumulation of facts, but undergoes periodic discontinuous revolutions.",
     "resources": [
       {
@@ -2173,7 +2173,7 @@ export const COMPILED_TOPICS = [
       "auxiliary-hypotheses",
       "underdetermination"
     ],
-    "title": "The Duhem-Quine Thesis: Epistemological Holism & Underdetermination",
+    "title": "The Duhem-Quine Thesis",
     "description": "The Duhem-Quine thesis states that an isolated scientific hypothesis cannot be tested in a vacuum because every empirical test relies on a web of auxiliary.",
     "resources": [
       {
@@ -2201,7 +2201,7 @@ export const COMPILED_TOPICS = [
       "philosophy-of-mind",
       "hard-problem"
     ],
-    "title": "The Hard Problem of Consciousness: Explaining Subjective Qualia",
+    "title": "The Hard Problem of Consciousness",
     "description": "David Chalmers distinguished the 'easy problems' of cognitive neuroscience from the 'Hard Problem'.",
     "resources": [
       {
@@ -2230,7 +2230,7 @@ export const COMPILED_TOPICS = [
       "mereology",
       "philosophy"
     ],
-    "title": "The Ship of Theseus: Mereological Change & Personal Identity",
+    "title": "The Ship of Theseus",
     "description": "The Ship of Theseus paradox asks whether an object whose component parts are gradually replaced one by one over time remains fundamentally the same object.",
     "resources": [
       {
@@ -2258,7 +2258,7 @@ export const COMPILED_TOPICS = [
       "moral-responsibility",
       "metaphysics"
     ],
-    "title": "The Free Will Problem: Hard Determinism, Libertarianism & Compatibilism",
+    "title": "The Free Will Problem",
     "description": "The free will problem investigates whether moral responsibility and human agency are compatible with a deterministic physical universe governed by antecedent.",
     "resources": [
       {
@@ -2287,7 +2287,7 @@ export const COMPILED_TOPICS = [
       "epiphenomenalism",
       "philosophy-of-mind"
     ],
-    "title": "Mary's Room (The Knowledge Argument): Challenging Physicalism via Qualia",
+    "title": "Mary's Room (The Knowledge Argument)",
     "description": "Frank Jackson proposed the Mary's Room thought experiment: Mary is a brilliant neuroscientist who knows every physical and physiological fact about color vision.",
     "resources": [
       {
@@ -2315,7 +2315,7 @@ export const COMPILED_TOPICS = [
       "syntax-semantics",
       "philosophy-of-mind"
     ],
-    "title": "The Chinese Room Argument: Syntax vs Semantics in Artificial Intelligence",
+    "title": "The Chinese Room Argument",
     "description": "John Searle formulated the Chinese Room thought experiment to challenge 'Strong AI'.",
     "resources": [
       {
@@ -2343,7 +2343,7 @@ export const COMPILED_TOPICS = [
       "existentialism",
       "meaning"
     ],
-    "title": "Camus' Absurdism: Defiance, Freedom & The Myth of Sisyphus",
+    "title": "Camus' Absurdism",
     "description": "Albert Camus defined the 'Absurd' as the irreconcilable conflict between the human hunger for inherent meaning and the silent, indifferent universe.",
     "resources": [
       {
@@ -2371,7 +2371,7 @@ export const COMPILED_TOPICS = [
       "radical-freedom",
       "authenticity"
     ],
-    "title": "Jean-Paul Sartre: Existence Precedes Essence & The Anatomy of Bad Faith",
+    "title": "Jean-Paul Sartre",
     "description": "Jean-Paul Sartre proclaimed that 'existence precedes essence': humans are not designed with predetermined purpose.",
     "resources": [
       {
@@ -2399,7 +2399,7 @@ export const COMPILED_TOPICS = [
       "master-slave-morality",
       "nihilism"
     ],
-    "title": "Nietzsche's Moral Genealogy: Master-Slave Morality & The Will to Power",
+    "title": "Nietzsche's Moral Genealogy",
     "description": "Friedrich Nietzsche traced the historical emergence of moral systems in 'On the Genealogy of Morality'.",
     "resources": [
       {
@@ -2427,15 +2427,15 @@ export const COMPILED_TOPICS = [
       "anxiety",
       "fear-and-trembling"
     ],
-    "title": "Søren Kierkegaard: The Leap of Faith & The Anxiety of Freedom",
+    "title": "S\u00f8ren Kierkegaard",
     "description": "Considered the father of existentialism, Kierkegaard analyzed anxiety (Angst) as the 'dizziness of freedom' when confronting limitless possibilities.",
     "resources": [
       {
-        "label": "Søren Kierkegaard: Fear and Trembling (Penguin Classics)",
+        "label": "S\u00f8ren Kierkegaard: Fear and Trembling (Penguin Classics)",
         "url": "https://www.penguinrandomhouse.com/books/260773/fear-and-trembling-by-soren-kierkegaard/"
       },
       {
-        "label": "Stanford Encyclopedia of Philosophy: Søren Kierkegaard",
+        "label": "Stanford Encyclopedia of Philosophy: S\u00f8ren Kierkegaard",
         "url": "https://plato.stanford.edu/entries/kierkegaard/"
       },
       {
@@ -2456,7 +2456,7 @@ export const COMPILED_TOPICS = [
       "political-philosophy",
       "state-of-nature"
     ],
-    "title": "The Social Contract Tradition: Hobbes, Locke & Rousseau's State of Nature",
+    "title": "The Social Contract Tradition",
     "description": "Social Contract theory explains political legitimacy through thought experiments on the pre-political 'State of Nature'.",
     "resources": [
       {
@@ -2484,7 +2484,7 @@ export const COMPILED_TOPICS = [
       "political-philosophy",
       "democracy"
     ],
-    "title": "The Paradox of Tolerance: Defending Open Societies Against Dogmatic Totalitarianism",
+    "title": "The Paradox of Tolerance",
     "description": "In 'The Open Society and Its Enemies', Karl Popper articulated the Paradox of Tolerance: unlimited tolerance must lead to the disappearance of tolerance.",
     "resources": [
       {
@@ -2512,7 +2512,7 @@ export const COMPILED_TOPICS = [
       "totalitarianism",
       "political-philosophy"
     ],
-    "title": "Hannah Arendt: The Banality of Evil & Thoughtlessness in Bureaucracy",
+    "title": "Hannah Arendt",
     "description": "Reporting on the Adolf Eichmann trial in Jerusalem, political philosopher Hannah Arendt formulated 'The Banality of Evil'.",
     "resources": [
       {
@@ -2541,7 +2541,7 @@ export const COMPILED_TOPICS = [
       "eastern-philosophy",
       "dialectics"
     ],
-    "title": "Nagarjuna's Madhyamaka: Shunyata (Emptiness) & The Two Truths Doctrine",
+    "title": "Nagarjuna's Madhyamaka",
     "description": "Nagarjuna founded the Madhyamaka (Middle Way) school of Buddhist philosophy, demonstrating that all phenomena are empty (shunyata) of intrinsic.",
     "resources": [
       {
@@ -2570,7 +2570,7 @@ export const COMPILED_TOPICS = [
       "eastern-philosophy",
       "action-theory"
     ],
-    "title": "Daoism & Wu Wei: The Philosophy of Non-Coercive Effortless Action",
+    "title": "Daoism & Wu Wei",
     "description": "Central to Laozi's Daodejing and Zhuangzi, the concept of Wu Wei ('non-action' or 'effortless action') does not denote passive inertia.",
     "resources": [
       {
@@ -2599,7 +2599,7 @@ export const COMPILED_TOPICS = [
       "maya",
       "eastern-philosophy"
     ],
-    "title": "Advaita Vedanta: Non-Dualism, Maya & The Epistemology of Self-Knowledge",
+    "title": "Advaita Vedanta",
     "description": "Systematized by Adi Shankara, Advaita Vedanta asserts radical non-dualism (Advaita).",
     "resources": [
       {
@@ -2627,11 +2627,11 @@ export const COMPILED_TOPICS = [
       "infinite-payoff",
       "philosophy-of-religion"
     ],
-    "title": "Pascal's Wager: Decision Theory, Infinite Payoffs & Epistemic Duty",
+    "title": "Pascal's Wager",
     "description": "Even if the probability of God's existence is minuscule, the infinite expected payoff of eternal reward outweighs finite temporal costs.",
     "resources": [
       {
-        "label": "Blaise Pascal: Pensées (Translated by A. J. Krailsheimer, Penguin Classics)",
+        "label": "Blaise Pascal: Pens\u00e9es (Translated by A. J. Krailsheimer, Penguin Classics)",
         "url": "https://www.penguinrandomhouse.com/books/261053/pensees-by-blaise-pascal/"
       },
       {
@@ -2639,7 +2639,7 @@ export const COMPILED_TOPICS = [
         "url": "https://plato.stanford.edu/entries/pascal-wager/"
       },
       {
-        "label": "Alan Hájek: Waging War on Pascal's Wager (Philosophical Review 2003)",
+        "label": "Alan H\u00e1jek: Waging War on Pascal's Wager (Philosophical Review 2003)",
         "url": "https://www.jstor.org/stable/3595532"
       }
     ]
@@ -2655,7 +2655,7 @@ export const COMPILED_TOPICS = [
       "evidential-decision-theory",
       "rationality"
     ],
-    "title": "Newcomb's Paradox: Causal vs Evidential Decision Theory",
+    "title": "Newcomb's Paradox",
     "description": "William Newcomb's paradox presents a choice between two boxes based on the prediction of a super-intelligent entity.",
     "resources": [
       {
@@ -2683,7 +2683,7 @@ export const COMPILED_TOPICS = [
       "map-and-territory",
       "decision-making"
     ],
-    "title": "Epistemic vs Instrumental Rationality: The Map-and-Territory Relation",
+    "title": "Epistemic vs Instrumental Rationality",
     "description": "Rationality divides into Epistemic Rationality and Instrumental Rationality .",
     "resources": [
       {
@@ -2711,7 +2711,7 @@ export const COMPILED_TOPICS = [
       "kahneman-tversky",
       "decision-making"
     ],
-    "title": "The Availability Heuristic: Frequency Estimation via Memory Ease",
+    "title": "The Availability Heuristic",
     "description": "The availability heuristic a heuristic where people assess the probability or frequency of an event based on how readily concrete examples come to mind.",
     "resources": [
       {
@@ -2739,7 +2739,7 @@ export const COMPILED_TOPICS = [
       "epistemology",
       "psychology"
     ],
-    "title": "Confirmation Bias: Selective Information Search & Evidence Dismissal",
+    "title": "Confirmation Bias",
     "description": "The cognitive tendency to seek out, interpret, and remember evidence that confirms existing beliefs while dismissing contradictions.",
     "resources": [
       {
@@ -2766,7 +2766,7 @@ export const COMPILED_TOPICS = [
       "decision-making",
       "behavioral-economics"
     ],
-    "title": "The Sunk Cost Fallacy: Escalation of Commitment & Loss Aversion",
+    "title": "The Sunk Cost Fallacy",
     "description": "The sunk cost fallacy occurs when decision-makers justify continuing an endeavor based on cumulative past investments of time, capital.",
     "resources": [
       {
@@ -2794,7 +2794,7 @@ export const COMPILED_TOPICS = [
       "numerical-cognition",
       "psychology"
     ],
-    "title": "Anchoring & Adjustment: Numerical Priming & Insufficient Correction",
+    "title": "Anchoring & Adjustment",
     "description": "The anchoring and adjustment heuristic is a cognitive bias wherein initial exposure to an arbitrary reference value ('anchor') disproportionately influences.",
     "resources": [
       {
@@ -2822,7 +2822,7 @@ export const COMPILED_TOPICS = [
       "cognitive-bias",
       "expertise"
     ],
-    "title": "The Dunning-Kruger Effect: Metacognitive Deficits in Novice Self-Assessment",
+    "title": "The Dunning-Kruger Effect",
     "description": "Novices in complex cognitive domains suffer a dual burden: they make erroneous judgments and lack the domain metacognition required to recognize their own.",
     "resources": [
       {
@@ -2849,7 +2849,7 @@ export const COMPILED_TOPICS = [
       "fundamental-attribution-error",
       "cognitive-bias"
     ],
-    "title": "The Fundamental Attribution Error & Actor-Observer Asymmetry",
+    "title": "The Fundamental Attribution Error",
     "description": "Lee Ross coined the Fundamental Attribution Error (FAE) to describe the human tendency to overemphasize internal personality traits while underestimating.",
     "resources": [
       {
@@ -2876,7 +2876,7 @@ export const COMPILED_TOPICS = [
       "decision-making",
       "epistemic-bias"
     ],
-    "title": "Hindsight Bias: Memory Reconstruction & The 'I-Knew-It-All-Along' Illusion",
+    "title": "Hindsight Bias",
     "description": "Once an event outcome is known, individuals unconsciously reconstruct their memory to believe they had predicted the outcome all along.",
     "resources": [
       {
@@ -2904,7 +2904,7 @@ export const COMPILED_TOPICS = [
       "heuristics",
       "probability"
     ],
-    "title": "The Base Rate Fallacy: Representativeness & Neglect of Prior Probabilities",
+    "title": "The Base Rate Fallacy",
     "description": "The base rate fallacy occurs when people evaluate the likelihood of a hypothesis by its descriptive similarity to a stereotype (representativeness heuristic).",
     "resources": [
       {
@@ -2932,7 +2932,7 @@ export const COMPILED_TOPICS = [
       "kahneman-tversky",
       "formal-logic"
     ],
-    "title": "The Conjunction Fallacy: The 'Linda Problem' & Probabilistic Violations",
+    "title": "The Conjunction Fallacy",
     "description": "The conjunction fallacy is a formal logical error where individuals judge a compound conjunction of two events (A and B) as more probable than a single.",
     "resources": [
       {
@@ -2960,7 +2960,7 @@ export const COMPILED_TOPICS = [
       "behavioral-economics",
       "kahneman-tversky"
     ],
-    "title": "Prospect Theory: Asymmetric Value Function & Loss Aversion",
+    "title": "Prospect Theory",
     "description": "Daniel Kahneman and Amos Tversky's Nobel Prize-winning Prospect Theory showed that human choices under risk violate expected utility theory.",
     "resources": [
       {
@@ -2988,7 +2988,7 @@ export const COMPILED_TOPICS = [
       "nudge",
       "decision-making"
     ],
-    "title": "Status Quo Bias: Default Inertia & The Endowment Effect",
+    "title": "Status Quo Bias",
     "description": "William Samuelson and Richard Zeckhauser identified the Status Quo Bias: a disproportionate preference for the current state of affairs over alternatives.",
     "resources": [
       {
@@ -3016,7 +3016,7 @@ export const COMPILED_TOPICS = [
       "kahneman",
       "memory-bias"
     ],
-    "title": "The Peak-End Rule & Duration Neglect in Retrospective Evaluation",
+    "title": "The Peak-End Rule",
     "description": "A heuristic where people judge past experiences primarily by how they felt at the peak and the end, rather than the total duration.",
     "resources": [
       {
@@ -3044,7 +3044,7 @@ export const COMPILED_TOPICS = [
       "social-cognition",
       "cognitive-bias"
     ],
-    "title": "The Halo Effect: Global Attractiveness & Trait Generalization",
+    "title": "The Halo Effect",
     "description": "A cognitive bias where a positive impression in one domain leads people to assume positive traits across unrelated areas.",
     "resources": [
       {
@@ -3072,7 +3072,7 @@ export const COMPILED_TOPICS = [
       "emotion",
       "decision-making"
     ],
-    "title": "The Affect Heuristic: Intuitive Feelings in Risk and Benefit Judgments",
+    "title": "The Affect Heuristic",
     "description": "Individuals rely on fast, automatic emotional reactions ('good' or 'bad' feelings) to assess complex hazards and investments.",
     "resources": [
       {
@@ -3100,7 +3100,7 @@ export const COMPILED_TOPICS = [
       "project-management",
       "cognition"
     ],
-    "title": "The Planning Fallacy & Inside vs Outside View in Estimation",
+    "title": "The Planning Fallacy",
     "description": "Daniel Kahneman and Amos Tversky identified the Planning Fallacy: the universal tendency to underestimate the time, costs.",
     "resources": [
       {
@@ -3128,7 +3128,7 @@ export const COMPILED_TOPICS = [
       "social-influence",
       "peer-pressure"
     ],
-    "title": "The Asch Conformity Experiments: Normative vs Informational Social Influence",
+    "title": "The Asch Conformity Experiments",
     "description": "Solomon Asch's landmark line-judgment studies demonstrated that 75% of participants conformed at least once to an obviously incorrect unanimous group consensus.",
     "resources": [
       {
@@ -3157,7 +3157,7 @@ export const COMPILED_TOPICS = [
       "ethics",
       "agentic-state"
     ],
-    "title": "The Milgram Obedience Experiments: Authority Compliance & The Agentic State",
+    "title": "The Milgram Obedience Experiments",
     "description": "65% of ordinary participants complied with instructions to administer lethal 450-volt electric shocks to a screaming learner when commanded by an authoritative.",
     "resources": [
       {
@@ -3184,15 +3184,15 @@ export const COMPILED_TOPICS = [
       "social-psychology",
       "helping-behavior"
     ],
-    "title": "The Bystander Effect: Pluralistic Ignorance & Diffusion of Responsibility",
-    "description": "John Darley and Bibb Latané demonstrated that as the number of passive onlookers increases during an emergency.",
+    "title": "The Bystander Effect",
+    "description": "John Darley and Bibb Latan\u00e9 demonstrated that as the number of passive onlookers increases during an emergency.",
     "resources": [
       {
-        "label": "John M. Darley & Bibb Latané: Bystander Intervention in Emergencies: Diffusion of Responsibility (JPSP 1968)",
+        "label": "John M. Darley & Bibb Latan\u00e9: Bystander Intervention in Emergencies: Diffusion of Responsibility (JPSP 1968)",
         "url": "https://psycnet.apa.org/record/1968-08862-001"
       },
       {
-        "label": "Bibb Latané & John M. Darley: The Unresponsive Bystander: Why Doesn't He Help? (Appleton-Century-Crofts)",
+        "label": "Bibb Latan\u00e9 & John M. Darley: The Unresponsive Bystander: Why Doesn't He Help? (Appleton-Century-Crofts)",
         "url": "https://www.worldcat.org/title/unresponsive-bystander-why-doesnt-he-help/oclc/95318"
       },
       {
@@ -3213,7 +3213,7 @@ export const COMPILED_TOPICS = [
       "prejudice",
       "minimal-group"
     ],
-    "title": "Social Identity Theory: Minimal Group Paradigms & In-Group Favoritism",
+    "title": "Social Identity Theory",
     "description": "Henri Tajfel's Minimal Group Experiments proved that categorizing humans into arbitrary.",
     "resources": [
       {
@@ -3241,7 +3241,7 @@ export const COMPILED_TOPICS = [
       "self-justification",
       "social-psychology"
     ],
-    "title": "Cognitive Dissonance Theory: Aversive Inconsistency & Attitude Change",
+    "title": "Cognitive Dissonance Theory",
     "description": "The psychological tension felt when holding conflicting beliefs or actions, prompting people to change attitudes to restore harmony.",
     "resources": [
       {
@@ -3269,7 +3269,7 @@ export const COMPILED_TOPICS = [
       "herding",
       "persuasion"
     ],
-    "title": "Social Proof & Informational Cascades: Behavioral Validation via Others",
+    "title": "Social Proof & Informational Cascades",
     "description": "Robert Cialdini's Social Proof principle describes the tendency to view a behavior as correct in a given situation to the degree that we see others performing.",
     "resources": [
       {
@@ -3297,7 +3297,7 @@ export const COMPILED_TOPICS = [
       "superordinate-goals",
       "prejudice"
     ],
-    "title": "Realistic Conflict Theory: Resource Scarcity & Superordinate Goals",
+    "title": "Realistic Conflict Theory",
     "description": "Intergroup hostility, prejudice, and aggressive stereotypes arise spontaneously when groups compete for zero-sum scarce resources (Realistic Conflict Theory).",
     "resources": [
       {
@@ -3325,7 +3325,7 @@ export const COMPILED_TOPICS = [
       "cognitive-bias",
       "ethics"
     ],
-    "title": "The Just-World Hypothesis: Psychological Need for Order & Victim Blaming",
+    "title": "The Just-World Hypothesis",
     "description": "Melvin Lerner formulated the Just-World Hypothesis to explain how the cognitive need to view the world as fair, predictable.",
     "resources": [
       {
@@ -3353,7 +3353,7 @@ export const COMPILED_TOPICS = [
       "egocentric-bias",
       "social-psychology"
     ],
-    "title": "The False Consensus Effect: Overestimating Shared Beliefs",
+    "title": "The False Consensus Effect",
     "description": "Lee Ross, David Greene, and Pamela House proved that people systematically overestimate the degree to which their personal beliefs, values, habits.",
     "resources": [
       {
@@ -3382,7 +3382,7 @@ export const COMPILED_TOPICS = [
       "self-perception",
       "persuasion"
     ],
-    "title": "Sequential Compliance: Foot-in-the-Door vs Door-in-the-Face Paradigms",
+    "title": "Sequential Compliance",
     "description": "Sequential request strategies exploit distinct cognitive mechanisms to maximize behavioral compliance.",
     "resources": [
       {
@@ -3410,7 +3410,7 @@ export const COMPILED_TOPICS = [
       "ebbinghaus",
       "learning-science"
     ],
-    "title": "The Ebbinghaus Forgetting Curve & Spaced Repetition Mechanics",
+    "title": "The Ebbinghaus Forgetting Curve",
     "description": "Memory retention decays exponentially over time following initial learning unless actively reinforced (R = e^(-t/S)).",
     "resources": [
       {
@@ -3438,7 +3438,7 @@ export const COMPILED_TOPICS = [
       "learning",
       "memory"
     ],
-    "title": "Retrieval Practice: The Testing Effect & Desirable Difficulties in Learning",
+    "title": "Retrieval Practice",
     "description": "Henry Roediger and Jeffrey Karpicke proved that actively retrieving information from memory via self-testing produces substantially greater long-term retention.",
     "resources": [
       {
@@ -3466,7 +3466,7 @@ export const COMPILED_TOPICS = [
       "executive-function",
       "memory"
     ],
-    "title": "Working Memory Architecture: Baddeley's Multi-Component Model",
+    "title": "Working Memory Architecture",
     "description": "Alan Baddeley and Graham Hitch replaced the concept of a single short-term memory store with a multi-component working memory model.",
     "resources": [
       {
@@ -3494,7 +3494,7 @@ export const COMPILED_TOPICS = [
       "encoding-specificity",
       "retrieval"
     ],
-    "title": "Context & State-Dependent Memory: The Encoding Specificity Principle",
+    "title": "Context & State-Dependent Memory",
     "description": "Endel Tulving's Encoding Specificity Principle states that memory retrieval is maximized when internal physiological states (mood.",
     "resources": [
       {
@@ -3522,7 +3522,7 @@ export const COMPILED_TOPICS = [
       "eyewitness-testimony",
       "memory"
     ],
-    "title": "Memory Malleability: Elizabeth Loftus & The Misinformation Effect",
+    "title": "Memory Malleability",
     "description": "Human memory does not function like a video recording; instead, memories are reconstructed dynamically during recall.",
     "resources": [
       {
@@ -3550,7 +3550,7 @@ export const COMPILED_TOPICS = [
       "visual-memory",
       "learning"
     ],
-    "title": "Dual-Coding Theory: Verbal and Nonverbal Cognitive Subsystems",
+    "title": "Dual-Coding Theory",
     "description": "Allan Paivio's Dual-Coding Theory proposes that the human mind processes information through two separate but interconnected channels.",
     "resources": [
       {
@@ -3578,7 +3578,7 @@ export const COMPILED_TOPICS = [
       "memory",
       "cognitive-psychology"
     ],
-    "title": "Levels of Processing: Structural, Phonemic & Deep Semantic Encoding",
+    "title": "Levels of Processing",
     "description": "Fergus Craik and Robert Lockhart challenged structural store models of memory by showing that memory durability is a direct function of the depth of cognitive.",
     "resources": [
       {
@@ -3606,7 +3606,7 @@ export const COMPILED_TOPICS = [
       "cognitive-psychology",
       "skill-acquisition"
     ],
-    "title": "The Interleaving Effect: Category Discrimination vs Blocked Practice",
+    "title": "The Interleaving Effect",
     "description": "The interleaving effect occurs when learners alternate between different but related problem types or skills during a study session.",
     "resources": [
       {
@@ -3634,7 +3634,7 @@ export const COMPILED_TOPICS = [
       "war-of-the-ghosts",
       "cognitive-psychology"
     ],
-    "title": "Schema Theory & Constructive Memory: Frederic Bartlett's Cultural Schemas",
+    "title": "Schema Theory & Constructive Memory",
     "description": "Human memory retrieval is inherently constructive rather than reproductive.",
     "resources": [
       {
@@ -3663,7 +3663,7 @@ export const COMPILED_TOPICS = [
       "stanovich",
       "cognitive-architecture"
     ],
-    "title": "Dual-Process Theory: System 1 Intuition vs System 2 Deliberation",
+    "title": "Dual-Process Theory",
     "description": "Keith Stanovich, Richard West, and Daniel Kahneman conceptualized cognition through Dual-Process Theory.",
     "resources": [
       {
@@ -3691,8 +3691,8 @@ export const COMPILED_TOPICS = [
       "ryan-and-deci",
       "intrinsic-motivation"
     ],
-    "title": "Self-Determination Theory: Autonomy, Competence & Relatedness",
-    "description": "Identifies three core psychological needs—autonomy, competence, and relatedness—essential for intrinsic motivation and thriving.",
+    "title": "Self-Determination Theory",
+    "description": "Identifies three core psychological needs\u2014autonomy, competence, and relatedness\u2014essential for intrinsic motivation and thriving.",
     "resources": [
       {
         "label": "Richard M. Ryan & Edward L. Deci: Self-Determination Theory and the Facilitation of Intrinsic Motivation, Social Development, and Well-Being (American Psychologist 2000)",
@@ -3718,7 +3718,7 @@ export const COMPILED_TOPICS = [
       "extrinsic-rewards",
       "behavioral-psychology"
     ],
-    "title": "The Overjustification Effect: How Extrinsic Rewards Erode Intrinsic Drive",
+    "title": "The Overjustification Effect",
     "description": "The overjustification effect occurs when introducing contingent extrinsic incentives (money.",
     "resources": [
       {
@@ -3746,7 +3746,7 @@ export const COMPILED_TOPICS = [
       "performance",
       "organizational-psychology"
     ],
-    "title": "Locke & Latham's Goal-Setting Theory: Specificity, Challenge & Feedback",
+    "title": "Locke & Latham's Goal-Setting Theory",
     "description": "Edwin Locke and Gary Latham's extensive empirical research proved that specific.",
     "resources": [
       {
@@ -3774,7 +3774,7 @@ export const COMPILED_TOPICS = [
       "decision-making",
       "psychology"
     ],
-    "title": "Regulatory Focus Theory: Promotion Focus vs Prevention Focus",
+    "title": "Regulatory Focus Theory",
     "description": "Distinguishes motivation focused on growth and maximizing gains (Promotion) from motivation focused on security and avoiding errors (Prevention).",
     "resources": [
       {
@@ -3802,7 +3802,7 @@ export const COMPILED_TOPICS = [
       "mastery",
       "motivation"
     ],
-    "title": "Bandura's Self-Efficacy Theory: Mastery Experiences & Agency",
+    "title": "Bandura's Self-Efficacy Theory",
     "description": "Albert Bandura defined self-efficacy as an individual's belief in their capacity to execute behaviors necessary to produce specific performance attainments.",
     "resources": [
       {
@@ -3830,7 +3830,7 @@ export const COMPILED_TOPICS = [
       "delay-of-gratification",
       "behavioral-economics"
     ],
-    "title": "Temporal Discounting: Hyperbolic Preference Decay & Intertemporal Choice",
+    "title": "Temporal Discounting",
     "description": "Temporal discounting describes how the subjective value of a reward decreases as the delay until its receipt increases.",
     "resources": [
       {
@@ -3858,7 +3858,7 @@ export const COMPILED_TOPICS = [
       "valence",
       "instrumentality"
     ],
-    "title": "Expectancy-Value Theory: Victor Vroom's Motivation Calculus",
+    "title": "Expectancy-Value Theory",
     "description": "Victor Vroom's Expectancy Theory models conscious motivation as a multiplicative function of three variables: Expectancy , Instrumentality , and Valence .",
     "resources": [
       {
@@ -3886,7 +3886,7 @@ export const COMPILED_TOPICS = [
       "psychometrics",
       "costa-mccrae"
     ],
-    "title": "The Big Five Personality Architecture: The OCEAN Factor Model",
+    "title": "The Big Five Personality Architecture",
     "description": "The Five-Factor Model (Big Five) is the gold standard of contemporary psychometrics, identifying five broad.",
     "resources": [
       {
@@ -3914,7 +3914,7 @@ export const COMPILED_TOPICS = [
       "bimodal-distribution",
       "personality"
     ],
-    "title": "Psychometric Critiques of the MBTI: Reliability, Validity & Bimodality Flaws",
+    "title": "Psychometric Critiques of the MBTI",
     "description": "Academic personality psychology largely rejects the Myers-Briggs Type Indicator (MBTI) due to three severe psychometric deficiencies.",
     "resources": [
       {
@@ -3941,7 +3941,7 @@ export const COMPILED_TOPICS = [
       "lifespan-psychology",
       "trait-stability"
     ],
-    "title": "Personality Across the Lifespan: Rank-Order Stability & The Maturity Principle",
+    "title": "Personality Across the Lifespan",
     "description": "Longitudinal personality studies reveal high rank-order stability alongside mean-level change known as the 'Maturity Principle'.",
     "resources": [
       {
@@ -3969,7 +3969,7 @@ export const COMPILED_TOPICS = [
       "behavioral-consistency",
       "personality"
     ],
-    "title": "The Person-Situation Debate: Walter Mischel's Cognitive-Affective Processing",
+    "title": "The Person-Situation Debate",
     "description": "Walter Mischel sparked the historic Person-Situation debate by demonstrating that individual behavior varies dramatically across differing environments (low.",
     "resources": [
       {
@@ -3997,7 +3997,7 @@ export const COMPILED_TOPICS = [
       "psychopathy",
       "personality-psychology"
     ],
-    "title": "The Dark Triad: Machiavellianism, Narcissism & Subclinical Psychopathy",
+    "title": "The Dark Triad",
     "description": "Delroy Paulhus and Kevin Williams identified the Dark Triad: three distinct but overlapping subclinical personality constellations characterized by callousness.",
     "resources": [
       {
@@ -4025,7 +4025,7 @@ export const COMPILED_TOPICS = [
       "attribution",
       "personality"
     ],
-    "title": "Locus of Control: Julian Rotter's Internal vs External Expectancy Spectrum",
+    "title": "Locus of Control",
     "description": "Julian Rotter formulated Locus of Control to describe individual generalized expectancies regarding the source of life reinforcements.",
     "resources": [
       {
@@ -4053,7 +4053,7 @@ export const COMPILED_TOPICS = [
       "ashton-lee",
       "psychometrics"
     ],
-    "title": "The HEXACO Model of Personality: The Honesty-Humility Factor",
+    "title": "The HEXACO Model of Personality",
     "description": "Kibeom Lee and Michael Ashton developed the HEXACO model from cross-cultural lexical studies.",
     "resources": [
       {
@@ -4081,7 +4081,7 @@ export const COMPILED_TOPICS = [
       "schachter-singer",
       "affective-science"
     ],
-    "title": "Theories of Emotion: James-Lange, Cannon-Bard & Schachter-Singer Two-Factor",
+    "title": "Theories of Emotion",
     "description": "Classical affective psychology debates the causal sequence of emotion.",
     "resources": [
       {
@@ -4108,7 +4108,7 @@ export const COMPILED_TOPICS = [
       "emotional-granularity",
       "neuroscience"
     ],
-    "title": "The Theory of Constructed Emotion & Emotional Granularity",
+    "title": "The Theory of Constructed Emotion",
     "description": "Lisa Feldman Barrett's Theory of Constructed Emotion upends classical views of dedicated emotional circuits in the brain.",
     "resources": [
       {
@@ -4135,7 +4135,7 @@ export const COMPILED_TOPICS = [
       "cognitive-reappraisal",
       "expressive-suppression"
     ],
-    "title": "James Gross's Process Model of Emotion Regulation: Reappraisal vs Suppression",
+    "title": "James Gross's Process Model of Emotion Regulation",
     "description": "James Gross's Process Model tracks emotion regulation across five temporal stages.",
     "resources": [
       {
@@ -4163,7 +4163,7 @@ export const COMPILED_TOPICS = [
       "decision-making",
       "neuroscience"
     ],
-    "title": "The Somatic Marker Hypothesis: Bodily Feedback in Decision-Making",
+    "title": "The Somatic Marker Hypothesis",
     "description": "Antonio Damasio's Somatic Marker Hypothesis posits that emotional processes and bodily physiological signals (somatic markers) guide and bias decision-making.",
     "resources": [
       {
@@ -4191,7 +4191,7 @@ export const COMPILED_TOPICS = [
       "strange-situation",
       "developmental-psychology"
     ],
-    "title": "Attachment Theory: Strange Situation Classification & Internal Working Models",
+    "title": "Attachment Theory",
     "description": "Pioneered by John Bowlby and experimentally operationalized by Mary Ainsworth's Strange Situation paradigm.",
     "resources": [
       {
@@ -4219,7 +4219,7 @@ export const COMPILED_TOPICS = [
       "object-permanence",
       "conservation"
     ],
-    "title": "Piaget's Stages of Cognitive Development: Assimilation, Accommodation & Equilibration",
+    "title": "Piaget's Stages of Cognitive Development",
     "description": "Jean Piaget proposed that children construct mental schemas of the world through four sequential developmental stages.",
     "resources": [
       {
@@ -4247,7 +4247,7 @@ export const COMPILED_TOPICS = [
       "sociocultural-theory",
       "developmental-psychology"
     ],
-    "title": "Vygotsky's Sociocultural Theory: The Zone of Proximal Development (ZPD)",
+    "title": "Vygotsky's Sociocultural Theory",
     "description": "Cognitive development is fundamentally social and mediated through cultural language tools.",
     "resources": [
       {
@@ -4275,7 +4275,7 @@ export const COMPILED_TOPICS = [
       "limbic-system",
       "myelination"
     ],
-    "title": "Adolescent Neurodevelopment: The Dual-Systems Model & Synaptic Pruning",
+    "title": "Adolescent Neurodevelopment",
     "description": "Neuroimaging demonstrates that the adolescent brain undergoes asynchronous maturation.",
     "resources": [
       {
@@ -4303,7 +4303,7 @@ export const COMPILED_TOPICS = [
       "cognitive-development",
       "social-cognition"
     ],
-    "title": "Theory of Mind: False-Belief Tasks & Mental State Attribution",
+    "title": "Theory of Mind",
     "description": "Theory of Mind (ToM) is the cognitive capacity to attribute mental states.",
     "resources": [
       {
@@ -4331,7 +4331,7 @@ export const COMPILED_TOPICS = [
       "lifespan-psychology",
       "development"
     ],
-    "title": "Erikson's Psychosocial Stages: Eight Lifespan Crises & Identity Formation",
+    "title": "Erikson's Psychosocial Stages",
     "description": "Erik Erikson outlined an eight-stage epigenetic model of human psychosocial development spanning infancy to late adulthood.",
     "resources": [
       {
@@ -4360,7 +4360,7 @@ export const COMPILED_TOPICS = [
       "ethics",
       "developmental-psychology"
     ],
-    "title": "Kohlberg's Moral Stages & Carol Gilligan's Ethics of Care Critique",
+    "title": "Kohlberg's Moral Stages",
     "description": "Lawrence Kohlberg established a six-stage hierarchical model of moral reasoning based on justice and rights (Pre-conventional).",
     "resources": [
       {
@@ -4388,7 +4388,7 @@ export const COMPILED_TOPICS = [
       "decision-making",
       "organizational-psychology"
     ],
-    "title": "Groupthink: Structural Insulation & The Illusion of Invulnerability",
+    "title": "Groupthink",
     "description": "Irving Janis identified Groupthink: a psychological phenomenon occurring in cohesive groups where the desire for consensus and harmony overrides realistic.",
     "resources": [
       {
@@ -4416,7 +4416,7 @@ export const COMPILED_TOPICS = [
       "echo-chambers",
       "collective-behavior"
     ],
-    "title": "Group Polarization & The Risky Shift Phenomenon",
+    "title": "Group Polarization",
     "description": "Occurs when group discussions cause members to adopt more extreme positions than their initial individual inclinations.",
     "resources": [
       {
@@ -4444,11 +4444,11 @@ export const COMPILED_TOPICS = [
       "group-dynamics",
       "crowd-psychology"
     ],
-    "title": "Collective Inaction: Deindividuation & The Ringelmann Social Loafing Effect",
+    "title": "Collective Inaction",
     "description": "Max Ringelmann's rope-pulling experiments established Social Loafing: individual effort decreases systematically as group size increases due to obscured.",
     "resources": [
       {
-        "label": "Bibb Latané, Kipnis Williams, Stephen Harkins: Many Hands Make Light the Work: The Causes and Consequences of Social Loafing (JPSP 1979)",
+        "label": "Bibb Latan\u00e9, Kipnis Williams, Stephen Harkins: Many Hands Make Light the Work: The Causes and Consequences of Social Loafing (JPSP 1979)",
         "url": "https://psycnet.apa.org/record/1980-08088-001"
       },
       {
@@ -4472,7 +4472,7 @@ export const COMPILED_TOPICS = [
       "drive-theory",
       "performance"
     ],
-    "title": "Social Facilitation vs Social Inhibition: Robert Zajonc's Drive Theory",
+    "title": "Social Facilitation vs Social Inhibition",
     "description": "Robert Zajonc resolved contradictory findings on audience effects through Drive Theory.",
     "resources": [
       {
@@ -4500,7 +4500,7 @@ export const COMPILED_TOPICS = [
       "organizational-behavior",
       "group-dynamics"
     ],
-    "title": "Psychological Safety in Teams: Amy Edmondson's Learning Climate Model",
+    "title": "Psychological Safety in Teams",
     "description": "Amy Edmondson defined team psychological safety as a shared belief that the team is safe for interpersonal risk-taking.",
     "resources": [
       {
@@ -4528,7 +4528,7 @@ export const COMPILED_TOPICS = [
       "group-dynamics",
       "organizational-behavior"
     ],
-    "title": "The Abilene Paradox: The Inability to Manage Collective Agreement",
+    "title": "The Abilene Paradox",
     "description": "A paradox where a group collectively pursues a decision that no individual member actually wanted due to miscommunicated consent.",
     "resources": [
       {
@@ -4556,7 +4556,7 @@ export const COMPILED_TOPICS = [
       "epigenetics",
       "clinical-psychology"
     ],
-    "title": "The Diathesis-Stress Framework: Genetic Vulnerability & Environmental Triggers",
+    "title": "The Diathesis-Stress Framework",
     "description": "The Diathesis-Stress model explains psychological disorders as an interaction between an underlying predisposition (diathesis) and precipitating environmental.",
     "resources": [
       {
@@ -4584,7 +4584,7 @@ export const COMPILED_TOPICS = [
       "automatic-thoughts",
       "clinical-psychology"
     ],
-    "title": "The Cognitive-Behavioral Model: Aaron Beck's Cognitive Triad & Automatic Thoughts",
+    "title": "The Cognitive-Behavioral Model",
     "description": "Aaron Beck's cognitive model posits that psychological distress is maintained not directly by external events, but by the cognitive interpretations applied to them.",
     "resources": [
       {
@@ -4612,7 +4612,7 @@ export const COMPILED_TOPICS = [
       "classical-conditioning",
       "neurobiology"
     ],
-    "title": "Exposure Therapy Mechanics: Habituation vs Inhibitory Learning Theory",
+    "title": "Exposure Therapy Mechanics",
     "description": "Exposure protocols address conditioned fear responses by presenting conditioned stimuli in the absence of expected negative outcomes.",
     "resources": [
       {
@@ -4640,7 +4640,7 @@ export const COMPILED_TOPICS = [
       "synaptic-plasticity",
       "neuroscience"
     ],
-    "title": "Neuroplasticity & Hebbian Learning: 'Neurons That Fire Together, Wire Together'",
+    "title": "Neuroplasticity & Hebbian Learning",
     "description": "Donald Hebb's 1949 neuropsychological postulate established that repeated co-activation of neighboring neurons strengthens the synaptic efficacy between them.",
     "resources": [
       {
@@ -4648,7 +4648,7 @@ export const COMPILED_TOPICS = [
         "url": "https://www.worldcat.org/title/organization-of-behavior-a-neuropsychological-theory/oclc/467888"
       },
       {
-        "label": "Terje Lømo: The Discovery of Long-Term Potentiation (Philosophical Transactions of the Royal Society B 2003)",
+        "label": "Terje L\u00f8mo: The Discovery of Long-Term Potentiation (Philosophical Transactions of the Royal Society B 2003)",
         "url": "https://royalsocietypublishing.org/doi/10.1098/rstb.2002.1226"
       },
       {
@@ -4668,7 +4668,7 @@ export const COMPILED_TOPICS = [
       "cbt",
       "cognitive-psychology"
     ],
-    "title": "Cognitive Distortions: Automatic Thought Biases in Cognitive Therapy",
+    "title": "Cognitive Distortions",
     "description": "Cognitive distortions are systematic, biased patterns of thought that reinforce negative emotions and reinforce maladaptive schemas.",
     "resources": [
       {
@@ -4695,7 +4695,7 @@ export const COMPILED_TOPICS = [
       "reinforcement-deprivation",
       "clinical-psychology"
     ],
-    "title": "Behavioral Activation Mechanics: Breaking the Avoidance-Deprivation Loop",
+    "title": "Behavioral Activation Mechanics",
     "description": "Behavioral Activation (BA) operates on empirical operant conditioning principles.",
     "resources": [
       {
@@ -4723,7 +4723,7 @@ export const COMPILED_TOPICS = [
       "psychosomatic",
       "integrative-medicine"
     ],
-    "title": "The Biopsychosocial Model: George Engel's Multi-System Health Framework",
+    "title": "The Biopsychosocial Model",
     "description": "Health, disease, and recovery are dynamic emergent properties of complex interactions between Biological factors (genetics, biochemistry).",
     "resources": [
       {
@@ -4752,7 +4752,7 @@ export const COMPILED_TOPICS = [
       "task-positive-network",
       "brain-networks"
     ],
-    "title": "The Default Mode Network: Intrinsic Connectivity & Self-Referential Processing",
+    "title": "The Default Mode Network",
     "description": "Marcus Raichle identified the Default Mode Network (DMN), a set of interconnected brain regions (medial prefrontal cortex) that becomes active during passive.",
     "resources": [
       {
@@ -4780,7 +4780,7 @@ export const COMPILED_TOPICS = [
       "intrinsic-motivation",
       "focus"
     ],
-    "title": "Flow State Architecture: The Challenge-Skill Balance & Autotelic Focus",
+    "title": "Flow State Architecture",
     "description": "Mihaly Csikszentmihalyi defined 'Flow' as an optimal psychological state of deep absorption where action and awareness merge, loss of self-consciousness occurs.",
     "resources": [
       {
@@ -4808,7 +4808,7 @@ export const COMPILED_TOPICS = [
       "optimism",
       "resilience"
     ],
-    "title": "Learned Helplessness vs Learned Optimism: The Role of Explanatory Styles",
+    "title": "Learned Helplessness vs Learned Optimism",
     "description": "Martin Seligman discovered Learned Helplessness: when organisms experience uncontrollable adverse events.",
     "resources": [
       {
@@ -4836,7 +4836,7 @@ export const COMPILED_TOPICS = [
       "positive-psychology",
       "subjective-wellbeing"
     ],
-    "title": "The Hedonic Treadmill: Hedonic Adaptation & Happiness Set-Point Drift",
+    "title": "The Hedonic Treadmill",
     "description": "Philip Brickman and Donald Campbell's Hedonic Treadmill theory shows that individuals rapidly habituate to major life changes.",
     "resources": [
       {
@@ -4892,7 +4892,7 @@ export const COMPILED_TOPICS = [
       "positive-psychology",
       "well-being"
     ],
-    "title": "The PERMA Model of Well-Being: Five Pillars of Human Flourishing",
+    "title": "The PERMA Model of Well-Being",
     "description": "Martin Seligman's PERMA framework defines multidimensional well-being beyond fleeting happiness through five measurable pillars.",
     "resources": [
       {
@@ -4921,7 +4921,7 @@ export const COMPILED_TOPICS = [
       "resilience",
       "positive-psychology"
     ],
-    "title": "The Self-Compassion Architecture: Kristin Neff's Tripartite Model",
+    "title": "The Self-Compassion Architecture",
     "description": "Kristin Neff conceptualizes self-compassion as a resilient alternative to contingent self-esteem, composed of three interacting dyads.",
     "resources": [
       {
@@ -4949,7 +4949,7 @@ export const COMPILED_TOPICS = [
       "financial-modeling",
       "intrinsic-value"
     ],
-    "title": "Discounted Cash Flow (DCF) Valuation & Free Cash Flow Modeling",
+    "title": "Discounted Cash Flow (DCF) Valuation",
     "description": "Determines an asset's intrinsic value by projecting future free cash flows and discounting them back using a risk-adjusted rate.",
     "resources": [
       {
@@ -5005,7 +5005,7 @@ export const COMPILED_TOPICS = [
       "debt-equity",
       "leverage"
     ],
-    "title": "Capital Structure & the Modigliani-Miller Theorem",
+    "title": "Capital Structure",
     "description": "The Modigliani-Miller theorem states that in a frictionless market without taxes or bankruptcy costs, enterprise value is independent of capital structure.",
     "resources": [
       {
@@ -5033,7 +5033,7 @@ export const COMPILED_TOPICS = [
       "synergies",
       "investment-banking"
     ],
-    "title": "M&A Mechanics: Accretion/Dilution Analysis & Deal Structuring",
+    "title": "M&A Mechanics",
     "description": "Accretion/dilution analysis evaluates whether a merger or acquisition increases or decreases the acquirer's post-transaction Earnings Per Share (EPS).",
     "resources": [
       {
@@ -5060,7 +5060,7 @@ export const COMPILED_TOPICS = [
       "share-repurchases",
       "corporate-finance"
     ],
-    "title": "Capital Allocation: Dividends vs Share Repurchases & Signaling Effects",
+    "title": "Capital Allocation",
     "description": "Companies return excess cash to shareholders through either regular cash dividends or open-market share buybacks.",
     "resources": [
       {
@@ -5088,7 +5088,7 @@ export const COMPILED_TOPICS = [
       "operations",
       "corporate-finance"
     ],
-    "title": "Working Capital Optimization & the Cash Conversion Cycle (CCC)",
+    "title": "Working Capital Optimization",
     "description": "The Cash Conversion Cycle measures the net duration (in days) required for a company to convert raw inventory purchases into cash inflows from sales (CCC = DIO +.",
     "resources": [
       {
@@ -5117,7 +5117,7 @@ export const COMPILED_TOPICS = [
       "corporate-finance",
       "moats"
     ],
-    "title": "ROIC vs WACC: Economic Value Added (EVA) & Value Creation",
+    "title": "ROIC vs WACC",
     "description": "A business creates genuine economic value only when its Return on Invested Capital (ROIC) exceeds its Weighted Average Cost of Capital (WACC).",
     "resources": [
       {
@@ -5145,7 +5145,7 @@ export const COMPILED_TOPICS = [
       "corporate-finance",
       "net-debt"
     ],
-    "title": "Enterprise Value vs Equity Value: The Valuation Bridge Mechanics",
+    "title": "Enterprise Value vs Equity Value",
     "description": "Enterprise Value (EV) measures the total operating value of a business attributable to all capital providers .",
     "resources": [
       {
@@ -5173,7 +5173,7 @@ export const COMPILED_TOPICS = [
       "financial-modeling",
       "debt"
     ],
-    "title": "Leveraged Buyouts (LBO): Private Equity Deal Structuring & Returns Modeling",
+    "title": "Leveraged Buyouts (LBO)",
     "description": "In a Leveraged Buyout (LBO), a private equity sponsor acquires a target company using a substantial proportion of debt secured by the target's assets and cash flows.",
     "resources": [
       {
@@ -5185,7 +5185,7 @@ export const COMPILED_TOPICS = [
         "url": "https://corporatefinanceinstitute.com/resources/valuation/leveraged-buyout-lbo/"
       },
       {
-        "label": "Steven N. Kaplan & Per Strömberg: Leveraged Buyouts and Private Equity (Journal of Economic Perspectives 2009)",
+        "label": "Steven N. Kaplan & Per Str\u00f6mberg: Leveraged Buyouts and Private Equity (Journal of Economic Perspectives 2009)",
         "url": "https://www.aeaweb.org/articles?id=10.1257/jep.23.1.121"
       }
     ]
@@ -5202,7 +5202,7 @@ export const COMPILED_TOPICS = [
       "capital-budgeting",
       "decision-making"
     ],
-    "title": "Capital Budgeting Decision Rules: Net Present Value (NPV) vs Internal Rate of Return (IRR)",
+    "title": "Capital Budgeting Decision Rules",
     "description": "Net Present Value (NPV) measures the total dollar value added by an investment discounted at the cost of capital.",
     "resources": [
       {
@@ -5258,7 +5258,7 @@ export const COMPILED_TOPICS = [
       "tax-strategy",
       "personal-finance"
     ],
-    "title": "Tax-Advantaged Accounts: Traditional vs Roth 401(k) and IRA Mechanics",
+    "title": "Tax-Advantaged Accounts",
     "description": "Tax-advantaged accounts optimize long-term retirement savings through distinct tax timing mechanisms.",
     "resources": [
       {
@@ -5286,7 +5286,7 @@ export const COMPILED_TOPICS = [
       "tax-strategy",
       "retirement"
     ],
-    "title": "Advanced Retirement Strategies: Backdoor Roth & The IRS Pro-Rata Rule",
+    "title": "Advanced Retirement Strategies",
     "description": "A tax-advantaged strategy that converts non-deductible traditional IRA funds into a Roth account, bypassing direct income limits.",
     "resources": [
       {
@@ -5314,7 +5314,7 @@ export const COMPILED_TOPICS = [
       "tax-strategy",
       "personal-finance"
     ],
-    "title": "Health Savings Accounts (HSA): The Triple-Tax-Advantaged Wealth Vehicle",
+    "title": "Health Savings Accounts (HSA)",
     "description": "Paired with High-Deductible Health Plans (HDHP), HSAs offer a rare triple tax advantage.",
     "resources": [
       {
@@ -5342,7 +5342,7 @@ export const COMPILED_TOPICS = [
       "debt-avalanche",
       "interest-minimization"
     ],
-    "title": "Debt Payoff Frameworks: Debt Avalanche vs Debt Snowball Methodology",
+    "title": "Debt Payoff Frameworks",
     "description": "The Debt Avalanche strategy mathematically minimizes total interest paid by directing surplus payments to the highest-interest debt first.",
     "resources": [
       {
@@ -5370,7 +5370,7 @@ export const COMPILED_TOPICS = [
       "personal-finance",
       "risk"
     ],
-    "title": "Emergency Fund Sizing: Income Volatility, Runway & Liquidity Tiering",
+    "title": "Emergency Fund Sizing",
     "description": "An emergency reserve insulates personal balance sheets from unanticipated income loss or capital expenditure shocks without forcing liquidation of volatile.",
     "resources": [
       {
@@ -5399,7 +5399,7 @@ export const COMPILED_TOPICS = [
       "umbrella-policy",
       "personal-finance"
     ],
-    "title": "Insurance as Risk Mitigation: Term Life, Disability & Umbrella Coverage",
+    "title": "Insurance as Risk Mitigation",
     "description": "Insurance protects human capital against catastrophic, low-probability events rather than functioning as an investment vehicle.",
     "resources": [
       {
@@ -5428,7 +5428,7 @@ export const COMPILED_TOPICS = [
       "beneficiary-designations",
       "personal-finance"
     ],
-    "title": "Estate Planning Essentials: Wills, Revocable Living Trusts & Probate Avoidance",
+    "title": "Estate Planning Essentials",
     "description": "Estate planning coordinates asset transfer, legal guardianship, and tax efficiency upon death or incapacitation.",
     "resources": [
       {
@@ -5457,7 +5457,7 @@ export const COMPILED_TOPICS = [
       "interest-rates",
       "yield-to-maturity"
     ],
-    "title": "Bond Valuation Mechanics: Yield to Maturity, Macaulay Duration & Convexity",
+    "title": "Bond Valuation Mechanics",
     "description": "Measures bond price sensitivity to interest rate shifts using duration and convexity, showing how yields move inversely to price.",
     "resources": [
       {
@@ -5485,7 +5485,7 @@ export const COMPILED_TOPICS = [
       "monetary-policy",
       "fixed-income"
     ],
-    "title": "The Yield Curve: Term Structure of Interest Rates & Expectations Theory",
+    "title": "The Yield Curve",
     "description": "The yield curve plots nominal bond yields against maturity terms.",
     "resources": [
       {
@@ -5513,7 +5513,7 @@ export const COMPILED_TOPICS = [
       "the-greeks",
       "volatility"
     ],
-    "title": "Options Pricing & The Greeks: Delta, Gamma, Theta, Vega & Rho",
+    "title": "Options Pricing & The Greeks",
     "description": "Options derivative contracts confer the right, but not the obligation, to buy (Call) or sell (Put) an underlying asset at a strike price before expiration.",
     "resources": [
       {
@@ -5541,7 +5541,7 @@ export const COMPILED_TOPICS = [
       "volatility-skew",
       "derivatives"
     ],
-    "title": "Implied Volatility Dynamics: The Volatility Smile, Skew & The VIX Index",
+    "title": "Implied Volatility Dynamics",
     "description": "Implied volatility (IV) reflects the market's forward-looking standard deviation priced into option premiums.",
     "resources": [
       {
@@ -5570,7 +5570,7 @@ export const COMPILED_TOPICS = [
       "backwardation",
       "hedging"
     ],
-    "title": "Futures Markets: Margining, Contango vs Backwardation & Cost of Carry",
+    "title": "Futures Markets",
     "description": "Futures are standardized exchange-traded contracts requiring daily mark-to-market settlement.",
     "resources": [
       {
@@ -5598,7 +5598,7 @@ export const COMPILED_TOPICS = [
       "creation-redemption",
       "tax-efficiency"
     ],
-    "title": "ETFs vs Mutual Funds: In-Kind Creation/Redemption & Tax Efficiency",
+    "title": "ETFs vs Mutual Funds",
     "description": "Unlike mutual funds that settle once daily at Net Asset Value (NAV), Exchange-Traded Funds (ETFs) trade continuously on secondary exchanges.",
     "resources": [
       {
@@ -5627,7 +5627,7 @@ export const COMPILED_TOPICS = [
       "liquidation",
       "risk"
     ],
-    "title": "Margin Trading Mechanics: Regulation T, Maintenance Margin & Forced Liquidation",
+    "title": "Margin Trading Mechanics",
     "description": "Margin trading allows investors to borrow capital against portfolio securities, amplifying potential returns and downside losses.",
     "resources": [
       {
@@ -5655,7 +5655,7 @@ export const COMPILED_TOPICS = [
       "diversification",
       "asset-allocation"
     ],
-    "title": "Modern Portfolio Theory (MPT): The Efficient Frontier & Mean-Variance Optimization",
+    "title": "Modern Portfolio Theory (MPT)",
     "description": "Harry Markowitz's Modern Portfolio Theory demonstrates that asset risk should not be assessed in isolation, but by how it contributes to overall portfolio variance.",
     "resources": [
       {
@@ -5684,7 +5684,7 @@ export const COMPILED_TOPICS = [
       "risk-free-rate",
       "asset-pricing"
     ],
-    "title": "Capital Asset Pricing Model (CAPM): Beta, Alpha & The Security Market Line",
+    "title": "Capital Asset Pricing Model (CAPM)",
     "description": "CAPM calculates the theoretical expected return of an asset based on its systematic risk (Beta) relative to the market portfolio: E(R) = Rf + Beta * (Rm - Rf).",
     "resources": [
       {
@@ -5712,7 +5712,7 @@ export const COMPILED_TOPICS = [
       "value-premium",
       "size-premium"
     ],
-    "title": "Factor Investing: Fama-French Multi-Factor Models (Size, Value, Momentum)",
+    "title": "Factor Investing",
     "description": "The Fama-French Three-Factor and Five-Factor models expand CAPM by demonstrating that market beta alone cannot explain stock returns.",
     "resources": [
       {
@@ -5740,7 +5740,7 @@ export const COMPILED_TOPICS = [
       "portfolio-management",
       "taxes"
     ],
-    "title": "Portfolio Rebalancing Disciplines & Tax-Loss Harvesting Mechanics",
+    "title": "Portfolio Rebalancing Disciplines",
     "description": "Portfolio rebalancing maintains target risk allocations through periodic calendar intervals or tolerance band thresholds (e.g. 5/25 rule).",
     "resources": [
       {
@@ -5768,7 +5768,7 @@ export const COMPILED_TOPICS = [
       "variance",
       "portfolio-math"
     ],
-    "title": "Diversification Mathematics: Covariance Matrices & Volatility Reduction",
+    "title": "Diversification Mathematics",
     "description": "Portfolio variance is calculated using the weighted sum of individual asset variances plus cross-asset covariances.",
     "resources": [
       {
@@ -5796,7 +5796,7 @@ export const COMPILED_TOPICS = [
       "asset-allocation",
       "macro-risk"
     ],
-    "title": "Risk Parity Frameworks & The All Weather Asset Allocation Model",
+    "title": "Risk Parity Frameworks",
     "description": "Traditional 60/40 equity/bond portfolios derive over 90% of their total risk from volatile equity swings.",
     "resources": [
       {
@@ -5824,7 +5824,7 @@ export const COMPILED_TOPICS = [
       "macroeconomics",
       "liquidity"
     ],
-    "title": "Federal Reserve Monetary Policy & The Transmission Mechanism",
+    "title": "Federal Reserve Monetary Policy",
     "description": "Central banks steer macroeconomic liquidity using the Federal Funds Rate, open market operations, and interest on reserve balances (IORB).",
     "resources": [
       {
@@ -5853,7 +5853,7 @@ export const COMPILED_TOPICS = [
       "macroeconomics",
       "purchasing-power"
     ],
-    "title": "Inflation Dynamics: Demand-Pull, Cost-Push & CPI vs PCE Indices",
+    "title": "Inflation Dynamics",
     "description": "Inflation erodes the purchasing power of money through demand-pull surges or cost-push shocks (supply disruptions).",
     "resources": [
       {
@@ -5881,7 +5881,7 @@ export const COMPILED_TOPICS = [
       "macroeconomics",
       "leading-indicators"
     ],
-    "title": "Yield Curve Inversion: 10Y-2Y Spread & Recessionary Signals",
+    "title": "Yield Curve Inversion",
     "description": "Yield curve inversion occurs when short-term sovereign bond yields exceed long-term yields .",
     "resources": [
       {
@@ -5909,7 +5909,7 @@ export const COMPILED_TOPICS = [
       "balance-sheet",
       "liquidity"
     ],
-    "title": "Central Bank Balance Sheets: Quantitative Easing (QE) vs Quantitative Tightening (QT)",
+    "title": "Central Bank Balance Sheets",
     "description": "When policy rates hit the zero lower bound, central banks deploy Quantitative Easing (QE) by purchasing long-duration Treasuries and Mortgage-Backed Securities.",
     "resources": [
       {
@@ -5937,7 +5937,7 @@ export const COMPILED_TOPICS = [
       "interest-rate-parity",
       "currencies"
     ],
-    "title": "Foreign Exchange Mechanics: Covered Interest Parity & Purchasing Power Parity",
+    "title": "Foreign Exchange Mechanics",
     "description": "Foreign exchange rates balance global trade and capital flows through two primary parity conditions.",
     "resources": [
       {
@@ -5965,7 +5965,7 @@ export const COMPILED_TOPICS = [
       "macroeconomics",
       "keynesian"
     ],
-    "title": "Fiscal Policy Dynamics: Government Multipliers & Sovereign Debt-to-GDP Sustainability",
+    "title": "Fiscal Policy Dynamics",
     "description": "Fiscal policy drives macroeconomic output through discretionary government expenditures and taxation policy.",
     "resources": [
       {
@@ -5993,7 +5993,7 @@ export const COMPILED_TOPICS = [
       "liabilities",
       "shareholders-equity"
     ],
-    "title": "Balance Sheet Analysis: Assets, Liabilities & Shareholders' Equity",
+    "title": "Balance Sheet Analysis",
     "description": "The balance sheet provides a snapshot of a firm's financial position governed by the fundamental accounting equation: Assets = Liabilities + Shareholders' Equity.",
     "resources": [
       {
@@ -6021,7 +6021,7 @@ export const COMPILED_TOPICS = [
       "asc-606",
       "margins"
     ],
-    "title": "Income Statement Mechanics: Revenue Recognition (ASC 606) & Margin Tiers",
+    "title": "Income Statement Mechanics",
     "description": "The income statement tracks operating performance across a period, moving from top-line Gross Revenue down to Net Income through Gross Margin, EBITDA.",
     "resources": [
       {
@@ -6049,7 +6049,7 @@ export const COMPILED_TOPICS = [
       "capex",
       "free-cash-flow"
     ],
-    "title": "Cash Flow Statement Analysis: Operating (CFO), Investing (CFI) & Financing (CFF)",
+    "title": "Cash Flow Statement Analysis",
     "description": "The statement of cash flows reconciles accrual-based net income to actual cash generation across three sections.",
     "resources": [
       {
@@ -6077,7 +6077,7 @@ export const COMPILED_TOPICS = [
       "profitability",
       "efficiency"
     ],
-    "title": "Financial Ratio Analysis & The DuPont Decomposition of ROE",
+    "title": "Financial Ratio Analysis",
     "description": "Ratio analysis standardizes financial comparison across company sizes.",
     "resources": [
       {
@@ -6105,7 +6105,7 @@ export const COMPILED_TOPICS = [
       "beneish-m-score",
       "fraud"
     ],
-    "title": "Quality of Earnings: Accruals vs Cash Flow & The Beneish M-Score",
+    "title": "Quality of Earnings",
     "description": "High accounting earnings backed by weak operating cash flow frequently indicate aggressive revenue recognition, deferred maintenance, or earnings manipulation.",
     "resources": [
       {
@@ -6133,7 +6133,7 @@ export const COMPILED_TOPICS = [
       "cogs",
       "accounting-standards"
     ],
-    "title": "Inventory Accounting Methods: FIFO vs LIFO & Inflationary Distortions",
+    "title": "Inventory Accounting Methods",
     "description": "Inventory costing methods dictate Cost of Goods Sold (COGS) and ending inventory carrying value.",
     "resources": [
       {
@@ -6161,7 +6161,7 @@ export const COMPILED_TOPICS = [
       "commercial-real-estate",
       "property-valuation"
     ],
-    "title": "Real Estate Valuation: Capitalization Rates (Cap Rates) & Net Operating Income (NOI)",
+    "title": "Real Estate Valuation",
     "description": "Commercial real estate valuation centers on Net Operating Income .",
     "resources": [
       {
@@ -6189,7 +6189,7 @@ export const COMPILED_TOPICS = [
       "refinancing",
       "interest-math"
     ],
-    "title": "Mortgage Amortization Mechanics: Principal Schedules & Refinancing Math",
+    "title": "Mortgage Amortization Mechanics",
     "description": "Fixed-rate mortgages utilize standard annuity formulas to generate level monthly payments where the interest component dominates early years and gradually.",
     "resources": [
       {
@@ -6217,7 +6217,7 @@ export const COMPILED_TOPICS = [
       "real-estate-investment-trusts",
       "dividends"
     ],
-    "title": "Real Estate Investment Trusts (REITs): Tax Exemption & FFO/AFFO Metrics",
+    "title": "Real Estate Investment Trusts (REITs)",
     "description": "Real estate entities that distribute over 90% of taxable income to avoid corporate tax, evaluated using Funds From Operations (FFO).",
     "resources": [
       {
@@ -6245,7 +6245,7 @@ export const COMPILED_TOPICS = [
       "loan-to-value",
       "banking"
     ],
-    "title": "Commercial Real Estate Underwriting: Debt Service Coverage Ratio (DSCR) & LTV",
+    "title": "Commercial Real Estate Underwriting",
     "description": "Commercial lenders underwrite property loans primarily through the Debt Service Coverage Ratio (DSCR = NOI / Annual Debt Service).",
     "resources": [
       {
@@ -6273,7 +6273,7 @@ export const COMPILED_TOPICS = [
       "depreciation-recapture",
       "taxes"
     ],
-    "title": "Section 1031 Like-Kind Exchanges & Depreciation Recapture Rules",
+    "title": "Section 1031 Like-Kind Exchanges",
     "description": "Internal Revenue Code Section 1031 allows real estate investors to defer capital gains tax and unrecaptured Section 1250 depreciation upon selling an investment.",
     "resources": [
       {
@@ -6302,7 +6302,7 @@ export const COMPILED_TOPICS = [
       "general-partner",
       "limited-partner"
     ],
-    "title": "Real Estate Private Equity: Waterfall Distributions & The Sponsor Promote",
+    "title": "Real Estate Private Equity",
     "description": "Real estate joint venture waterfall models distribute cash flows between Limited Partners (LP capital providers) and General Partners (GP sponsors).",
     "resources": [
       {
@@ -6330,7 +6330,7 @@ export const COMPILED_TOPICS = [
       "venture-capital",
       "equity-modeling"
     ],
-    "title": "Capitalization Tables: Pre-Money vs Post-Money Valuation & Dilution Math",
+    "title": "Capitalization Tables",
     "description": "A capitalization (cap) table details ownership stakes, share classes, and option pools across funding rounds.",
     "resources": [
       {
@@ -6358,7 +6358,7 @@ export const COMPILED_TOPICS = [
       "fundraising",
       "y-combinator"
     ],
-    "title": "Early-Stage Instruments: Post-Money SAFE Notes vs Convertible Promissory Notes",
+    "title": "Early-Stage Instruments",
     "description": "Simple Agreements for Future Equity (SAFE notes) and convertible promissory notes allow seed startups to raise bridge capital before establishing a priced equity.",
     "resources": [
       {
@@ -6387,7 +6387,7 @@ export const COMPILED_TOPICS = [
       "nso",
       "startup-compensation"
     ],
-    "title": "Startup Equity Compensation: 4-Year Vesting Cliffs & The Section 83(b) Election",
+    "title": "Startup Equity Compensation",
     "description": "Startup equity typically vests over 4 years with a 1-year cliff, where 25% vests after 12 months and 1/48th monthly thereafter.",
     "resources": [
       {
@@ -6416,7 +6416,7 @@ export const COMPILED_TOPICS = [
       "tax-strategy",
       "startup-equity"
     ],
-    "title": "Stock Options Taxation: Incentive Stock Options (ISO) vs NSOs & The AMT Trap",
+    "title": "Stock Options Taxation",
     "description": "Incentive Stock Options (ISOs) provide tax advantages by deferring ordinary income taxes upon exercise until the underlying stock is sold as long-term capital.",
     "resources": [
       {
@@ -6444,7 +6444,7 @@ export const COMPILED_TOPICS = [
       "preferred-stock",
       "waterfall"
     ],
-    "title": "Venture Term Sheets: 1x Non-Participating vs Participating Liquidation Preferences",
+    "title": "Venture Term Sheets",
     "description": "Liquidation preferences determine payout order when a company is acquired or liquidated.",
     "resources": [
       {
@@ -6472,7 +6472,7 @@ export const COMPILED_TOPICS = [
       "capital-gains",
       "angel-investing"
     ],
-    "title": "Qualified Small Business Stock (QSBS): Section 1202 Capital Gains Exemption",
+    "title": "Qualified Small Business Stock (QSBS)",
     "description": "Internal Revenue Code Section 1202 allows founders and early startup investors to exclude up to 100% of federal capital gains tax upon selling Qualified Small.",
     "resources": [
       {
@@ -6500,7 +6500,7 @@ export const COMPILED_TOPICS = [
       "expected-shortfall",
       "financial-risk"
     ],
-    "title": "Quantitative Risk Metrics: Value at Risk (VaR) & Expected Shortfall (CVaR)",
+    "title": "Quantitative Risk Metrics",
     "description": "Value at Risk (VaR) quantifies the maximum expected financial loss across a portfolio over a given time horizon at a specific confidence level (e.g. 99% 1-day VaR).",
     "resources": [
       {
@@ -6528,7 +6528,7 @@ export const COMPILED_TOPICS = [
       "collar",
       "downside-protection"
     ],
-    "title": "Downside Risk Hedging: Protective Puts, Collars & Delta Hedging",
+    "title": "Downside Risk Hedging",
     "description": "Portfolio hedging mitigates equity drawdowns without triggering outright stock sales.",
     "resources": [
       {
@@ -6556,7 +6556,7 @@ export const COMPILED_TOPICS = [
       "portfolio-allocation",
       "bankroll"
     ],
-    "title": "Position Sizing Mathematics: The Kelly Criterion & Risk of Ruin",
+    "title": "Position Sizing Mathematics",
     "description": "A mathematical formula that determines the optimal fraction of capital to risk per bet to maximize long-term wealth growth.",
     "resources": [
       {
@@ -6584,7 +6584,7 @@ export const COMPILED_TOPICS = [
       "order-book",
       "execution"
     ],
-    "title": "Market Microstructure: Bid-Ask Spreads, Market Impact & Slippage Costs",
+    "title": "Market Microstructure",
     "description": "Liquidity risk measures the friction and cost incurred when entering or exiting an asset position.",
     "resources": [
       {
@@ -6612,7 +6612,7 @@ export const COMPILED_TOPICS = [
       "isda",
       "clearinghouse"
     ],
-    "title": "Counterparty Credit Risk & Credit Default Swaps (CDS)",
+    "title": "Counterparty Credit Risk",
     "description": "Counterparty risk is the hazard that the other party to a bilateral financial contract defaults before fulfilling their contractual obligations.",
     "resources": [
       {
@@ -6640,7 +6640,7 @@ export const COMPILED_TOPICS = [
       "risk-management",
       "banking-resilience"
     ],
-    "title": "Institutional Risk Governance: Stress Testing & Scenario Analysis (CCAR)",
+    "title": "Institutional Risk Governance",
     "description": "Under Dodd-Frank and Basel III frameworks, major financial institutions conduct Comprehensive Capital Analysis and Review (CCAR) stress tests against severely.",
     "resources": [
       {
@@ -6668,7 +6668,7 @@ export const COMPILED_TOPICS = [
       "constant-product",
       "market-microstructure"
     ],
-    "title": "Automated Market Makers (AMM): Constant Product Invariant (x * y = k)",
+    "title": "Automated Market Makers (AMM)",
     "description": "Automated Market Makers replace traditional order books with pooled liquidity algorithms governed by the constant product invariant x * y = k.",
     "resources": [
       {
@@ -6696,7 +6696,7 @@ export const COMPILED_TOPICS = [
       "liquidity-provision",
       "yield-farming"
     ],
-    "title": "Impermanent Loss: Opportunity Cost & Convexity in AMM Liquidity Provision",
+    "title": "Impermanent Loss",
     "description": "Impermanent loss measures the valuation divergence between depositing token pairs into a constant-product AMM pool versus simply holding them in a wallet.",
     "resources": [
       {
@@ -6724,7 +6724,7 @@ export const COMPILED_TOPICS = [
       "monetary-economics",
       "collateral"
     ],
-    "title": "Stablecoin Economics: Fiat-Backed, Crypto-Overcollateralized & Algorithmic Risks",
+    "title": "Stablecoin Economics",
     "description": "Stablecoins peg digital assets to sovereign currencies through three core collateral models.",
     "resources": [
       {
@@ -6753,7 +6753,7 @@ export const COMPILED_TOPICS = [
       "yield",
       "risk"
     ],
-    "title": "Proof-of-Stake Economics: Staking Yields, Dilution & Slashing Risk",
+    "title": "Proof-of-Stake Economics",
     "description": "In Proof-of-Stake consensus, staking yields derive from a combination of programmatic token issuance inflation and transaction priority fees (MEV).",
     "resources": [
       {
@@ -6782,7 +6782,7 @@ export const COMPILED_TOPICS = [
       "liquidation-threshold",
       "interest-rate-models"
     ],
-    "title": "DeFi Money Markets: Overcollateralized Lending, Utilization Rates & Liquidation Thresholds",
+    "title": "DeFi Money Markets",
     "description": "Decentralized lending protocols (Aave, Compound) manage liquidity pools where borrowing interest rates float dynamically based on capital utilization curves (U =.",
     "resources": [
       {
@@ -6838,7 +6838,7 @@ export const COMPILED_TOPICS = [
       "defi",
       "capital-markets"
     ],
-    "title": "Real-World Asset (RWA) Tokenization & On-Chain Sovereign Debt Yields",
+    "title": "Real-World Asset (RWA) Tokenization",
     "description": "Real-World Asset (RWA) tokenization bridges traditional capital market instruments (short-term US Treasuries) onto public blockchains via bankruptcy-remote.",
     "resources": [
       {
@@ -6864,7 +6864,7 @@ export const COMPILED_TOPICS = [
       "transformers",
       "nlp"
     ],
-    "title": "Scaled Dot-Product & Multi-Head Self-Attention",
+    "title": "Scaled Dot-Product",
     "description": "Calculates pairwise dynamic compatibility across token representations via query-key dot products to route value embeddings across multiple representation subspaces.",
     "resources": [
       {
@@ -6968,7 +6968,7 @@ export const COMPILED_TOPICS = [
       "deep-learning",
       "optimization"
     ],
-    "title": "Residual Connections & Highway Gradient Flow",
+    "title": "Residual Connections",
     "description": "Introduces identity skip connections that formulate layer mappings as learning residual functions with reference to layer inputs.",
     "resources": [
       {
@@ -7020,7 +7020,7 @@ export const COMPILED_TOPICS = [
       "transformers",
       "vision-backbone"
     ],
-    "title": "Swin Transformer: Hierarchical Vision with Shifted Windows",
+    "title": "Swin Transformer",
     "description": "Constructs hierarchical feature maps with linear complexity relative to image size by computing self-attention only within local non-overlapping windows.",
     "resources": [
       {
@@ -7046,7 +7046,7 @@ export const COMPILED_TOPICS = [
       "sparse-attention",
       "long-context"
     ],
-    "title": "Sliding Window & Sparse Attention Patterns",
+    "title": "Sliding Window",
     "description": "Replaces full dense $O(N^2)$ attention matrices with localized sliding window bands combined with dilated and global attention anchor tokens.",
     "resources": [
       {
@@ -7072,7 +7072,7 @@ export const COMPILED_TOPICS = [
       "attention",
       "inference"
     ],
-    "title": "Grouped-Query Attention (GQA) & Multi-Query Attention (MQA)",
+    "title": "Grouped-Query Attention (GQA)",
     "description": "Shares key-value heads across multiple query heads, dramatically reducing memory bandwidth while preserving multi-head model quality.",
     "resources": [
       {
@@ -7202,7 +7202,7 @@ export const COMPILED_TOPICS = [
       "ai-safety",
       "rlhf"
     ],
-    "title": "Constitutional AI & RL from AI Feedback (RLAIF)",
+    "title": "Constitutional AI",
     "description": "Scales model alignment by using a set of natural language principles ('constitution') and self-critique loops to generate synthetic revision pairs and train.",
     "resources": [
       {
@@ -7462,7 +7462,7 @@ export const COMPILED_TOPICS = [
       "sampling",
       "nlp"
     ],
-    "title": "Nucleus (Top-p) Sampling, Temperature & Beam Search",
+    "title": "Nucleus (Top-p) Sampling, Temperature",
     "description": "Decoding strategies for language models; nucleus (top-p) sampling dynamically samples from the smallest token set exceeding probability threshold p.",
     "resources": [
       {
@@ -7566,7 +7566,7 @@ export const COMPILED_TOPICS = [
       "knowledge-graphs",
       "llms"
     ],
-    "title": "GraphRAG: Knowledge Graph-Augmented Generation",
+    "title": "GraphRAG",
     "description": "Extracts entity-relationship graphs and community summaries from raw document corpora via LLMs to synthesize answers across diffuse.",
     "resources": [
       {
@@ -7696,7 +7696,7 @@ export const COMPILED_TOPICS = [
       "probabilistic-ml",
       "deep-learning"
     ],
-    "title": "Variational Autoencoders & The Reparameterization Trick",
+    "title": "Variational Autoencoders",
     "description": "Maps inputs into a smooth continuous latent space using the reparameterization trick, allowing stable generation of new samples.",
     "resources": [
       {
@@ -7722,7 +7722,7 @@ export const COMPILED_TOPICS = [
       "codebook",
       "discrete-latent"
     ],
-    "title": "Vector Quantized VAE (VQ-VAE) & Discrete Codebooks",
+    "title": "Vector Quantized VAE (VQ-VAE)",
     "description": "Learns discrete latent representations by quantizing continuous encoder vectors to their nearest entry in a learned codebook.",
     "resources": [
       {
@@ -7748,7 +7748,7 @@ export const COMPILED_TOPICS = [
       "deep-learning",
       "training"
     ],
-    "title": "AdamW: Decoupled Weight Decay Optimization",
+    "title": "AdamW",
     "description": "Decouples weight decay from gradient momentum updates, preventing L2 regularization from degrading adaptive learning rates.",
     "resources": [
       {
@@ -7826,7 +7826,7 @@ export const COMPILED_TOPICS = [
       "gpu-optimization",
       "training"
     ],
-    "title": "FP16/BF16 Mixed Precision & Gradient Accumulation",
+    "title": "FP16/BF16 Mixed Precision",
     "description": "Accelerates deep learning training and halves GPU memory by running tensor contractions in Bfloat16 or FP16 Tensor Cores while maintaining master FP32 parameter.",
     "resources": [
       {
@@ -7878,7 +7878,7 @@ export const COMPILED_TOPICS = [
       "search",
       "planning"
     ],
-    "title": "Monte Carlo Tree Search (MCTS) & AlphaZero",
+    "title": "Monte Carlo Tree Search (MCTS)",
     "description": "Combines deep policy and value networks with heuristic tree search (selection) using Upper Confidence Bounds applied to Trees (UCT) to guide decision-making.",
     "resources": [
       {
@@ -7904,7 +7904,7 @@ export const COMPILED_TOPICS = [
       "deep-learning",
       "q-learning"
     ],
-    "title": "Deep Q-Networks (DQN) & Experience Replay",
+    "title": "Deep Q-Networks (DQN)",
     "description": "Overcomes training instability in non-linear function approximation for Q-learning by employing experience replay buffers to break sample temporal correlations.",
     "resources": [
       {
@@ -7956,7 +7956,7 @@ export const COMPILED_TOPICS = [
       "vlm",
       "instruction-tuning"
     ],
-    "title": "LLaVA: Visual Instruction Tuning",
+    "title": "LLaVA",
     "description": "Connects a pre-trained vision encoder (CLIP ViT) with a language model decoder (Vicuna/Llama) using a linear or MLP projection matrix.",
     "resources": [
       {
@@ -7990,7 +7990,7 @@ export const COMPILED_TOPICS = [
         "url": "https://arxiv.org/abs/2003.08934"
       },
       {
-        "label": "Instant Neural Graphics Primitives with a Multiresolution Hash Encoding (Müller et al., NVIDIA)",
+        "label": "Instant Neural Graphics Primitives with a Multiresolution Hash Encoding (M\u00fcller et al., NVIDIA)",
         "url": "https://arxiv.org/abs/2201.05989"
       },
       {
@@ -8034,7 +8034,7 @@ export const COMPILED_TOPICS = [
       "distillation",
       "deep-learning"
     ],
-    "title": "Knowledge Distillation & Dark Knowledge Transfer",
+    "title": "Knowledge Distillation",
     "description": "Compresses large ensemble or teacher models into compact student models by training the student on the softened logit probability distributions.",
     "resources": [
       {
@@ -8086,7 +8086,7 @@ export const COMPILED_TOPICS = [
       "computer-vision",
       "representation"
     ],
-    "title": "SimCLR: Contrastive Self-Supervised Representation Learning",
+    "title": "SimCLR",
     "description": "Learns visual representations without human labels by maximizing agreement between differently augmented views (random cropping) of the same image via normalized.",
     "resources": [
       {
@@ -8190,7 +8190,7 @@ export const COMPILED_TOPICS = [
       "ai-safety",
       "mechanistic-analysis"
     ],
-    "title": "Mechanistic Interpretability & Induction Heads",
+    "title": "Mechanistic Interpretability",
     "description": "Reverse-engineers neural networks into discrete human-interpretable computational circuits.",
     "resources": [
       {
@@ -8216,7 +8216,7 @@ export const COMPILED_TOPICS = [
       "prompting",
       "tool-use"
     ],
-    "title": "ReAct: Synergizing Reasoning and Acting in Language Models",
+    "title": "ReAct",
     "description": "Interleaves dynamic chain-of-thought verbal reasoning traces with domain-specific tool execution actions (APIs, search engines).",
     "resources": [
       {
@@ -8268,7 +8268,7 @@ export const COMPILED_TOPICS = [
       "structured-outputs",
       "decoding"
     ],
-    "title": "Function Calling & Constrained Grammar Decoding",
+    "title": "Function Calling",
     "description": "Enforces strict JSON schema compliance during token generation by masking out invalid next-token logits that violate Context-Free Grammar (CFG) or regex.",
     "resources": [
       {
@@ -8294,7 +8294,7 @@ export const COMPILED_TOPICS = [
       "pytorch",
       "deep-learning"
     ],
-    "title": "Fully Sharded Data Parallelism (FSDP) & ZeRO-3",
+    "title": "Fully Sharded Data Parallelism (FSDP)",
     "description": "Eliminates memory redundancy across GPU clusters by sharding model parameters, gradients, and optimizer states across worker ranks.",
     "resources": [
       {
@@ -8398,7 +8398,7 @@ export const COMPILED_TOPICS = [
       "instruction-tuning",
       "data-engine"
     ],
-    "title": "Evol-Instruct: Automated Synthetic Instruction Evolution",
+    "title": "Evol-Instruct",
     "description": "Iteratively rewrites seed prompts into increasingly complex, multi-step instructions using structured evolutionary mutation prompts.",
     "resources": [
       {
@@ -8450,7 +8450,7 @@ export const COMPILED_TOPICS = [
       "evaluation",
       "hallucinations"
     ],
-    "title": "The RAG Triad: Context Relevance, Groundedness & Answer Relevance",
+    "title": "The RAG Triad",
     "description": "A formal evaluation methodology that breaks down RAG hallucinations into three measurable orthogonal axes.",
     "resources": [
       {
@@ -8502,7 +8502,7 @@ export const COMPILED_TOPICS = [
       "scheduling",
       "containers"
     ],
-    "title": "Kubernetes Scheduler: Filtering, Scoring & Preemption",
+    "title": "Kubernetes Scheduler",
     "description": "The kube-scheduler assigns pods to nodes in a two-phase cycle: filtering nodes via predicates (node affinity) and scoring survivors via priorities.",
     "resources": [
       {
@@ -8528,7 +8528,7 @@ export const COMPILED_TOPICS = [
       "operators",
       "controller-runtime"
     ],
-    "title": "Kubernetes Operator Pattern & Edge-Triggered Reconciliation",
+    "title": "Kubernetes Operator Pattern",
     "description": "Operators extend Kubernetes by pairing Custom Resource Definitions (CRDs) with an idempotent reconciliation controller.",
     "resources": [
       {
@@ -8576,7 +8576,7 @@ export const COMPILED_TOPICS = [
       "security",
       "admission-controllers"
     ],
-    "title": "Kubernetes Dynamic Admission: Mutating & Validating Webhooks",
+    "title": "Kubernetes Dynamic Admission",
     "description": "Admission webhooks intercept API requests to the kube-apiserver after authentication and schema validation.",
     "resources": [
       {
@@ -8599,7 +8599,7 @@ export const COMPILED_TOPICS = [
       "runtimes",
       "linux"
     ],
-    "title": "Container Runtime Architecture: CRI, containerd, runc & OCI Specs",
+    "title": "Container Runtime Architecture",
     "description": "The Kubelet delegates pod lifecycle execution via the gRPC Container Runtime Interface (CRI) to high-level runtimes like containerd or CRI-O. These runtimes pull.",
     "resources": [
       {
@@ -8626,7 +8626,7 @@ export const COMPILED_TOPICS = [
       "resource-management",
       "kernel"
     ],
-    "title": "Linux cgroups v2: Unified Hierarchy, Memory Pressure & OOM Management",
+    "title": "Linux cgroups v2",
     "description": "Control Groups (cgroups v2) unify resource accounting under a single hierarchy, resolving the I/O-memory attribution flaws of cgroups v1.",
     "resources": [
       {
@@ -8653,7 +8653,7 @@ export const COMPILED_TOPICS = [
       "service-mesh",
       "proxies"
     ],
-    "title": "Envoy Proxy Architecture: Event Loops, Threading & dynamic xDS APIs",
+    "title": "Envoy Proxy Architecture",
     "description": "Envoy uses a single-process, multi-threaded event-driven model where non-blocking libevent loops pinned to OS threads handle socket I/O independently.",
     "resources": [
       {
@@ -8680,7 +8680,7 @@ export const COMPILED_TOPICS = [
       "networking",
       "security"
     ],
-    "title": "Istio Service Mesh: istiod Control Plane, mTLS & Sidecar Interception",
+    "title": "Istio Service Mesh",
     "description": "Istio converts high-level routing rules (VirtualService, DestinationRule) into Envoy xDS configuration distributed by istiod.",
     "resources": [
       {
@@ -8703,7 +8703,7 @@ export const COMPILED_TOPICS = [
       "cilium",
       "kernel"
     ],
-    "title": "eBPF & Cilium: Kernel-Level Packet Forwarding without iptables",
+    "title": "eBPF & Cilium",
     "description": "Extended Berkeley Packet Filter (eBPF) allows verified sandboxed bytecode to execute directly inside the Linux kernel at socket and network driver hooks (XDP, TC).",
     "resources": [
       {
@@ -8730,7 +8730,7 @@ export const COMPILED_TOPICS = [
       "cni",
       "vxlan"
     ],
-    "title": "Kubernetes CNI Plugins: Overlay Networks (VXLAN/Geneve) vs Direct BGP Routing",
+    "title": "Kubernetes CNI Plugins",
     "description": "Container Network Interface (CNI) plugins allocate unique IPs per pod.",
     "resources": [
       {
@@ -8757,7 +8757,7 @@ export const COMPILED_TOPICS = [
       "gateway-api",
       "networking"
     ],
-    "title": "Kubernetes Ingress vs. Gateway API: Role-Oriented Declarative Routing",
+    "title": "Kubernetes Ingress vs. Gateway API",
     "description": "The Kubernetes Gateway API evolves the legacy monolithic Ingress spec into expressive, role-oriented resources .",
     "resources": [
       {
@@ -8780,7 +8780,7 @@ export const COMPILED_TOPICS = [
       "state-management",
       "devops"
     ],
-    "title": "Terraform State Internals: Dependency Graphs, Remote Backends & Distributed Locking",
+    "title": "Terraform State Internals",
     "description": "Terraform maintains a JSON state file mapping declared HCL configuration to real-world cloud resource IDs and attributes.",
     "resources": [
       {
@@ -8830,7 +8830,7 @@ export const COMPILED_TOPICS = [
       "cloud-engineering",
       "typescript"
     ],
-    "title": "Pulumi Architecture: Language Host, Resource Monitors & RPC Engine",
+    "title": "Pulumi Architecture",
     "description": "Runs real programming languages to declare cloud infrastructure, orchestrating state updates through an engine-managed resource DAG.",
     "resources": [
       {
@@ -8853,7 +8853,7 @@ export const COMPILED_TOPICS = [
       "module-patterns",
       "software-design"
     ],
-    "title": "Terraform Module Composition: Root Modules, Child Modules & Inversion of Control",
+    "title": "Terraform Module Composition",
     "description": "Production IaC structures isolate state blasted radius using composable child modules with clean input/output contracts.",
     "resources": [
       {
@@ -8876,7 +8876,7 @@ export const COMPILED_TOPICS = [
       "raft",
       "consensus"
     ],
-    "title": "etcd Internals: Raft Consensus Engine, MVCC & B+ Tree BoltDB Storage",
+    "title": "etcd Internals",
     "description": "Etcd stores Kubernetes cluster state using an in-memory Raft consensus implementation to replicate WAL logs across a quorum ($N/2 + 1$).",
     "resources": [
       {
@@ -8903,7 +8903,7 @@ export const COMPILED_TOPICS = [
       "fencing-tokens",
       "consensus"
     ],
-    "title": "Distributed Locking: TTL Leases, Split-Brain & Fencing Tokens",
+    "title": "Distributed Locking",
     "description": "Distributed locks rely on heartbeated TTL leases granted by a consensus quorum.",
     "resources": [
       {
@@ -8926,7 +8926,7 @@ export const COMPILED_TOPICS = [
       "consensus",
       "replication"
     ],
-    "title": "Apache ZooKeeper: ZAB Protocol (ZooKeeper Atomic Broadcast) & Ephemeral Znodes",
+    "title": "Apache ZooKeeper",
     "description": "ZooKeeper ensures strong linearizable writes via the two-phase ZAB protocol (Leader Discovery).",
     "resources": [
       {
@@ -8949,11 +8949,11 @@ export const COMPILED_TOPICS = [
       "distributed-systems",
       "consistency"
     ],
-    "title": "Amazon S3 Consistency Model: From Eventual to Strong Read-After-Write",
+    "title": "Amazon S3 Consistency Model",
     "description": "In 2020, Amazon S3 eliminated eventual consistency delays across PUT, LIST, and DELETE operations without performance compromises.",
     "resources": [
       {
-        "label": "AWS News: Amazon S3 Update – Strong Read-After-Write Consistency",
+        "label": "AWS News: Amazon S3 Update \u2013 Strong Read-After-Write Consistency",
         "url": "https://aws.amazon.com/blogs/aws/amazon-s3-update-strong-read-after-write-consistency/"
       },
       {
@@ -8973,7 +8973,7 @@ export const COMPILED_TOPICS = [
       "efs",
       "posix"
     ],
-    "title": "Storage Primitives Compared: Block (EBS/SAN), File (NFS/EFS), and Object (S3)",
+    "title": "Storage Primitives Compared",
     "description": "Block storage provides raw sector-level byte addressing with low latency for random database I/O but attaches to a single node.",
     "resources": [
       {
@@ -8997,7 +8997,7 @@ export const COMPILED_TOPICS = [
       "distributed-systems"
     ],
     "title": "Erasure Coding vs. Multi-Way Replication in Distributed Object Stores",
-    "description": "Divides data into fragments with parity chunks to survive multiple disk failures with 30–50% storage overhead versus 200% for 3x replication.",
+    "description": "Divides data into fragments with parity chunks to survive multiple disk failures with 30\u201350% storage overhead versus 200% for 3x replication.",
     "resources": [
       {
         "label": "MinIO Erasure Code Architecture & Reed-Solomon Math",
@@ -9023,7 +9023,7 @@ export const COMPILED_TOPICS = [
       "hardware",
       "cloud-infra"
     ],
-    "title": "NVMe-oF (NVMe over Fabrics) & Nitro/Custom Storage Accelerators",
+    "title": "NVMe-oF (NVMe over Fabrics)",
     "description": "NVMe over Fabrics extends NVMe PCIe register semantics over high-speed networks (RDMA, RoCE, TCP) with microsecond latency and zero-copy transfers.",
     "resources": [
       {
@@ -9046,7 +9046,7 @@ export const COMPILED_TOPICS = [
       "tracing",
       "w3c"
     ],
-    "title": "OpenTelemetry Architecture: OTel Collector, Exporters & W3C TraceContext",
+    "title": "OpenTelemetry Architecture",
     "description": "OpenTelemetry standardizes vendor-neutral telemetry ingestion via receiving, processing (batching, filtering), and exporting pipelines in the OTel Collector.",
     "resources": [
       {
@@ -9073,7 +9073,7 @@ export const COMPILED_TOPICS = [
       "tsdb",
       "metrics"
     ],
-    "title": "Prometheus TSDB: Head Block Memory Mapping, WAL & Gorilla Compression",
+    "title": "Prometheus TSDB",
     "description": "Prometheus TSDB writes incoming time-series samples into an in-memory Head chunk and a Write-Ahead Log (WAL) to prevent data loss.",
     "resources": [
       {
@@ -9100,7 +9100,7 @@ export const COMPILED_TOPICS = [
       "slos",
       "error-budgets"
     ],
-    "title": "SRE Frameworks: SLIs, SLOs, Error Budgets & Multi-Window Burn Rate Alerts",
+    "title": "SRE Frameworks",
     "description": "Site Reliability Engineering defines Service Level Indicators (SLIs) as quantifiable service metrics (e.g. good requests / total requests) measured against.",
     "resources": [
       {
@@ -9123,7 +9123,7 @@ export const COMPILED_TOPICS = [
       "ebpf",
       "performance"
     ],
-    "title": "Continuous Profiling: eBPF Stack Trace Sampling & Flame Graphs",
+    "title": "Continuous Profiling",
     "description": "Uses eBPF kernel probes to sample CPU instructions and stack traces without code instrumentation, exposing production bottlenecks.",
     "resources": [
       {
@@ -9150,7 +9150,7 @@ export const COMPILED_TOPICS = [
       "aws",
       "access-control"
     ],
-    "title": "AWS IAM Policy Evaluation Engine: Explicit Deny, Scopes & ABAC",
+    "title": "AWS IAM Policy Evaluation Engine",
     "description": "AWS IAM evaluates authorization via a deterministic flowchart: defaults to implicit deny, evaluates Organizations Service Control Policies (SCPs).",
     "resources": [
       {
@@ -9173,7 +9173,7 @@ export const COMPILED_TOPICS = [
       "spiffe",
       "cryptography"
     ],
-    "title": "SPIFFE / SPIRE: Cryptographic Zero-Trust Workload Identity Federation",
+    "title": "SPIFFE / SPIRE",
     "description": "Secure Production Identity Framework for Everyone (SPIFFE) standardizes machine identity using SPIFFE IDs formatted as URIs and issued as short-lived X. 509 SVID.",
     "resources": [
       {
@@ -9196,7 +9196,7 @@ export const COMPILED_TOPICS = [
       "github-actions",
       "iam"
     ],
-    "title": "OIDC Identity Federation: Keyless Cloud Authentication for CI/CD",
+    "title": "OIDC Identity Federation",
     "description": "OpenID Connect (OIDC) federation eliminates long-lived static cloud secret keys in CI/CD platforms (GitHub Actions, GitLab CI).",
     "resources": [
       {
@@ -9219,7 +9219,7 @@ export const COMPILED_TOPICS = [
       "encryption",
       "key-management"
     ],
-    "title": "HashiCorp Vault: Shamir Secret Sharing, Envelope Encryption & Dynamic Secrets",
+    "title": "HashiCorp Vault",
     "description": "Vault protects secrets using an unsealed master key broken into shares via Shamir's Secret Sharing algorithm.",
     "resources": [
       {
@@ -9242,7 +9242,7 @@ export const COMPILED_TOPICS = [
       "network-security",
       "identity"
     ],
-    "title": "Zero Trust Architecture (BeyondCorp) & Identity-Aware Proxies",
+    "title": "Zero Trust Architecture (BeyondCorp)",
     "description": "The Zero Trust model discards the assumption of internal network perimeter safety ('never trust, always verify').",
     "resources": [
       {
@@ -9265,7 +9265,7 @@ export const COMPILED_TOPICS = [
       "routing",
       "topology"
     ],
-    "title": "VPC Peering vs. Transit Gateway: Hub-and-Spoke vs Full Mesh Topologies",
+    "title": "VPC Peering vs. Transit Gateway",
     "description": "Direct VPC Peering is non-transitive, requiring an $O(N^2)$ mesh of individual peering connections as network count scales.",
     "resources": [
       {
@@ -9288,7 +9288,7 @@ export const COMPILED_TOPICS = [
       "maglev",
       "distributed-systems"
     ],
-    "title": "Maglev & Layer 4 Load Balancing: Consistent Hashing & ECMP Resiliency",
+    "title": "Maglev & Layer 4 Load Balancing",
     "description": "Maglev operates on bare-metal servers using BGP Equal-Cost Multi-Pathing (ECMP) across routers.",
     "resources": [
       {
@@ -9311,7 +9311,7 @@ export const COMPILED_TOPICS = [
       "anycast",
       "cdn"
     ],
-    "title": "BGP Anycast Routing: Internet Topologies, PoP Routing & DDoS Absorption",
+    "title": "BGP Anycast Routing",
     "description": "Anycast assigns the exact same public IP address to servers distributed across dozens of global Points of Presence (PoPs) advertising BGP routes to Tier-1.",
     "resources": [
       {
@@ -9334,7 +9334,7 @@ export const COMPILED_TOPICS = [
       "http",
       "performance"
     ],
-    "title": "CDN Edge Caching: Cache-Control, RFC 5861 (stale-while-revalidate) & Origin Shielding",
+    "title": "CDN Edge Caching",
     "description": "Edge CDNs collapse origin traffic spikes using multi-tier shielding caches.",
     "resources": [
       {
@@ -9357,7 +9357,7 @@ export const COMPILED_TOPICS = [
       "latency-routing",
       "edns"
     ],
-    "title": "DNS Traffic Management: GeoDNS, Latency-Based Routing & EDNS0 Client Subnet",
+    "title": "DNS Traffic Management",
     "description": "Authoritative DNS servers route requests based on client geolocation and network latency measurements.",
     "resources": [
       {
@@ -9380,8 +9380,8 @@ export const COMPILED_TOPICS = [
       "canary",
       "observability"
     ],
-    "title": "Canary Releases & Progressive Delivery: Statistical Metric Verification",
-    "description": "Canary deployment shifts a small percentage of real user traffic (1–5%) to newly deployed version pods while measuring error rates and latency histograms against.",
+    "title": "Canary Releases & Progressive Delivery",
+    "description": "Canary deployment shifts a small percentage of real user traffic (1\u20135%) to newly deployed version pods while measuring error rates and latency histograms against.",
     "resources": [
       {
         "label": "Flagger: Progressive Delivery Operator for Kubernetes Architecture",
@@ -9407,7 +9407,7 @@ export const COMPILED_TOPICS = [
       "blue-green",
       "networking"
     ],
-    "title": "Blue-Green Deployments: Router Target Switching & Zero-Downtime Rollouts",
+    "title": "Blue-Green Deployments",
     "description": "Blue-Green deployments maintain two identical production environments: Blue (active live traffic) and Green (idle staging target).",
     "resources": [
       {
@@ -9430,7 +9430,7 @@ export const COMPILED_TOPICS = [
       "flux",
       "kubernetes"
     ],
-    "title": "GitOps Architecture: Pull-Based In-Cluster Controllers & Drift Healing",
+    "title": "GitOps Architecture",
     "description": "GitOps uses Git repositories as the cryptographic single source of truth for declared Kubernetes infrastructure.",
     "resources": [
       {
@@ -9457,7 +9457,7 @@ export const COMPILED_TOPICS = [
       "migrations",
       "zero-downtime"
     ],
-    "title": "Zero-Downtime Database Migrations: The Expand-and-Contract (Parallel Run) Pattern",
+    "title": "Zero-Downtime Database Migrations",
     "description": "Applying breaking database schema mutations during rolling software rollouts causes dual-version write crashes.",
     "resources": [
       {
@@ -9480,7 +9480,7 @@ export const COMPILED_TOPICS = [
       "kvm",
       "microvms"
     ],
-    "title": "Firecracker MicroVMs: Minimalist KVM Hypervisors & Multi-Tenant Isolation",
+    "title": "Firecracker MicroVMs",
     "description": "AWS Firecracker strips legacy BIOS/QEMU device emulation, running lightweight Rust-based virtual machines directly over the Linux Kernel-based Virtual Machine (KVM).",
     "resources": [
       {
@@ -9503,7 +9503,7 @@ export const COMPILED_TOPICS = [
       "v8",
       "javascript"
     ],
-    "title": "Edge Compute: V8 Isolates vs Container Virtualization",
+    "title": "Edge Compute",
     "description": "Traditional serverless functions allocate dedicated processes or microVMs per tenant.",
     "resources": [
       {
@@ -9526,7 +9526,7 @@ export const COMPILED_TOPICS = [
       "performance",
       "concurrency"
     ],
-    "title": "Serverless Cold Starts: MicroVM Spawning, Snapshot Restoration & Provisioned Concurrency",
+    "title": "Serverless Cold Starts",
     "description": "Serverless cold starts occur during initial container initialization, runtime bootstrapping, and module imports.",
     "resources": [
       {
@@ -9549,7 +9549,7 @@ export const COMPILED_TOPICS = [
       "cqrs",
       "kafka"
     ],
-    "title": "Event-Driven Systems: CQRS, Event Sourcing & Idempotent Consumer Patterns",
+    "title": "Event-Driven Systems",
     "description": "Event-driven systems decouple asynchronous domain state transitions through ordered immutable event logs (Kafka, EventBridge).",
     "resources": [
       {
@@ -9598,7 +9598,7 @@ export const COMPILED_TOPICS = [
       "keda",
       "metrics"
     ],
-    "title": "Kubernetes Autoscaling: Metrics Server, HPA & KEDA Event-Driven Scaling",
+    "title": "Kubernetes Autoscaling",
     "description": "Horizontal Pod Autoscaler (HPA) queries the metrics.k8s.io API and adjusts replica counts based on observed CPU/memory utilization using a proportional target ratio.",
     "resources": [
       {
@@ -9621,7 +9621,7 @@ export const COMPILED_TOPICS = [
       "network-policies",
       "firewall"
     ],
-    "title": "Kubernetes NetworkPolicies: Ingress/Egress Isolation & Pod Selectors",
+    "title": "Kubernetes NetworkPolicies",
     "description": "Enforces declarative micro-segmentation at Layer 3/4, isolating pod traffic using Kubernetes label selectors and network plugins.",
     "resources": [
       {
@@ -9644,7 +9644,7 @@ export const COMPILED_TOPICS = [
       "http2",
       "load-balancing"
     ],
-    "title": "gRPC over HTTP/2: Connection Multiplexing & L4 vs L7 Load Balancing Pitfalls",
+    "title": "gRPC over HTTP/2",
     "description": "GRPC multiplexes concurrent RPC requests over single long-lived TCP/TLS connections via HTTP/2 binary streams.",
     "resources": [
       {
@@ -9667,7 +9667,7 @@ export const COMPILED_TOPICS = [
       "resilience",
       "reliability"
     ],
-    "title": "Chaos Engineering: Hypothesis-Driven Fault Injection & Blast Radius Control",
+    "title": "Chaos Engineering",
     "description": "Chaos engineering proactively uncovers systemic architectural vulnerabilities by injecting controlled production anomalies (network partitions).",
     "resources": [
       {
@@ -9694,7 +9694,7 @@ export const COMPILED_TOPICS = [
       "algorithms",
       "redis"
     ],
-    "title": "Distributed Rate Limiting: Token Bucket, Sliding Window Counter & Redis Lua Scripts",
+    "title": "Distributed Rate Limiting (Redis)",
     "description": "APIs protect downstream backends from overload using rate limiting algorithms.",
     "resources": [
       {
@@ -9721,8 +9721,8 @@ export const COMPILED_TOPICS = [
       "cloud-architecture",
       "spot-instances"
     ],
-    "title": "Cloud FinOps: Spot Instance Diversification, Capacity Pools & 2-Minute Warnings",
-    "description": "Cloud providers sell spare compute capacity at steep discounts (60–90%) via Spot/Preemptible instances with a 2-minute eviction notice.",
+    "title": "Cloud FinOps",
+    "description": "Cloud providers sell spare compute capacity at steep discounts (60\u201390%) via Spot/Preemptible instances with a 2-minute eviction notice.",
     "resources": [
       {
         "label": "FinOps Foundation: Cloud Cost Management Framework",
@@ -9744,7 +9744,7 @@ export const COMPILED_TOPICS = [
       "sampling",
       "opentelemetry"
     ],
-    "title": "Distributed Tracing Sampling: Head-Based vs. Tail-Based Sampling",
+    "title": "Distributed Tracing Sampling",
     "description": "High-throughput systems cannot afford to persist 100% of telemetry traces.",
     "resources": [
       {
@@ -9767,7 +9767,7 @@ export const COMPILED_TOPICS = [
       "vault",
       "iam"
     ],
-    "title": "Zero-Static-Secrets: Dynamic Database Credential Generation & Auto-Rotation",
+    "title": "Zero-Static-Secrets",
     "description": "Static database credentials embedded in config maps create severe breach vulnerabilities.",
     "resources": [
       {
@@ -9790,7 +9790,7 @@ export const COMPILED_TOPICS = [
       "oci",
       "storage"
     ],
-    "title": "Container Image Internals: OCI Image Spec, OverlayFS & Tar Content Addressability",
+    "title": "Container Image Internals",
     "description": "OCI container images are structured as cryptographic SHA-256 content-addressable blobs organized into a manifest, config JSON, and stacked tarball filesystem layers.",
     "resources": [
       {
@@ -9813,7 +9813,7 @@ export const COMPILED_TOPICS = [
       "iac",
       "cloud-engineering"
     ],
-    "title": "Crossplane: Transforming Kubernetes into a Universal Cloud Control Plane",
+    "title": "Crossplane",
     "description": "Crossplane extends the Kubernetes API to manage external cloud infrastructure (databases, buckets, VPCs) directly using Custom Resources (Managed Resources).",
     "resources": [
       {
@@ -9836,7 +9836,7 @@ export const COMPILED_TOPICS = [
       "aws-vpc",
       "snat"
     ],
-    "title": "Cloud NAT Gateways & Source NAT (SNAT) Port Exhaustion",
+    "title": "Cloud NAT Gateways",
     "description": "Private subnets communicate with external internet services through managed NAT gateways using Source Network Address Translation (SNAT).",
     "resources": [
       {
@@ -9859,7 +9859,7 @@ export const COMPILED_TOPICS = [
       "ami",
       "immutable-infrastructure"
     ],
-    "title": "Immutable Infrastructure: HashiCorp Packer, Golden AMIs & AMI Baking Pipelines",
+    "title": "Immutable Infrastructure",
     "description": "Immutable infrastructure strictly prohibits in-place patching or mutating running production instances.",
     "resources": [
       {
@@ -9882,8 +9882,8 @@ export const COMPILED_TOPICS = [
       "database-admin",
       "storage"
     ],
-    "title": "etcd Maintenance: Historical Revision Compaction & BoltDB Space Defragmentation",
-    "description": "Because etcd is an append-only MVCC database that preserves revision history, unbounded updates trigger out-of-quota database alarms (2–8 GB limits).",
+    "title": "etcd Maintenance",
+    "description": "Because etcd is an append-only MVCC database that preserves revision history, unbounded updates trigger out-of-quota database alarms (2\u20138 GB limits).",
     "resources": [
       {
         "label": "etcd Maintenance Guide: Compacting and Defragmenting Storage",
@@ -9905,7 +9905,7 @@ export const COMPILED_TOPICS = [
       "containers",
       "kernel"
     ],
-    "title": "Linux Container Hardening: POSIX Capabilities, Seccomp BPF & AppArmor Profiles",
+    "title": "Linux Container Hardening",
     "description": "Default container root permissions are constrained by dropping unnecessary Linux kernel capabilities (e.g. CAP_SYS_ADMIN, CAP_NET_ADMIN).",
     "resources": [
       {
@@ -9932,7 +9932,7 @@ export const COMPILED_TOPICS = [
       "consul",
       "distributed-systems"
     ],
-    "title": "Service Discovery Architecture: HashiCorp Consul, Serf & SWIM Gossip Protocol",
+    "title": "Service Discovery Architecture",
     "description": "Consul manages dynamic microservice registration and health checking across multi-datacenter clusters.",
     "resources": [
       {
@@ -9959,7 +9959,7 @@ export const COMPILED_TOPICS = [
       "nomad",
       "distributed-systems"
     ],
-    "title": "Distributed Workload Scheduling: HashiCorp Nomad Evaluation Broker & Bin-Packing",
+    "title": "Distributed Workload Scheduling",
     "description": "Nomad schedules containers, non-containerized binaries, and batch jobs across heterogeneous infrastructure with sub-second execution latency.",
     "resources": [
       {
@@ -9982,11 +9982,11 @@ export const COMPILED_TOPICS = [
       "kernel",
       "compilers"
     ],
-    "title": "eBPF Portability: BPF CO-RE (Compile Once – Run Everywhere) & BTF Type Information",
+    "title": "eBPF Portability",
     "description": "Historically, eBPF programs required runtime LLVM/Clang compilation on every target node with matching kernel headers.",
     "resources": [
       {
-        "label": "BPF CO-RE (Compile Once – Run Everywhere) (Andrii Nakryiko)",
+        "label": "BPF CO-RE (Compile Once \u2013 Run Everywhere) (Andrii Nakryiko)",
         "url": "https://nakryiko.com/posts/bpf-core-reference-guide/"
       },
       {
@@ -10005,7 +10005,7 @@ export const COMPILED_TOPICS = [
       "multi-region",
       "cockroachdb"
     ],
-    "title": "Multi-Region Active-Active Architectures: Multi-Raft, Range Leases & CockroachDB",
+    "title": "Multi-Region Active-Active Architectures",
     "description": "Global distributed SQL databases (CockroachDB, YugabyteDB) partition keys into 64MB ranges, each governed by its own independent Raft consensus group (Multi-Raft).",
     "resources": [
       {
@@ -10028,7 +10028,7 @@ export const COMPILED_TOPICS = [
       "hardware",
       "cloud-infra"
     ],
-    "title": "Cloud Block Storage Virtualization: AWS EBS io2 Block Express & SR-IOV Networking",
+    "title": "Cloud Block Storage Virtualization",
     "description": "AWS io2 Block Express decouples storage instances by routing block commands over a custom SR-IOV virtual network device to scalable NVMe storage pools.",
     "resources": [
       {
@@ -10051,7 +10051,7 @@ export const COMPILED_TOPICS = [
       "hashing",
       "data-structures"
     ],
-    "title": "Bloom Filters: Space-Efficient Probabilistic Set Membership",
+    "title": "Bloom Filters",
     "description": "A Bloom filter represents set membership in a compact bit array using $k$ independent hash functions.",
     "resources": [
       {
@@ -10078,7 +10078,7 @@ export const COMPILED_TOPICS = [
       "hashing",
       "data-structures"
     ],
-    "title": "Cuckoo Filters: Set Membership with Dynamic Deletions & Fingerprints",
+    "title": "Cuckoo Filters",
     "description": "Cuckoo filters store short hash fingerprints inside an array of buckets using cuckoo hashing.",
     "resources": [
       {
@@ -10101,7 +10101,7 @@ export const COMPILED_TOPICS = [
       "streaming",
       "cardinality"
     ],
-    "title": "HyperLogLog: Near-Optimal Distinct Element Cardinality Estimation",
+    "title": "HyperLogLog",
     "description": "HyperLogLog estimates the cardinality of large multiset streams using $O(\\log \\log N)$ space by tracking the maximum number of leading zeros in hashed element.",
     "resources": [
       {
@@ -10124,7 +10124,7 @@ export const COMPILED_TOPICS = [
       "streaming",
       "heavy-hitters"
     ],
-    "title": "Count-Min Sketch: Sublinear Frequency Estimation in Streaming Data",
+    "title": "Count-Min Sketch",
     "description": "The Count-Min Sketch maintains a 2D array of counters with $d$ hash functions to estimate event frequencies and identify heavy hitters in high-velocity data.",
     "resources": [
       {
@@ -10148,7 +10148,7 @@ export const COMPILED_TOPICS = [
       "lsh",
       "similarity"
     ],
-    "title": "MinHash & SimHash: Locality-Sensitive Hashing for Near-Duplicate Detection",
+    "title": "MinHash & SimHash",
     "description": "MinHash estimates Jaccard set similarity by comparing minimum hash permutations across document token sets.",
     "resources": [
       {
@@ -10175,7 +10175,7 @@ export const COMPILED_TOPICS = [
       "databases",
       "indexing"
     ],
-    "title": "B-Trees & B+ Trees: Self-Balancing Disk-Page-Optimized Search Trees",
+    "title": "B-Trees & B+ Trees",
     "description": "B-trees maintain balanced multi-way tree hierarchies where each node matches disk page boundaries to minimize I/O seek latency during disk-based lookups.",
     "resources": [
       {
@@ -10202,7 +10202,7 @@ export const COMPILED_TOPICS = [
       "storage",
       "databases"
     ],
-    "title": "Log-Structured Merge-Trees (LSM-Trees): Write-Optimized Tiered Storage",
+    "title": "Log-Structured Merge-Trees (LSM-Trees)",
     "description": "LSM-Trees buffer incoming writes in an in-memory balanced tree (MemTable) before flushing sorted immutable disk files (SSTables) sequentially.",
     "resources": [
       {
@@ -10225,7 +10225,7 @@ export const COMPILED_TOPICS = [
       "range-queries",
       "algorithms"
     ],
-    "title": "Segment Trees: Dynamic Range Queries & Lazy Propagation",
+    "title": "Segment Trees",
     "description": "A Segment Tree stores aggregated associative metrics (sum, min, gcd) over array intervals across binary tree nodes.",
     "resources": [
       {
@@ -10233,7 +10233,7 @@ export const COMPILED_TOPICS = [
         "url": "https://cp-algorithms.com/data_structures/segment_tree.html"
       },
       {
-        "label": "MIT OpenCourseWare 6.851: Advanced Data Structures — Static Range Queries",
+        "label": "MIT OpenCourseWare 6.851: Advanced Data Structures \u2014 Static Range Queries",
         "url": "https://ocw.mit.edu/courses/6-851-advanced-data-structures-spring-2012/resources/session-18-static-range-queries/"
       }
     ]
@@ -10248,7 +10248,7 @@ export const COMPILED_TOPICS = [
       "bit",
       "prefix-sums"
     ],
-    "title": "Fenwick Trees (Binary Indexed Trees): Implicit Prefix Sum Calculation",
+    "title": "Fenwick Trees (Binary Indexed Trees)",
     "description": "A Fenwick Tree evaluates cumulative prefix sums and executes point updates over dynamic numeric arrays in $O(\\log N)$ time and $O(N)$ auxiliary space.",
     "resources": [
       {
@@ -10271,11 +10271,11 @@ export const COMPILED_TOPICS = [
       "radix-tree",
       "strings"
     ],
-    "title": "Tries, Radix Trees & Crit-Bit Trees: Prefix Search and IP Routing",
+    "title": "Tries, Radix Trees & Crit-Bit Trees",
     "description": "Tries structure string or bit sequences into positional key trees where edges represent character transitions.",
     "resources": [
       {
-        "label": "Donald R. Morrison: PATRICIA — Practical Algorithm To Retrieve Information Coded in Alphanumeric (1968)",
+        "label": "Donald R. Morrison: PATRICIA \u2014 Practical Algorithm To Retrieve Information Coded in Alphanumeric (1968)",
         "url": "https://dl.acm.org/doi/10.1145/321479.321481"
       },
       {
@@ -10294,7 +10294,7 @@ export const COMPILED_TOPICS = [
       "search",
       "concurrency"
     ],
-    "title": "Skip Lists: Probabilistic Layered Fast-Path Search Structures",
+    "title": "Skip Lists",
     "description": "A skip list augments a sorted linked list with hierarchical express forward lanes generated via geometric coin flips, delivering expected $O(\\log N)$ search.",
     "resources": [
       {
@@ -10317,7 +10317,7 @@ export const COMPILED_TOPICS = [
       "avl-tree",
       "balanced-trees"
     ],
-    "title": "Red-Black Trees vs. AVL Trees: Self-Balancing Invariants and Rotations",
+    "title": "Red-Black Trees vs. AVL Trees",
     "description": "AVL trees maintain strict balance by ensuring child subtree heights differ by at most one.",
     "resources": [
       {
@@ -10344,7 +10344,7 @@ export const COMPILED_TOPICS = [
       "amortized",
       "self-adjusting"
     ],
-    "title": "Splay Trees: Self-Adjusting Binary Search Trees & Splay Rotations",
+    "title": "Splay Trees",
     "description": "A Splay Tree re-structures itself by moving accessed nodes to the root via a series of double rotations (zig-zig, zig-zag) called splaying.",
     "resources": [
       {
@@ -10367,7 +10367,7 @@ export const COMPILED_TOPICS = [
       "randomized",
       "data-structures"
     ],
-    "title": "Treaps & Implicit Cartesian Trees: Randomized Priority Balance & Array Splits",
+    "title": "Treaps & Implicit Cartesian Trees",
     "description": "A Treap combines binary search tree key ordering with binary heap priority ordering using randomly assigned numeric priorities.",
     "resources": [
       {
@@ -10390,7 +10390,7 @@ export const COMPILED_TOPICS = [
       "range-tree",
       "geometry"
     ],
-    "title": "Interval Trees & Range Trees: Multidimensional Geometric Point & Interval Enclosure",
+    "title": "Interval Trees & Range Trees",
     "description": "Interval trees store 1D line segments keyed by start endpoints and augmented with maximum subtree endpoints.",
     "resources": [
       {
@@ -10413,7 +10413,7 @@ export const COMPILED_TOPICS = [
       "dijkstra",
       "heaps"
     ],
-    "title": "Dijkstra's Shortest Path Algorithm & Fibonacci Heap Optimization",
+    "title": "Dijkstra's Shortest Path Algorithm",
     "description": "Dijkstra's algorithm finds single-source shortest paths in non-negatively weighted graphs by greedily relaxing edge frontiers using a priority queue.",
     "resources": [
       {
@@ -10440,7 +10440,7 @@ export const COMPILED_TOPICS = [
       "heuristics",
       "pathfinding"
     ],
-    "title": "A* Search Algorithm: Admissibility, Consistency & Heuristic Pathfinding",
+    "title": "A* Search Algorithm",
     "description": "The A* search algorithm navigates state graphs by prioritizing node evaluations according to $f(n) = g(n) + h(n)$.",
     "resources": [
       {
@@ -10448,7 +10448,7 @@ export const COMPILED_TOPICS = [
         "url": "https://ieeexplore.ieee.org/document/4082128"
       },
       {
-        "label": "Stanford CS221: Artificial Intelligence — Heuristic Search and A*",
+        "label": "Stanford CS221: Artificial Intelligence \u2014 Heuristic Search and A*",
         "url": "https://stanford-cs221.github.io/autumn2023/lectures/search1.pdf"
       }
     ]
@@ -10463,7 +10463,7 @@ export const COMPILED_TOPICS = [
       "max-flow",
       "min-cut"
     ],
-    "title": "Max-Flow Min-Cut Theorem: Ford-Fulkerson, Edmonds-Karp & Dinic's Algorithm",
+    "title": "Max-Flow Min-Cut Theorem",
     "description": "The Max-Flow Min-Cut theorem establishes that the maximum throughput across a flow network strictly equals the minimum capacity required to sever source-sink.",
     "resources": [
       {
@@ -10486,7 +10486,7 @@ export const COMPILED_TOPICS = [
       "tarjan",
       "kosaraju"
     ],
-    "title": "Strongly Connected Components: Tarjan's & Kosaraju's DFS Decomposition",
+    "title": "Strongly Connected Components",
     "description": "Strongly Connected Components (SCCs) represent maximal subgraphs where every vertex is reachable from every other vertex.",
     "resources": [
       {
@@ -10509,7 +10509,7 @@ export const COMPILED_TOPICS = [
       "dag",
       "dependencies"
     ],
-    "title": "Topological Sorting: Kahn's In-Degree Algorithm & Post-Order DFS",
+    "title": "Topological Sorting",
     "description": "Topological sorting produces a linear ordering of vertices in Directed Acyclic Graphs (DAGs) such that for every directed edge $u \\to v$, vertex $u$ precedes $v$.",
     "resources": [
       {
@@ -10532,7 +10532,7 @@ export const COMPILED_TOPICS = [
       "kruskal",
       "prim"
     ],
-    "title": "Minimum Spanning Trees: Kruskal's Greedy Union-Find & Prim's Cut Property",
+    "title": "Minimum Spanning Trees",
     "description": "A Minimum Spanning Tree connects all vertices in an edge-weighted undirected graph with the minimum total edge cost without cycles.",
     "resources": [
       {
@@ -10555,7 +10555,7 @@ export const COMPILED_TOPICS = [
       "dynamic-programming",
       "bellman-ford"
     ],
-    "title": "Negative Cycles & All-Pairs Shortest Paths: Bellman-Ford & Floyd-Warshall",
+    "title": "Negative Cycles",
     "description": "The Bellman-Ford algorithm calculates single-source shortest paths in $O(VE)$ time across graphs with negative edge weights.",
     "resources": [
       {
@@ -10579,7 +10579,7 @@ export const COMPILED_TOPICS = [
       "binary-lifting",
       "rmq"
     ],
-    "title": "Lowest Common Ancestor (LCA): Binary Lifting & Euler Tour RMQ Reductions",
+    "title": "Lowest Common Ancestor (LCA)",
     "description": "The Lowest Common Ancestor problem finds the deepest shared ancestor node between two tree vertices.",
     "resources": [
       {
@@ -10587,7 +10587,7 @@ export const COMPILED_TOPICS = [
         "url": "https://link.springer.com/chapter/10.1007/10719839_9"
       },
       {
-        "label": "CP-Algorithms: Lowest Common Ancestor — Binary Lifting & Farach-Colton and Bender Algorithm",
+        "label": "CP-Algorithms: Lowest Common Ancestor \u2014 Binary Lifting & Farach-Colton and Bender Algorithm",
         "url": "https://cp-algorithms.com/graph/lca.html"
       }
     ]
@@ -10602,7 +10602,7 @@ export const COMPILED_TOPICS = [
       "hld",
       "segment-tree"
     ],
-    "title": "Heavy-Light Decomposition (HLD): Path Queries & Subtree Aggregations",
+    "title": "Heavy-Light Decomposition (HLD)",
     "description": "Heavy-Light Decomposition partitions any tree into disjoint contiguous linear chains by classifying each node's heaviest subtree edge as 'heavy' and all.",
     "resources": [
       {
@@ -10625,7 +10625,7 @@ export const COMPILED_TOPICS = [
       "flow",
       "algorithms"
     ],
-    "title": "Bipartite Maximum Matching: Hopcroft-Karp & Augmenting Paths",
+    "title": "Bipartite Maximum Matching",
     "description": "Finds the maximum cardinality matching in bipartite graphs in optimal O(E * sqrt(V)) time by discovering shortest augmenting paths.",
     "resources": [
       {
@@ -10648,7 +10648,7 @@ export const COMPILED_TOPICS = [
       "raft",
       "replication"
     ],
-    "title": "Raft Consensus Algorithm: Leader Election, Log Replication & Safety",
+    "title": "Raft Consensus Algorithm",
     "description": "Raft decomposes distributed state machine consensus into three independent sub-problems.",
     "resources": [
       {
@@ -10671,7 +10671,7 @@ export const COMPILED_TOPICS = [
       "paxos",
       "fault-tolerance"
     ],
-    "title": "Paxos Consensus Protocol: Phase 1/2 Proposers, Acceptors & Learners",
+    "title": "Paxos Consensus Protocol",
     "description": "Paxos establishes agreement on a single value in asynchronous distributed networks prone to message loss and delays.",
     "resources": [
       {
@@ -10694,7 +10694,7 @@ export const COMPILED_TOPICS = [
       "vector-clocks",
       "causality"
     ],
-    "title": "Causal Ordering: Lamport Timestamps & Multi-Dimensional Vector Clocks",
+    "title": "Causal Ordering",
     "description": "Lamport timestamps establish a partial 'happens-before' ($\\to$) ordering by monotonically incrementing local logical counters on internal events and message.",
     "resources": [
       {
@@ -10717,11 +10717,11 @@ export const COMPILED_TOPICS = [
       "replication",
       "eventual-consistency"
     ],
-    "title": "Conflict-Free Replicated Data Types (CRDTs): State-Based & Operation-Based Convergence",
+    "title": "Conflict-Free Replicated Data Types (CRDTs)",
     "description": "CRDTs allow distributed replicas to execute concurrent mutations locally without centralized coordination, guaranteeing eventual consistency without merge conflicts.",
     "resources": [
       {
-        "label": "Shapiro, Preguiça, Baquero, Zawirski: Conflict-Free Replicated Data Types (INRIA Research Report 2011)",
+        "label": "Shapiro, Pregui\u00e7a, Baquero, Zawirski: Conflict-Free Replicated Data Types (INRIA Research Report 2011)",
         "url": "https://inria.hal.science/inria-00609399/document"
       },
       {
@@ -10740,7 +10740,7 @@ export const COMPILED_TOPICS = [
       "2pc",
       "consensus"
     ],
-    "title": "Atomic Commit: Two-Phase Commit (2PC) Blocking Pitfalls & 3PC Non-Blocking Protocol",
+    "title": "Atomic Commit",
     "description": "Two-Phase Commit (2PC) coordinates distributed transactions across multiple resource managers via voting (Prepare) and execution (Commit/Abort) phases.",
     "resources": [
       {
@@ -10763,7 +10763,7 @@ export const COMPILED_TOPICS = [
       "epidemic",
       "membership"
     ],
-    "title": "Gossip Protocols: Epidemic State Dissemination & SWIM Failure Detection",
+    "title": "Gossip Protocols",
     "description": "Gossip protocols disseminate cluster state and membership updates by having nodes periodically exchange random pairwise messages.",
     "resources": [
       {
@@ -10786,7 +10786,7 @@ export const COMPILED_TOPICS = [
       "consensus",
       "pbft"
     ],
-    "title": "Practical Byzantine Fault Tolerance (PBFT): Tolerating Arbitrary Malicious Nodes",
+    "title": "Practical Byzantine Fault Tolerance (PBFT)",
     "description": "PBFT achieves state machine replication in asynchronous networks withstanding up to $f$ arbitrary or malicious node failures across $3f + 1$ total cluster.",
     "resources": [
       {
@@ -10809,7 +10809,7 @@ export const COMPILED_TOPICS = [
       "chandy-lamport",
       "state-machine"
     ],
-    "title": "Chandy-Lamport Algorithm: Global State Snapshots in Asynchronous Distributed Systems",
+    "title": "Chandy-Lamport Algorithm",
     "description": "The Chandy-Lamport algorithm records a consistent global system state without halting live distributed transaction processing.",
     "resources": [
       {
@@ -10832,7 +10832,7 @@ export const COMPILED_TOPICS = [
       "pattern-matching",
       "algorithms"
     ],
-    "title": "Knuth-Morris-Pratt (KMP) Algorithm: Prefix Function & Failure Tables",
+    "title": "Knuth-Morris-Pratt (KMP) Algorithm",
     "description": "The KMP algorithm executes exact substring matching in linear $O(N + M)$ time by preprocessing the search pattern into a longest prefix-suffix (LPS) lookup array.",
     "resources": [
       {
@@ -10855,7 +10855,7 @@ export const COMPILED_TOPICS = [
       "hashing",
       "pattern-matching"
     ],
-    "title": "Rabin-Karp Algorithm: Polynomial Rolling Hashes & Multi-Pattern Search",
+    "title": "Rabin-Karp Algorithm",
     "description": "Rabin-Karp matches substrings by computing a polynomial rolling hash over sliding text windows.",
     "resources": [
       {
@@ -10878,7 +10878,7 @@ export const COMPILED_TOPICS = [
       "lcp",
       "algorithms"
     ],
-    "title": "Suffix Arrays & Longest Common Prefix (LCP) Arrays: Kasai's Algorithm",
+    "title": "Suffix Arrays",
     "description": "A Suffix Array contains sorted integer indices of all suffixes in a string, offering a space-efficient alternative to Suffix Trees with $O(N)$ construction via.",
     "resources": [
       {
@@ -10901,7 +10901,7 @@ export const COMPILED_TOPICS = [
       "automata",
       "pattern-matching"
     ],
-    "title": "Aho-Corasick Automaton: Multi-Pattern Dictionary Matching & Trie Transitions",
+    "title": "Aho-Corasick Automaton",
     "description": "The Aho-Corasick algorithm builds a deterministic finite automaton from a dictionary of keywords by linking trie nodes with suffix fallback failure transitions.",
     "resources": [
       {
@@ -10924,7 +10924,7 @@ export const COMPILED_TOPICS = [
       "dynamic-programming",
       "levenshtein"
     ],
-    "title": "Levenshtein Distance & Wagner-Fischer Dynamic Programming Algorithm",
+    "title": "Levenshtein Distance",
     "description": "Levenshtein distance measures the minimum number of single-character insertions, deletions, and substitutions required to transform one string into another.",
     "resources": [
       {
@@ -10947,7 +10947,7 @@ export const COMPILED_TOPICS = [
       "ukkonen",
       "data-structures"
     ],
-    "title": "Suffix Trees: Ukkonen's On-line Linear-Time Construction Algorithm",
+    "title": "Suffix Trees",
     "description": "A Suffix Tree is a compacted trie containing all suffixes of a text string.",
     "resources": [
       {
@@ -10970,7 +10970,7 @@ export const COMPILED_TOPICS = [
       "pattern-matching",
       "algorithms"
     ],
-    "title": "Boyer-Moore String Search: Bad Character & Good Suffix Heuristics",
+    "title": "Boyer-Moore String Search",
     "description": "The Boyer-Moore algorithm searches for substrings by scanning pattern characters from right to left while advancing across the target text from left to right.",
     "resources": [
       {
@@ -10994,7 +10994,7 @@ export const COMPILED_TOPICS = [
       "compression",
       "bioinformatics"
     ],
-    "title": "Burrows-Wheeler Transform (BWT) & FM-Index: Compressed Pattern Matching",
+    "title": "Burrows-Wheeler Transform (BWT)",
     "description": "The Burrows-Wheeler Transform rearranges string characters into reversible cyclic permutation blocks with high character runs.",
     "resources": [
       {
@@ -11017,7 +11017,7 @@ export const COMPILED_TOPICS = [
       "quickselect",
       "median-of-medians"
     ],
-    "title": "Quickselect & Median of Medians: Deterministic Linear-Time Order Statistics",
+    "title": "Quickselect & Median of Medians",
     "description": "Quickselect discovers the $k$-th smallest element in an unordered array with average $O(N)$ time by recursively partitioning only the side containing target.",
     "resources": [
       {
@@ -11040,7 +11040,7 @@ export const COMPILED_TOPICS = [
       "databases",
       "io-complexity"
     ],
-    "title": "External Merge Sort: Multi-Way Merging for Datasets Exceeding RAM",
+    "title": "External Merge Sort",
     "description": "External Merge Sort sorts massive datasets exceeding primary physical RAM by loading data into memory chunks, sorting them locally into initial runs.",
     "resources": [
       {
@@ -11063,7 +11063,7 @@ export const COMPILED_TOPICS = [
       "radix-sort",
       "counting-sort"
     ],
-    "title": "Non-Comparison Sorting: Counting Sort, LSD & MSD Radix Sort",
+    "title": "Non-Comparison Sorting",
     "description": "Non-comparison sorting algorithms bypass the $\\Omega(N \\log N)$ information-theoretic lower bound by exploiting integer and fixed-radix properties.",
     "resources": [
       {
@@ -11086,7 +11086,7 @@ export const COMPILED_TOPICS = [
       "hybrid",
       "algorithms"
     ],
-    "title": "TimSort: Hybrid Adaptive Sorting via Natural Run Detection & Merging",
+    "title": "TimSort",
     "description": "TimSort combines insertion sort with merge sort to exploit pre-existing sorted subsequences (natural runs) in real-world data.",
     "resources": [
       {
@@ -11094,7 +11094,7 @@ export const COMPILED_TOPICS = [
         "url": "https://github.com/python/cpython/blob/main/Objects/listsort.txt"
       },
       {
-        "label": "Auger, Jugé, Nicaud, Pivoteau: On the Worst-Case Complexity of TimSort (ESA 2015)",
+        "label": "Auger, Jug\u00e9, Nicaud, Pivoteau: On the Worst-Case Complexity of TimSort (ESA 2015)",
         "url": "https://arxiv.org/abs/1805.04154"
       }
     ]
@@ -11109,7 +11109,7 @@ export const COMPILED_TOPICS = [
       "quicksort",
       "algorithms"
     ],
-    "title": "Introsort: Quicksort, Heapsort & Insertion Sort Hybrid for std::sort",
+    "title": "Introsort",
     "description": "Introsort provides average-case Quicksort performance while preventing $O(N^2)$ degradation by monitoring recursive partition depth.",
     "resources": [
       {
@@ -11132,7 +11132,7 @@ export const COMPILED_TOPICS = [
       "distributed",
       "caching"
     ],
-    "title": "Consistent Hashing & Virtual Nodes: Partitioning Distributed Rings",
+    "title": "Consistent Hashing & Virtual Nodes",
     "description": "Consistent hashing maps keys and storage nodes to points on a cyclic hash ring.",
     "resources": [
       {
@@ -11155,15 +11155,15 @@ export const COMPILED_TOPICS = [
       "fks",
       "data-structures"
     ],
-    "title": "Perfect Hashing & FKS Two-Level Hash Table Scheme",
+    "title": "Perfect Hashing",
     "description": "Perfect hashing constructs collision-free lookup tables for static key sets, guaranteeing strictly deterministic $O(1)$ worst-case search time in linear space.",
     "resources": [
       {
-        "label": "Fredman, Komlós, Szemerédi: Storing a Sparse Table with O(1) Worst Case Access Time (1984 Original Paper)",
+        "label": "Fredman, Koml\u00f3s, Szemer\u00e9di: Storing a Sparse Table with O(1) Worst Case Access Time (1984 Original Paper)",
         "url": "https://dl.acm.org/doi/10.1145/828.1884"
       },
       {
-        "label": "MIT OpenCourseWare 6.851: Advanced Data Structures — Perfect Hashing & FKS",
+        "label": "MIT OpenCourseWare 6.851: Advanced Data Structures \u2014 Perfect Hashing & FKS",
         "url": "https://ocw.mit.edu/courses/6-851-advanced-data-structures-spring-2012/resources/session-12-hashing-1/"
       }
     ]
@@ -11178,7 +11178,7 @@ export const COMPILED_TOPICS = [
       "cuckoo-hashing",
       "open-addressing"
     ],
-    "title": "Open Addressing Collision Strategies: Robin Hood Hashing & Cuckoo Hashing",
+    "title": "Open Addressing Collision Strategies",
     "description": "Collision resolution techniques that minimize probe variances by stealing slots from rich items or using dual candidate locations.",
     "resources": [
       {
@@ -11201,7 +11201,7 @@ export const COMPILED_TOPICS = [
       "security",
       "hashdos"
     ],
-    "title": "SipHash & Hash-Flooding DoS: Cryptographically-Secure Short-Key Hashing",
+    "title": "SipHash & Hash-Flooding DoS",
     "description": "Standard fast hash functions (MurmurHash, FNV) are vulnerable to algorithmic complexity attacks (HashDoS).",
     "resources": [
       {
@@ -11224,7 +11224,7 @@ export const COMPILED_TOPICS = [
       "memoization",
       "tabulation"
     ],
-    "title": "Dynamic Programming Foundations: Optimal Substructure & Overlapping Subproblems",
+    "title": "Dynamic Programming Foundations",
     "description": "Dynamic Programming solves complex optimization problems by decomposing them into overlapping subproblems whose optimal solutions combine to yield the global.",
     "resources": [
       {
@@ -11232,7 +11232,7 @@ export const COMPILED_TOPICS = [
         "url": "https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming"
       },
       {
-        "label": "MIT OpenCourseWare 6.006: Dynamic Programming — Memoization, Subproblems, Guessing",
+        "label": "MIT OpenCourseWare 6.006: Dynamic Programming \u2014 Memoization, Subproblems, Guessing",
         "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-15-dynamic-programming-part-1-srs-fibonacci-shortest-paths/"
       }
     ]
@@ -11247,7 +11247,7 @@ export const COMPILED_TOPICS = [
       "diff",
       "algorithms"
     ],
-    "title": "Longest Common Subsequence (LCS) & Myers Diff Algorithm",
+    "title": "Longest Common Subsequence (LCS)",
     "description": "The Longest Common Subsequence problem determines the longest ordered element sequence shared between sequences.",
     "resources": [
       {
@@ -11270,7 +11270,7 @@ export const COMPILED_TOPICS = [
       "np-complete",
       "pseudo-polynomial"
     ],
-    "title": "0/1 Knapsack Problem & Pseudo-Polynomial Dynamic Programming",
+    "title": "0/1 Knapsack Problem",
     "description": "The 0/1 Knapsack problem selects an optimal value subset under a fixed weight capacity constraint, exhibiting NP-complete complexity in the general case.",
     "resources": [
       {
@@ -11293,7 +11293,7 @@ export const COMPILED_TOPICS = [
       "optimization",
       "algorithms"
     ],
-    "title": "Matrix Chain Multiplication: Optimal Parenthesization & Interval DP",
+    "title": "Matrix Chain Multiplication",
     "description": "Matrix Chain Multiplication determines the parenthesization order that minimizes total scalar multiplications across a sequence of matrices of varying dimensions.",
     "resources": [
       {
@@ -11316,7 +11316,7 @@ export const COMPILED_TOPICS = [
       "traveling-salesman",
       "held-karp"
     ],
-    "title": "Bitmask Dynamic Programming: Held-Karp Traveling Salesperson Algorithm",
+    "title": "Bitmask Dynamic Programming",
     "description": "Bitmask DP represents subset state configurations as integer binary bitmasks.",
     "resources": [
       {
@@ -11339,7 +11339,7 @@ export const COMPILED_TOPICS = [
       "li-chao-tree",
       "optimization"
     ],
-    "title": "Convex Hull Trick & Li Chao Trees: Linear-Time Dynamic Programming Optimization",
+    "title": "Convex Hull Trick & Li Chao Trees",
     "description": "The Convex Hull Trick optimizes DP transitions of the form $dp[i] = \\min_{j < i} (dp[j] + m_j x_i + c_j)$ from $O(N^2)$ to $O(N \\log N)$ by maintaining the lower.",
     "resources": [
       {
@@ -11362,7 +11362,7 @@ export const COMPILED_TOPICS = [
       "rerooting",
       "algorithms"
     ],
-    "title": "Tree Dynamic Programming & All-Roots Rerooting Technique",
+    "title": "Tree Dynamic Programming",
     "description": "Tree DP calculates subtree properties (tree diameter, independent sets) using bottom-up post-order DFS traversals in $O(N)$ time.",
     "resources": [
       {
@@ -11385,7 +11385,7 @@ export const COMPILED_TOPICS = [
       "potential-method",
       "algorithms"
     ],
-    "title": "Amortized Complexity Analysis: Aggregate, Accounting & Potential Methods",
+    "title": "Amortized Complexity Analysis",
     "description": "Amortized analysis bounds the average runtime of an operation sequence without probabilistic assumptions.",
     "resources": [
       {
@@ -11393,7 +11393,7 @@ export const COMPILED_TOPICS = [
         "url": "https://epubs.siam.org/doi/10.1137/0606031"
       },
       {
-        "label": "MIT OpenCourseWare 6.046J: Design and Analysis of Algorithms — Amortized Analysis",
+        "label": "MIT OpenCourseWare 6.046J: Design and Analysis of Algorithms \u2014 Amortized Analysis",
         "url": "https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/resources/lecture-13-amortized-analysis/"
       }
     ]
@@ -11408,7 +11408,7 @@ export const COMPILED_TOPICS = [
       "np-complete",
       "cook-levin"
     ],
-    "title": "P vs. NP, Cook-Levin Theorem & Polynomial-Time Reductions",
+    "title": "P vs. NP, Cook-Levin Theorem",
     "description": "Complexity class P contains decision problems solvable in deterministic polynomial time, while NP contains problems verifiable in polynomial time.",
     "resources": [
       {
@@ -11435,7 +11435,7 @@ export const COMPILED_TOPICS = [
       "competitive-analysis",
       "paging"
     ],
-    "title": "Online Algorithms & Competitive Analysis: Paging and the $k$-Server Problem",
+    "title": "Online Algorithms",
     "description": "Online algorithms process incoming requests in real-time without future knowledge.",
     "resources": [
       {
@@ -11458,7 +11458,7 @@ export const COMPILED_TOPICS = [
       "recurrences",
       "divide-and-conquer"
     ],
-    "title": "Master Theorem & Akra-Bazzi Method: Solving Divide-and-Conquer Recurrences",
+    "title": "Master Theorem & Akra-Bazzi Method",
     "description": "Provides asymptotic time complexity bounds for divide-and-conquer recurrences by comparing subproblem splits against combination work.",
     "resources": [
       {
@@ -11481,7 +11481,7 @@ export const COMPILED_TOPICS = [
       "ptas",
       "np-hard"
     ],
-    "title": "Approximation Algorithms & Polynomial-Time Approximation Schemes (PTAS)",
+    "title": "Approximation Algorithms",
     "description": "When NP-hard problems resist exact polynomial-time solutions, approximation algorithms guarantee solutions within a bounded factor $\\alpha$ of the optimal cost.",
     "resources": [
       {
@@ -11504,7 +11504,7 @@ export const COMPILED_TOPICS = [
       "lower-bounds",
       "information-theory"
     ],
-    "title": "Space-Time Tradeoffs & The Yao/Miltersen Cell-Probe Model for Lower Bounds",
+    "title": "Space-Time Tradeoffs",
     "description": "The cell-probe model establishes fundamental data structure lower bounds by measuring only memory cell access count during query evaluation.",
     "resources": [
       {
@@ -11527,7 +11527,7 @@ export const COMPILED_TOPICS = [
       "union-find",
       "amortized"
     ],
-    "title": "Disjoint Set Union (DSU): Path Compression & Inverse Ackermann Complexity",
+    "title": "Disjoint Set Union (DSU)",
     "description": "Disjoint Set Union manages partitions of an equivalence set across dynamic disjoint groups supporting near-constant time union and find operations.",
     "resources": [
       {
@@ -11550,7 +11550,7 @@ export const COMPILED_TOPICS = [
       "queues",
       "cas"
     ],
-    "title": "Lock-Free Queues: The Michael & Scott Compare-And-Swap (CAS) Algorithm",
+    "title": "Lock-Free Queues",
     "description": "The Michael & Scott lock-free queue implements a concurrent FIFO queue using atomic Compare-And-Swap (CAS) primitives over a singly-linked list with a dummy head.",
     "resources": [
       {
@@ -11573,7 +11573,7 @@ export const COMPILED_TOPICS = [
       "hazard-pointers",
       "memory-reclamation"
     ],
-    "title": "Memory Reclamation in Lock-Free Structures: The ABA Problem & Hazard Pointers",
+    "title": "Memory Reclamation in Lock-Free Structures",
     "description": "In lock-free algorithms, the ABA problem occurs when a memory pointer is freed and reallocated with identical address values.",
     "resources": [
       {
@@ -11596,7 +11596,7 @@ export const COMPILED_TOPICS = [
       "synchronization",
       "operating-systems"
     ],
-    "title": "Read-Copy Update (RCU): Lockless Concurrent Read Scaling & Grace Periods",
+    "title": "Read-Copy Update (RCU)",
     "description": "Read-Copy Update allows concurrent reader threads to traverse linked data structures with zero lock overhead, atomic memory barriers, or cache line bouncing.",
     "resources": [
       {
@@ -11619,7 +11619,7 @@ export const COMPILED_TOPICS = [
       "striped-locking",
       "concurrent-map"
     ],
-    "title": "Concurrent Hash Tables: Lock Striping, Split-Ordered Lists & Cliff Click's Map",
+    "title": "Concurrent Hash Tables",
     "description": "Concurrent hash tables scale read/write throughput across multi-core processors by avoiding monolithic synchronization locks.",
     "resources": [
       {
@@ -11642,7 +11642,7 @@ export const COMPILED_TOPICS = [
       "deque",
       "schedulers"
     ],
-    "title": "Work-Stealing Deques: The Chase-Lev Lock-Free Scheduling Deque",
+    "title": "Work-Stealing Deques",
     "description": "The Chase-Lev work-stealing deque enables work-stealing thread schedulers (used in Go runtime) to balance task loads across CPU cores.",
     "resources": [
       {
@@ -11666,7 +11666,7 @@ export const COMPILED_TOPICS = [
       "kd-tree",
       "geometry"
     ],
-    "title": "Spatial Partitioning: $k$-d Trees, Quadtrees & R-Tree Spatial Indexing",
+    "title": "Spatial Partitioning",
     "description": "$k$-d Trees partition $k$-dimensional points by alternating orthogonal splitting planes across coordinate dimensions.",
     "resources": [
       {
@@ -11689,7 +11689,7 @@ export const COMPILED_TOPICS = [
       "functional",
       "versioning"
     ],
-    "title": "Persistent Data Structures: Path Copying, Fat Nodes & Functional Trees",
+    "title": "Persistent Data Structures",
     "description": "Persistent data structures preserve historical versions across modifications.",
     "resources": [
       {
@@ -11712,7 +11712,7 @@ export const COMPILED_TOPICS = [
       "priority-queue",
       "cache-friendly"
     ],
-    "title": "Priority Queues: Binary Heaps, $d$-ary Heaps & Cache-Conscious Layouts",
+    "title": "Priority Queues",
     "description": "A Binary Heap represents a complete binary tree in a flat array where parent-child navigation uses arithmetic index operations (`2i + 1`, `2i + 2`).",
     "resources": [
       {
@@ -11735,7 +11735,7 @@ export const COMPILED_TOPICS = [
       "fibonacci-heap",
       "pairing-heap"
     ],
-    "title": "Mergeable Heaps: Fibonacci Heaps & Self-Adjusting Pairing Heaps",
+    "title": "Mergeable Heaps",
     "description": "Fibonacci heaps delay tree consolidation until extraction operations, achieving optimal $O(1)$ amortized insertion, decrease-key.",
     "resources": [
       {
@@ -11758,7 +11758,7 @@ export const COMPILED_TOPICS = [
       "concurrency",
       "theory"
     ],
-    "title": "Sequential Consistency & Interleaved Execution Order",
+    "title": "Sequential Consistency",
     "description": "Sequential consistency requires that the result of any execution is the same as if the operations of all processors were executed in some sequential order.",
     "resources": [
       {
@@ -11785,7 +11785,7 @@ export const COMPILED_TOPICS = [
       "distributed-systems",
       "formal-methods"
     ],
-    "title": "Linearizability: Real-Time Precedence & Atomic Registers",
+    "title": "Linearizability",
     "description": "A strong consistency model guaranteeing that every read and write operation appears to take effect instantaneously at a distinct point.",
     "resources": [
       {
@@ -11812,7 +11812,7 @@ export const COMPILED_TOPICS = [
       "distributed-storage",
       "replication"
     ],
-    "title": "Eventual Consistency & Client-Centric Session Guarantees",
+    "title": "Eventual Consistency",
     "description": "Eventual consistency guarantees that all replicas will converge to identical state if no new updates are made.",
     "resources": [
       {
@@ -11839,7 +11839,7 @@ export const COMPILED_TOPICS = [
       "distributed-systems",
       "ordering"
     ],
-    "title": "Causal Consistency: Potential Causality & Dependency Tracking",
+    "title": "Causal Consistency",
     "description": "Causal consistency ensures that operations causally related by happened-before dependencies are observed in identical order across all nodes.",
     "resources": [
       {
@@ -11867,7 +11867,7 @@ export const COMPILED_TOPICS = [
       "x86",
       "arm"
     ],
-    "title": "Hardware Memory Models: Total Store Order (TSO) vs Weak Ordering",
+    "title": "Hardware Memory Models",
     "description": "Hardware architectures enforce differing memory models; x86 employs Total Store Order (TSO).",
     "resources": [
       {
@@ -11894,7 +11894,7 @@ export const COMPILED_TOPICS = [
       "synchronization",
       "atomics"
     ],
-    "title": "Release Consistency & Acquire-Release Synchronization Barriers",
+    "title": "Release Consistency",
     "description": "Release consistency divides memory access into synchronized and ordinary operations.",
     "resources": [
       {
@@ -11921,7 +11921,7 @@ export const COMPILED_TOPICS = [
       "cpu-architecture",
       "hardware"
     ],
-    "title": "MESI Protocol: State Transitions & Write-Invalidation Snooping",
+    "title": "MESI Protocol",
     "description": "The MESI protocol maintains cache consistency across multi-core processors using four states: Modified, Exclusive, Shared, and Invalid.",
     "resources": [
       {
@@ -11948,7 +11948,7 @@ export const COMPILED_TOPICS = [
       "amd",
       "cpu-architecture"
     ],
-    "title": "MOESI Protocol: Owner State & Inter-Cache Dirty Sharing",
+    "title": "MOESI Protocol",
     "description": "Extends cache coherence with an Owner state, letting dirty cache lines be shared among cores without writing back to main memory.",
     "resources": [
       {
@@ -12002,7 +12002,7 @@ export const COMPILED_TOPICS = [
       "cache-line",
       "multithreading"
     ],
-    "title": "False Sharing, Cache Line Bouncing & Spatial Invalidation",
+    "title": "False Sharing, Cache Line Bouncing",
     "description": "False sharing occurs when distinct threads on separate CPU cores concurrently modify independent variables that reside within the same 64-byte cache line.",
     "resources": [
       {
@@ -12029,7 +12029,7 @@ export const COMPILED_TOPICS = [
       "invalidation-queues",
       "memory-barriers"
     ],
-    "title": "Store Buffers, Invalidation Queues & Hardware Memory Barriers",
+    "title": "Store Buffers, Invalidation Queues",
     "description": "Processors use store buffers to let execution continue immediately after write operations while cache line ownership is resolved over the bus.",
     "resources": [
       {
@@ -12057,7 +12057,7 @@ export const COMPILED_TOPICS = [
       "rpc-internals",
       "networking"
     ],
-    "title": "gRPC HTTP/2 Transport: Multiplexing, Flow Control & Streams",
+    "title": "gRPC HTTP/2 Transport",
     "description": "GRPC leverages HTTP/2 binary framing to multiplex multiple concurrent bidirectional RPC calls over a single long-lived TCP connection using distinct Stream IDs.",
     "resources": [
       {
@@ -12085,7 +12085,7 @@ export const COMPILED_TOPICS = [
       "wire-format",
       "performance"
     ],
-    "title": "Protocol Buffers Wire Format: Varints, ZigZag & Tag-Length-Value",
+    "title": "Protocol Buffers Wire Format",
     "description": "Protocol Buffers achieves compact binary serialization by encoding fields as key-value pairs where the key packs the field number and wire type using LEB128 varints.",
     "resources": [
       {
@@ -12113,7 +12113,7 @@ export const COMPILED_TOPICS = [
       "cross-language",
       "protocols"
     ],
-    "title": "Apache Thrift Internals: TBinaryProtocol vs TCompactProtocol",
+    "title": "Apache Thrift Internals",
     "description": "Apache Thrift decouples interface definition from serialization protocol and transport mechanism.",
     "resources": [
       {
@@ -12140,7 +12140,7 @@ export const COMPILED_TOPICS = [
       "networking",
       "microservices"
     ],
-    "title": "Service Discovery Patterns: Client-Side vs Server-Side Routing",
+    "title": "Service Discovery Patterns",
     "description": "Client-side service discovery queries a registry (Consul, Eureka, ZooKeeper) directly and performs local load balancing over resolved endpoints.",
     "resources": [
       {
@@ -12168,7 +12168,7 @@ export const COMPILED_TOPICS = [
       "control-plane",
       "dynamic-routing"
     ],
-    "title": "Envoy Dynamic Control Plane: The xDS Protocol (LDS, RDS, CDS, EDS)",
+    "title": "Envoy Dynamic Control Plane",
     "description": "Envoy's xDS protocol provides a dynamic configuration API that updates proxy routes without process restarts or traffic interruption.",
     "resources": [
       {
@@ -12196,7 +12196,7 @@ export const COMPILED_TOPICS = [
       "ebpf",
       "kernel-bypass"
     ],
-    "title": "High-Throughput RPC: Zero-Copy I/O & Kernel Bypass Networking",
+    "title": "High-Throughput RPC",
     "description": "High-performance RPC engines eliminate CPU memory copy overhead between kernel network buffers and user-space memory using zero-copy primitives like Linux.",
     "resources": [
       {
@@ -12223,7 +12223,7 @@ export const COMPILED_TOPICS = [
       "replication-lag",
       "databases"
     ],
-    "title": "Single-Leader Replication: Write-Ahead Log Shipping & Replication Lag",
+    "title": "Single-Leader Replication",
     "description": "In single-leader replication, all mutating queries execute on a designated leader.",
     "resources": [
       {
@@ -12277,7 +12277,7 @@ export const COMPILED_TOPICS = [
       "conflict-resolution",
       "multi-region"
     ],
-    "title": "Multi-Leader Replication: Multi-Region Deployments & Conflict Resolution",
+    "title": "Multi-Leader Replication",
     "description": "Multi-leader replication allows writes across multiple distributed datacenters, reducing client write latency and tolerating full datacenter outages.",
     "resources": [
       {
@@ -12305,7 +12305,7 @@ export const COMPILED_TOPICS = [
       "replication",
       "cassandra"
     ],
-    "title": "Leaderless Replication: Dynamo Quorums & Configurable Consistency",
+    "title": "Leaderless Replication",
     "description": "Leaderless distributed storage where configurable read and write quorums (R + W > N) guarantee strong consistency across node failures.",
     "resources": [
       {
@@ -12332,7 +12332,7 @@ export const COMPILED_TOPICS = [
       "high-availability",
       "fault-tolerance"
     ],
-    "title": "Sloppy Quorums & Hinted Handoff: Partition-Tolerant Ingestion",
+    "title": "Sloppy Quorums & Hinted Handoff",
     "description": "During network partitions or node failures where a strict quorum cannot be reached among designated home replicas.",
     "resources": [
       {
@@ -12359,7 +12359,7 @@ export const COMPILED_TOPICS = [
       "merkle-trees",
       "data-synchronization"
     ],
-    "title": "Anti-Entropy Systems: Synchronous Read Repair vs Merkle Tree Sync",
+    "title": "Anti-Entropy Systems",
     "description": "Leaderless datastores maintain long-term replica convergence through two complementary mechanisms: opportunistic read repair and active background anti-entropy.",
     "resources": [
       {
@@ -12441,7 +12441,7 @@ export const COMPILED_TOPICS = [
       "database-sharding",
       "high-availability"
     ],
-    "title": "Online Resharding & Partition Migration Without Downtime",
+    "title": "Online Resharding",
     "description": "Online resharding splits or migrates live partitions while serving continuous read/write traffic.",
     "resources": [
       {
@@ -12468,11 +12468,11 @@ export const COMPILED_TOPICS = [
       "tail-latency",
       "sharding"
     ],
-    "title": "Scatter-Gather Query Execution & Tail Latency Amplification",
+    "title": "Scatter-Gather Query Execution",
     "description": "Queries that do not include the shard routing key must be scattered to every individual partition in the cluster, gathered by a coordinator node.",
     "resources": [
       {
-        "label": "Jeffrey Dean & Luiz André Barroso: The Tail at Scale (Communications of the ACM 2013)",
+        "label": "Jeffrey Dean & Luiz Andr\u00e9 Barroso: The Tail at Scale (Communications of the ACM 2013)",
         "url": "https://cacm.acm.org/magazines/2013/2/160173-the-tail-at-scale/fulltext"
       },
       {
@@ -12495,7 +12495,7 @@ export const COMPILED_TOPICS = [
       "sharding",
       "distributed-databases"
     ],
-    "title": "Distributed Secondary Indexes: Document-Partitioned vs Term-Partitioned",
+    "title": "Distributed Secondary Indexes",
     "description": "Document-partitioned (local) secondary indexes store index entries strictly within the partition holding the primary record.",
     "resources": [
       {
@@ -12523,7 +12523,7 @@ export const COMPILED_TOPICS = [
       "distributed-sql",
       "middleware"
     ],
-    "title": "Relational Sharding Middleware: Vitess & Citus Architectures",
+    "title": "Relational Sharding Middleware",
     "description": "Sharding middleware transparently transforms monolithic relational databases (MySQL/PostgreSQL) into distributed clusters.",
     "resources": [
       {
@@ -12550,7 +12550,7 @@ export const COMPILED_TOPICS = [
       "idempotency",
       "kafka"
     ],
-    "title": "Message Delivery Semantics: At-Most-Once, At-Least-Once & Exactly-Once",
+    "title": "Message Delivery Semantics",
     "description": "At-most-once delivery drops messages on network failure, while at-least-once retries delivery until acknowledged, risking duplicate processing on consumer crashes.",
     "resources": [
       {
@@ -12578,7 +12578,7 @@ export const COMPILED_TOPICS = [
       "zero-copy",
       "commit-log"
     ],
-    "title": "Kafka Commit Log Internals: Segment Indexes & Zero-Copy Sendfile",
+    "title": "Kafka Commit Log Internals",
     "description": "Kafka structures each partition as an append-only sequence of immutable segment files paired with memory-mapped `.index` and `.timeindex` files for O(1).",
     "resources": [
       {
@@ -12605,7 +12605,7 @@ export const COMPILED_TOPICS = [
       "event-sourcing",
       "state-management"
     ],
-    "title": "Kafka Log Compaction: Retaining Keyed State & Tombstone Deletion",
+    "title": "Kafka Log Compaction",
     "description": "Log compaction ensures Kafka retains at least the latest value for every message key within a partition.",
     "resources": [
       {
@@ -12632,7 +12632,7 @@ export const COMPILED_TOPICS = [
       "flow-control",
       "streaming"
     ],
-    "title": "Backpressure Handling: Pull-Based Flow Control & Reactive Streams",
+    "title": "Backpressure Handling",
     "description": "Backpressure prevents fast upstream producers from overwhelming slower downstream consumers by propagating resource constraints backward through the pipeline.",
     "resources": [
       {
@@ -12659,7 +12659,7 @@ export const COMPILED_TOPICS = [
       "rebalance",
       "cooperative-sticky"
     ],
-    "title": "Kafka Consumer Group Rebalancing: Eager vs Cooperative Sticky Protocols",
+    "title": "Kafka Consumer Group Rebalancing",
     "description": "Consumer groups balance partition assignments across instances through coordinator heartbeats and JoinGroup/SyncGroup sync phases.",
     "resources": [
       {
@@ -12687,7 +12687,7 @@ export const COMPILED_TOPICS = [
       "retry-topics",
       "messaging"
     ],
-    "title": "Poison Pill Handling: Dead-Letter Queues (DLQ) & Non-Blocking Retry Queues",
+    "title": "Poison Pill Handling",
     "description": "A poison pill is a corrupted or unprocessable message that repeatedly crashes consumer logic, blocking head-of-line progress across an entire queue.",
     "resources": [
       {
@@ -12714,7 +12714,7 @@ export const COMPILED_TOPICS = [
       "time-synchronization",
       "distributed-clocks"
     ],
-    "title": "NTP Clock Synchronization: Drift, Asymmetric Jitter & Monotonic Timers",
+    "title": "NTP Clock Synchronization",
     "description": "Network Time Protocol (NTP) synchronizes computer clocks over packet-switched networks by estimating round-trip latency and clock offset.",
     "resources": [
       {
@@ -12741,7 +12741,7 @@ export const COMPILED_TOPICS = [
       "happened-before",
       "ordering"
     ],
-    "title": "Lamport Logical Timestamps & Distributed Happened-Before Partial Order",
+    "title": "Lamport Logical Timestamps",
     "description": "Lamport logical clocks define a partial order of distributed events using the 'happened-before' relation (a -> b) without relying on physical time.",
     "resources": [
       {
@@ -12769,7 +12769,7 @@ export const COMPILED_TOPICS = [
       "external-consistency",
       "google"
     ],
-    "title": "Google TrueTime & Cloud Spanner: Bounded Clock Uncertainty & Commit Wait",
+    "title": "Google TrueTime & Cloud Spanner",
     "description": "Uses atomic clocks and GPS to provide bounded time uncertainty, using commit-wait intervals to enforce global serializability.",
     "resources": [
       {
@@ -12797,7 +12797,7 @@ export const COMPILED_TOPICS = [
       "causality",
       "time"
     ],
-    "title": "Hybrid Logical Clocks (HLC): Combining Physical Time with Causal Ordering",
+    "title": "Hybrid Logical Clocks (HLC)",
     "description": "Hybrid Logical Clocks (HLC) merge physical timestamps with Lamport logical counters into a single 64-bit coordinate that tracks causal dependencies while staying.",
     "resources": [
       {
@@ -12824,7 +12824,7 @@ export const COMPILED_TOPICS = [
       "distributed-storage",
       "dynamo"
     ],
-    "title": "Practical Concurrency Tracking: Vector Clocks vs Version Vectors in Production",
+    "title": "Practical Concurrency Tracking",
     "description": "While scalar Lamport clocks detect ordering, vector clocks and version vectors distinguish between causal precedence and true concurrent modifications .",
     "resources": [
       {
@@ -12832,7 +12832,7 @@ export const COMPILED_TOPICS = [
         "url": "https://link.springer.com/chapter/10.1007/978-3-642-88169-5_15"
       },
       {
-        "label": "Nuno Preguiça et al.: Dotted Version Vectors: Logical Clocks for Optimistic Replication (SOCC 2014)",
+        "label": "Nuno Pregui\u00e7a et al.: Dotted Version Vectors: Logical Clocks for Optimistic Replication (SOCC 2014)",
         "url": "https://arxiv.org/abs/1011.5808"
       },
       {
@@ -12851,7 +12851,7 @@ export const COMPILED_TOPICS = [
       "fault-tolerance",
       "microservices"
     ],
-    "title": "Circuit Breaker Pattern: Closed, Open & Half-Open State Transitions",
+    "title": "Circuit Breaker Pattern",
     "description": "The Circuit Breaker pattern prevents cascading service failure by intercepting outbound RPC calls with an active finite state machine.",
     "resources": [
       {
@@ -12878,7 +12878,7 @@ export const COMPILED_TOPICS = [
       "fault-isolation",
       "thread-pools"
     ],
-    "title": "Bulkhead Pattern: Thread Pool, Connection & Memory Isolation",
+    "title": "Bulkhead Pattern",
     "description": "Inspired by naval watertight hull compartments, the Bulkhead pattern partitions internal resources (thread pools) into isolated pools per dependency.",
     "resources": [
       {
@@ -12906,7 +12906,7 @@ export const COMPILED_TOPICS = [
       "thundering-herd",
       "networking"
     ],
-    "title": "Retry Strategies: Exponential Backoff & Decorrelated Jitter",
+    "title": "Retry Strategies",
     "description": "Blind client retries after a partial outage create a thundering herd problem that repeatedly knocks recovering backends offline.",
     "resources": [
       {
@@ -12933,7 +12933,7 @@ export const COMPILED_TOPICS = [
       "grpc",
       "distributed-tracing"
     ],
-    "title": "Distributed Deadline Propagation & End-to-End Timeout Budgets",
+    "title": "Distributed Deadline Propagation",
     "description": "When an incoming request spans a deep microservice call tree, static per-hop timeouts cause wasted CPU processing on downstream nodes when the upstream caller.",
     "resources": [
       {
@@ -12960,7 +12960,7 @@ export const COMPILED_TOPICS = [
       "littles-law",
       "capacity-planning"
     ],
-    "title": "Load Shedding & Adaptive Concurrency Limits: Little's Law in Overload",
+    "title": "Load Shedding",
     "description": "When server queues grow past peak throughput capacity, response times spike while throughput collapses due to context switching and lock contention.",
     "resources": [
       {
@@ -12987,7 +12987,7 @@ export const COMPILED_TOPICS = [
       "sliding-window",
       "redis-lua"
     ],
-    "title": "Distributed Rate Limiting: Token Bucket vs Sliding Window Counters",
+    "title": "Rate Limiting: Token Bucket vs Window",
     "description": "Distributed rate limiting enforces quota governance across horizontal API gateways without central single-point bottlenecks.",
     "resources": [
       {
@@ -13014,7 +13014,7 @@ export const COMPILED_TOPICS = [
       "distributed-tradeoffs",
       "system-architecture"
     ],
-    "title": "PACELC Theorem: Practical Consistency vs Latency Tradeoffs",
+    "title": "PACELC Theorem",
     "description": "Daniel Abadi's PACELC theorem expands the CAP theorem by stating that IF there is a Partition (P).",
     "resources": [
       {
@@ -13068,7 +13068,7 @@ export const COMPILED_TOPICS = [
       "distributed-locks",
       "consensus"
     ],
-    "title": "Split-Brain Mitigation: Monotonic Fencing Tokens & Epoch Leases",
+    "title": "Split-Brain Mitigation",
     "description": "When a network partition isolates a primary node, false failovers can promote a secondary leader while the original leader remains unaware.",
     "resources": [
       {
@@ -13096,7 +13096,7 @@ export const COMPILED_TOPICS = [
       "etcd",
       "redis"
     ],
-    "title": "Distributed Locks: Redis Redlock vs Consensus-Backed Leases (etcd/Chubby)",
+    "title": "Distributed Locks",
     "description": "Redis Redlock attempts distributed mutual exclusion across N independent Redis nodes without a shared consensus protocol.",
     "resources": [
       {
@@ -13123,7 +13123,7 @@ export const COMPILED_TOPICS = [
       "availability",
       "graceful-degradation"
     ],
-    "title": "Graceful Degradation: The Harvest and Yield Model for Availability",
+    "title": "Graceful Degradation",
     "description": "Fox and Brewer's Harvest and Yield model reframes distributed availability into two quantifiable metrics: Yield and Harvest .",
     "resources": [
       {
@@ -13151,7 +13151,7 @@ export const COMPILED_TOPICS = [
       "choreography",
       "microservices"
     ],
-    "title": "Saga Pattern: Choreography vs Orchestration & Compensating Actions",
+    "title": "Saga Pattern",
     "description": "The Saga pattern coordinates long-running distributed transactions as a series of distinct local transactions across microservices.",
     "resources": [
       {
@@ -13179,7 +13179,7 @@ export const COMPILED_TOPICS = [
       "dual-write",
       "event-driven"
     ],
-    "title": "Transactional Outbox Pattern & Change Data Capture (CDC)",
+    "title": "Transactional Outbox Pattern",
     "description": "Mutating a database and publishing to a message broker in separate application calls introduces fatal dual-write inconsistencies if either step crashes mid-flight.",
     "resources": [
       {
@@ -13206,7 +13206,7 @@ export const COMPILED_TOPICS = [
       "api-design",
       "distributed-systems"
     ],
-    "title": "Idempotency Keys & Request Deduplication in Payment Gateways",
+    "title": "Idempotency Keys",
     "description": "In financial systems where network timeouts leave API call outcomes ambiguous, clients attach a unique Idempotency-Key header to mutating requests.",
     "resources": [
       {
@@ -13233,7 +13233,7 @@ export const COMPILED_TOPICS = [
       "data-consistency",
       "event-driven"
     ],
-    "title": "The Dual-Write Hazard & Asynchronous Reconciliation Loops",
+    "title": "The Dual-Write Hazard",
     "description": "Attempting to update two independent distributed systems without distributed transactions inevitably causes silent drift when one operation fails.",
     "resources": [
       {
@@ -13261,7 +13261,7 @@ export const COMPILED_TOPICS = [
       "consensus",
       "blocking"
     ],
-    "title": "Two-Phase Commit (2PC): Protocol Phases, Coordinator Crashes & Blocking Flaws",
+    "title": "Two-Phase Commit (2PC)",
     "description": "Two-Phase Commit (2PC) achieves atomic multi-node transactions through a Prepare phase and a Commit phase.",
     "resources": [
       {
@@ -13288,7 +13288,7 @@ export const COMPILED_TOPICS = [
       "cqrs",
       "messaging"
     ],
-    "title": "Listen-to-Yourself Pattern: Event-Driven Local State Synchronization",
+    "title": "Listen-to-Yourself Pattern",
     "description": "In the Listen-to-Yourself pattern, a service handling a write command does not update its local database directly.",
     "resources": [
       {
@@ -13315,7 +13315,7 @@ export const COMPILED_TOPICS = [
       "react",
       "streaming"
     ],
-    "title": "React Server Components (RSC) & Flight Wire Format",
+    "title": "React Server Components (RSC)",
     "description": "RSCs execute strictly on the server during build or request time, outputting a serialized JSON-like stream (the Flight protocol) containing UI tree references.",
     "resources": [
       {
@@ -13342,7 +13342,7 @@ export const COMPILED_TOPICS = [
       "hydration",
       "react"
     ],
-    "title": "Streaming SSR & Selective Hydration with React Suspense",
+    "title": "Streaming SSR",
     "description": "Streaming Server-Side Rendering uses HTML chunking via HTTP/1.1 chunked transfer encoding or HTTP/2 streams to flush static page shells early.",
     "resources": [
       {
@@ -13365,7 +13365,7 @@ export const COMPILED_TOPICS = [
       "ssg",
       "nextjs"
     ],
-    "title": "Incremental Static Regeneration (ISR) & Stale-While-Revalidate Caching",
+    "title": "Incremental Static Regeneration (ISR)",
     "description": "ISR allows static pages to be regenerated in the background on a per-page basis without rebuilding the entire website.",
     "resources": [
       {
@@ -13388,7 +13388,7 @@ export const COMPILED_TOPICS = [
       "astro",
       "performance"
     ],
-    "title": "Islands Architecture: Zero-JS Defaults & Independent Partial Hydration",
+    "title": "Islands Architecture",
     "description": "Islands Architecture renders pages as pure static HTML by default, embedding small, isolated dynamic component 'islands' .",
     "resources": [
       {
@@ -13411,15 +13411,15 @@ export const COMPILED_TOPICS = [
       "resumability",
       "performance"
     ],
-    "title": "Resumability vs. Hydration: Serialized Execution State & Qwik",
+    "title": "Resumability vs. Hydration",
     "description": "Hydration requires the client browser to download, parse, and execute all component code to rebuild event listener bindings and virtual DOM state.",
     "resources": [
       {
-        "label": "Miško Hevery: HTML-first JavaScript Framework (Qwik Docs)",
+        "label": "Mi\u0161ko Hevery: HTML-first JavaScript Framework (Qwik Docs)",
         "url": "https://qwik.dev/docs/concepts/resumable/"
       },
       {
-        "label": "Builder.io: Hydration is Pure Overhead (Miško Hevery)",
+        "label": "Builder.io: Hydration is Pure Overhead (Mi\u0161ko Hevery)",
         "url": "https://www.builder.io/blog/hydration-is-pure-overhead"
       }
     ]
@@ -13434,7 +13434,7 @@ export const COMPILED_TOPICS = [
       "event-loop",
       "async"
     ],
-    "title": "JavaScript Event Loop: Task Queues, Microtasks & Rendering Frames",
+    "title": "JavaScript Event Loop",
     "description": "The browser execution loop processes one macrotask (timer callbacks, I/O events) per iteration.",
     "resources": [
       {
@@ -13461,7 +13461,7 @@ export const COMPILED_TOPICS = [
       "compilers",
       "jit"
     ],
-    "title": "V8 Engine Execution Pipeline: Ignition Bytecode, Sparkplug & TurboFan JIT",
+    "title": "V8 Engine Execution Pipeline",
     "description": "V8 compiles JavaScript into bytecode via the Ignition interpreter for instant startup.",
     "resources": [
       {
@@ -13469,7 +13469,7 @@ export const COMPILED_TOPICS = [
         "url": "https://v8.dev/blog/launching-ignition-and-turbofan"
       },
       {
-        "label": "V8 Blog: Sparkplug — A Fast Non-Optimizing Compiler",
+        "label": "V8 Blog: Sparkplug \u2014 A Fast Non-Optimizing Compiler",
         "url": "https://v8.dev/blog/sparkplug"
       },
       {
@@ -13488,7 +13488,7 @@ export const COMPILED_TOPICS = [
       "compositing",
       "performance"
     ],
-    "title": "Browser Critical Rendering Path: DOM/CSSOM, Layout, Paint & GPU Compositing",
+    "title": "Browser Critical Rendering Path",
     "description": "The rendering engine combines the DOM and CSSOM into a Render Tree, calculates geometry bounding boxes (Layout/Reflow).",
     "resources": [
       {
@@ -13541,7 +13541,7 @@ export const COMPILED_TOPICS = [
       "performance",
       "html-parsing"
     ],
-    "title": "HTML Speculative Parsing & Secondary Preload Scanners",
+    "title": "HTML Speculative Parsing",
     "description": "Scans HTML ahead of blocking scripts using a background thread, discovering and preloading external assets concurrently.",
     "resources": [
       {
@@ -13564,7 +13564,7 @@ export const COMPILED_TOPICS = [
       "protocols",
       "rfc6455"
     ],
-    "title": "WebSocket Protocol: RFC 6455 Handshake, Frame Masks & Heartbeating",
+    "title": "WebSocket Protocol",
     "description": "WebSockets upgrade HTTP connections into full-duplex persistent TCP channels via the `Upgrade: websocket` header handshake.",
     "resources": [
       {
@@ -13587,7 +13587,7 @@ export const COMPILED_TOPICS = [
       "p2p",
       "realtime"
     ],
-    "title": "WebRTC Architecture: SDP Offer/Answer, NAT Traversal (STUN/TURN) & ICE",
+    "title": "WebRTC Architecture",
     "description": "WebRTC enables real-time peer-to-peer audio, video, and binary DataChannel communication directly between browsers.",
     "resources": [
       {
@@ -13614,7 +13614,7 @@ export const COMPILED_TOPICS = [
       "http",
       "streaming"
     ],
-    "title": "Server-Sent Events (SSE): HTTP/2 Stream Multiplexing & Auto-Reconnection",
+    "title": "Server-Sent Events (SSE)",
     "description": "Server-Sent Events deliver unidirectional server-to-client updates over standard persistent HTTP connections using the `text/event-stream` MIME type.",
     "resources": [
       {
@@ -13637,7 +13637,7 @@ export const COMPILED_TOPICS = [
       "http3",
       "quic"
     ],
-    "title": "HTTP/2 vs. HTTP/3 (QUIC): Solving TCP Head-of-Line (HoL) Blocking",
+    "title": "HTTP/2 vs. HTTP/3 (QUIC)",
     "description": "HTTP/2 multiplexes multiple streams over a single TCP connection, but a single lost packet blocks all concurrent streams at the OS TCP transport layer (TCP.",
     "resources": [
       {
@@ -13664,7 +13664,7 @@ export const COMPILED_TOPICS = [
       "backpressure",
       "async"
     ],
-    "title": "Web Streams API: ReadableStream, WritableStream & Backpressure Handling",
+    "title": "Web Streams API",
     "description": "The Web Streams API enables processing network payloads chunk-by-chunk in real time rather than buffering entire gigabyte responses in memory.",
     "resources": [
       {
@@ -13692,7 +13692,7 @@ export const COMPILED_TOPICS = [
       "lcp",
       "cls"
     ],
-    "title": "Core Web Vitals: Interaction to Next Paint (INP), LCP & Cumulative Layout Shift (CLS)",
+    "title": "Core Web Vitals",
     "description": "INP measures user interface responsiveness across all interactions, tracking input delay, event processing duration, and presentation delay.",
     "resources": [
       {
@@ -13719,7 +13719,7 @@ export const COMPILED_TOPICS = [
       "code-splitting",
       "webpack"
     ],
-    "title": "Code Splitting Architecture: Route-Level, Component Lazy Loading & Chunk Graph Splitting",
+    "title": "Code Splitting Architecture",
     "description": "Modern bundlers parse dynamic `import` statements into separate chunk entry points in the dependency graph.",
     "resources": [
       {
@@ -13746,7 +13746,7 @@ export const COMPILED_TOPICS = [
       "containment",
       "rendering"
     ],
-    "title": "CSS Containment: contain Property & content-visibility: auto",
+    "title": "CSS Containment",
     "description": "CSS Containment (`contain: layout paint style`) isolates subtrees from the rest of the document.",
     "resources": [
       {
@@ -13773,7 +13773,7 @@ export const COMPILED_TOPICS = [
       "browsers",
       "navigation"
     ],
-    "title": "Back/Forward Cache (bfcache): In-Memory Page Freezing & Lifecycle Events",
+    "title": "Back/Forward Cache (bfcache)",
     "description": "The bfcache stores an entire frozen snapshot of the live DOM, JavaScript execution context, and rendering state in browser memory when users navigate away.",
     "resources": [
       {
@@ -13796,7 +13796,7 @@ export const COMPILED_TOPICS = [
       "html",
       "networking"
     ],
-    "title": "Resource Hints: rel=preload, prefetch, preconnect & modulepreload",
+    "title": "Resource Hints",
     "description": "`preload` forces immediate high-priority retrieval of critical late-discovered assets (fonts, hero images).",
     "resources": [
       {
@@ -13823,7 +13823,7 @@ export const COMPILED_TOPICS = [
       "offline",
       "caching"
     ],
-    "title": "Service Worker Lifecycle: Registration, Installation, Activation & clients.claim()",
+    "title": "Service Worker Lifecycle",
     "description": "Service Workers run on an independent background thread decoupled from web pages.",
     "resources": [
       {
@@ -13850,7 +13850,7 @@ export const COMPILED_TOPICS = [
       "service-workers",
       "offline"
     ],
-    "title": "PWA Caching Strategies: Stale-While-Revalidate, Network-First & Cache-First",
+    "title": "PWA Caching Strategies",
     "description": "The CacheStorage API allows Service Workers to intercept fetch requests and programmatically respond with cached responses.",
     "resources": [
       {
@@ -13873,7 +13873,7 @@ export const COMPILED_TOPICS = [
       "pwa",
       "databases"
     ],
-    "title": "IndexedDB Architecture: Object Stores, B-Tree Indexes & ACID Transactions",
+    "title": "IndexedDB Architecture",
     "description": "IndexedDB provides client-side NoSQL storage supporting gigabytes of structured cloneable objects.",
     "resources": [
       {
@@ -13896,7 +13896,7 @@ export const COMPILED_TOPICS = [
       "service-workers",
       "offline"
     ],
-    "title": "Background Sync API & Periodic Background Sync",
+    "title": "Background Sync API",
     "description": "The Background Sync API queues offline mutation tasks inside IndexedDB and registers a `sync` event with the browser.",
     "resources": [
       {
@@ -13919,7 +13919,7 @@ export const COMPILED_TOPICS = [
       "responsive-design",
       "modern-css"
     ],
-    "title": "CSS Container Queries: @container, Size Queries & cq Units",
+    "title": "CSS Container Queries",
     "description": "Container queries evaluate component styling based on the width and height of an ancestor container element (`container-type.",
     "resources": [
       {
@@ -13946,7 +13946,7 @@ export const COMPILED_TOPICS = [
       "specificity",
       "modern-css"
     ],
-    "title": "CSS Cascade Layers: @layer, Specificity Inversion & Architecture",
+    "title": "CSS Cascade Layers",
     "description": "Cascade Layers (`@layer`) introduce an explicit layering hierarchy that takes precedence over traditional selector specificity rules.",
     "resources": [
       {
@@ -13973,7 +13973,7 @@ export const COMPILED_TOPICS = [
       "modern-css",
       "web-design"
     ],
-    "title": "CSS Relational Pseudo-Class :has() (The Parent Selector)",
+    "title": "CSS Relational Pseudo-Class",
     "description": "The `:has` pseudo-class matches an element if any of the relative selectors passed as arguments match at least one element.",
     "resources": [
       {
@@ -14000,7 +14000,7 @@ export const COMPILED_TOPICS = [
       "animation",
       "dom"
     ],
-    "title": "View Transitions API: DOM State Morphing in SPAs & MPAs",
+    "title": "View Transitions API",
     "description": "The View Transitions API creates animated transitions between DOM states by taking before and after visual snapshots of elements tagged with `view-transition-name`.",
     "resources": [
       {
@@ -14050,7 +14050,7 @@ export const COMPILED_TOPICS = [
       "signals",
       "solidjs"
     ],
-    "title": "Fine-Grained Reactivity: Signal Graphs, Subscriptions & O(1) DOM Updates",
+    "title": "Fine-Grained Reactivity",
     "description": "Signals (in Solid) track dependencies dynamically using an automatic subscription graph established during getter execution.",
     "resources": [
       {
@@ -14077,7 +14077,7 @@ export const COMPILED_TOPICS = [
       "flux",
       "functional-programming"
     ],
-    "title": "Centralized Immutable State: The Flux Pattern & Pure Reducer State Machines",
+    "title": "Centralized Immutable State",
     "description": "The Flux architecture enforces unidirectional data flow: actions dispatched through a centralized store invoke pure reducer functions `(state.",
     "resources": [
       {
@@ -14100,7 +14100,7 @@ export const COMPILED_TOPICS = [
       "jotai",
       "react"
     ],
-    "title": "Atomic State Management: Bottom-Up State Graphs (Jotai & Recoil)",
+    "title": "Atomic State Management",
     "description": "Atomic state models state as minimal independent reactive units called 'atoms' combined via pure derived selector functions into dependency DAGs.",
     "resources": [
       {
@@ -14123,7 +14123,7 @@ export const COMPILED_TOPICS = [
       "swr",
       "data-fetching"
     ],
-    "title": "Server State Synchronization: TanStack Query, Request Deduplication & Optimistic Mutations",
+    "title": "Server State Synchronization",
     "description": "Server cache synchronizers manage asynchronous server state separately from UI client state.",
     "resources": [
       {
@@ -14146,7 +14146,7 @@ export const COMPILED_TOPICS = [
       "xss",
       "headers"
     ],
-    "title": "Content Security Policy (CSP Level 3): Cryptographic Nonces, Hashes & Strict-Dynamic",
+    "title": "Content Security Policy (CSP Level 3)",
     "description": "CSP restricts the origins from which scripts, styles, and media can execute.",
     "resources": [
       {
@@ -14173,7 +14173,7 @@ export const COMPILED_TOPICS = [
       "http",
       "networking"
     ],
-    "title": "CORS Internals: Preflight OPTIONS Requests, Simple Requests & Credentialed Headers",
+    "title": "CORS Internals",
     "description": "Cross-Origin Resource Sharing (CORS) enforces Same-Origin Policy boundaries.",
     "resources": [
       {
@@ -14196,7 +14196,7 @@ export const COMPILED_TOPICS = [
       "dom",
       "vulnerabilities"
     ],
-    "title": "XSS Vulnerabilities: Stored, Reflected, DOM-Based & Trusted Types Sanitization",
+    "title": "XSS Vulnerabilities",
     "description": "Cross-Site Scripting (XSS) occurs when untrusted user input is injected into the DOM as executable code.",
     "resources": [
       {
@@ -14223,7 +14223,7 @@ export const COMPILED_TOPICS = [
       "cookies",
       "samesite"
     ],
-    "title": "CSRF Defense: SameSite Cookie Attributes (Strict/Lax), Double Submit & Synchronizer Tokens",
+    "title": "CSRF Defense",
     "description": "Cross-Site Request Forgery (CSRF) tricks authenticated user browsers into issuing unauthorized state-changing requests to target origins.",
     "resources": [
       {
@@ -14246,7 +14246,7 @@ export const COMPILED_TOPICS = [
       "spectre",
       "sharedarraybuffer"
     ],
-    "title": "Cross-Origin Isolation: COOP, COEP, CORP & Spectre Side-Channel Defenses",
+    "title": "Cross-Origin Isolation",
     "description": "To mitigate microarchitectural CPU timing attacks (Spectre), high-resolution timers and `SharedArrayBuffer` require strict Cross-Origin Isolation.",
     "resources": [
       {
@@ -14269,7 +14269,7 @@ export const COMPILED_TOPICS = [
       "memory",
       "security"
     ],
-    "title": "WebAssembly Linear Memory: ArrayBuffer Pages, Bounds Checks & Sandboxing",
+    "title": "WebAssembly Linear Memory",
     "description": "WebAssembly memory is structured as a contiguous, resizable, one-dimensional array of raw unmanaged bytes represented in JS as an `ArrayBuffer`.",
     "resources": [
       {
@@ -14296,7 +14296,7 @@ export const COMPILED_TOPICS = [
       "javascript",
       "interop"
     ],
-    "title": "WebAssembly JS Interop: wasm-bindgen, Type Marshaling & Zero-Copy Views",
+    "title": "WebAssembly JS Interop",
     "description": "Wasm natively only handles numeric scalar types (i32, i64, f32, f64).",
     "resources": [
       {
@@ -14319,7 +14319,7 @@ export const COMPILED_TOPICS = [
       "simd",
       "vectorization"
     ],
-    "title": "WebAssembly Fixed-Width SIMD: 128-Bit Vectorization in the Browser",
+    "title": "WebAssembly Fixed-Width SIMD",
     "description": "WebAssembly SIMD (Single Instruction, Multiple Data) exposes 128-bit vector registers to process multiple integers or floats concurrently in a single CPU.",
     "resources": [
       {
@@ -14342,7 +14342,7 @@ export const COMPILED_TOPICS = [
       "systems",
       "sandboxing"
     ],
-    "title": "WASI (WebAssembly System Interface): Capability-Based POSIX Sandboxing",
+    "title": "WASI (WebAssembly System Interface)",
     "description": "WASI defines a standardized, modular system call interface allowing WebAssembly to run outside browser sandboxes on servers and edge nodes.",
     "resources": [
       {
@@ -14365,7 +14365,7 @@ export const COMPILED_TOPICS = [
       "esm",
       "webpack"
     ],
-    "title": "Tree-Shaking Internals: Static ESM Analysis vs. Dynamic CommonJS Bailouts",
+    "title": "Tree-Shaking Internals",
     "description": "Tree-shaking relies on ECMAScript Modules (ESM) having static `import`/`export` syntax that can be analyzed at compile time without code execution.",
     "resources": [
       {
@@ -14393,7 +14393,7 @@ export const COMPILED_TOPICS = [
       "node",
       "bundling"
     ],
-    "title": "ESM vs. CommonJS Interoperability: The Dual-Package Hazard & Package Exports",
+    "title": "ESM vs. CommonJS Interoperability",
     "description": "CommonJS loads modules synchronously via dynamic `require`, while ESM loads asynchronously via static imports.",
     "resources": [
       {
@@ -14416,7 +14416,7 @@ export const COMPILED_TOPICS = [
       "compilers",
       "debugging"
     ],
-    "title": "Source Maps v3: Variable-Length Quantity (VLQ) Encoding & Debugging Mappings",
+    "title": "Source Maps v3",
     "description": "Source Maps map compiled, minified production JavaScript back to original source files and lines.",
     "resources": [
       {
@@ -14439,7 +14439,7 @@ export const COMPILED_TOPICS = [
       "micro-frontends",
       "webpack"
     ],
-    "title": "Webpack Module Federation & Dynamic Runtime Micro-Frontends",
+    "title": "Webpack Module Federation",
     "description": "Enables independent JavaScript applications to dynamically load and share components and dependencies at runtime.",
     "resources": [
       {
@@ -14463,7 +14463,7 @@ export const COMPILED_TOPICS = [
       "esbuild",
       "rspack"
     ],
-    "title": "Next-Gen Bundler Architecture: Go/Rust Concurrency (esbuild, Rspack, Rolldown)",
+    "title": "Next-Gen Bundler Architecture",
     "description": "Modern bundlers replace JavaScript-based compilers with compiled languages (Go in esbuild).",
     "resources": [
       {
@@ -14486,7 +14486,7 @@ export const COMPILED_TOPICS = [
       "browser-internals",
       "performance"
     ],
-    "title": "DOM MutationObserver: Batch DOM Change Notifications via Microtasks",
+    "title": "DOM MutationObserver",
     "description": "MutationObserver replaces deprecated, performance-degrading DOM Mutation Events.",
     "resources": [
       {
@@ -14509,7 +14509,7 @@ export const COMPILED_TOPICS = [
       "observers",
       "layout-thrashing"
     ],
-    "title": "IntersectionObserver & Avoiding Synchronous Layout Thrashing",
+    "title": "IntersectionObserver",
     "description": "Traditional scroll listeners querying `getBoundingClientRect` force the browser to execute synchronous layout passes (layout thrashing) on the main thread.",
     "resources": [
       {
@@ -14532,7 +14532,7 @@ export const COMPILED_TOPICS = [
       "css",
       "encapsulation"
     ],
-    "title": "Shadow DOM: Scoped CSS, Slots & Custom Elements Architecture",
+    "title": "Shadow DOM",
     "description": "Shadow DOM attaches a scoped, encapsulated sub-DOM tree (`ShadowRoot`) to a custom element host.",
     "resources": [
       {
@@ -14555,7 +14555,7 @@ export const COMPILED_TOPICS = [
       "cryptography",
       "cdn"
     ],
-    "title": "Subresource Integrity (SRI): SHA Hashing & CDN Tampering Defense",
+    "title": "Subresource Integrity (SRI)",
     "description": "Subresource Integrity allows browsers to verify that third-party scripts and stylesheets fetched from external CDNs have not been maliciously modified.",
     "resources": [
       {
@@ -14578,7 +14578,7 @@ export const COMPILED_TOPICS = [
       "css",
       "typography"
     ],
-    "title": "Web Font Optimization: WOFF2, font-display (swap/optional) & FOIT/FOUT",
+    "title": "Web Font Optimization",
     "description": "Custom web fonts can cause Flash of Invisible Text (FOIT) or Flash of Unstyled Text (FOUT) while downloading.",
     "resources": [
       {
@@ -14601,7 +14601,7 @@ export const COMPILED_TOPICS = [
       "encoding",
       "fetch"
     ],
-    "title": "HTTP Form Encoding: application/x-www-form-urlencoded vs multipart/form-data",
+    "title": "HTTP Form Encoding",
     "description": "Standard HTML forms serialize inputs as URL-encoded key-value strings (`application/x-www-form-urlencoded`).",
     "resources": [
       {
@@ -14624,7 +14624,7 @@ export const COMPILED_TOPICS = [
       "multimedia",
       "javascript"
     ],
-    "title": "Web Audio API: AudioContext Modular Routing Graphs & AudioNodes",
+    "title": "Web Audio API",
     "description": "The Web Audio API processes and synthesizes audio within an `AudioContext` using directed modular audio routing graphs.",
     "resources": [
       {
@@ -14647,7 +14647,7 @@ export const COMPILED_TOPICS = [
       "webgl",
       "webgpu"
     ],
-    "title": "Browser Graphics Primitives: Canvas 2D, WebGL & Next-Gen WebGPU Pipelines",
+    "title": "Browser Graphics Primitives",
     "description": "Canvas 2D provides immediate-mode software/hardware 2D rasterization.",
     "resources": [
       {
@@ -14674,7 +14674,7 @@ export const COMPILED_TOPICS = [
       "networking",
       "browser-internals"
     ],
-    "title": "Reliable Telemetry Dispatch: navigator.sendBeacon & fetch keepalive",
+    "title": "Reliable Telemetry Dispatch",
     "description": "Standard asynchronous `fetch` requests triggered in `unload` or `pagehide` event handlers are frequently canceled by the browser when tearing down the page..",
     "resources": [
       {
@@ -14696,11 +14696,11 @@ export const COMPILED_TOPICS = [
       "staff-engineering",
       "org-design"
     ],
-    "title": "The Dual-Track Career Ladder: IC vs Management",
+    "title": "The Dual-Track Career Ladder",
     "description": "Distinguishes technical leadership (Individual Contributor Track) from organizational orchestration (Management Track).",
     "resources": [
       {
-        "label": "Camille Fournier — The Manager's Path (O'Reilly)",
+        "label": "Camille Fournier \u2014 The Manager's Path (O'Reilly)",
         "url": "https://www.oreilly.com/library/view/the-managers-path/9781491973882/"
       }
     ]
@@ -14714,11 +14714,11 @@ export const COMPILED_TOPICS = [
       "leverage",
       "productivity"
     ],
-    "title": "High-Leverage Activities & Andy Grove's Output Formula",
+    "title": "High-Leverage Activities",
     "description": "A manager's output as the output of the organization plus the output of neighboring teams influenced.",
     "resources": [
       {
-        "label": "Andy Grove — High Output Management (Vintage)",
+        "label": "Andy Grove \u2014 High Output Management (Vintage)",
         "url": "https://www.goodreads.com/book/show/324750.High_Output_Management"
       }
     ]
@@ -14736,7 +14736,7 @@ export const COMPILED_TOPICS = [
     "description": "Will Larson categorizes principal technical roles into four distinct operating modes.",
     "resources": [
       {
-        "label": "Will Larson — Staff Engineer: Leadership beyond the management track",
+        "label": "Will Larson \u2014 Staff Engineer: Leadership beyond the management track",
         "url": "https://staffeng.com/book"
       }
     ]
@@ -14754,7 +14754,7 @@ export const COMPILED_TOPICS = [
     "description": "Paul Graham explains that creative and technical workers require large contiguous blocks of uninterrupted time (half-days).",
     "resources": [
       {
-        "label": "Paul Graham — Maker's Schedule, Manager's Schedule (2009)",
+        "label": "Paul Graham \u2014 Maker's Schedule, Manager's Schedule (2009)",
         "url": "http://www.paulgraham.com/makersschedule.html"
       }
     ]
@@ -14768,11 +14768,11 @@ export const COMPILED_TOPICS = [
       "communication",
       "leadership"
     ],
-    "title": "Radical Candor: Care Personally & Challenge Directly",
+    "title": "Radical Candor Framework",
     "description": "Kim Scott's feedback matrix positions high-performance team culture at the intersection of caring personally and challenging directly.",
     "resources": [
       {
-        "label": "Kim Scott — Radical Candor: Be a Kick-Ass Boss",
+        "label": "Kim Scott \u2014 Radical Candor: Be a Kick-Ass Boss",
         "url": "https://www.radicalcandor.com/"
       }
     ]
@@ -14790,7 +14790,7 @@ export const COMPILED_TOPICS = [
     "description": "McKinsey's executive communication scaffold begins with an uncontroversial baseline (Situation), introduces the acute disruption or pain point (Complication).",
     "resources": [
       {
-        "label": "Barbara Minto — The Pyramid Principle in Strategic Problem Solving",
+        "label": "Barbara Minto \u2014 The Pyramid Principle in Strategic Problem Solving",
         "url": "https://www.mckinsey.com"
       }
     ]
@@ -14804,11 +14804,11 @@ export const COMPILED_TOPICS = [
       "onboarding",
       "leadership"
     ],
-    "title": "The First 90 Days: Transition Curve & Early Wins",
+    "title": "The First 90 Days",
     "description": "Michael Watkins demonstrates that professional credibility is established during initial onboarding by building alliances.",
     "resources": [
       {
-        "label": "Michael D. Watkins — The First 90 Days (Harvard Business Review Press)",
+        "label": "Michael D. Watkins \u2014 The First 90 Days (Harvard Business Review Press)",
         "url": "https://hbr.org/books"
       }
     ]
@@ -14822,11 +14822,11 @@ export const COMPILED_TOPICS = [
       "amazon",
       "ownership"
     ],
-    "title": "Single-Threaded Ownership & Amazon's 2-Pizza Teams",
+    "title": "Single-Threaded Ownership",
     "description": "Amazon's organizational doctrine stipulates that any vital initiative must be led by a single leader with a dedicated team whose sole accountability is that outcome.",
     "resources": [
       {
-        "label": "Colin Bryar & Bill Carr — Working Backwards: Insights, Stories, and Secrets from Inside Amazon",
+        "label": "Colin Bryar & Bill Carr \u2014 Working Backwards: Insights, Stories, and Secrets from Inside Amazon",
         "url": "https://workingbackwards.com/"
       }
     ]
@@ -14844,7 +14844,7 @@ export const COMPILED_TOPICS = [
     "description": "Dave Snowden's sense-making model classifies organizational situations into five domains.",
     "resources": [
       {
-        "label": "Dave Snowden & Mary Boone — A Leader's Framework for Decision Making (HBR)",
+        "label": "Dave Snowden & Mary Boone \u2014 A Leader's Framework for Decision Making (HBR)",
         "url": "https://hbr.org/2007/11/a-leaders-framework-for-decision-making"
       }
     ]
@@ -14858,11 +14858,11 @@ export const COMPILED_TOPICS = [
       "org-design",
       "conways-law"
     ],
-    "title": "Conway's Law & The Inverse Conway Maneuver",
+    "title": "Conway's Law",
     "description": "Organizations design systems that mirror their internal communication structures.",
     "resources": [
       {
-        "label": "Melvin E. Conway — How Do Committees Invent? (Datamation 1968)",
+        "label": "Melvin E. Conway \u2014 How Do Committees Invent? (Datamation 1968)",
         "url": "http://www.melconway.com/Home/Committees_Paper.html"
       }
     ]
@@ -14876,11 +14876,11 @@ export const COMPILED_TOPICS = [
       "culture",
       "psychological-safety"
     ],
-    "title": "Blameless Post-Mortems & Psychological Safety",
+    "title": "Blameless Post-Mortems",
     "description": "Etsy and Google SRE pioneered blameless post-incident reviews, operating under the premise that engineers do not deliberately introduce outages.",
     "resources": [
       {
-        "label": "Google SRE Book — Chapter 15: Postmortem Culture: Learning from Failure",
+        "label": "Google SRE Book \u2014 Chapter 15: Postmortem Culture: Learning from Failure",
         "url": "https://sre.google/sre-book/postmortem-culture/"
       }
     ]
@@ -14898,7 +14898,7 @@ export const COMPILED_TOPICS = [
     "description": "Categorizes code shortcuts across two axes: Deliberate vs Inadvertent, and Prudent vs Reckless.",
     "resources": [
       {
-        "label": "Martin Fowler — Technical Debt Quadrant",
+        "label": "Martin Fowler \u2014 Technical Debt Quadrant",
         "url": "https://martinfowler.com/bliki/TechnicalDebtQuadrant.html"
       }
     ]
@@ -14912,11 +14912,11 @@ export const COMPILED_TOPICS = [
       "saas",
       "growth"
     ],
-    "title": "Product-Led Growth (PLG) & The Viral Loop",
+    "title": "Product-Led Growth (PLG)",
     "description": "PLG relies on the software product itself as the primary driver of customer acquisition, retention, and expansion.",
     "resources": [
       {
-        "label": "Wes Bush — Product-Led Growth: How to Build a Product That Sells Itself",
+        "label": "Wes Bush \u2014 Product-Led Growth: How to Build a Product That Sells Itself",
         "url": "https://productled.com/book"
       }
     ]
@@ -14930,11 +14930,11 @@ export const COMPILED_TOPICS = [
       "strategy",
       "business"
     ],
-    "title": "The Innovator's Dilemma & Low-End Disruption",
+    "title": "The Innovator's Dilemma",
     "description": "Market-leading incumbents fail not from poor management, but by listening rationally to their most profitable customers.",
     "resources": [
       {
-        "label": "Clayton M. Christensen — The Innovator's Dilemma (Harvard Business Review)",
+        "label": "Clayton M. Christensen \u2014 The Innovator's Dilemma (Harvard Business Review)",
         "url": "https://hbr.org/books"
       }
     ]
@@ -14952,7 +14952,7 @@ export const COMPILED_TOPICS = [
     "description": "Customers do not buy products; they 'hire' them to make progress in specific life situations.",
     "resources": [
       {
-        "label": "Clayton Christensen — Competing Against Luck: The Story of Innovation and Customer Choice",
+        "label": "Clayton Christensen \u2014 Competing Against Luck: The Story of Innovation and Customer Choice",
         "url": "https://hbr.org"
       }
     ]
@@ -14970,7 +14970,7 @@ export const COMPILED_TOPICS = [
     "description": "Andy Grove created and John Doerr popularized OKRs to connect high-level strategic ambitions with measurable, quantitative deliverables.",
     "resources": [
       {
-        "label": "John Doerr — Measure What Matters (Penguin)",
+        "label": "John Doerr \u2014 Measure What Matters (Penguin)",
         "url": "https://www.whatmatters.com/"
       }
     ]
@@ -14984,11 +14984,11 @@ export const COMPILED_TOPICS = [
       "metrics",
       "strategy"
     ],
-    "title": "The North Star Metric & Input Metric Trees",
+    "title": "The North Star Metric",
     "description": "A company's North Star Metric captures the core value delivered to customers and leading indicators of sustainable revenue.",
     "resources": [
       {
-        "label": "Amplitude — Every Product Needs a North Star Metric",
+        "label": "Amplitude \u2014 Every Product Needs a North Star Metric",
         "url": "https://amplitude.com/north-star"
       }
     ]
@@ -15006,7 +15006,7 @@ export const COMPILED_TOPICS = [
     "description": "Categorizes product features into Must-Be , One-Dimensional , and Attractive Delighters .",
     "resources": [
       {
-        "label": "Noriaki Kano — Attractive Quality and Must-Be Quality (1984)",
+        "label": "Noriaki Kano \u2014 Attractive Quality and Must-Be Quality (1984)",
         "url": "https://en.wikipedia.org/wiki/Kano_model"
       }
     ]
@@ -15024,7 +15024,7 @@ export const COMPILED_TOPICS = [
     "description": "Geoffrey Moore identifies a perilous market gap between Visionaries (Early Adopters eager to experiment) and Pragmatists .",
     "resources": [
       {
-        "label": "Geoffrey A. Moore — Crossing the Chasm (HarperBusiness)",
+        "label": "Geoffrey A. Moore \u2014 Crossing the Chasm (HarperBusiness)",
         "url": "https://www.harpercollins.com"
       }
     ]
@@ -15038,11 +15038,11 @@ export const COMPILED_TOPICS = [
       "finance",
       "unit-economics"
     ],
-    "title": "SaaS Unit Economics: CAC, LTV & Payback Period",
+    "title": "SaaS Unit Economics",
     "description": "Evaluates commercial sustainability by comparing Customer Acquisition Cost (CAC) to Customer Lifetime Value (LTV).",
     "resources": [
       {
-        "label": "David Skok — SaaS Metrics 2.0: A Guide to Measuring and Improving What Matters",
+        "label": "David Skok \u2014 SaaS Metrics 2.0: A Guide to Measuring and Improving What Matters",
         "url": "https://www.forentrepreneurs.com/saas-metrics-2/"
       }
     ]
@@ -15056,11 +15056,11 @@ export const COMPILED_TOPICS = [
       "cohorts",
       "product-market-fit"
     ],
-    "title": "Cohort Retention Curves & Product-Market Fit",
+    "title": "Cohort Retention Curves",
     "description": "Tracking customer cohorts over time reveals whether product engagement flattens parallel to the x-axis or decays to zero .",
     "resources": [
       {
-        "label": "Brian Balfour — Why Retention Is The King of Growth Strategy",
+        "label": "Brian Balfour \u2014 Why Retention Is The King of Growth Strategy",
         "url": "https://brianbalfour.com"
       }
     ]
@@ -15074,11 +15074,11 @@ export const COMPILED_TOPICS = [
       "prioritization",
       "focus"
     ],
-    "title": "The Eisenhower Matrix: Urgent vs. Important",
+    "title": "The Eisenhower Matrix",
     "description": "Prioritization quadrant separating urgency from importance, emphasizing that long-term career growth requires focusing on non-urgent, high-value tasks.",
     "resources": [
       {
-        "label": "Stephen R. Covey — The 7 Habits of Highly Effective People",
+        "label": "Stephen R. Covey \u2014 The 7 Habits of Highly Effective People",
         "url": "https://www.franklincovey.com"
       }
     ]
@@ -15092,11 +15092,11 @@ export const COMPILED_TOPICS = [
       "strategy",
       "game-theory"
     ],
-    "title": "BATNA: Best Alternative to a Negotiated Agreement",
-    "description": "From Fisher & Ury's Getting to Yes, your negotiating leverage is strictly determined by your BATNA—the alternative course of action if talks collapse.",
+    "title": "BATNA",
+    "description": "From Fisher & Ury's Getting to Yes, your negotiating leverage is strictly determined by your BATNA\u2014the alternative course of action if talks collapse.",
     "resources": [
       {
-        "label": "Roger Fisher & William Ury — Getting to Yes: Negotiating Agreement Without Giving In",
+        "label": "Roger Fisher & William Ury \u2014 Getting to Yes: Negotiating Agreement Without Giving In",
         "url": "https://www.williamury.com/books/getting-to-yes/"
       }
     ]
@@ -15114,7 +15114,7 @@ export const COMPILED_TOPICS = [
     "description": "This communication method requires stating the executive conclusion or recommendation first, followed by mutually exclusive.",
     "resources": [
       {
-        "label": "Barbara Minto — The Minto Pyramid Principle: Logic in Writing and Thinking",
+        "label": "Barbara Minto \u2014 The Minto Pyramid Principle: Logic in Writing and Thinking",
         "url": "https://minto.com"
       }
     ]
@@ -15132,7 +15132,7 @@ export const COMPILED_TOPICS = [
     "description": "John Gall's rule of systems engineering states: 'A complex system that works is invariably found to have evolved from a simple system that worked.' Complex.",
     "resources": [
       {
-        "label": "John Gall — Systemantics: How Systems Work and Especially How They Fail (1975)",
+        "label": "John Gall \u2014 Systemantics: How Systems Work and Especially How They Fail (1975)",
         "url": "https://en.wikipedia.org/wiki/John_Gall_(author)"
       }
     ]
@@ -15150,7 +15150,7 @@ export const COMPILED_TOPICS = [
     "description": "Cyril Northcote Parkinson's dictum that 'work expands so as to fill the time available for its completion.' Enforcing strict sprint horizons, timeboxing.",
     "resources": [
       {
-        "label": "C. Northcote Parkinson — Parkinson's Law (1955)",
+        "label": "C. Northcote Parkinson \u2014 Parkinson's Law (1955)",
         "url": "https://www.economist.com"
       }
     ]
@@ -15164,11 +15164,11 @@ export const COMPILED_TOPICS = [
       "momentum",
       "compound-growth"
     ],
-    "title": "Jim Collins' Flywheel Effect & Cumulative Momentum",
+    "title": "Jim Collins' Flywheel Effect",
     "description": "Sustainable business success does not result from a single breakthrough or miraculous launch, but from pushing a giant, heavy flywheel turn upon turn.",
     "resources": [
       {
-        "label": "Jim Collins — Good to Great: Why Some Companies Make the Leap... and Others Don't",
+        "label": "Jim Collins \u2014 Good to Great: Why Some Companies Make the Leap... and Others Don't",
         "url": "https://www.jimcollins.com"
       }
     ]
@@ -15186,7 +15186,7 @@ export const COMPILED_TOPICS = [
     "description": "Richard Rumelt demystifies strategy by defining its essential three-part kernel.",
     "resources": [
       {
-        "label": "Richard Rumelt — Good Strategy/Bad Strategy: The Difference and Why It Matters",
+        "label": "Richard Rumelt \u2014 Good Strategy/Bad Strategy: The Difference and Why It Matters",
         "url": "https://goodstrategybadstrategy.com"
       }
     ]
@@ -15204,7 +15204,7 @@ export const COMPILED_TOPICS = [
     "description": "Clarifies organizational roles across four dimensions: Responsible (doing the work), Accountable , Consulted (two-way input).",
     "resources": [
       {
-        "label": "Project Management Institute — Roles & Responsibilities Matrix",
+        "label": "Project Management Institute \u2014 Roles & Responsibilities Matrix",
         "url": "https://www.pmi.org"
       }
     ]
@@ -15218,11 +15218,11 @@ export const COMPILED_TOPICS = [
       "promotions",
       "management"
     ],
-    "title": "The Peter Principle & Competence Ceilings",
+    "title": "The Peter Principle",
     "description": "Employees in a hierarchy tend to be promoted based on success in their current role until they reach their level of incompetence.",
     "resources": [
       {
-        "label": "Laurence J. Peter — The Peter Principle (William Morrow & Co)",
+        "label": "Laurence J. Peter \u2014 The Peter Principle (William Morrow & Co)",
         "url": "https://en.wikipedia.org/wiki/Peter_principle"
       }
     ]
@@ -15236,11 +15236,11 @@ export const COMPILED_TOPICS = [
       "power-law",
       "investing"
     ],
-    "title": "The Power Law of Startup & Venture Returns",
+    "title": "The Power Law of Startup",
     "description": "Sebastian Mallaby and Peter Thiel observe that venture returns are not normally distributed.",
     "resources": [
       {
-        "label": "Sebastian Mallaby — The Power Law: Venture Capital and the Making of the New Future",
+        "label": "Sebastian Mallaby \u2014 The Power Law: Venture Capital and the Making of the New Future",
         "url": "https://www.penguinrandomhouse.com"
       }
     ]
@@ -15258,7 +15258,7 @@ export const COMPILED_TOPICS = [
     "description": "Jurgen Appelo's delegation continuum moves leaders from micro-management to true autonomy: Tell, Sell, Consult, Agree, Advise, Inquire, and Delegate.",
     "resources": [
       {
-        "label": "Jurgen Appelo — Management 3.0: Leading Agile Developers",
+        "label": "Jurgen Appelo \u2014 Management 3.0: Leading Agile Developers",
         "url": "https://management30.com"
       }
     ]
@@ -15276,7 +15276,7 @@ export const COMPILED_TOPICS = [
     "description": "Naval Ravikant defines specific knowledge as rare, highly contextual domain expertise that cannot be taught in a standard course or outsourced.",
     "resources": [
       {
-        "label": "Naval Ravikant — How to Get Rich (Without Getting Lucky)",
+        "label": "Naval Ravikant \u2014 How to Get Rich (Without Getting Lucky)",
         "url": "https://nav.al"
       }
     ]
@@ -15294,7 +15294,7 @@ export const COMPILED_TOPICS = [
     "description": "Categorizes scope for releases into Must have , Should have , Could have (nice-to-have if time permits), and Won't have (explicitly deferred for this cycle).",
     "resources": [
       {
-        "label": "DSDM Consortium — Agile Project Framework: MoSCoW Prioritisation",
+        "label": "DSDM Consortium \u2014 Agile Project Framework: MoSCoW Prioritisation",
         "url": "https://www.agilebusiness.org"
       }
     ]
@@ -15312,7 +15312,7 @@ export const COMPILED_TOPICS = [
     "description": "Alexander Osterwalder maps customer profiles (Jobs, Pains, Gains) directly against product offerings (Products & Services).",
     "resources": [
       {
-        "label": "Alexander Osterwalder — Value Proposition Design (Wiley)",
+        "label": "Alexander Osterwalder \u2014 Value Proposition Design (Wiley)",
         "url": "https://www.strategyzer.com"
       }
     ]
@@ -15330,7 +15330,7 @@ export const COMPILED_TOPICS = [
     "description": "Deconstructs user lifecycle economics into five measurable conversion milestones.",
     "resources": [
       {
-        "label": "Dave McClure — Startup Metrics for Pirates: AARRR! (500 Startups)",
+        "label": "Dave McClure \u2014 Startup Metrics for Pirates: AARRR! (500 Startups)",
         "url": "https://500.co"
       }
     ]
@@ -15348,7 +15348,7 @@ export const COMPILED_TOPICS = [
     "description": "Kahneman & Tversky demonstrated that people react differently to choices depending on whether they are framed as losses or gains.",
     "resources": [
       {
-        "label": "Daniel Kahneman — Thinking, Fast and Slow (Farrar, Straus and Giroux)",
+        "label": "Daniel Kahneman \u2014 Thinking, Fast and Slow (Farrar, Straus and Giroux)",
         "url": "https://us.macmillan.com"
       }
     ]
@@ -15366,7 +15366,7 @@ export const COMPILED_TOPICS = [
     "description": "Sylvia Ann Hewlett clarifies that while mentors give guidance, sponsors use their social capital and influence to advocate for you behind closed doors where.",
     "resources": [
       {
-        "label": "Sylvia Ann Hewlett — Forget a Mentor, Find a Sponsor (HBR)",
+        "label": "Sylvia Ann Hewlett \u2014 Forget a Mentor, Find a Sponsor (HBR)",
         "url": "https://hbr.org"
       }
     ]
@@ -15384,7 +15384,7 @@ export const COMPILED_TOPICS = [
     "description": "Eric Ries emphasizes that the goal of a startup is not to build software, but to minimize the total time through the Build-Measure-Learn feedback loop.",
     "resources": [
       {
-        "label": "Eric Ries — The Lean Startup (Crown Business)",
+        "label": "Eric Ries \u2014 The Lean Startup (Crown Business)",
         "url": "https://theleanstartup.com"
       }
     ]
@@ -15402,7 +15402,7 @@ export const COMPILED_TOPICS = [
     "description": "The triple constraint states that project quality is constrained by Scope, Budget, and Schedule.",
     "resources": [
       {
-        "label": "Project Management Institute — PMBOK Guide",
+        "label": "Project Management Institute \u2014 PMBOK Guide",
         "url": "https://www.pmi.org"
       }
     ]
@@ -15420,7 +15420,7 @@ export const COMPILED_TOPICS = [
     "description": "Amazon and Intel principle requiring leaders to vigorously debate decisions while they are open, but once a decision is made.",
     "resources": [
       {
-        "label": "Jeff Bezos — 2016 Letter to Shareholders",
+        "label": "Jeff Bezos \u2014 2016 Letter to Shareholders",
         "url": "https://www.aboutamazon.com"
       }
     ]
@@ -15438,7 +15438,7 @@ export const COMPILED_TOPICS = [
     "description": "Ben Horowitz notes that 1-on-1s belong to the report, not the manager.",
     "resources": [
       {
-        "label": "Ben Horowitz — The Hard Thing About Hard Things (HarperBusiness)",
+        "label": "Ben Horowitz \u2014 The Hard Thing About Hard Things (HarperBusiness)",
         "url": "https://a16z.com"
       }
     ]
@@ -15456,7 +15456,7 @@ export const COMPILED_TOPICS = [
     "description": "Even if a senior executive is faster at drafting documentation than an intern, their comparative advantage is in executive negotiation.",
     "resources": [
       {
-        "label": "David Ricardo — On the Principles of Political Economy and Taxation (1817)",
+        "label": "David Ricardo \u2014 On the Principles of Political Economy and Taxation (1817)",
         "url": "https://en.wikipedia.org/wiki/Comparative_advantage"
       }
     ]
@@ -15474,7 +15474,7 @@ export const COMPILED_TOPICS = [
     "description": "Methodological principle of philosophy: when critiquing an opponent's design proposal, interpret it in its strongest.",
     "resources": [
       {
-        "label": "Donald Davidson — Inquiries into Truth and Interpretation (Oxford)",
+        "label": "Donald Davidson \u2014 Inquiries into Truth and Interpretation (Oxford)",
         "url": "https://global.oup.com"
       }
     ]
@@ -15492,7 +15492,7 @@ export const COMPILED_TOPICS = [
     "description": "The true cost of building any engineering feature is not the developer salaries, but the value of the next-best initiative that could not be built simultaneously.",
     "resources": [
       {
-        "label": "Henry Hazlitt — Economics in One Lesson",
+        "label": "Henry Hazlitt \u2014 Economics in One Lesson",
         "url": "https://mises.org"
       }
     ]
@@ -15510,7 +15510,7 @@ export const COMPILED_TOPICS = [
     "description": "In any isolated system, total entropy must increase over time, defining the thermodynamic arrow of time.",
     "resources": [
       {
-        "label": "Rudolf Clausius — The Mechanical Theory of Heat (1867)",
+        "label": "Rudolf Clausius \u2014 The Mechanical Theory of Heat (1867)",
         "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
       }
     ]
@@ -15524,11 +15524,11 @@ export const COMPILED_TOPICS = [
       "physics",
       "experiments"
     ],
-    "title": "Wave-Particle Duality & The Double-Slit Experiment",
+    "title": "Wave-Particle Duality",
     "description": "Particles like electrons exhibit wave interference patterns when unobserved, yet collapse to localized point impacts upon detector measurement.",
     "resources": [
       {
-        "label": "Richard Feynman — The Character of Physical Law (MIT Press)",
+        "label": "Richard Feynman \u2014 The Character of Physical Law (MIT Press)",
         "url": "https://mitpress.mit.edu"
       }
     ]
@@ -15546,7 +15546,7 @@ export const COMPILED_TOPICS = [
     "description": "John Stewart Bell mathematically proved that no local hidden variable theory can reproduce the quantum mechanical predictions of entangled states.",
     "resources": [
       {
-        "label": "John S. Bell — Speakable and Unspeakable in Quantum Mechanics (Cambridge)",
+        "label": "John S. Bell \u2014 Speakable and Unspeakable in Quantum Mechanics (Cambridge)",
         "url": "https://www.cambridge.org"
       }
     ]
@@ -15564,7 +15564,7 @@ export const COMPILED_TOPICS = [
     "description": "Discovered by Jennifer Doudna and Emmanuelle Charpentier as an ancient bacterial immune mechanism against phages.",
     "resources": [
       {
-        "label": "Doudna & Charpentier — A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity (Science 2012)",
+        "label": "Doudna & Charpentier \u2014 A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity (Science 2012)",
         "url": "https://www.science.org/doi/10.1126/science.1225829"
       }
     ]
@@ -15582,7 +15582,7 @@ export const COMPILED_TOPICS = [
     "description": "Francis Crick formalized the fundamental direction of genetic information flow in biological systems.",
     "resources": [
       {
-        "label": "Francis Crick — Central Dogma of Molecular Biology (Nature 1970)",
+        "label": "Francis Crick \u2014 Central Dogma of Molecular Biology (Nature 1970)",
         "url": "https://www.nature.com/articles/227561a0"
       }
     ]
@@ -15600,7 +15600,7 @@ export const COMPILED_TOPICS = [
     "description": "While natural selection preserves adaptive phenotypic variations that improve reproductive fitness.",
     "resources": [
       {
-        "label": "Sewall Wright — Evolution in Mendelian Populations (Genetics 1931)",
+        "label": "Sewall Wright \u2014 Evolution in Mendelian Populations (Genetics 1931)",
         "url": "https://www.genetics.org"
       }
     ]
@@ -15614,11 +15614,11 @@ export const COMPILED_TOPICS = [
       "brain",
       "plasticity"
     ],
-    "title": "Neuroplasticity & Hebbian Synaptic Pruning",
+    "title": "Neuroplasticity",
     "description": "Donald Hebb's postulate that 'neurons that fire together, wire together' explains synaptic plasticity.",
     "resources": [
       {
-        "label": "Donald Hebb — The Organization of Behavior (1949)",
+        "label": "Donald Hebb \u2014 The Organization of Behavior (1949)",
         "url": "https://en.wikipedia.org/wiki/Hebbian_theory"
       }
     ]
@@ -15632,11 +15632,11 @@ export const COMPILED_TOPICS = [
       "medicine",
       "physiology"
     ],
-    "title": "The Blood-Brain Barrier & Pharmacokinetics",
+    "title": "The Blood-Brain Barrier",
     "description": "Specialized brain capillary endothelial cells connected by tight junctions and astrocyte foot processes strictly filter solutes from entering the central nervous.",
     "resources": [
       {
-        "label": "Abbott et al. — Structure and Function of the Blood-Brain Barrier (Neurobiology of Disease)",
+        "label": "Abbott et al. \u2014 Structure and Function of the Blood-Brain Barrier (Neurobiology of Disease)",
         "url": "https://www.sciencedirect.com"
       }
     ]
@@ -15650,11 +15650,11 @@ export const COMPILED_TOPICS = [
       "cellular-biology",
       "energy"
     ],
-    "title": "Cellular Respiration & The ATP Synthase Rotor",
+    "title": "Cellular Respiration",
     "description": "Through glycolysis, the Krebs cycle, and the mitochondrial electron transport chain.",
     "resources": [
       {
-        "label": "Peter Mitchell — Chemiosmotic Hypothesis (Nobel Prize in Chemistry 1978)",
+        "label": "Peter Mitchell \u2014 Chemiosmotic Hypothesis (Nobel Prize in Chemistry 1978)",
         "url": "https://www.nobelprize.org"
       }
     ]
@@ -15668,11 +15668,11 @@ export const COMPILED_TOPICS = [
       "biochemistry",
       "photosynthesis"
     ],
-    "title": "Photosynthesis: Light Reactions & The Calvin Cycle",
+    "title": "Photosynthesis",
     "description": "Chloroplasts capture photons via chlorophyll pigments to split water molecules (photolysis) and produce ATP and NADPH.",
     "resources": [
       {
-        "label": "Melvin Calvin — The Path of Carbon in Photosynthesis (Nobel Lecture 1961)",
+        "label": "Melvin Calvin \u2014 The Path of Carbon in Photosynthesis (Nobel Lecture 1961)",
         "url": "https://www.nobelprize.org"
       }
     ]
@@ -15686,11 +15686,11 @@ export const COMPILED_TOPICS = [
       "earth-science",
       "plate-tectonics"
     ],
-    "title": "Plate Tectonics & The Wilson Supercontinent Cycle",
+    "title": "Plate Tectonics",
     "description": "The Earth's lithosphere is divided into rigid tectonic plates that float on the convective asthenosphere. J. Tuzo Wilson's cycle shows that supercontinents.",
     "resources": [
       {
-        "label": "J. Tuzo Wilson — Did the Atlantic Close and then Re-Open? (Nature 1966)",
+        "label": "J. Tuzo Wilson \u2014 Did the Atlantic Close and then Re-Open? (Nature 1966)",
         "url": "https://www.nature.com"
       }
     ]
@@ -15704,11 +15704,11 @@ export const COMPILED_TOPICS = [
       "cosmology",
       "fermi-paradox"
     ],
-    "title": "The Fermi Paradox & Robin Hanson's Great Filter",
+    "title": "The Fermi Paradox",
     "description": "Enrico Fermi asked: with billions of stars and planets older than our solar system, where is everyone?",
     "resources": [
       {
-        "label": "Robin Hanson — The Great Filter: Are We Almost Past It? (1998)",
+        "label": "Robin Hanson \u2014 The Great Filter: Are We Almost Past It? (1998)",
         "url": "https://mason.gmu.edu/~rhanson/greatfilter.html"
       }
     ]
@@ -15722,11 +15722,11 @@ export const COMPILED_TOPICS = [
       "relativity",
       "gravity"
     ],
-    "title": "General Relativity: Spacetime Curvature & Geodesics",
+    "title": "General Relativity",
     "description": "Albert Einstein replaced Newtonian gravitational action-at-a-distance with Riemannian geometry.",
     "resources": [
       {
-        "label": "Albert Einstein — The Foundation of the General Theory of Relativity (Annalen der Physik 1916)",
+        "label": "Albert Einstein \u2014 The Foundation of the General Theory of Relativity (Annalen der Physik 1916)",
         "url": "https://einsteinpapers.press.princeton.edu"
       }
     ]
@@ -15740,11 +15740,11 @@ export const COMPILED_TOPICS = [
       "relativity",
       "einstein"
     ],
-    "title": "Special Relativity: Time Dilation & Lorentz Contraction",
+    "title": "Special Relativity",
     "description": "Because the speed of light in a vacuum (c) is constant for all inertial observers.",
     "resources": [
       {
-        "label": "Albert Einstein — On the Electrodynamics of Moving Bodies (1905)",
+        "label": "Albert Einstein \u2014 On the Electrodynamics of Moving Bodies (1905)",
         "url": "https://einsteinpapers.press.princeton.edu"
       }
     ]
@@ -15758,11 +15758,11 @@ export const COMPILED_TOPICS = [
       "astrophysics",
       "hawking"
     ],
-    "title": "Black Hole Thermodynamics & Hawking Radiation",
+    "title": "Black Hole Thermodynamics",
     "description": "Stephen Hawking combined quantum field theory with general relativity to show that black holes emit thermal radiation due to virtual particle-antiparticle pair.",
     "resources": [
       {
-        "label": "Stephen W. Hawking — Particle Creation by Black Holes (Communications in Mathematical Physics 1975)",
+        "label": "Stephen W. Hawking \u2014 Particle Creation by Black Holes (Communications in Mathematical Physics 1975)",
         "url": "https://projecteuclid.org"
       }
     ]
@@ -15780,7 +15780,7 @@ export const COMPILED_TOPICS = [
     "description": "Discovered by Penzias and Wilson in 1965, the CMB is the thermal relic radiation from the epoch of recombination (~380.",
     "resources": [
       {
-        "label": "Arno Penzias & Robert Wilson — A Measurement of Excess Antenna Temperature (Astrophysical Journal 1965)",
+        "label": "Arno Penzias & Robert Wilson \u2014 A Measurement of Excess Antenna Temperature (Astrophysical Journal 1965)",
         "url": "https://iopscience.iop.org"
       }
     ]
@@ -15798,7 +15798,7 @@ export const COMPILED_TOPICS = [
     "description": "Vera Rubin's observations of spiral galaxy rotation curves revealed that outer stars orbit at velocities far exceeding predictions from visible baryonic mass.",
     "resources": [
       {
-        "label": "Vera C. Rubin & W. Kent Ford — Rotation of the Andromeda Nebula from a Spectroscopic Survey (1970)",
+        "label": "Vera C. Rubin & W. Kent Ford \u2014 Rotation of the Andromeda Nebula from a Spectroscopic Survey (1970)",
         "url": "https://iopscience.iop.org"
       }
     ]
@@ -15816,7 +15816,7 @@ export const COMPILED_TOPICS = [
     "description": "Observations of Type Ia supernovae in 1998 showed that cosmic expansion is accelerating rather than decelerating under gravity.",
     "resources": [
       {
-        "label": "Perlmutter, Schmidt & Riess — Discovery of Accelerating Universe (Nobel Prize in Physics 2011)",
+        "label": "Perlmutter, Schmidt & Riess \u2014 Discovery of Accelerating Universe (Nobel Prize in Physics 2011)",
         "url": "https://www.nobelprize.org"
       }
     ]
@@ -15834,7 +15834,7 @@ export const COMPILED_TOPICS = [
     "description": "The gauge theory describing fundamental constituents of matter (6 quarks, 6 leptons) and three of the four fundamental forces mediated by vector bosons (gluons.",
     "resources": [
       {
-        "label": "CERN — The Standard Model of Particle Physics",
+        "label": "CERN \u2014 The Standard Model of Particle Physics",
         "url": "https://home.cern/science/physics/standard-model"
       }
     ]
@@ -15848,11 +15848,11 @@ export const COMPILED_TOPICS = [
       "cern",
       "physics"
     ],
-    "title": "The Higgs Mechanism & Electroweak Symmetry Breaking",
+    "title": "The Higgs Mechanism",
     "description": "Fundamental particles acquire mass through interactions with a non-zero vacuum expectation value of the scalar Higgs field.",
     "resources": [
       {
-        "label": "Peter Higgs — Broken Symmetries and the Masses of Gauge Bosons (Phys. Rev. Lett. 1964)",
+        "label": "Peter Higgs \u2014 Broken Symmetries and the Masses of Gauge Bosons (Phys. Rev. Lett. 1964)",
         "url": "https://journals.aps.org"
       }
     ]
@@ -15870,7 +15870,7 @@ export const COMPILED_TOPICS = [
     "description": "Edward Lorenz's computational weather models revealed deterministic chaos: non-linear dynamical systems exhibit sensitive dependence on initial conditions.",
     "resources": [
       {
-        "label": "Edward N. Lorenz — Deterministic Nonperiodic Flow (Journal of the Atmospheric Sciences 1963)",
+        "label": "Edward N. Lorenz \u2014 Deterministic Nonperiodic Flow (Journal of the Atmospheric Sciences 1963)",
         "url": "https://journals.ametsoc.org"
       }
     ]
@@ -15884,11 +15884,11 @@ export const COMPILED_TOPICS = [
       "cellular-automata",
       "emergence"
     ],
-    "title": "Cellular Automata & Conway's Game of Life",
+    "title": "Cellular Automata",
     "description": "John Conway proved that a simple two-dimensional grid governed by four elementary local neighbor rules can produce complex emergent behaviors.",
     "resources": [
       {
-        "label": "Martin Gardner — Mathematical Games: The fantastic combinations of John Conway's new game of 'life' (1970)",
+        "label": "Martin Gardner \u2014 Mathematical Games: The fantastic combinations of John Conway's new game of 'life' (1970)",
         "url": "https://www.scientificamerican.com"
       }
     ]
@@ -15902,11 +15902,11 @@ export const COMPILED_TOPICS = [
       "genetics",
       "biology"
     ],
-    "title": "Epigenetics: DNA Methylation & Histone Modification",
+    "title": "Epigenetics",
     "description": "Heritable changes in gene expression that do not alter the underlying nucleotide sequence.",
     "resources": [
       {
-        "label": "Adrian Bird — DNA Methylation Patterns and Epigenetic Memory (Genes & Development 2002)",
+        "label": "Adrian Bird \u2014 DNA Methylation Patterns and Epigenetic Memory (Genes & Development 2002)",
         "url": "https://genesdev.cshlp.org"
       }
     ]
@@ -15924,7 +15924,7 @@ export const COMPILED_TOPICS = [
     "description": "Telomeres are repetitive nucleotide caps at the ends of linear chromosomes that protect genomic integrity.",
     "resources": [
       {
-        "label": "Leonard Hayflick — The Serial Cultivation of Human Diploid Cell Strains (1961)",
+        "label": "Leonard Hayflick \u2014 The Serial Cultivation of Human Diploid Cell Strains (1961)",
         "url": "https://www.sciencedirect.com"
       }
     ]
@@ -15938,7 +15938,7 @@ export const COMPILED_TOPICS = [
       "medicine",
       "biology"
     ],
-    "title": "The Dual Immune Architecture: Innate vs. Adaptive",
+    "title": "The Dual Immune Architecture",
     "description": "Innate immunity provides rapid, non-specific anatomical barriers, phagocytes, and complement cascades.",
     "resources": [
       {
@@ -15960,7 +15960,7 @@ export const COMPILED_TOPICS = [
     "description": "Transmissible spongiform encephalopathies are caused not by viruses or bacteria.",
     "resources": [
       {
-        "label": "Stanley B. Prusiner — Novel Proteinaceous Infectious Particles Cause Scrapie (Science 1982)",
+        "label": "Stanley B. Prusiner \u2014 Novel Proteinaceous Infectious Particles Cause Scrapie (Science 1982)",
         "url": "https://www.science.org"
       }
     ]
@@ -15974,11 +15974,11 @@ export const COMPILED_TOPICS = [
       "climate",
       "geology"
     ],
-    "title": "The Anthropocene & The Sixth Mass Extinction",
+    "title": "The Anthropocene",
     "description": "Geological and ecological epoch defined by dominant human atmospheric and biological disruption.",
     "resources": [
       {
-        "label": "Paul Crutzen & Eugene Stoermer — The 'Anthropocene' (IGBP Newsletter 2000)",
+        "label": "Paul Crutzen & Eugene Stoermer \u2014 The 'Anthropocene' (IGBP Newsletter 2000)",
         "url": "https://www.igbp.net"
       }
     ]
@@ -15992,7 +15992,7 @@ export const COMPILED_TOPICS = [
       "exoplanets",
       "kepler"
     ],
-    "title": "Exoplanet Detection: Transit Photometry & Radial Velocity",
+    "title": "Exoplanet Detection",
     "description": "Astronomers discover planets orbiting distant stars via Transit Photometry and Radial Velocity .",
     "resources": [
       {
@@ -16010,11 +16010,11 @@ export const COMPILED_TOPICS = [
       "nuclear-physics",
       "stars"
     ],
-    "title": "Stellar Nucleosynthesis & The Origin of Elements",
+    "title": "Stellar Nucleosynthesis",
     "description": "Stars fuse hydrogen into helium via the proton-proton chain and CNO cycle.",
     "resources": [
       {
-        "label": "Burbidge, Burbidge, Fowler & Hoyle — Synthesis of the Elements in Stars (Reviews of Modern Physics 1957)",
+        "label": "Burbidge, Burbidge, Fowler & Hoyle \u2014 Synthesis of the Elements in Stars (Reviews of Modern Physics 1957)",
         "url": "https://journals.aps.org"
       }
     ]
@@ -16028,11 +16028,11 @@ export const COMPILED_TOPICS = [
       "elements",
       "kilonova"
     ],
-    "title": "Supernovae, Neutron Star Mergers & The R-Process",
+    "title": "Supernovae, Neutron Star Mergers",
     "description": "Elements heavier than iron (gold, platinum, uranium) cannot form through standard stellar fusion.",
     "resources": [
       {
-        "label": "Abbott et al. — Multi-messenger Observations of a Binary Neutron Star Merger (Astrophysical Journal Letters 2017)",
+        "label": "Abbott et al. \u2014 Multi-messenger Observations of a Binary Neutron Star Merger (Astrophysical Journal Letters 2017)",
         "url": "https://iopscience.iop.org"
       }
     ]
@@ -16046,11 +16046,11 @@ export const COMPILED_TOPICS = [
       "evolution",
       "geobiology"
     ],
-    "title": "The Great Oxidation Event & Cyanobacteria",
+    "title": "The Great Oxidation Event",
     "description": "Approximately 2.4 billion years ago, photosynthetic cyanobacteria produced free oxygen that saturated mineral sinks and oxygenated the atmosphere.",
     "resources": [
       {
-        "label": "Heinrich Holland — The Oxygenation of the Atmosphere and Oceans (Phil. Trans. R. Soc. B 2006)",
+        "label": "Heinrich Holland \u2014 The Oxygenation of the Atmosphere and Oceans (Phil. Trans. R. Soc. B 2006)",
         "url": "https://royalsocietypublishing.org"
       }
     ]
@@ -16064,11 +16064,11 @@ export const COMPILED_TOPICS = [
       "eukaryotes",
       "mitochondria"
     ],
-    "title": "Endosymbiotic Theory & Eukaryotic Origins",
+    "title": "Endosymbiotic Theory",
     "description": "Lynn Margulis proved that mitochondria and chloroplasts originated as free-living prokaryotic bacteria that were engulfed by ancestral host cells.",
     "resources": [
       {
-        "label": "Lynn Margulis — Origin of Eukaryotic Cells (Yale University Press 1970)",
+        "label": "Lynn Margulis \u2014 Origin of Eukaryotic Cells (Yale University Press 1970)",
         "url": "https://yalebooks.yale.edu"
       }
     ]
@@ -16082,11 +16082,11 @@ export const COMPILED_TOPICS = [
       "evolution",
       "cambrian"
     ],
-    "title": "The Cambrian Explosion & Morphological Radiation",
+    "title": "The Cambrian Explosion",
     "description": "A rapid evolutionary radiation 541 million years ago that produced nearly all modern animal body plans and phyla.",
     "resources": [
       {
-        "label": "Stephen Jay Gould — Wonderful Life: The Burgess Shale and the Nature of History",
+        "label": "Stephen Jay Gould \u2014 Wonderful Life: The Burgess Shale and the Nature of History",
         "url": "https://wwnorton.com"
       }
     ]
@@ -16104,7 +16104,7 @@ export const COMPILED_TOPICS = [
     "description": "States that allele and genotype frequencies in a population remain constant across generations in the absence of evolutionary influences (no mutation).",
     "resources": [
       {
-        "label": "G. H. Hardy — Mendelian Proportions in a Mixed Population (Science 1908)",
+        "label": "G. H. Hardy \u2014 Mendelian Proportions in a Mixed Population (Science 1908)",
         "url": "https://www.science.org"
       }
     ]
@@ -16118,11 +16118,11 @@ export const COMPILED_TOPICS = [
       "qcd",
       "quarks"
     ],
-    "title": "Quantum Chromodynamics & Asymptotic Freedom",
+    "title": "Quantum Chromodynamics",
     "description": "David Gross, Frank Wilczek, and David Politzer demonstrated that the strong nuclear force binding quarks via gluons becomes paradoxically weaker at extremely.",
     "resources": [
       {
-        "label": "Gross & Wilczek — Ultraviolet Behavior of Non-Abelian Gauge Theories (1973)",
+        "label": "Gross & Wilczek \u2014 Ultraviolet Behavior of Non-Abelian Gauge Theories (1973)",
         "url": "https://journals.aps.org"
       }
     ]
@@ -16140,7 +16140,7 @@ export const COMPILED_TOPICS = [
     "description": "John Bardeen, Leon Cooper, and John Robert Schrieffer explained that at near-absolute zero temperatures.",
     "resources": [
       {
-        "label": "Bardeen, Cooper & Schrieffer — Theory of Superconductivity (Physical Review 1957)",
+        "label": "Bardeen, Cooper & Schrieffer \u2014 Theory of Superconductivity (Physical Review 1957)",
         "url": "https://journals.aps.org"
       }
     ]
@@ -16154,11 +16154,11 @@ export const COMPILED_TOPICS = [
       "physics",
       "solar"
     ],
-    "title": "The Photovoltaic Effect & Semiconductor Bandgaps",
+    "title": "The Photovoltaic Effect",
     "description": "The physical process where absorbed photons excite electrons across a semiconductor bandgap, generating direct electric current.",
     "resources": [
       {
-        "label": "Albert Einstein — Concerning an Heuristic Point of View Toward the Emission and Transformation of Light (1905)",
+        "label": "Albert Einstein \u2014 Concerning an Heuristic Point of View Toward the Emission and Transformation of Light (1905)",
         "url": "https://einsteinpapers.press.princeton.edu"
       }
     ]
@@ -16172,11 +16172,11 @@ export const COMPILED_TOPICS = [
       "gravitational-waves",
       "astrophysics"
     ],
-    "title": "Gravitational Waves & Laser Interferometry",
+    "title": "Gravitational Waves",
     "description": "Predicted by Einstein in 1916 and detected by LIGO in 2015, gravitational waves are ripples in spacetime generated by cataclysmic accelerating cosmic masses.",
     "resources": [
       {
-        "label": "B. P. Abbott et al. — Observation of Gravitational Waves from a Binary Black Hole Merger (Phys. Rev. Lett. 2016)",
+        "label": "B. P. Abbott et al. \u2014 Observation of Gravitational Waves from a Binary Black Hole Merger (Phys. Rev. Lett. 2016)",
         "url": "https://journals.aps.org/prl/abstract/10.1103/PhysRevLett.116.061102"
       }
     ]
@@ -16190,11 +16190,11 @@ export const COMPILED_TOPICS = [
       "thermodynamics",
       "origin-of-life"
     ],
-    "title": "Negative Entropy & Erwin Schrödinger's What is Life?",
-    "description": "Schrödinger's insight that living systems avoid thermal decay by absorbing negative entropy from their external environment.",
+    "title": "Negative Entropy",
+    "description": "Schr\u00f6dinger's insight that living systems avoid thermal decay by absorbing negative entropy from their external environment.",
     "resources": [
       {
-        "label": "Erwin Schrödinger — What is Life? The Physical Aspect of the Living Cell (Cambridge)",
+        "label": "Erwin Schr\u00f6dinger \u2014 What is Life? The Physical Aspect of the Living Cell (Cambridge)",
         "url": "https://www.cambridge.org"
       }
     ]
@@ -16208,11 +16208,11 @@ export const COMPILED_TOPICS = [
       "biochemistry",
       "origin-of-life"
     ],
-    "title": "The Miller-Urey Experiment & Prebiotic Chemistry",
+    "title": "The Miller-Urey Experiment",
     "description": "Stanley Miller and Harold Urey stimulated primordial Earth atmospheric conditions (water) with electric discharges.",
     "resources": [
       {
-        "label": "Stanley L. Miller — A Production of Amino Acids Under Possible Primitive Earth Conditions (Science 1953)",
+        "label": "Stanley L. Miller \u2014 A Production of Amino Acids Under Possible Primitive Earth Conditions (Science 1953)",
         "url": "https://www.science.org"
       }
     ]
@@ -16226,11 +16226,11 @@ export const COMPILED_TOPICS = [
       "biology",
       "mendel"
     ],
-    "title": "Mendelian Genetics: Segregation & Independent Assortment",
+    "title": "Mendelian Genetics",
     "description": "Gregor Mendel's hybridization experiments with pea plants established particulate inheritance.",
     "resources": [
       {
-        "label": "Gregor Mendel — Experiments in Plant Hybridization (1866)",
+        "label": "Gregor Mendel \u2014 Experiments in Plant Hybridization (1866)",
         "url": "https://www.mendelweb.org"
       }
     ]
@@ -16248,7 +16248,7 @@ export const COMPILED_TOPICS = [
     "description": "Frank Drake framed the probabilistic argument estimating the number of active.",
     "resources": [
       {
-        "label": "Frank Drake — Project Ozma and the Drake Equation (1961)",
+        "label": "Frank Drake \u2014 Project Ozma and the Drake Equation (1961)",
         "url": "https://www.seti.org/drake-equation"
       }
     ]
@@ -16262,11 +16262,11 @@ export const COMPILED_TOPICS = [
       "astronomy",
       "big-bang"
     ],
-    "title": "Hubble-Lemaître Law & Cosmic Metric Expansion",
-    "description": "Edwin Hubble and Georges Lemaître demonstrated that the recessional velocity of distant galaxies is directly proportional to their distance from Earth.",
+    "title": "Hubble-Lema\u00eetre Law",
+    "description": "Edwin Hubble and Georges Lema\u00eetre demonstrated that the recessional velocity of distant galaxies is directly proportional to their distance from Earth.",
     "resources": [
       {
-        "label": "Edwin Hubble — A Relation between Distance and Radial Velocity among Extra-Galactic Nebulae (PNAS 1929)",
+        "label": "Edwin Hubble \u2014 A Relation between Distance and Radial Velocity among Extra-Galactic Nebulae (PNAS 1929)",
         "url": "https://www.pnas.org"
       }
     ]
@@ -16284,7 +16284,7 @@ export const COMPILED_TOPICS = [
     "description": "The CNO cycle is the dominant catalytic nuclear fusion mechanism in stars heavier than 1.3 solar masses, converting hydrogen into helium using carbon, nitrogen.",
     "resources": [
       {
-        "label": "Hans Bethe — Energy Production in Stars (Physical Review 1939)",
+        "label": "Hans Bethe \u2014 Energy Production in Stars (Physical Review 1939)",
         "url": "https://journals.aps.org"
       }
     ]
@@ -16302,7 +16302,7 @@ export const COMPILED_TOPICS = [
     "description": "Cann, Stoneking, and Wilson analyzed mitochondrial DNA (mtDNA) inherited strictly through the maternal lineage to date the most recent common matrilineal.",
     "resources": [
       {
-        "label": "Cann, Stoneking & Wilson — Mitochondrial DNA and Human Evolution (Nature 1987)",
+        "label": "Cann, Stoneking & Wilson \u2014 Mitochondrial DNA and Human Evolution (Nature 1987)",
         "url": "https://www.nature.com"
       }
     ]
@@ -16316,11 +16316,11 @@ export const COMPILED_TOPICS = [
       "printing",
       "innovation"
     ],
-    "title": "The Gutenberg Movable Type Press & The Information Explosion",
+    "title": "The Gutenberg Movable Type Press",
     "description": "Johannes Gutenberg's 1440 invention combined movable metal type, oil-based ink, and a wooden screw press.",
     "resources": [
       {
-        "label": "Elizabeth Eisenstein — The Printing Press as an Agent of Change (Cambridge)",
+        "label": "Elizabeth Eisenstein \u2014 The Printing Press as an Agent of Change (Cambridge)",
         "url": "https://www.cambridge.org"
       }
     ]
@@ -16334,11 +16334,11 @@ export const COMPILED_TOPICS = [
       "energy",
       "mechanics"
     ],
-    "title": "James Watt's Separate Condenser & The Steam Age",
+    "title": "James Watt's Separate Condenser",
     "description": "By introducing a separate condensing vessel in 1769, James Watt eliminated the continuous heating and cooling cycles of Newcomen engines.",
     "resources": [
       {
-        "label": "H. W. Dickinson — A Short History of the Steam Engine (Cambridge)",
+        "label": "H. W. Dickinson \u2014 A Short History of the Steam Engine (Cambridge)",
         "url": "https://www.cambridge.org"
       }
     ]
@@ -16352,11 +16352,11 @@ export const COMPILED_TOPICS = [
       "steel",
       "industrial-revolution"
     ],
-    "title": "The Bessemer Process & Mass Structural Steel",
+    "title": "The Bessemer Process",
     "description": "Henry Bessemer's 1856 converter blew air through molten pig iron to oxidize impurities through exothermic reactions.",
     "resources": [
       {
-        "label": "Henry Bessemer — Sir Henry Bessemer: An Autobiography",
+        "label": "Henry Bessemer \u2014 Sir Henry Bessemer: An Autobiography",
         "url": "https://archive.org"
       }
     ]
@@ -16374,7 +16374,7 @@ export const COMPILED_TOPICS = [
     "description": "John Bardeen, Walter Brattain, and William Shockley invented the solid-state semiconductor amplifier, replacing fragile.",
     "resources": [
       {
-        "label": "Michael Riordan & Lillian Hoddeson — Crystal Fire: The Invention of the Transistor",
+        "label": "Michael Riordan & Lillian Hoddeson \u2014 Crystal Fire: The Invention of the Transistor",
         "url": "https://wwnorton.com"
       }
     ]
@@ -16388,11 +16388,11 @@ export const COMPILED_TOPICS = [
       "agriculture",
       "haber-bosch"
     ],
-    "title": "The Haber-Bosch Process & Synthetic Fertilizers",
+    "title": "The Haber-Bosch Process",
     "description": "Fritz Haber and Carl Bosch developed high-pressure catalytic synthesis to fix atmospheric dinitrogen (N2) into ammonia (NH3).",
     "resources": [
       {
-        "label": "Vaclav Smil — Enriching the Earth: Fritz Haber, Carl Bosch, and the Transformation of World Food Production (MIT Press)",
+        "label": "Vaclav Smil \u2014 Enriching the Earth: Fritz Haber, Carl Bosch, and the Transformation of World Food Production (MIT Press)",
         "url": "https://mitpress.mit.edu"
       }
     ]
@@ -16406,11 +16406,11 @@ export const COMPILED_TOPICS = [
       "telegraph",
       "information-age"
     ],
-    "title": "The Electric Telegraph & The Annihilation of Space",
+    "title": "The Electric Telegraph",
     "description": "Samuel Morse's 1844 electromagnetic telegraph decoupled information velocity from physical transportation for the first time in human history.",
     "resources": [
       {
-        "label": "Tom Standage — The Victorian Internet: The Remarkable Story of the Telegraph",
+        "label": "Tom Standage \u2014 The Victorian Internet: The Remarkable Story of the Telegraph",
         "url": "https://www.bloomsbury.com"
       }
     ]
@@ -16424,11 +16424,11 @@ export const COMPILED_TOPICS = [
       "capitalism",
       "accounting"
     ],
-    "title": "Luca Pacioli & Double-Entry Bookkeeping (1494)",
+    "title": "Luca Pacioli",
     "description": "Franciscan friar Luca Pacioli documented the Venetian accounting method of balancing debits against credits.",
     "resources": [
       {
-        "label": "Luca Pacioli — Summa de arithmetica, geometria, proportioni et proportionalita (1494)",
+        "label": "Luca Pacioli \u2014 Summa de arithmetica, geometria, proportioni et proportionalita (1494)",
         "url": "https://en.wikipedia.org/wiki/Luca_Pacioli"
       }
     ]
@@ -16442,11 +16442,11 @@ export const COMPILED_TOPICS = [
       "monetary-policy",
       "history"
     ],
-    "title": "The Bretton Woods Agreement & Modern Monetary Architecture",
+    "title": "The Bretton Woods Agreement",
     "description": "In 1944, delegates from 44 Allied nations met in New Hampshire to establish the post-WWII economic architecture.",
     "resources": [
       {
-        "label": "Benn Steil — The Battle of Bretton Woods: John Maynard Keynes, Harry Dexter White, and the Making of a New World Order",
+        "label": "Benn Steil \u2014 The Battle of Bretton Woods: John Maynard Keynes, Harry Dexter White, and the Making of a New World Order",
         "url": "https://press.princeton.edu"
       }
     ]
@@ -16460,11 +16460,11 @@ export const COMPILED_TOPICS = [
       "trade",
       "globalization"
     ],
-    "title": "The Silk Road & Ancient Eurasian Globalization",
+    "title": "The Silk Road",
     "description": "A transcontinental network of Eurasian trade corridors connecting Han China to the Mediterranean.",
     "resources": [
       {
-        "label": "Peter Frankopan — The Silk Roads: A New History of the World",
+        "label": "Peter Frankopan \u2014 The Silk Roads: A New History of the World",
         "url": "https://www.bloomsbury.com"
       }
     ]
@@ -16478,11 +16478,11 @@ export const COMPILED_TOPICS = [
       "antibiotics",
       "pharmacology"
     ],
-    "title": "Alexander Fleming & The Penicillin Revolution",
+    "title": "Alexander Fleming",
     "description": "Fleming's 1928 discovery of Penicillium notatum mold lysing staphylococcus colonies, scaled by Florey and Chain, inaugurated the antibiotic era.",
     "resources": [
       {
-        "label": "Alexander Fleming — On the Antibacterial Action of Cultures of a Penicillium (1929)",
+        "label": "Alexander Fleming \u2014 On the Antibacterial Action of Cultures of a Penicillium (1929)",
         "url": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC2048009/"
       }
     ]
@@ -16496,11 +16496,11 @@ export const COMPILED_TOPICS = [
       "public-health",
       "microbiology"
     ],
-    "title": "The Germ Theory of Disease (Pasteur & Koch)",
+    "title": "The Germ Theory of Disease (Pasteur",
     "description": "Louis Pasteur and Robert Koch definitively overthrew the ancient miasma theory of foul air by demonstrating that specific microscopic pathogens cause specific.",
     "resources": [
       {
-        "label": "Robert Koch — The Etiology of Anthrax (1876)",
+        "label": "Robert Koch \u2014 The Etiology of Anthrax (1876)",
         "url": "https://en.wikipedia.org/wiki/Germ_theory_of_disease"
       }
     ]
@@ -16514,11 +16514,11 @@ export const COMPILED_TOPICS = [
       "evidence-based-medicine",
       "history"
     ],
-    "title": "James Lind, Scurvy & The Birth of Clinical Trials (1747)",
+    "title": "James Lind, Scurvy",
     "description": "Royal Navy physician James Lind conducted the first documented controlled prospective clinical trial on HMS Salisbury.",
     "resources": [
       {
-        "label": "James Lind — A Treatise of the Scurvy (1753)",
+        "label": "James Lind \u2014 A Treatise of the Scurvy (1753)",
         "url": "https://archive.org"
       }
     ]
@@ -16536,7 +16536,7 @@ export const COMPILED_TOPICS = [
     "description": "In 628 CE, mathematician Brahmagupta in the Brahmasphutasiddhanta established the rules for arithmetic computation with zero (shunya) and negative numbers.",
     "resources": [
       {
-        "label": "Brahmagupta — Brahmasphutasiddhanta (628 CE)",
+        "label": "Brahmagupta \u2014 Brahmasphutasiddhanta (628 CE)",
         "url": "https://en.wikipedia.org/wiki/Brahmasphutasiddhanta"
       }
     ]
@@ -16550,11 +16550,11 @@ export const COMPILED_TOPICS = [
       "computing",
       "turing"
     ],
-    "title": "Alan Turing, The Bombe & Cryptanalysis at Bletchley",
+    "title": "Alan Turing, The Bombe",
     "description": "Alan Turing designed the electromechanical 'Bombe' to systematically eliminate impossible rotor combinations of the German Enigma cipher machine.",
     "resources": [
       {
-        "label": "Andrew Hodges — Alan Turing: The Enigma (Princeton University Press)",
+        "label": "Andrew Hodges \u2014 Alan Turing: The Enigma (Princeton University Press)",
         "url": "https://press.princeton.edu"
       }
     ]
@@ -16572,7 +16572,7 @@ export const COMPILED_TOPICS = [
     "description": "Paul Baran and Donald Davies conceived packet switching to route discrete digitized data blocks across distributed, decentralized networks.",
     "resources": [
       {
-        "label": "Paul Baran — On Distributed Communications (RAND Corporation 1964)",
+        "label": "Paul Baran \u2014 On Distributed Communications (RAND Corporation 1964)",
         "url": "https://www.rand.org"
       }
     ]
@@ -16586,11 +16586,11 @@ export const COMPILED_TOPICS = [
       "web-history",
       "cern"
     ],
-    "title": "Tim Berners-Lee & The World Wide Web Protocol",
+    "title": "Tim Berners-Lee",
     "description": "At CERN in 1989, Tim Berners-Lee synthesized hypertext, URIs, and HTTP into the World Wide Web.",
     "resources": [
       {
-        "label": "Tim Berners-Lee — Information Management: A Proposal (CERN 1989)",
+        "label": "Tim Berners-Lee \u2014 Information Management: A Proposal (CERN 1989)",
         "url": "https://www.w3.org/History/1989/proposal.html"
       }
     ]
@@ -16608,7 +16608,7 @@ export const COMPILED_TOPICS = [
     "description": "By moving car chassis past specialized workstations via automated conveyor belts, Ford reduced Model T assembly time from 12 hours to 93 minutes.",
     "resources": [
       {
-        "label": "Henry Ford — My Life and Work (Doubleday 1922)",
+        "label": "Henry Ford \u2014 My Life and Work (Doubleday 1922)",
         "url": "https://archive.org"
       }
     ]
@@ -16626,7 +16626,7 @@ export const COMPILED_TOPICS = [
     "description": "Nobel Laureate Norman Borlaug bred semi-dwarf, disease-resistant, high-yield wheat varieties in Mexico, Pakistan, and India.",
     "resources": [
       {
-        "label": "Norman Borlaug — Nobel Peace Prize Lecture (1970)",
+        "label": "Norman Borlaug \u2014 Nobel Peace Prize Lecture (1970)",
         "url": "https://www.nobelprize.org"
       }
     ]
@@ -16640,11 +16640,11 @@ export const COMPILED_TOPICS = [
       "globalization",
       "trade"
     ],
-    "title": "Malcolm McLean & The Standard Shipping Container",
+    "title": "Malcolm McLean",
     "description": "Malcolm McLean's 1956 introduction of the standardized intermodal steel shipping container collapsed cargo dock-loading costs from $5.86/ton to $0.16/ton.",
     "resources": [
       {
-        "label": "Marc Levinson — The Box: How the Shipping Container Made the World Smaller and the World Economy Bigger",
+        "label": "Marc Levinson \u2014 The Box: How the Shipping Container Made the World Smaller and the World Economy Bigger",
         "url": "https://press.princeton.edu"
       }
     ]
@@ -16658,11 +16658,11 @@ export const COMPILED_TOPICS = [
       "vaccines",
       "eradication"
     ],
-    "title": "Smallpox Eradication: Public Health's Greatest Victory",
+    "title": "Smallpox Eradication",
     "description": "A landmark global public health campaign using targeted surveillance and containment vaccination to eradicate smallpox in 1980.",
     "resources": [
       {
-        "label": "World Health Organization — The Global Eradication of Smallpox (1980)",
+        "label": "World Health Organization \u2014 The Global Eradication of Smallpox (1980)",
         "url": "https://www.who.int"
       }
     ]
@@ -16676,11 +16676,11 @@ export const COMPILED_TOPICS = [
       "space",
       "apollo"
     ],
-    "title": "The Apollo Guidance Computer & Real-Time Software",
+    "title": "The Apollo Guidance Computer",
     "description": "Margaret Hamilton's team at MIT developed the AGC's priority-driven asynchronous executive software.",
     "resources": [
       {
-        "label": "Margaret Hamilton — Universal Systems Language and the Apollo Computer",
+        "label": "Margaret Hamilton \u2014 Universal Systems Language and the Apollo Computer",
         "url": "https://www.nasa.gov"
       }
     ]
@@ -16694,11 +16694,11 @@ export const COMPILED_TOPICS = [
       "energy",
       "physics"
     ],
-    "title": "The War of the Currents: Tesla vs. Edison",
+    "title": "The War of the Currents",
     "description": "Nikola Tesla and George Westinghouse championed Alternating Current (AC) using step-up transformers for low-loss high-voltage long-distance transmission.",
     "resources": [
       {
-        "label": "Jill Jonnes — Empires of Light: Edison, Tesla, Westinghouse, and the Race to Electrify the World",
+        "label": "Jill Jonnes \u2014 Empires of Light: Edison, Tesla, Westinghouse, and the Race to Electrify the World",
         "url": "https://www.penguinrandomhouse.com"
       }
     ]
@@ -16712,11 +16712,11 @@ export const COMPILED_TOPICS = [
       "horology",
       "inventions"
     ],
-    "title": "John Harrison's Marine Chronometer & The Longitude Problem",
+    "title": "John Harrison's Marine Chronometer",
     "description": "While astronomers sought celestial moon tables, self-taught carpenter John Harrison spent 40 years engineering the frictionless.",
     "resources": [
       {
-        "label": "Dava Sobel — Longitude: The True Story of a Lone Genius Who Solved the Greatest Scientific Problem of His Time",
+        "label": "Dava Sobel \u2014 Longitude: The True Story of a Lone Genius Who Solved the Greatest Scientific Problem of His Time",
         "url": "https://www.bloomsbury.com"
       }
     ]
@@ -16730,11 +16730,11 @@ export const COMPILED_TOPICS = [
       "corporations",
       "capitalism"
     ],
-    "title": "The Dutch East India Company (VOC) & Public Equity",
+    "title": "The Dutch East India Company (VOC)",
     "description": "Chartered in 1602, the VOC became the world's first publicly traded corporation, introducing limited liability, continuous tradable equity shares.",
     "resources": [
       {
-        "label": "Femme S. Gaastra — The Dutch East India Company: Expansion and Decline",
+        "label": "Femme S. Gaastra \u2014 The Dutch East India Company: Expansion and Decline",
         "url": "https://en.wikipedia.org/wiki/Dutch_East_India_Company"
       }
     ]
@@ -16748,7 +16748,7 @@ export const COMPILED_TOPICS = [
       "civilization",
       "ancient-history"
     ],
-    "title": "The Code of Hammurabi & Statutory Jurisprudence",
+    "title": "The Code of Hammurabi",
     "description": "Inscribed on a basalt stele in 1750 BCE Babylon, Hammurabi's legal code established public statutory law.",
     "resources": [
       {
@@ -16766,11 +16766,11 @@ export const COMPILED_TOPICS = [
       "governance",
       "history"
     ],
-    "title": "The Magna Carta (1215) & Constitutional Limitations",
+    "title": "The Magna Carta (1215)",
     "description": "Signed at Runnymede by King John under baronial pressure, the Great Charter established that the sovereign is bound by the rule of law.",
     "resources": [
       {
-        "label": "The British Library — Magna Carta: An Introduction",
+        "label": "The British Library \u2014 Magna Carta: An Introduction",
         "url": "https://www.bl.uk/magna-carta"
       }
     ]
@@ -16784,11 +16784,11 @@ export const COMPILED_TOPICS = [
       "linguistics",
       "history"
     ],
-    "title": "The Rosetta Stone & Deciphering Hieroglyphics",
+    "title": "The Rosetta Stone",
     "description": "Discovered in 1799 containing the same decree in Egyptian Hieroglyphics, Demotic, and Ancient Greek.",
     "resources": [
       {
-        "label": "The British Museum — Everything You Ever Wanted to Know About the Rosetta Stone",
+        "label": "The British Museum \u2014 Everything You Ever Wanted to Know About the Rosetta Stone",
         "url": "https://www.britishmuseum.org"
       }
     ]
@@ -16802,11 +16802,11 @@ export const COMPILED_TOPICS = [
       "sovereignty",
       "international-relations"
     ],
-    "title": "The Peace of Westphalia (1648) & The Sovereign State",
+    "title": "The Peace of Westphalia (1648)",
     "description": "Concluding the catastrophic Thirty Years' War, the Westphalian treaties established the principle of national territorial sovereignty (cuius regio.",
     "resources": [
       {
-        "label": "Leo Gross — The Peace of Westphalia, 1648–1948 (American Journal of International Law)",
+        "label": "Leo Gross \u2014 The Peace of Westphalia, 1648\u20131948 (American Journal of International Law)",
         "url": "https://www.jstor.org"
       }
     ]
@@ -16820,11 +16820,11 @@ export const COMPILED_TOPICS = [
       "geopolitics",
       "post-war"
     ],
-    "title": "The Marshall Plan & European Economic Reconstruction",
+    "title": "The Marshall Plan",
     "description": "The US European Recovery Program (1948) transferred over $13 billion to rebuild war-devastated Western European industry, lowering interstate trade barriers.",
     "resources": [
       {
-        "label": "US National Archives — The Marshall Plan (1948)",
+        "label": "US National Archives \u2014 The Marshall Plan (1948)",
         "url": "https://www.archives.gov"
       }
     ]
@@ -16842,7 +16842,7 @@ export const COMPILED_TOPICS = [
     "description": "Beginning ~10,000 BCE in the Fertile Crescent, humanity transitioned from nomadic foraging to settled cereal crop cultivation (wheat.",
     "resources": [
       {
-        "label": "James C. Scott — Against the Grain: A Deep History of the Earliest States (Yale)",
+        "label": "James C. Scott \u2014 Against the Grain: A Deep History of the Earliest States (Yale)",
         "url": "https://yalebooks.yale.edu"
       }
     ]
@@ -16856,11 +16856,11 @@ export const COMPILED_TOPICS = [
       "architecture",
       "rome"
     ],
-    "title": "Roman Aqueducts & Pozzolanic Hydraulic Concrete",
+    "title": "Roman Aqueducts",
     "description": "Roman civil engineers combined volcanic pozzolana ash with lime to create underwater-curing hydraulic concrete.",
     "resources": [
       {
-        "label": "Vitruvius — De architectura (Ten Books on Architecture)",
+        "label": "Vitruvius \u2014 De architectura (Ten Books on Architecture)",
         "url": "https://en.wikipedia.org/wiki/De_architectura"
       }
     ]
@@ -16874,11 +16874,11 @@ export const COMPILED_TOPICS = [
       "technology",
       "time"
     ],
-    "title": "The Verge Escapement & Mechanical Clockwork (13th Century)",
+    "title": "The Verge Escapement",
     "description": "The medieval European invention of the oscillating verge escapement and foliot balance allowed mechanical gear trains to measure uniform units of time.",
     "resources": [
       {
-        "label": "David S. Landes — Revolution in Time: Clocks and the Making of the Modern World (Harvard)",
+        "label": "David S. Landes \u2014 Revolution in Time: Clocks and the Making of the Modern World (Harvard)",
         "url": "https://www.hup.harvard.edu"
       }
     ]
@@ -16896,7 +16896,7 @@ export const COMPILED_TOPICS = [
     "description": "The wartime effort concentrating industrial resources to achieve controlled uranium enrichment, plutonium breeding, and nuclear chain reactions.",
     "resources": [
       {
-        "label": "Richard Rhodes — The Making of the Atomic Bomb (Simon & Schuster)",
+        "label": "Richard Rhodes \u2014 The Making of the Atomic Bomb (Simon & Schuster)",
         "url": "https://www.simonandschuster.com"
       }
     ]
@@ -16914,7 +16914,7 @@ export const COMPILED_TOPICS = [
     "description": "Jonas Salk developed the first effective inactivated polio vaccine and refused to patent the formula, prioritizing rapid, cheap global immunization.",
     "resources": [
       {
-        "label": "David M. Oshinsky — Polio: An American Story (Oxford University Press)",
+        "label": "David M. Oshinsky \u2014 Polio: An American Story (Oxford University Press)",
         "url": "https://global.oup.com"
       }
     ]
@@ -16932,7 +16932,7 @@ export const COMPILED_TOPICS = [
     "description": "John Goodenough, Stanley Whittingham, and Akira Yoshino commercialized rechargeable lithium-ion intercalation batteries with lightweight cobalt oxide cathodes.",
     "resources": [
       {
-        "label": "Nobel Prize in Chemistry 2019 — Development of Lithium-Ion Batteries",
+        "label": "Nobel Prize in Chemistry 2019 \u2014 Development of Lithium-Ion Batteries",
         "url": "https://www.nobelprize.org"
       }
     ]
@@ -16950,7 +16950,7 @@ export const COMPILED_TOPICS = [
     "description": "In 1966, Charles Kao calculated that laser light could transmit digital data across tens of kilometers of ultrapure fused silica glass with minimal attenuation.",
     "resources": [
       {
-        "label": "Charles K. Kao & G. A. Hockham — Dielectric-fibre surface waveguides for optical frequencies (1966)",
+        "label": "Charles K. Kao & G. A. Hockham \u2014 Dielectric-fibre surface waveguides for optical frequencies (1966)",
         "url": "https://digital-library.theiet.org"
       }
     ]
@@ -16968,7 +16968,7 @@ export const COMPILED_TOPICS = [
     "description": "Han Dynasty official Cai Lun standardized paper manufacturing by macerating mulberry bark, hemp waste, and old rags.",
     "resources": [
       {
-        "label": "Denis Twitchett & Michael Loewe — The Cambridge History of China: Volume 1",
+        "label": "Denis Twitchett & Michael Loewe \u2014 The Cambridge History of China: Volume 1",
         "url": "https://www.cambridge.org"
       }
     ]
@@ -16986,7 +16986,7 @@ export const COMPILED_TOPICS = [
     "description": "The suspended magnetic needle that enabled open-ocean navigation independent of celestial visibility or coastal landmarks.",
     "resources": [
       {
-        "label": "Joseph Needham — Science and Civilisation in China (Volume 4)",
+        "label": "Joseph Needham \u2014 Science and Civilisation in China (Volume 4)",
         "url": "https://www.cambridge.org"
       }
     ]
@@ -17000,11 +17000,11 @@ export const COMPILED_TOPICS = [
       "scientific-revolution",
       "experiment"
     ],
-    "title": "Evangelista Torricelli & The Atmospheric Barometer (1643)",
+    "title": "Evangelista Torricelli",
     "description": "Proved atmospheric air has weight by inverting a mercury tube, demonstrating the physical reality of a vacuum in 1643.",
     "resources": [
       {
-        "label": "Evangelista Torricelli — Opera Geometrica (1644)",
+        "label": "Evangelista Torricelli \u2014 Opera Geometrica (1644)",
         "url": "https://en.wikipedia.org/wiki/Evangelista_Torricelli"
       }
     ]
@@ -17018,11 +17018,11 @@ export const COMPILED_TOPICS = [
       "peer-review",
       "philosophy-of-science"
     ],
-    "title": "The Royal Society & Nullius in Verba (1660)",
+    "title": "The Royal Society",
     "description": "Founded in London with the motto 'Nullius in Verba' (Take nobody's word for it), the Royal Society established modern peer review.",
     "resources": [
       {
-        "label": "The Royal Society — History of the Royal Society",
+        "label": "The Royal Society \u2014 History of the Royal Society",
         "url": "https://royalsociety.org"
       }
     ]
@@ -17036,7 +17036,7 @@ export const COMPILED_TOPICS = [
       "railways",
       "standardization"
     ],
-    "title": "Sir Sandford Fleming & The Standardization of Time Zones (1884)",
+    "title": "Sir Sandford Fleming",
     "description": "Before railways, every municipality set local noon by the solar meridian, creating over 300 conflicting time standards across North America.",
     "resources": [
       {
@@ -17054,11 +17054,11 @@ export const COMPILED_TOPICS = [
       "navigation",
       "relativity"
     ],
-    "title": "The Global Positioning System (GPS) & Relativistic Clocks",
+    "title": "The Global Positioning System (GPS)",
     "description": "GPS trilaterates ground positions using signals from 24+ orbiting satellites carrying atomic clocks.",
     "resources": [
       {
-        "label": "Neil Ashby — Relativity in the Global Positioning System (Living Reviews in Relativity)",
+        "label": "Neil Ashby \u2014 Relativity in the Global Positioning System (Living Reviews in Relativity)",
         "url": "https://link.springer.com"
       }
     ]
@@ -17076,7 +17076,7 @@ export const COMPILED_TOPICS = [
     "description": "Connecting the Central Pacific and Union Pacific at Promontory Summit, Utah, the transcontinental railway reduced cross-continental travel time from six months.",
     "resources": [
       {
-        "label": "David Haward Bain — Empire Express: Building the First Transcontinental Railroad",
+        "label": "David Haward Bain \u2014 Empire Express: Building the First Transcontinental Railroad",
         "url": "https://www.penguinrandomhouse.com"
       }
     ]
@@ -17090,11 +17090,11 @@ export const COMPILED_TOPICS = [
       "public-health",
       "pasteur"
     ],
-    "title": "Louis Pasteur & Thermal Pasteurization (1864)",
-    "description": "Heating milk, wine, and beer to ~60–70°C destroys spoilage microbes without altering chemical compositions, eliminating bovine tuberculosis, typhoid.",
+    "title": "Louis Pasteur",
+    "description": "Heating milk, wine, and beer to ~60\u201370\u00b0C destroys spoilage microbes without altering chemical compositions, eliminating bovine tuberculosis, typhoid.",
     "resources": [
       {
-        "label": "Louis Pasteur — Studies on Fermentation (1876)",
+        "label": "Louis Pasteur \u2014 Studies on Fermentation (1876)",
         "url": "https://archive.org"
       }
     ]
@@ -17108,11 +17108,11 @@ export const COMPILED_TOPICS = [
       "steam",
       "transportation"
     ],
-    "title": "George Stephenson's Rocket & Intercity Passenger Rail (1829)",
+    "title": "George Stephenson's Rocket",
     "description": "Stephenson's multi-tubular boiler Rocket won the Rainhill Trials and opened the Liverpool and Manchester Railway.",
     "resources": [
       {
-        "label": "Michael Robbins — The Railway Age in Britain (Penguin)",
+        "label": "Michael Robbins \u2014 The Railway Age in Britain (Penguin)",
         "url": "https://www.penguin.co.uk"
       }
     ]
