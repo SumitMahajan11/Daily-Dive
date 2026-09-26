@@ -1,10 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { RotateCw, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
+import { RotateCw, UploadCloud, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
 
 export const BottomNavigation = ({ activeTab, onSelectTab }) => {
   const tabs = [
     { id: 'spin', label: 'Spin', icon: RotateCw },
+    { id: 'extract', label: 'Extract', icon: UploadCloud },
     { id: 'filter', label: 'Filter', icon: SlidersHorizontal },
     { id: 'progress', label: 'Progress', icon: BarChart3 },
     { id: 'settings', label: 'Settings', icon: Settings },

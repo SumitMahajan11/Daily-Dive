@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Sparkles, ArrowRight, Disc } from 'lucide-react';
+import { Sparkles, ArrowRight, Disc, ShieldCheck } from 'lucide-react';
 import { Button } from '../UI/Button';
 
 export const Hero = ({ onGetStarted }) => {
@@ -41,9 +41,13 @@ export const Hero = ({ onGetStarted }) => {
                 onClick={onGetStarted}
                 className="w-full sm:w-auto h-11 px-6 text-sm font-semibold shadow-lg shadow-primary-container/20 cursor-pointer"
               >
-                <span>Get Started Free</span>
+                <span>Spin Roulette Now</span>
                 <ArrowRight size={16} />
               </Button>
+              <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant/30 text-xs font-mono text-on-surface-variant select-none">
+                <ShieldCheck size={14} className="text-secondary" />
+                <span>Local Device Storage · Privacy-First</span>
+              </div>
             </div>
           </div>
 

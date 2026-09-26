@@ -5,6 +5,7 @@ import { DataProvider, useData } from './context/DataContext';
 import { Navbar } from './components/Navbar/Navbar';
 import { BottomNavigation } from './components/Navbar/BottomNavigation';
 import { SpinScreen } from './components/Screens/SpinScreen';
+import { ExtractScreen } from './components/Screens/ExtractScreen';
 import { FilterScreen } from './components/Screens/FilterScreen';
 import { ProgressScreen } from './components/Screens/ProgressScreen';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
@@ -12,13 +13,14 @@ import { AuthScreen } from './components/Auth/AuthScreen';
 import { Hero } from './components/Landing/Hero';
 import { ToastContainer } from './components/UI/Toast';
 import { Skeleton } from './components/UI/Skeleton';
-import { RotateCw, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
+import { RotateCw, UploadCloud, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
 
 const SECTIONS = [
   { id: 'spin',     label: 'Spin Roulette',    icon: RotateCw,          kbd: '1' },
-  { id: 'filter',   label: 'Category Filter',  icon: SlidersHorizontal, kbd: '2' },
-  { id: 'progress', label: 'Progress & Stats', icon: BarChart3,         kbd: '3' },
-  { id: 'settings', label: 'Settings',          icon: Settings,          kbd: '4' },
+  { id: 'extract',  label: 'Extract Topics',   icon: UploadCloud,       kbd: '2' },
+  { id: 'filter',   label: 'Category Filter',  icon: SlidersHorizontal, kbd: '3' },
+  { id: 'progress', label: 'Progress & Stats', icon: BarChart3,         kbd: '4' },
+  { id: 'settings', label: 'Settings',          icon: Settings,          kbd: '5' },
 ];
 
 /* ── Small helper components ── */
@@ -95,7 +97,7 @@ const MainLayout = () => {
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
-      const map = { '1': 'spin', '2': 'filter', '3': 'progress', '4': 'settings' };
+      const map = { '1': 'spin', '2': 'extract', '3': 'filter', '4': 'progress', '5': 'settings' };
       if (map[e.key]) scrollToSection(map[e.key]);
     };
     window.addEventListener('keydown', handleKeyDown);
@@ -172,30 +174,15 @@ const MainLayout = () => {
         </aside>
 
         {/* Scrollable Content — all sections stacked vertically */}
+        {/* Scrollable Content — all sections stacked vertically */}
         <main className="flex-1 w-full overflow-x-hidden">
 
           {/* Introductory Hero (only when not signed in) */}
           {!user && (
-            <Hero onGetStarted={() => scrollToSection('auth')} />
-          )}
-
-          {/* Auth section (only when not signed in) */}
-          {!user && (
-            <section
-              id="auth"
-              data-section="auth"
-              ref={setSectionRef('auth')}
-              className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
-            >
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true, amount: 0.2 }}
-                transition={{ duration: 0.5, ease: 'easeOut' }}
-              >
-                <AuthScreen onAuthSuccess={() => scrollToSection('spin')} />
-              </motion.div>
-            </section>
+            <Hero
+              onGetStarted={() => scrollToSection('spin')}
+              onSignIn={() => scrollToSection('auth')}
+            />
           )}
 
           {/* ── SPIN ── */}
@@ -203,7 +190,7 @@ const MainLayout = () => {
             id="spin"
             data-section="spin"
             ref={setSectionRef('spin')}
-            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-20"
           >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -212,7 +199,30 @@ const MainLayout = () => {
               transition={{ duration: 0.5, ease: 'easeOut' }}
             >
               <SectionDivider label="Spin Roulette" icon={RotateCw} />
-              <SpinScreen onNavigateFilter={() => scrollToSection('filter')} />
+              <SpinScreen
+                onNavigateFilter={() => scrollToSection('filter')}
+                onNavigateExtract={() => scrollToSection('extract')}
+              />
+            </motion.div>
+          </section>
+
+          <HorizontalSeparator />
+
+          {/* ── EXTRACT ── */}
+          <section
+            id="extract"
+            data-section="extract"
+            ref={setSectionRef('extract')}
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-20"
+          >
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.2 }}
+              transition={{ duration: 0.5, ease: 'easeOut' }}
+            >
+              <SectionDivider label="Extract Topics from Uploads" icon={UploadCloud} />
+              <ExtractScreen onNavigateSpin={() => scrollToSection('spin')} />
             </motion.div>
           </section>
 
@@ -223,7 +233,7 @@ const MainLayout = () => {
             id="filter"
             data-section="filter"
             ref={setSectionRef('filter')}
-            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-20"
           >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -243,7 +253,7 @@ const MainLayout = () => {
             id="progress"
             data-section="progress"
             ref={setSectionRef('progress')}
-            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-20"
           >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -263,7 +273,7 @@ const MainLayout = () => {
             id="settings"
             data-section="settings"
             ref={setSectionRef('settings')}
-            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-16"
+            className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-20"
           >
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -275,6 +285,29 @@ const MainLayout = () => {
               <SettingsScreen />
             </motion.div>
           </section>
+
+          {/* Auth section (only when not signed in) */}
+          {!user && (
+            <>
+              <HorizontalSeparator />
+              <section
+                id="auth"
+                data-section="auth"
+                ref={setSectionRef('auth')}
+                className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-20"
+              >
+                <motion.div
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, amount: 0.2 }}
+                  transition={{ duration: 0.5, ease: 'easeOut' }}
+                >
+                  <SectionDivider label="Account & Sync" icon={RotateCw} />
+                  <AuthScreen onAuthSuccess={() => scrollToSection('spin')} />
+                </motion.div>
+              </section>
+            </>
+          )}
 
           {/* Bottom breathing room */}
           <div className="h-16" />

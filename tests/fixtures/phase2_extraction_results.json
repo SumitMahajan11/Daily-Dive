@@ -1,0 +1,88 @@
+{
+  "formats": {
+    "pptx": {
+      "file": "lecture_systems.pptx",
+      "topic_count": 3,
+      "topics": [
+        {
+          "title": "CAP Theorem in Distributed Systems",
+          "description": "A distributed system can guarantee at most two of Consistency, Availability, and Partition Tolerance simultaneously. Network partitions are inevitable in real-world distributed networks, forcing systems to choose between consistency and availability.",
+          "category": "ai-ml",
+          "tags": []
+        },
+        {
+          "title": "Raft Distributed Consensus Algorithm",
+          "description": "Raft achieves consensus via leader election, log replication, and commitment safety across replicated state machines. It decomposes consensus into independent subproblems to improve understandability and formal verification over Multi-Paxos.",
+          "category": "ai-ml",
+          "tags": []
+        },
+        {
+          "title": "Eventual Consistency and CRDTs",
+          "description": "Conflict-free Replicated Data Types (CRDTs) allow concurrent replicas to converge automatically without central coordination. State-based and operation-based CRDTs ensure mathematical commutativity and idempotence during multi-master synchronization.",
+          "category": "custom-notes",
+          "tags": []
+        }
+      ]
+    },
+    "pdf": {
+      "file": "study_guide_algorithms.pdf",
+      "topic_count": 2,
+      "topics": [
+        {
+          "title": "Dynamic & Programming & Optimal",
+          "description": "Dynamic Programming and Optimal Substructure Dynamic programming solves complex problems by breaking them down into overlapping subproblems and storing intermediate solutions in a memoization table or 2D array.",
+          "category": "custom-notes"
+        },
+        {
+          "title": "Shortest & Dijkstra & Path",
+          "description": "Dijkstra Shortest Path Algorithm Finds the shortest paths between nodes in a graph with non-negative edge weights. Uses a priority queue min-heap to achieve O(|E| + |V| log |V|) asymptotic time complexity.",
+          "category": "ai-ml"
+        }
+      ]
+    },
+    "image": {
+      "file": "study_note_neural_nets.png",
+      "topic_count": 2,
+      "topics": [
+        {
+          "title": "Backpropagation computes the gradientof the es function with resp",
+          "description": "fosvery weight parameter inadeep neural network",
+          "category": "ai-ml"
+        },
+        {
+          "title": "tapplesthe caleuluschain rule recursively from the output layer",
+          "description": "backward through hidden layersto update synaptic weighiseficenty",
+          "category": "ai-ml"
+        }
+      ]
+    },
+    "video": {
+      "file": "lecture_microservices.webm",
+      "topic_count": 1,
+      "topics": [
+        {
+          "title": "Microservices Architecture Patterns",
+          "description": "Decoupled business capabilities and horizontal scaling. Services communicate via asynchronous event buses.",
+          "category": "cloud"
+        }
+      ]
+    }
+  },
+  "error_cases": {
+    "corrupt_file": "The PDF file appears corrupt or is not a valid PDF document.",
+    "non_text_image": "No readable text detected in this image. Daily Dive extracts study topics from text-heavy materials (such as lecture slides, book pages, or typed/handwritten notes). Photos, diagrams, or graphics without readable text are out of scope for topic extraction.",
+    "oversized_video": "Video file is too large (105.0 MB). To prevent your browser from running out of memory, Daily Dive supports video clips up to 100 MB for client-side presentation extraction."
+  },
+  "spin_pool_verification": {
+    "personal_pool_cards": [
+      "Microservices Architecture Patterns",
+      "Backpropagation computes the gradientof the es function with resp",
+      "tapplesthe caleuluschain rule recursively from the output layer",
+      "Dynamic & Programming & Optimal",
+      "Shortest & Dijkstra & Path",
+      "CAP Theorem in Distributed Systems",
+      "Raft Distributed Consensus Algorithm",
+      "Eventual Consistency and CRDTs"
+    ]
+  }
+}

@@ -7,14 +7,16 @@ import { UserMenu } from './UserMenu';
 
 export const Navbar = ({ activeTab, onNavigateTab }) => {
   const { user } = useAuth();
-  const { userStreaks, isOnline } = useData();
+  const { userStreaks, effectiveStreak, isOnline } = useData();
   const { theme, toggleTheme } = useTheme();
 
-  const streak = userStreaks?.current_streak || 0;
+  const streak = (effectiveStreak || userStreaks)?.current_streak || 0;
+  const isActiveToday = effectiveStreak?.is_active_today;
 
   const getScreenTitle = () => {
     switch (activeTab) {
       case 'spin': return 'Daily Dive';
+      case 'extract': return 'Extract Topics';
       case 'filter': return 'Category Filters';
       case 'progress': return 'Progress & Metrics';
       case 'settings': return 'Settings & Preferences';
@@ -46,7 +48,7 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
         <div className="flex items-center gap-2.5 sm:gap-3">
           {/* Streak Counter */}
           <div className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-on-surface-variant text-xs shadow-inner">
-            <Flame size={15} className="text-tertiary" />
+            <Flame size={15} className={isActiveToday ? 'text-amber-500 fill-amber-500' : 'text-tertiary'} />
             <span className="font-mono font-medium text-on-surface">{streak}d streak</span>
           </div>
 

@@ -1,7 +1,13 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
 import { useAuth } from './AuthContext';
 import { DataService } from '../lib/dataService';
-import { INITIAL_TOPICS, selectWeightedTopic } from '../lib/roulette';
+import {
+  INITIAL_TOPICS,
+  selectWeightedTopic,
+  calculateUpdatedStreak,
+  getEffectiveStreak,
+  appendHistoryEntry
+} from '../lib/roulette';
 import { AudioController } from '../lib/audio';
 import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications';
 
@@ -10,9 +16,40 @@ const DataContext = createContext(null);
 export const DataProvider = ({ children }) => {
   const { user, loading: authLoading } = useAuth();
   
-  const [topics, setTopics] = useState(INITIAL_TOPICS);
+  const [customTopics, setCustomTopics] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_custom_topics');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return [];
+  });
+  const [topics, setTopics] = useState(() => {
+    let initialCustom = [];
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_custom_topics');
+        if (saved) initialCustom = JSON.parse(saved);
+      } catch (e) {}
+    }
+    return [...initialCustom, ...INITIAL_TOPICS];
+  });
   const [userProgressMap, setUserProgressMap] = useState({});
   const [userStreaks, setUserStreaks] = useState({ current_streak: 0, longest_streak: 0, last_active_date: null });
+  const [history, setHistory] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_history');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return [];
+  });
+
+  const effectiveStreak = useMemo(() => {
+    return getEffectiveStreak(userStreaks);
+  }, [userStreaks]);
   const [userSettings, setUserSettings] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -83,17 +120,26 @@ export const DataProvider = ({ children }) => {
     try {
       if (!userId) {
         const dbTopics = await DataService.fetchTopics().catch(() => INITIAL_TOPICS);
-        const effectiveTopics = (dbTopics && dbTopics.length > 0) ? dbTopics : INITIAL_TOPICS;
-        setTopics(effectiveTopics);
+        const effectiveTopics = (dbTopics && dbTopics.length >= INITIAL_TOPICS.length) ? dbTopics : INITIAL_TOPICS;
+        let storedCustom = [];
+        try {
+          const sc = localStorage.getItem('daily_dive_custom_topics');
+          if (sc) storedCustom = JSON.parse(sc);
+        } catch (e) {}
+        const mergedTopics = [...storedCustom, ...effectiveTopics];
+        setTopics(mergedTopics);
         
         let guestProgress = {};
         let guestStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
         let guestCategories = {};
+        let guestHistory = [];
         try {
           const savedProgress = localStorage.getItem('daily_dive_guest_progress');
           if (savedProgress) guestProgress = JSON.parse(savedProgress);
           const savedStreaks = localStorage.getItem('daily_dive_guest_streaks');
           if (savedStreaks) guestStreaks = JSON.parse(savedStreaks);
+          const savedHistory = localStorage.getItem('daily_dive_history');
+          if (savedHistory) guestHistory = JSON.parse(savedHistory);
           const savedSettings = localStorage.getItem('daily_dive_guest_settings');
           if (savedSettings) {
             const parsed = JSON.parse(savedSettings);
@@ -103,8 +149,9 @@ export const DataProvider = ({ children }) => {
 
         setUserProgressMap(guestProgress);
         setUserStreaks(guestStreaks);
-        const initialSelected = selectWeightedTopic(effectiveTopics, guestProgress, guestCategories);
-        setCurrentTopic(initialSelected || effectiveTopics[0]);
+        setHistory(guestHistory);
+        const initialSelected = selectWeightedTopic(mergedTopics, guestProgress, guestCategories);
+        setCurrentTopic(initialSelected || mergedTopics[0]);
         return;
       }
 
@@ -115,8 +162,14 @@ export const DataProvider = ({ children }) => {
         DataService.fetchUserSettings(userId).catch(() => null)
       ]);
 
-      const effectiveTopics = (dbTopics && dbTopics.length > 0) ? dbTopics : INITIAL_TOPICS;
-      setTopics(effectiveTopics);
+      const effectiveTopics = (dbTopics && dbTopics.length >= INITIAL_TOPICS.length) ? dbTopics : INITIAL_TOPICS;
+      let storedCustom = [];
+      try {
+        const sc = localStorage.getItem('daily_dive_custom_topics');
+        if (sc) storedCustom = JSON.parse(sc);
+      } catch (e) {}
+      const mergedTopics = [...storedCustom, ...effectiveTopics];
+      setTopics(mergedTopics);
       setUserProgressMap(progress || {});
       if (streaks) setUserStreaks(streaks);
       if (settings) {
@@ -164,68 +217,106 @@ export const DataProvider = ({ children }) => {
     });
   }, [topics, userSettings.enabled_categories]);
 
-  // Pure weighted selection call
+  // Pure weighted selection call & history/streak tracking
   const spinNextTopic = useCallback(() => {
     const selected = selectWeightedTopic(topics, userProgressMap, userSettings.enabled_categories);
     const result = selected || eligibleTopics[Math.floor(Math.random() * eligibleTopics.length)] || topics[0];
     if (result) {
       setCurrentTopic(result);
+      const now = new Date();
+      const nowIso = now.toISOString();
+
+      // 1. Update Progress
+      setUserProgressMap(prev => {
+        const cur = prev[result.id] || { times_seen: 0, last_seen: null };
+        const updated = {
+          ...prev,
+          [result.id]: {
+            ...cur,
+            times_seen: (cur.times_seen || 0) + 1,
+            last_seen: nowIso
+          }
+        };
+        try {
+          localStorage.setItem('daily_dive_guest_progress', JSON.stringify(updated));
+        } catch (e) {}
+        return updated;
+      });
+
+      // 2. Update Streak
+      setUserStreaks(prev => {
+        const updated = calculateUpdatedStreak(prev, now);
+        try {
+          localStorage.setItem('daily_dive_guest_streaks', JSON.stringify(updated));
+        } catch (e) {}
+        return updated;
+      });
+
+      // 3. Append to History Log
+      setHistory(prev => {
+        const updated = appendHistoryEntry(prev, result, 'spin', now);
+        try {
+          localStorage.setItem('daily_dive_history', JSON.stringify(updated));
+        } catch (e) {}
+        return updated;
+      });
     }
     return result;
   }, [topics, userProgressMap, userSettings.enabled_categories, eligibleTopics]);
 
-  // Mark topic as learned with offline guard
+  // Mark topic as learned with local & streak tracking
   const markCurrentTopicLearned = useCallback(async () => {
     if (!currentTopic) return;
+    const now = new Date();
+    const nowIso = now.toISOString();
 
-    if (!isOnline) {
-      showToast("You're offline — reconnect to save this", 'warning');
-      return;
-    }
-
-    if (!user) {
-      // Local preview state for guest
-      const currentProgress = userProgressMap[currentTopic.id] || { times_seen: 0, last_seen: null };
-      const newTimesSeen = (currentProgress.times_seen || 0) + 1;
-      const nowIso = new Date().toISOString();
-      setUserProgressMap(prev => ({
+    // 1. Update Progress
+    setUserProgressMap(prev => {
+      const cur = prev[currentTopic.id] || { times_seen: 0, last_seen: null };
+      const updated = {
         ...prev,
-        [currentTopic.id]: { times_seen: newTimesSeen, last_seen: nowIso }
-      }));
-      setUserStreaks(prev => ({
-        ...prev,
-        current_streak: (prev.current_streak || 0) + 1,
-        longest_streak: Math.max(prev.longest_streak || 0, (prev.current_streak || 0) + 1),
-        last_active_date: nowIso.slice(0, 10)
-      }));
-      showToast('Marked as learned!', 'success');
-      return;
-    }
+        [currentTopic.id]: {
+          ...cur,
+          times_seen: (cur.times_seen || 0) + 1,
+          last_seen: nowIso,
+          learned: true
+        }
+      };
+      try {
+        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
 
-    setIsMarkingLearned(true);
+    // 2. Update Streaks
+    setUserStreaks(prev => {
+      const updated = calculateUpdatedStreak(prev, now);
+      try {
+        localStorage.setItem('daily_dive_guest_streaks', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    // 3. Append to History
+    setHistory(prev => {
+      const updated = appendHistoryEntry(prev, currentTopic, 'learned', now);
+      try {
+        localStorage.setItem('daily_dive_history', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    showToast('Marked as learned! Streak updated.', 'success');
+  }, [currentTopic, showToast]);
+
+  // Clear local history
+  const clearHistory = useCallback(() => {
+    setHistory([]);
     try {
-      const result = await DataService.markTopicLearned(
-        user.id,
-        currentTopic.id,
-        userProgressMap,
-        userStreaks
-      );
-
-      if (result) {
-        setUserProgressMap(prev => ({
-          ...prev,
-          [currentTopic.id]: result.updatedProgress
-        }));
-        setUserStreaks(result.updatedStreak);
-        showToast('Marked as learned! Streak updated.', 'success');
-      }
-    } catch (err) {
-      console.error('Mark as learned error:', err);
-      showToast(err.message || 'Failed to save progress', 'error');
-    } finally {
-      setIsMarkingLearned(false);
-    }
-  }, [currentTopic, isOnline, user, userProgressMap, userStreaks, showToast]);
+      localStorage.removeItem('daily_dive_history');
+    } catch (e) {}
+    showToast('Learning history cleared from this device.', 'info');
+  }, [showToast]);
 
   // Update Settings patch
   const updateSettings = useCallback(async (patch) => {
@@ -292,12 +383,66 @@ export const DataProvider = ({ children }) => {
     showToast('Backup imported and synced successfully', 'success');
   }, [isOnline, user, showToast]);
 
+  // Add newly extracted custom topics
+  const addCustomTopics = useCallback((newTopics) => {
+    if (!newTopics || newTopics.length === 0) return;
+
+    setCustomTopics(prev => {
+      const updated = [...newTopics, ...prev.filter(p => !newTopics.some(n => n.id === p.id))];
+      try {
+        localStorage.setItem('daily_dive_custom_topics', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    setTopics(prev => {
+      return [...newTopics, ...prev.filter(t => !newTopics.some(n => n.id === t.id))];
+    });
+
+    // Automatically enable categories for the new topics so they are spinnable immediately
+    const currentEnabled = userSettings?.enabled_categories || {};
+    const patch = { ...currentEnabled };
+    newTopics.forEach(t => {
+      const group = t.group_name || 'custom';
+      const cat = t.category || 'custom-notes';
+      patch[group] = true;
+      patch[`${group}::${cat}`] = true;
+      patch[cat] = true;
+    });
+    updateSettings({ enabled_categories: patch });
+
+    // Set first newly added topic as current preview
+    if (newTopics[0]) {
+      setCurrentTopic(newTopics[0]);
+    }
+
+    showToast(`Added ${newTopics.length} topic${newTopics.length > 1 ? 's' : ''} to your spin pool!`, 'success');
+  }, [userSettings, updateSettings, showToast]);
+
+  // Remove a custom topic
+  const deleteCustomTopic = useCallback((topicId) => {
+    setCustomTopics(prev => {
+      const updated = prev.filter(t => t.id !== topicId);
+      try {
+        localStorage.setItem('daily_dive_custom_topics', JSON.stringify(updated));
+      } catch (e) {}
+      return updated;
+    });
+
+    setTopics(prev => prev.filter(t => t.id !== topicId));
+    showToast('Topic removed from your pool', 'info');
+  }, [showToast]);
+
   return (
     <DataContext.Provider value={{
       topics,
+      customTopics,
       eligibleTopics,
       userProgressMap,
       userStreaks,
+      effectiveStreak,
+      history,
+      clearHistory,
       userSettings,
       currentTopic,
       setCurrentTopic,
@@ -310,7 +455,9 @@ export const DataProvider = ({ children }) => {
       markCurrentTopicLearned,
       updateSettings,
       resetAllData,
-      importDataBackup
+      importDataBackup,
+      addCustomTopics,
+      deleteCustomTopic
     }}>
       {children}
     </DataContext.Provider>
