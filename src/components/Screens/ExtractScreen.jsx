@@ -1,7 +1,6 @@
 import React, { useState, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
-  UploadCloud,
   FileText,
   Presentation,
   Image as ImageIcon,
@@ -19,7 +18,12 @@ import {
   FileCheck,
   Tag,
   BookOpen,
-  ArrowRight
+  ArrowRight,
+  FolderOpen,
+  FileUp,
+  Clock,
+  Pin,
+  Layers
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { extractFromPdf } from '../../lib/extractors/pdfExtractor';
@@ -53,28 +57,31 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
   const [useByok, setUseByok] = useState(false);
   const [showByokSettings, setShowByokSettings] = useState(false);
 
+  // Candidate Batch Retention Lifecycle
+  const [reviewBatchLifecycle, setReviewBatchLifecycle] = useState('temporary'); // 'temporary' | 'permanent'
+
   // Manual Add Topic State
   const [showManualForm, setShowManualForm] = useState(false);
   const [manualTitle, setManualTitle] = useState('');
-  const [manualCategory, setManualCategory] = useState('cloud-infra');
-  const [manualCustomCategory, setManualCustomCategory] = useState('');
+  const [manualLifecycle, setManualLifecycle] = useState('temporary'); // 'temporary' | 'permanent'
+  const [manualDomain, setManualDomain] = useState('general');
   const [manualDescription, setManualDescription] = useState('');
   const [manualTags, setManualTags] = useState('');
 
-  const CATEGORY_OPTIONS = [
-    { value: 'cloud-infra', label: 'Cloud & Infrastructure (Tech)', group: 'tech' },
-    { value: 'systems-distributed-computing', label: 'Systems & Distributed Computing (Tech)', group: 'tech' },
-    { value: 'ai-ml', label: 'AI & Machine Learning (Tech)', group: 'tech' },
-    { value: 'data-structures-algorithms', label: 'Data Structures & Algorithms (Tech)', group: 'tech' },
-    { value: 'web-dev', label: 'Web Architecture & Performance (Tech)', group: 'tech' },
-    { value: 'finance', label: 'Finance & Wealth Strategy (Money & Career)', group: 'money-career' },
-    { value: 'career-strategy', label: 'Career Strategy & Leadership (Money & Career)', group: 'money-career' },
-    { value: 'communication', label: 'Communication & Rhetoric (Mind & Growth)', group: 'mind-growth' },
-    { value: 'philosophy-critical-thinking', label: 'Philosophy & Critical Thinking (Mind & Growth)', group: 'mind-growth' },
-    { value: 'psychology', label: 'Psychology & Decision Making (Mind & Growth)', group: 'mind-growth' },
-    { value: 'science-nature', label: 'Science & Natural World (World & Ideas)', group: 'world-ideas' },
-    { value: 'history-innovation', label: 'History of Innovation (World & Ideas)', group: 'world-ideas' },
-    { value: 'custom', label: 'Custom Category...', group: 'custom' },
+  const DOMAIN_OPTIONS = [
+    { value: 'general', label: 'General / Miscellaneous' },
+    { value: 'AI & Machine Learning', label: 'AI & Machine Learning' },
+    { value: 'Cloud & Infrastructure', label: 'Cloud & Infrastructure' },
+    { value: 'Systems & Computing', label: 'Systems & Computing' },
+    { value: 'Web Architecture', label: 'Web Architecture & Performance' },
+    { value: 'Data Structures & Algorithms', label: 'Data Structures & Algorithms' },
+    { value: 'Finance & Wealth Strategy', label: 'Finance & Wealth Strategy' },
+    { value: 'Career Strategy & Leadership', label: 'Career Strategy & Leadership' },
+    { value: 'Communication & Rhetoric', label: 'Communication & Rhetoric' },
+    { value: 'Philosophy & Critical Thinking', label: 'Philosophy & Critical Thinking' },
+    { value: 'Psychology & Decisions', label: 'Psychology & Decision Making' },
+    { value: 'Science & Natural World', label: 'Science & Natural World' },
+    { value: 'History of Innovation', label: 'History of Innovation' }
   ];
 
   const handleCreateManualTopic = (e) => {
@@ -88,45 +95,61 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
       return;
     }
 
-    const selectedOption = CATEGORY_OPTIONS.find(c => c.value === manualCategory);
-    const finalCategory = manualCategory === 'custom' 
-      ? (manualCustomCategory.trim() || 'custom-notes') 
-      : manualCategory;
-    const finalGroup = selectedOption ? selectedOption.group : 'custom';
-
     const tagsList = manualTags.trim() 
       ? manualTags.split(',').map(t => t.trim()).filter(Boolean) 
-      : ['Custom', finalCategory];
+      : [];
+
+    if (manualDomain && manualDomain !== 'general' && !tagsList.includes(manualDomain)) {
+      tagsList.unshift(manualDomain);
+    }
+    if (tagsList.length === 0) {
+      tagsList.push('Custom');
+    }
+
+    const isPermanent = manualLifecycle === 'permanent';
+    const now = Date.now();
+    const createdAt = new Date().toISOString();
+    const expiresAt = isPermanent ? null : new Date(now + 14 * 86400000).toISOString();
 
     const newTopic = {
-      id: `manual_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
+      id: `manual_${now}_${Math.random().toString(36).substr(2, 6)}`,
       title: manualTitle.trim(),
-      category: finalCategory,
-      group_name: finalGroup,
+      category: 'custom-notes',
+      group_name: 'custom',
       description: manualDescription.trim(),
       source: 'Manual Entry',
       tags: tagsList,
       difficulty: 'intermediate',
       read_time_minutes: 3,
-      is_custom: true
+      is_custom: true,
+      lifecycle: isPermanent ? 'permanent' : 'temporary',
+      created_at: createdAt,
+      expires_at: expiresAt,
+      expiry_rule: isPermanent ? null : '14_days'
     };
 
     if (processingState === 'review') {
       // Append to candidate list and auto-select
       setCandidateTopics(prev => [newTopic, ...prev]);
       setSelectedTopicIds(prev => new Set([newTopic.id, ...prev]));
-      showToast(`Added "${newTopic.title}" to review list`, 'success');
+      showToast(`Added "${newTopic.title}" to review candidates`, 'success');
     } else {
       // Direct add to personal spin pool
       addCustomTopics([newTopic]);
-      showToast(`Added "${newTopic.title}" directly to your spin pool!`, 'success');
+      showToast(
+        isPermanent
+          ? `Added "${newTopic.title}" to permanent collection!`
+          : `Added "${newTopic.title}" (expires in 14 days)`,
+        'success'
+      );
     }
 
     // Reset form
     setManualTitle('');
     setManualDescription('');
     setManualTags('');
-    setManualCustomCategory('');
+    setManualDomain('general');
+    setManualLifecycle('temporary');
     setShowManualForm(false);
   };
 
@@ -192,9 +215,16 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
         extractionResult = await extractFromImage(file, setProgress);
       } else if (file.type.startsWith('video/') || fileName.endsWith('.mp4') || fileName.endsWith('.webm')) {
         extractionResult = await extractFromVideo(file, setProgress);
+      } else if (fileName.endsWith('.txt') || fileName.endsWith('.md')) {
+        const text = await file.text();
+        const rawSections = text
+          .split(/\n\s*---+\s*\n|\n(?=#{1,3}\s)/m)
+          .map(s => s.trim())
+          .filter(s => s.length > 20);
+        extractionResult = { text, rawSections: rawSections.length > 0 ? rawSections : [text], title: file.name.replace(/\.[^/.]+$/, '') };
       } else {
         throw new Error(
-          'Unsupported file format. Please upload a PDF (.pdf), PowerPoint (.pptx), Image (.png, .jpg), or Video (.mp4).'
+          'Unsupported file format. Please upload a PDF (.pdf), PowerPoint (.pptx), Text/Markdown (.txt, .md), Image (.png, .jpg), or Video (.mp4).'
         );
       }
 
@@ -214,12 +244,12 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
         } catch (byokErr) {
           console.warn('BYOK Gemini failed, falling back to local NLP:', byokErr);
           showToast(`Gemini API failed (${byokErr.message}). Using local NLP engine.`, 'warning');
-          topics = extractTopicsLocally(extractionResult.text, extractionResult.rawPages || extractionResult.rawSlides || extractionResult.rawFrames, file.name);
+          topics = extractTopicsLocally(extractionResult.text, extractionResult.rawSections || extractionResult.rawPages || extractionResult.rawSlides || extractionResult.rawFrames, file.name);
         }
       } else {
         topics = extractTopicsLocally(
           extractionResult.text,
-          extractionResult.rawPages || extractionResult.rawSlides || extractionResult.rawFrames,
+          extractionResult.rawSections || extractionResult.rawPages || extractionResult.rawSlides || extractionResult.rawFrames,
           file.name
         );
       }
@@ -272,15 +302,36 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
 
   // Add selected candidate topics to user's spin pool
   const handleAddToSpinPool = () => {
-    const approvedTopics = candidateTopics.filter(t => selectedTopicIds.has(t.id));
-    if (approvedTopics.length === 0) {
+    const rawSelected = candidateTopics.filter(t => selectedTopicIds.has(t.id));
+    if (rawSelected.length === 0) {
       showToast('Please select at least one topic to add to your spin pool', 'warning');
       return;
     }
 
+    const now = Date.now();
+    const approvedTopics = rawSelected.map(t => {
+      const topicLifecycle = t.lifecycle || reviewBatchLifecycle || 'temporary';
+      const isPermanent = topicLifecycle === 'permanent';
+      return {
+        ...t,
+        is_custom: true,
+        group_name: 'custom',
+        category: 'custom-notes',
+        lifecycle: isPermanent ? 'permanent' : 'temporary',
+        created_at: t.created_at || new Date().toISOString(),
+        expires_at: isPermanent ? null : (t.expires_at || new Date(now + 14 * 86400000).toISOString()),
+        expiry_rule: isPermanent ? null : '14_days'
+      };
+    });
+
     addCustomTopics(approvedTopics);
+    const permCount = approvedTopics.filter(t => t.lifecycle === 'permanent').length;
+    const tempCount = approvedTopics.length - permCount;
+
     setAddedNotice({
-      count: approvedTopics.length
+      count: approvedTopics.length,
+      permCount,
+      tempCount
     });
     // Reset back to idle
     setProcessingState('idle');
@@ -432,7 +483,10 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                     {addedNotice.count} topic{addedNotice.count !== 1 ? 's' : ''} added to your active spin pool!
                   </h4>
                   <p className="text-xs text-on-surface-variant mt-0.5 leading-relaxed">
-                    Manage, edit, or delete them anytime in <span className="font-semibold text-on-surface">Category Filter → Custom Uploads</span>.
+                    {addedNotice.permCount > 0 && `${addedNotice.permCount} permanent`}
+                    {addedNotice.permCount > 0 && addedNotice.tempCount > 0 && ' · '}
+                    {addedNotice.tempCount > 0 && `${addedNotice.tempCount} temporary (auto-expires in 14 days)`}.
+                    {' '}Manage them anytime in <span className="font-semibold text-on-surface">Category Filter → Custom Uploads</span>.
                   </p>
                 </div>
               </div>
@@ -452,52 +506,93 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
             </motion.div>
           )}
 
+          {/* ── BESPOKE MANUSCRIPT INTAKE TRAY (Fix 3) ── */}
           <div
             onDragEnter={handleDrag}
             onDragLeave={handleDrag}
             onDragOver={handleDrag}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className={`relative border-2 border-dashed rounded-3xl p-8 sm:p-12 text-center transition-all cursor-pointer flex flex-col items-center justify-center gap-4 ${
+            className={`journal-card relative rounded-3xl p-8 sm:p-12 text-center transition-all duration-300 cursor-pointer flex flex-col items-center justify-center gap-5 overflow-hidden group select-none ${
               dragActive
-                ? 'border-primary bg-primary/5 scale-[1.01]'
-                : 'border-outline-variant/40 hover:border-primary/60 bg-surface-container-low/50 hover:bg-surface-container-low'
+                ? 'border-primary bg-primary/5 scale-[1.015] shadow-2xl shadow-primary/20 ring-2 ring-primary/25'
+                : 'border border-outline-variant/35 bg-gradient-to-b from-surface-container-low/90 via-surface-container/50 to-surface-container-low/90 hover:border-primary/50 hover:shadow-lg'
             }`}
           >
+            {/* Archival Docket Register Corner Crosshairs */}
+            <div className="absolute top-3 left-3 w-3 h-3 border-t-2 border-l-2 border-primary/30 rounded-tl-sm pointer-events-none group-hover:border-primary/60 transition-colors" />
+            <div className="absolute top-3 right-3 w-3 h-3 border-t-2 border-r-2 border-primary/30 rounded-tr-sm pointer-events-none group-hover:border-primary/60 transition-colors" />
+            <div className="absolute bottom-3 left-3 w-3 h-3 border-b-2 border-l-2 border-primary/30 rounded-bl-sm pointer-events-none group-hover:border-primary/60 transition-colors" />
+            <div className="absolute bottom-3 right-3 w-3 h-3 border-b-2 border-r-2 border-primary/30 rounded-br-sm pointer-events-none group-hover:border-primary/60 transition-colors" />
+
             <input
               ref={fileInputRef}
               type="file"
-              accept=".pdf,.pptx,.png,.jpg,.jpeg,.webp,.mp4,.webm"
+              accept=".pdf,.pptx,.txt,.md,.png,.jpg,.jpeg,.webp,.mp4,.webm"
               onChange={handleFileChange}
               className="hidden"
             />
 
-            <div className="w-16 h-16 rounded-2xl bg-primary/10 text-primary flex items-center justify-center border border-primary/20 shadow-sm">
-              <UploadCloud size={32} />
+            {/* Archival Intake Instrument Emblem */}
+            <div className="relative">
+              <div className={`w-16 h-16 rounded-2xl flex items-center justify-center border shadow-sm transition-all duration-300 ${
+                dragActive
+                  ? 'bg-primary text-on-primary border-primary scale-110 shadow-lg shadow-primary/30 animate-pulse'
+                  : 'bg-primary/10 text-primary border-primary/25 group-hover:scale-105 group-hover:border-primary/50 group-hover:bg-primary/15'
+              }`}>
+                <FileUp size={30} className="stroke-[1.8]" />
+              </div>
+              <div className={`absolute -inset-2 rounded-3xl border border-primary/20 pointer-events-none transition-opacity duration-300 ${
+                dragActive ? 'opacity-100 scale-105' : 'opacity-0 group-hover:opacity-40'
+              }`} />
             </div>
 
-            <div className="space-y-1.5 max-w-md">
-              <p className="font-display text-base sm:text-lg font-bold text-on-surface">
-                Drag and drop study files here, or <span className="text-primary underline underline-offset-4">browse</span>
-              </p>
-              <p className="text-xs sm:text-sm text-outline">
-                Supports PDF, PPTX slides, images (notes/handouts), and video presentations (up to 100MB).
+            {/* Typography & Intake Prompt */}
+            <div className="space-y-2 max-w-md">
+              <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-surface-container border border-outline-variant/30 text-[10px] font-mono uppercase tracking-wider text-outline">
+                <span>Curator's Intake Desk</span>
+              </div>
+              <h3 className="font-display text-lg sm:text-xl font-bold text-on-surface tracking-tight">
+                {dragActive ? 'Release Source Material to Begin Synthesis' : 'Deposit Study Manuscripts & Research Notes'}
+              </h3>
+              <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed">
+                Feed research papers, lecture slide decks, annotated diagrams, or recorded presentations onto the collection tray to distill discrete, high-yield study cards.
               </p>
             </div>
 
-            {/* Supported Formats Badges */}
+            {/* Tactile Ingestion Button */}
+            <div className="pt-1 flex flex-col items-center gap-2">
+              <Button
+                type="button"
+                size="sm"
+                variant="secondary"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  fileInputRef.current?.click();
+                }}
+                className="font-mono text-xs px-4 py-2 border border-outline-variant/40 hover:border-primary flex items-center gap-2 shadow-sm"
+              >
+                <FolderOpen size={14} className="text-primary" />
+                <span>Select Manuscript from Storage</span>
+              </Button>
+              <span className="text-[11px] font-mono text-outline">
+                or position documents directly onto the collection tray
+              </span>
+            </div>
+
+            {/* Archival Specification Chips */}
             <div className="flex flex-wrap items-center justify-center gap-2 pt-2">
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
-                <FileText size={14} className="text-red-400" /> PDF (Text & Scanned)
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container/80 border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
+                <FileText size={13} className="text-red-400" /> PDF · Scholarly Texts
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
-                <Presentation size={14} className="text-amber-400" /> PPTX (Slides)
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container/80 border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
+                <Presentation size={13} className="text-amber-400" /> PPTX · Slide Decks
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
-                <ImageIcon size={14} className="text-blue-400" /> Images (Notes OCR)
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container/80 border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
+                <ImageIcon size={13} className="text-blue-400" /> Image · Notes & Handouts
               </span>
-              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
-                <Video size={14} className="text-purple-400" /> Video (Lecture Slides)
+              <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-surface-container/80 border border-outline-variant/30 text-xs font-mono text-on-surface-variant">
+                <Video size={13} className="text-purple-400" /> Video · Presentations
               </span>
             </div>
           </div>
@@ -562,54 +657,94 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                   onSubmit={handleCreateManualTopic}
                   className="space-y-3 pt-3 border-t border-outline-variant/20 overflow-hidden"
                 >
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
-                        Topic Title *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g., Paxos Consensus Protocol"
-                        value={manualTitle}
-                        onChange={(e) => setManualTitle(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
-                      />
-                    </div>
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                      Topic Title *
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      placeholder="e.g., Paxos Consensus Protocol"
+                      value={manualTitle}
+                      onChange={(e) => setManualTitle(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                    />
+                  </div>
 
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
-                        Category *
-                      </label>
-                      <select
-                        value={manualCategory}
-                        onChange={(e) => setManualCategory(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                  {/* Retention Lifecycle Selection (Fix 1) */}
+                  <div className="space-y-1.5 pt-1">
+                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider flex items-center justify-between">
+                      <span>Retention Policy *</span>
+                      <span className="text-[10px] text-primary lowercase font-mono">
+                        {manualLifecycle === 'temporary' ? '14-day auto-expiry' : 'permanent storage'}
+                      </span>
+                    </label>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                      <button
+                        type="button"
+                        onClick={() => setManualLifecycle('temporary')}
+                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-2.5 ${
+                          manualLifecycle === 'temporary'
+                            ? 'bg-primary/10 border-primary shadow-sm'
+                            : 'bg-surface border-outline-variant/30 hover:border-outline-variant/60'
+                        }`}
                       >
-                        {CATEGORY_OPTIONS.map((opt) => (
-                          <option key={opt.value} value={opt.value}>
-                            {opt.label}
-                          </option>
-                        ))}
-                      </select>
+                        <div className={`p-1.5 rounded-lg shrink-0 ${manualLifecycle === 'temporary' ? 'bg-primary text-on-primary' : 'bg-surface-container text-outline'}`}>
+                          <Clock size={14} />
+                        </div>
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                            <span>Temporary</span>
+                            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-amber-500/20 text-amber-600 dark:text-amber-400">14 Days</span>
+                          </div>
+                          <p className="text-[11px] text-on-surface-variant leading-tight">
+                            Auto-retires in 14 days without cluttering library. Soft-deleted with 1-click undo.
+                          </p>
+                        </div>
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setManualLifecycle('permanent')}
+                        className={`p-3 rounded-xl border text-left transition-all cursor-pointer flex items-start gap-2.5 ${
+                          manualLifecycle === 'permanent'
+                            ? 'bg-primary/10 border-primary shadow-sm'
+                            : 'bg-surface border-outline-variant/30 hover:border-outline-variant/60'
+                        }`}
+                      >
+                        <div className={`p-1.5 rounded-lg shrink-0 ${manualLifecycle === 'permanent' ? 'bg-primary text-on-primary' : 'bg-surface-container text-outline'}`}>
+                          <Pin size={14} />
+                        </div>
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="text-xs font-bold text-on-surface flex items-center gap-1.5">
+                            <span>Permanent</span>
+                            <span className="text-[10px] font-mono px-1.5 py-0.2 rounded bg-emerald-500/20 text-emerald-600 dark:text-emerald-400">Indefinite</span>
+                          </div>
+                          <p className="text-[11px] text-on-surface-variant leading-tight">
+                            Retained indefinitely in your roulette pool until you manually delete it.
+                          </p>
+                        </div>
+                      </button>
                     </div>
                   </div>
 
-                  {manualCategory === 'custom' && (
-                    <div className="space-y-1">
-                      <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
-                        Custom Category Name *
-                      </label>
-                      <input
-                        type="text"
-                        required
-                        placeholder="e.g., Distributed Databases"
-                        value={manualCustomCategory}
-                        onChange={(e) => setManualCustomCategory(e.target.value)}
-                        className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
-                      />
-                    </div>
-                  )}
+                  {/* Related Field / Domain Flavor */}
+                  <div className="space-y-1">
+                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                      Related Domain (Informational Tag)
+                    </label>
+                    <select
+                      value={manualDomain}
+                      onChange={(e) => setManualDomain(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                    >
+                      {DOMAIN_OPTIONS.map((opt) => (
+                        <option key={opt.value} value={opt.value}>
+                          {opt.label}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
 
                   <div className="space-y-1">
                     <div className="flex items-center justify-between">
@@ -781,6 +916,51 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
             </div>
           </div>
 
+          {/* Batch Retention Policy Selection Bar (Fix 1) */}
+          <div className="p-4 rounded-2xl bg-surface-container-low border border-outline-variant/30 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+            <div className="space-y-0.5">
+              <span className="text-xs font-mono font-semibold text-on-surface uppercase tracking-wider flex items-center gap-1.5">
+                <Clock size={13} className="text-primary" />
+                <span>Default Retention Policy</span>
+              </span>
+              <p className="text-[11px] text-on-surface-variant">
+                Temporary topics auto-expire in 14 days (with 1-click undo). Permanent topics remain indefinitely.
+              </p>
+            </div>
+            <div className="flex items-center gap-1.5 p-1 rounded-xl bg-surface-container border border-outline-variant/30 shrink-0 self-start sm:self-auto">
+              <button
+                type="button"
+                onClick={() => {
+                  setReviewBatchLifecycle('temporary');
+                  setCandidateTopics(prev => prev.map(t => ({ ...t, lifecycle: 'temporary' })));
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                  reviewBatchLifecycle === 'temporary'
+                    ? 'bg-primary text-on-primary shadow-sm'
+                    : 'text-on-surface-variant hover:text-on-surface'
+                }`}
+              >
+                <Clock size={12} />
+                <span>Temporary (14d Expiry)</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setReviewBatchLifecycle('permanent');
+                  setCandidateTopics(prev => prev.map(t => ({ ...t, lifecycle: 'permanent' })));
+                }}
+                className={`px-3 py-1.5 rounded-lg text-xs font-mono font-medium transition-all cursor-pointer flex items-center gap-1.5 ${
+                  reviewBatchLifecycle === 'permanent'
+                    ? 'bg-primary text-on-primary shadow-sm'
+                    : 'text-on-surface-variant hover:text-on-surface'
+                }`}
+              >
+                <Pin size={12} />
+                <span>Permanent Collection</span>
+              </button>
+            </div>
+          </div>
+
           {/* Optional Inline Manual Topic Add in Review */}
           <AnimatePresence>
             {showManualForm && (
@@ -805,54 +985,75 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                   </button>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
-                      Topic Title *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g., Multi-Tenancy Isolation Patterns"
-                      value={manualTitle}
-                      onChange={(e) => setManualTitle(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
-                    />
-                  </div>
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                    Topic Title *
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    placeholder="e.g., Multi-Tenancy Isolation Patterns"
+                    value={manualTitle}
+                    onChange={(e) => setManualTitle(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                  />
+                </div>
 
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
-                      Category *
-                    </label>
-                    <select
-                      value={manualCategory}
-                      onChange={(e) => setManualCategory(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                <div className="space-y-1.5 pt-1">
+                  <label className="text-[11px] font-mono text-outline uppercase tracking-wider flex items-center justify-between">
+                    <span>Retention Policy *</span>
+                    <span className="text-[10px] text-primary lowercase font-mono">
+                      {manualLifecycle === 'temporary' ? '14-day auto-expiry' : 'permanent storage'}
+                    </span>
+                  </label>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                    <button
+                      type="button"
+                      onClick={() => setManualLifecycle('temporary')}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 ${
+                        manualLifecycle === 'temporary'
+                          ? 'bg-primary/10 border-primary shadow-sm'
+                          : 'bg-surface border-outline-variant/30 hover:border-outline-variant/60'
+                      }`}
                     >
-                      {CATEGORY_OPTIONS.map((opt) => (
-                        <option key={opt.value} value={opt.value}>
-                          {opt.label}
-                        </option>
-                      ))}
-                    </select>
+                      <Clock size={14} className="text-primary shrink-0" />
+                      <div className="text-xs font-bold text-on-surface">
+                        Temporary (14 Days)
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setManualLifecycle('permanent')}
+                      className={`p-2.5 rounded-xl border text-left transition-all cursor-pointer flex items-center gap-2 ${
+                        manualLifecycle === 'permanent'
+                          ? 'bg-primary/10 border-primary shadow-sm'
+                          : 'bg-surface border-outline-variant/30 hover:border-outline-variant/60'
+                      }`}
+                    >
+                      <Pin size={14} className="text-primary shrink-0" />
+                      <div className="text-xs font-bold text-on-surface">
+                        Permanent Collection
+                      </div>
+                    </button>
                   </div>
                 </div>
 
-                {manualCategory === 'custom' && (
-                  <div className="space-y-1">
-                    <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
-                      Custom Category Name *
-                    </label>
-                    <input
-                      type="text"
-                      required
-                      placeholder="e.g., Cloud Architecture"
-                      value={manualCustomCategory}
-                      onChange={(e) => setManualCustomCategory(e.target.value)}
-                      className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
-                    />
-                  </div>
-                )}
+                <div className="space-y-1">
+                  <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
+                    Related Domain (Informational Tag)
+                  </label>
+                  <select
+                    value={manualDomain}
+                    onChange={(e) => setManualDomain(e.target.value)}
+                    className="w-full px-3 py-2 rounded-xl bg-surface border border-outline-variant/40 text-on-surface text-sm focus:outline-none focus:border-primary"
+                  >
+                    {DOMAIN_OPTIONS.map((opt) => (
+                      <option key={opt.value} value={opt.value}>
+                        {opt.label}
+                      </option>
+                    ))}
+                  </select>
+                </div>
 
                 <div className="space-y-1">
                   <label className="text-[11px] font-mono text-outline uppercase tracking-wider">
@@ -896,6 +1097,7 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {candidateTopics.map((topic) => {
               const isSelected = selectedTopicIds.has(topic.id);
+              const currentLifecycle = topic.lifecycle || reviewBatchLifecycle || 'temporary';
               return (
                 <div
                   key={topic.id}
@@ -906,8 +1108,8 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                   }`}
                 >
                   <div className="space-y-2.5">
-                    {/* Header Row: Checkbox + Category + Source */}
-                    <div className="flex items-center justify-between gap-2">
+                    {/* Header Row: Checkbox + Lifecycle Pill + Source */}
+                    <div className="flex items-center justify-between gap-2 flex-wrap">
                       <label className="flex items-center gap-2.5 cursor-pointer">
                         <input
                           type="checkbox"
@@ -916,12 +1118,38 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                           className="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer"
                         />
                         <span className="text-xs font-mono font-semibold text-primary uppercase tracking-wider">
-                          {topic.category || 'custom'}
+                          {topic.tags?.[0] || 'custom'}
                         </span>
                       </label>
-                      <span className="text-[10px] font-mono text-outline truncate max-w-[140px]">
-                        {topic.source}
-                      </span>
+
+                      <div className="flex items-center gap-2">
+                        {/* Interactive Lifecycle Pill */}
+                        <button
+                          type="button"
+                          onClick={() => updateCandidateTopic(topic.id, 'lifecycle', currentLifecycle === 'permanent' ? 'temporary' : 'permanent')}
+                          className={`inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold border transition-all cursor-pointer ${
+                            currentLifecycle === 'permanent'
+                              ? 'bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/30 hover:bg-emerald-500/20'
+                              : 'bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/30 hover:bg-amber-500/20'
+                          }`}
+                          title="Click to toggle between Temporary (14 days) and Permanent"
+                        >
+                          {currentLifecycle === 'permanent' ? (
+                            <>
+                              <Pin size={10} />
+                              <span>Permanent</span>
+                            </>
+                          ) : (
+                            <>
+                              <Clock size={10} />
+                              <span>Temporary (14d)</span>
+                            </>
+                          )}
+                        </button>
+                        <span className="text-[10px] font-mono text-outline truncate max-w-[100px]">
+                          {topic.source}
+                        </span>
+                      </div>
                     </div>
 
                     {/* Editable Title */}

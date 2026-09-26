@@ -21,6 +21,7 @@ export const BottomNavigation = ({ activeTab, onSelectTab }) => {
             <button
               key={tab.id}
               type="button"
+              data-nav-id={tab.id}
               onClick={() => onSelectTab(tab.id)}
               className={`relative min-w-[64px] min-h-[48px] px-2.5 py-1 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-colors z-10 cursor-pointer ${
                 isActive

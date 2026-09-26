@@ -5,6 +5,9 @@ import { CATEGORY_TREE, isTopicEligible, STARTER_ENABLED_CATEGORIES } from '../.
 import {
   RotateCcw,
   ChevronDown,
+  ChevronUp,
+  Clock,
+  Pin,
   RotateCw,
   Sliders,
   CheckCheck,
@@ -68,7 +71,8 @@ export const FilterScreen = ({ onSpinActivePool }) => {
     showToast,
     deleteCustomTopic,
     updateCustomTopic,
-    clearCustomTopics
+    clearCustomTopics,
+    convertTopicLifecycle
   } = useData();
 
   const [editingTopicId, setEditingTopicId] = useState(null);
@@ -99,7 +103,25 @@ export const FilterScreen = ({ onSpinActivePool }) => {
 
   const enabled = userSettings?.enabled_categories || {};
 
-  // Track expanded groups
+  // Fix 2: Category Filter defaults to collapsed top-level groups; full detail behind toggle
+  const [isDetailedView, setIsDetailedView] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return localStorage.getItem('daily_dive_category_detail_view') === 'true';
+    }
+    return false; // Default: collapsed to top-level groups!
+  });
+
+  const toggleDetailView = () => {
+    setIsDetailedView(prev => {
+      const next = !prev;
+      try {
+        localStorage.setItem('daily_dive_category_detail_view', String(next));
+      } catch (e) {}
+      return next;
+    });
+  };
+
+  // Track expanded groups when in detailed view
   const [expandedGroups, setExpandedGroups] = useState({
     tech: true,
     'money-career': true,
@@ -127,13 +149,35 @@ export const FilterScreen = ({ onSpinActivePool }) => {
     }
 
     patch[group] = isChecked;
-    const groupDef = CATEGORY_TREE.find(g => g.group === group);
-    if (groupDef) {
-      groupDef.categories.forEach(cat => {
-        patch[`${group}::${cat.name}`] = isChecked;
+    if (group === 'custom') {
+      patch['custom'] = isChecked;
+      patch['custom::custom-notes'] = isChecked;
+      (customTopics || []).forEach(ct => {
+        if (ct.category) patch[`custom::${ct.category}`] = isChecked;
       });
+    } else {
+      const groupDef = CATEGORY_TREE.find(g => g.group === group);
+      if (groupDef) {
+        groupDef.categories.forEach(cat => {
+          patch[`${group}::${cat.name}`] = isChecked;
+        });
+      }
     }
     updateSettings({ enabled_categories: patch });
+  };
+
+  // Fix 1: Partition custom topics by lifecycle (Permanent vs Temporary)
+  const permanentTopics = (customTopics || []).filter(t => t.lifecycle === 'permanent');
+  const temporaryTopics = (customTopics || []).filter(t => t.lifecycle !== 'permanent');
+
+  const getExpiryLabel = (expiresAt) => {
+    if (!expiresAt) return '14 days';
+    const diffMs = new Date(expiresAt).getTime() - Date.now();
+    if (diffMs <= 0) return 'Expired today';
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
+    if (diffHours < 24) return `${Math.max(1, diffHours)}h left`;
+    const diffDays = Math.ceil(diffMs / (1000 * 60 * 60 * 24));
+    return `${diffDays}d left`;
   };
 
   const handleCategoryToggle = (group, categoryName, isChecked) => {
@@ -357,7 +401,39 @@ export const FilterScreen = ({ onSpinActivePool }) => {
 
       </div>
 
-      {/* ── HIERARCHICAL CATEGORY GROUPS ── */}
+      {/* ── TAXONOMY GRANULARITY CONTROL (Fix 2: Collapsed by Default vs Full Detail) ── */}
+      <div className="flex items-center justify-between px-1 py-1">
+        <div className="flex items-center gap-2">
+          <span className="text-xs font-mono font-semibold uppercase tracking-wider text-outline">
+            Taxonomy View
+          </span>
+          <span className="px-2 py-0.5 rounded-full text-[10px] font-mono bg-surface-container text-on-surface-variant">
+            {isDetailedView ? 'All Subcategories' : 'Main Groups Collapsed'}
+          </span>
+        </div>
+
+        <button
+          type="button"
+          id="btn-toggle-category-detail"
+          onClick={toggleDetailView}
+          className="px-3 py-1.5 rounded-xl bg-surface-container-high hover:bg-surface-container-highest border border-outline-variant/40 text-xs font-semibold text-primary hover:text-primary-container transition-all cursor-pointer flex items-center gap-1.5 shadow-sm"
+          aria-label={isDetailedView ? 'Collapse to Main Groups' : 'Show All Categories'}
+        >
+          {isDetailedView ? (
+            <>
+              <ChevronUp size={14} />
+              <span>Collapse to Groups</span>
+            </>
+          ) : (
+            <>
+              <ChevronDown size={14} />
+              <span>Show All Categories</span>
+            </>
+          )}
+        </button>
+      </div>
+
+      {/* ── CATEGORY GROUPS (COLLAPSED VS DETAILED) ── */}
       {loadingData ? (
         <div className="space-y-3">
           {[1, 2, 3].map(i => (
@@ -370,8 +446,103 @@ export const FilterScreen = ({ onSpinActivePool }) => {
             </div>
           ))}
         </div>
+      ) : !isDetailedView ? (
+        /* ── COLLAPSED VIEW (DEFAULT): Main group cards only, no subcategories ── */
+        <div className="space-y-3" id="category-collapsed-view">
+          {CATEGORY_TREE.map(groupDef => {
+            const groupName = groupDef.group;
+            const isGroupEnabled = enabled[groupName] !== false;
+            const GroupIcon = GROUP_ICONS[groupName] || Layers;
+
+            const groupTopics = topics.filter(t => (t.group_name || t.group) === groupName);
+            const activeInGroup = groupTopics.filter(t => isTopicEligible(t, enabled)).length;
+
+            return (
+              <div
+                key={groupName}
+                className={`journal-card rounded-2xl p-4 sm:p-5 flex items-center justify-between border transition-all duration-200 ${
+                  isGroupEnabled
+                    ? 'border-outline-variant/30 bg-surface-container-low/50 shadow-sm'
+                    : 'border-outline-variant/15 opacity-60 bg-surface-container-lowest/30'
+                }`}
+              >
+                <div className="flex items-center gap-3.5 min-w-0">
+                  <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
+                    isGroupEnabled ? 'bg-primary/10 text-primary border-primary/20' : 'bg-surface-container text-outline border-outline-variant/20'
+                  }`}>
+                    <GroupIcon size={20} />
+                  </div>
+
+                  <div className="flex flex-col truncate">
+                    <div className="flex items-center gap-2">
+                      <span className="font-display font-bold text-base sm:text-lg text-on-surface truncate">
+                        {groupDef.label}
+                      </span>
+                      <span className="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[10px] font-mono font-medium">
+                        {groupDef.badge}
+                      </span>
+                    </div>
+                    <span className="text-xs font-mono text-outline mt-0.5">
+                      {activeInGroup} of {groupTopics.length} topics active • {groupDef.categories.length} subcategories
+                    </span>
+                  </div>
+                </div>
+
+                <Toggle
+                  checked={isGroupEnabled}
+                  onChange={(e) => handleGroupToggle(groupName, e.target.checked)}
+                  size="lg"
+                  className="ml-3 shrink-0"
+                  aria-label={`Toggle group ${groupDef.label}`}
+                />
+              </div>
+            );
+          })}
+
+          {/* Custom Uploads Main Group Card (Collapsed) */}
+          {customTopics && customTopics.length > 0 && (
+            <div
+              className={`journal-card rounded-2xl p-4 sm:p-5 flex items-center justify-between border transition-all duration-200 ${
+                enabled['custom'] !== false
+                  ? 'border-primary/30 bg-primary/5 shadow-sm'
+                  : 'border-outline-variant/15 opacity-60 bg-surface-container-lowest/30'
+              }`}
+            >
+              <div className="flex items-center gap-3.5 min-w-0">
+                <div className={`w-10 h-10 rounded-xl flex items-center justify-center shrink-0 border ${
+                  enabled['custom'] !== false ? 'bg-primary/15 text-primary border-primary/30' : 'bg-surface-container text-outline border-outline-variant/20'
+                }`}>
+                  <Sparkles size={20} />
+                </div>
+
+                <div className="flex flex-col truncate">
+                  <div className="flex items-center gap-2">
+                    <span className="font-display font-bold text-base sm:text-lg text-on-surface truncate">
+                      Custom Uploads
+                    </span>
+                    <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-mono font-medium">
+                      {customTopics.length} topic{customTopics.length > 1 ? 's' : ''}
+                    </span>
+                  </div>
+                  <span className="text-xs font-mono text-outline mt-0.5">
+                    {customTopics.filter(t => isTopicEligible(t, enabled)).length} active in pool ({permanentTopics.length} permanent, {temporaryTopics.length} temporary)
+                  </span>
+                </div>
+              </div>
+
+              <Toggle
+                checked={enabled['custom'] !== false}
+                onChange={(e) => handleGroupToggle('custom', e.target.checked)}
+                size="lg"
+                className="ml-3 shrink-0"
+                aria-label="Toggle Custom Uploads group"
+              />
+            </div>
+          )}
+        </div>
       ) : (
-        <div className="space-y-3">
+        /* ── DETAILED VIEW: Full subcategories & accordion controls ── */
+        <div className="space-y-3" id="category-detailed-view">
           {CATEGORY_TREE.map(groupDef => {
             const groupName = groupDef.group;
             const isGroupExpanded = Boolean(expandedGroups[groupName]);
@@ -514,9 +685,9 @@ export const FilterScreen = ({ onSpinActivePool }) => {
             );
           })}
 
-          {/* Custom Uploads Accordion Card if user has custom topics */}
+          {/* Custom Uploads Detailed Card (Fix 1: Visually separate Permanent vs Temporary) */}
           {customTopics && customTopics.length > 0 && (
-            <div className="journal-card rounded-2xl overflow-hidden transition-all duration-200">
+            <div className="journal-card rounded-2xl overflow-hidden transition-all duration-200 border-primary/20">
               <div
                 onClick={() => toggleGroupAccordion('custom')}
                 className="flex items-center justify-between p-4 sm:p-5 cursor-pointer hover:bg-surface-container-high/40 transition-colors select-none"
@@ -542,30 +713,19 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                       <span className="font-display font-bold text-base text-on-surface truncate">
                         Custom Uploads
                       </span>
-                      <span className="px-2 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-[10px] font-mono font-medium">
+                      <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary text-[10px] font-mono font-medium">
                         {customTopics.length} topic{customTopics.length > 1 ? 's' : ''}
                       </span>
                     </div>
                     <span className="text-[11px] font-mono text-outline">
-                      {customTopics.filter(t => isTopicEligible(t, enabled)).length} active in pool
+                      {customTopics.filter(t => isTopicEligible(t, enabled)).length} active in pool ({permanentTopics.length} perm, {temporaryTopics.length} temp)
                     </span>
                   </div>
                 </div>
 
                 <Toggle
                   checked={enabled['custom'] !== false}
-                  onChange={(e) => {
-                    const isChecked = e.target.checked;
-                    let patch = { ...enabled };
-                    patch['custom'] = isChecked;
-                    patch['custom::custom-notes'] = isChecked;
-                    (customTopics || []).forEach(ct => {
-                      if (ct.category) {
-                        patch[`custom::${ct.category}`] = isChecked;
-                      }
-                    });
-                    updateSettings({ enabled_categories: patch });
-                  }}
+                  onChange={(e) => handleGroupToggle('custom', e.target.checked)}
                   size="md"
                   className="ml-3"
                   onClick={(e) => e.stopPropagation()}
@@ -573,7 +733,7 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                 />
               </div>
 
-              {/* Subcategories / Topics preview */}
+              {/* Subcategories / Topics preview partitioned by lifecycle */}
               <AnimatePresence initial={false}>
                 {expandedGroups['custom'] && (
                   <motion.div
@@ -583,9 +743,9 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                     transition={{ duration: 0.28, ease: 'easeInOut' }}
                     className="overflow-hidden"
                   >
-                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-1 space-y-3 border-t border-outline-variant/15">
+                    <div className="px-4 pb-4 sm:px-5 sm:pb-5 pt-1 space-y-4 border-t border-outline-variant/15">
                       <div className="flex items-center justify-between text-xs text-on-surface-variant py-1 font-mono">
-                        <span>Uploaded / Extracted Study Topics:</span>
+                        <span>Curated Uploads &amp; Manuscript Intake:</span>
                         <div className="flex items-center gap-3">
                           <span className="text-primary font-semibold">
                             {customTopics.filter(t => isTopicEligible(t, enabled)).length} of {customTopics.length} active
@@ -606,122 +766,322 @@ export const FilterScreen = ({ onSpinActivePool }) => {
                         </div>
                       </div>
 
-                      <div className="max-h-96 overflow-y-auto space-y-2 pr-1">
-                        {customTopics.map(ct => {
-                          const isEligible = isTopicEligible(ct, enabled);
-                          const isEditing = editingTopicId === ct.id;
-
-                          if (isEditing) {
-                            return (
-                              <div
-                                key={ct.id}
-                                className="p-3.5 rounded-xl bg-surface border border-primary/40 space-y-2.5 shadow-sm"
-                              >
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
-                                    Topic Title
-                                  </label>
-                                  <input
-                                    type="text"
-                                    placeholder="Topic Title"
-                                    aria-label="Edit Topic Title"
-                                    value={editTitle}
-                                    onChange={(e) => setEditTitle(e.target.value)}
-                                    className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface font-semibold focus:outline-none focus:border-primary"
-                                  />
-                                </div>
-                                <div className="space-y-1">
-                                  <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
-                                    Description (1-2 sentences)
-                                  </label>
-                                  <textarea
-                                    rows={2}
-                                    value={editDesc}
-                                    onChange={(e) => setEditDesc(e.target.value)}
-                                    className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface leading-relaxed focus:outline-none focus:border-primary resize-none"
-                                  />
-                                </div>
-                                <div className="flex items-center justify-end gap-2 pt-1">
-                                  <Button
-                                    size="sm"
-                                    variant="ghost"
-                                    onClick={handleCancelEdit}
-                                    className="h-7 px-2.5 text-xs flex items-center gap-1"
-                                  >
-                                    <X size={12} />
-                                    <span>Cancel</span>
-                                  </Button>
-                                  <Button
-                                    size="sm"
-                                    variant="primary"
-                                    onClick={() => handleSaveEdit(ct.id)}
-                                    className="h-7 px-2.5 text-xs flex items-center gap-1"
-                                  >
-                                    <Check size={12} />
-                                    <span>Save</span>
-                                  </Button>
-                                </div>
-                              </div>
-                            );
-                          }
-
-                          return (
-                            <div
-                              key={ct.id}
-                              className={`p-3 rounded-xl border transition-all ${
-                                isEligible
-                                  ? 'bg-surface-container/60 border-outline-variant/20 hover:border-outline-variant/40'
-                                  : 'bg-surface-container-lowest/30 border-outline-variant/10 opacity-50'
-                              }`}
-                            >
-                              <div className="flex items-start justify-between gap-2">
-                                <div className="flex-1 min-w-0">
-                                  <div className="flex items-center gap-2 flex-wrap mb-1">
-                                    <h4 className="font-semibold text-xs text-on-surface">
-                                      {ct.title}
-                                    </h4>
-                                    <span className="px-1.5 py-0.2 rounded bg-primary/10 text-primary font-mono text-[9px]">
-                                      {ct.category || 'custom'}
-                                    </span>
-                                    {isEligible ? (
-                                      <span className="text-[9px] font-mono text-emerald-500">Active</span>
-                                    ) : (
-                                      <span className="text-[9px] font-mono text-outline">Paused</span>
-                                    )}
-                                  </div>
-                                  <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
-                                    {ct.description}
-                                  </p>
-                                  <div className="text-[10px] font-mono text-outline mt-1.5">
-                                    Source: {ct.source || 'Upload'}
-                                  </div>
-                                </div>
-
-                                <div className="flex items-center gap-1 shrink-0 pt-0.5">
-                                  <button
-                                    type="button"
-                                    onClick={() => handleStartEdit(ct)}
-                                    className="p-1 rounded text-outline hover:text-primary transition-colors cursor-pointer"
-                                    title="Edit topic"
-                                    aria-label={`Edit ${ct.title}`}
-                                  >
-                                    <Edit2 size={13} />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    onClick={() => deleteCustomTopic(ct.id)}
-                                    className="p-1 rounded text-outline hover:text-red-500 transition-colors cursor-pointer"
-                                    title="Delete topic"
-                                    aria-label={`Delete ${ct.title}`}
-                                  >
-                                    <Trash2 size={13} />
-                                  </button>
-                                </div>
-                              </div>
+                      {/* ── SUBSECTION 1: PERMANENT COLLECTION ── */}
+                      <div className="space-y-2 pt-1">
+                        <div className="flex items-center justify-between px-1">
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 rounded-md bg-primary/10 text-primary flex items-center justify-center">
+                              <Pin size={12} />
                             </div>
-                          );
-                        })}
+                            <span className="text-xs font-semibold text-on-surface uppercase tracking-wide font-mono">
+                              Permanent Collection ({permanentTopics.length})
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-mono text-outline">
+                            Kept indefinitely • Manual removal
+                          </span>
+                        </div>
+
+                        {permanentTopics.length === 0 ? (
+                          <div className="p-3 rounded-xl bg-surface-container/30 border border-outline-variant/15 text-xs text-on-surface-variant font-mono text-center">
+                            No permanent topics yet. Pin topics from Temporary Intake below to keep them indefinitely.
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {permanentTopics.map(ct => {
+                              const isEligible = isTopicEligible(ct, enabled);
+                              const isEditing = editingTopicId === ct.id;
+
+                              if (isEditing) {
+                                return (
+                                  <div
+                                    key={ct.id}
+                                    className="p-3.5 rounded-xl bg-surface border border-primary/40 space-y-2.5 shadow-sm"
+                                  >
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
+                                        Topic Title
+                                      </label>
+                                      <input
+                                        type="text"
+                                        placeholder="Topic Title"
+                                        aria-label="Edit Topic Title"
+                                        value={editTitle}
+                                        onChange={(e) => setEditTitle(e.target.value)}
+                                        className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface font-semibold focus:outline-none focus:border-primary"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
+                                        Description (1-2 sentences)
+                                      </label>
+                                      <textarea
+                                        rows={2}
+                                        value={editDesc}
+                                        onChange={(e) => setEditDesc(e.target.value)}
+                                        className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface leading-relaxed focus:outline-none focus:border-primary resize-none"
+                                      />
+                                    </div>
+                                    <div className="flex items-center justify-end gap-2 pt-1">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={handleCancelEdit}
+                                        className="h-7 px-2.5 text-xs flex items-center gap-1"
+                                      >
+                                        <X size={12} />
+                                        <span>Cancel</span>
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="primary"
+                                        onClick={() => handleSaveEdit(ct.id)}
+                                        className="h-7 px-2.5 text-xs flex items-center gap-1"
+                                      >
+                                        <Check size={12} />
+                                        <span>Save</span>
+                                      </Button>
+                                    </div>
+                                  </div>
+                                );
+                              }
+
+                              return (
+                                <div
+                                  key={ct.id}
+                                  className={`p-3 rounded-xl border transition-all ${
+                                    isEligible
+                                      ? 'bg-surface-container/60 border-outline-variant/20 hover:border-outline-variant/40'
+                                      : 'bg-surface-container-lowest/30 border-outline-variant/10 opacity-50'
+                                  }`}
+                                >
+                                  <div className="flex items-start justify-between gap-2.5">
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                                        <h4 className="font-semibold text-xs text-on-surface">
+                                          {ct.title}
+                                        </h4>
+                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-primary/10 text-primary font-mono text-[9px] font-semibold">
+                                          <Pin size={9} />
+                                          <span>Permanent</span>
+                                        </span>
+                                        {ct.tags && ct.tags[0] && (
+                                          <span className="px-1.5 py-0.2 rounded bg-surface-container border border-outline-variant/20 text-on-surface-variant font-mono text-[9px]">
+                                            #{ct.tags[0]}
+                                          </span>
+                                        )}
+                                        {isEligible ? (
+                                          <span className="text-[9px] font-mono text-emerald-500">Active</span>
+                                        ) : (
+                                          <span className="text-[9px] font-mono text-outline">Paused</span>
+                                        )}
+                                      </div>
+                                      <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
+                                        {ct.description}
+                                      </p>
+                                      <div className="text-[10px] font-mono text-outline mt-1.5">
+                                        Source: {ct.source || 'Upload'}
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-1 shrink-0 pt-0.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          convertTopicLifecycle(ct.id, 'temporary');
+                                          if (showToast) showToast(`"${ct.title}" set to Temporary (14 days)`, 'info');
+                                        }}
+                                        className="px-2 py-1 rounded bg-surface-container hover:bg-surface-container-high text-on-surface-variant text-[10px] font-mono flex items-center gap-1 transition-colors cursor-pointer"
+                                        title="Convert to 14-day temporary topic"
+                                      >
+                                        <Clock size={11} />
+                                        <span>Set Temp</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleStartEdit(ct)}
+                                        className="p-1 rounded text-outline hover:text-primary transition-colors cursor-pointer"
+                                        title="Edit topic"
+                                        aria-label={`Edit ${ct.title}`}
+                                      >
+                                        <Edit2 size={13} />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => deleteCustomTopic(ct.id)}
+                                        className="p-1 rounded text-outline hover:text-red-500 transition-colors cursor-pointer"
+                                        title="Delete topic"
+                                        aria-label={`Delete ${ct.title}`}
+                                      >
+                                        <Trash2 size={13} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
                       </div>
+
+                      {/* ── SUBSECTION 2: TEMPORARY INTAKE ── */}
+                      <div className="space-y-2 pt-2 border-t border-outline-variant/15">
+                        <div className="flex items-center justify-between px-1">
+                          <div className="flex items-center gap-2">
+                            <div className="w-5 h-5 rounded-md bg-amber-500/10 text-amber-500 flex items-center justify-center">
+                              <Clock size={12} />
+                            </div>
+                            <span className="text-xs font-semibold text-on-surface uppercase tracking-wide font-mono">
+                              Temporary Intake ({temporaryTopics.length})
+                            </span>
+                          </div>
+                          <span className="text-[10px] font-mono text-outline">
+                            Auto-expires in 14 days • Soft delete with Undo
+                          </span>
+                        </div>
+
+                        {temporaryTopics.length === 0 ? (
+                          <div className="p-3 rounded-xl bg-surface-container/30 border border-outline-variant/15 text-xs text-on-surface-variant font-mono text-center">
+                            No temporary topics pending expiry. Newly extracted or added topics arrive here by default.
+                          </div>
+                        ) : (
+                          <div className="space-y-2">
+                            {temporaryTopics.map(ct => {
+                              const isEligible = isTopicEligible(ct, enabled);
+                              const isEditing = editingTopicId === ct.id;
+
+                              if (isEditing) {
+                                return (
+                                  <div
+                                    key={ct.id}
+                                    className="p-3.5 rounded-xl bg-surface border border-primary/40 space-y-2.5 shadow-sm"
+                                  >
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
+                                        Topic Title
+                                      </label>
+                                      <input
+                                        type="text"
+                                        placeholder="Topic Title"
+                                        aria-label="Edit Topic Title"
+                                        value={editTitle}
+                                        onChange={(e) => setEditTitle(e.target.value)}
+                                        className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface font-semibold focus:outline-none focus:border-primary"
+                                      />
+                                    </div>
+                                    <div className="space-y-1">
+                                      <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
+                                        Description (1-2 sentences)
+                                      </label>
+                                      <textarea
+                                        rows={2}
+                                        value={editDesc}
+                                        onChange={(e) => setEditDesc(e.target.value)}
+                                        className="w-full px-2.5 py-1.5 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface leading-relaxed focus:outline-none focus:border-primary resize-none"
+                                      />
+                                    </div>
+                                    <div className="flex items-center justify-end gap-2 pt-1">
+                                      <Button
+                                        size="sm"
+                                        variant="ghost"
+                                        onClick={handleCancelEdit}
+                                        className="h-7 px-2.5 text-xs flex items-center gap-1"
+                                      >
+                                        <X size={12} />
+                                        <span>Cancel</span>
+                                      </Button>
+                                      <Button
+                                        size="sm"
+                                        variant="primary"
+                                        onClick={() => handleSaveEdit(ct.id)}
+                                        className="h-7 px-2.5 text-xs flex items-center gap-1"
+                                      >
+                                        <Check size={12} />
+                                        <span>Save</span>
+                                      </Button>
+                                    </div>
+                                  </div>
+                                );
+                              }
+
+                              return (
+                                <div
+                                  key={ct.id}
+                                  className={`p-3 rounded-xl border transition-all ${
+                                    isEligible
+                                      ? 'bg-surface-container/60 border-outline-variant/20 hover:border-outline-variant/40'
+                                      : 'bg-surface-container-lowest/30 border-outline-variant/10 opacity-50'
+                                  }`}
+                                >
+                                  <div className="flex items-start justify-between gap-2.5">
+                                    <div className="flex-1 min-w-0">
+                                      <div className="flex items-center gap-2 flex-wrap mb-1">
+                                        <h4 className="font-semibold text-xs text-on-surface">
+                                          {ct.title}
+                                        </h4>
+                                        <span className="inline-flex items-center gap-1 px-1.5 py-0.5 rounded bg-amber-500/15 border border-amber-500/30 text-amber-500 font-mono text-[9px] font-semibold">
+                                          <Clock size={9} />
+                                          <span>{getExpiryLabel(ct.expires_at)}</span>
+                                        </span>
+                                        {ct.tags && ct.tags[0] && (
+                                          <span className="px-1.5 py-0.2 rounded bg-surface-container border border-outline-variant/20 text-on-surface-variant font-mono text-[9px]">
+                                            #{ct.tags[0]}
+                                          </span>
+                                        )}
+                                        {isEligible ? (
+                                          <span className="text-[9px] font-mono text-emerald-500">Active</span>
+                                        ) : (
+                                          <span className="text-[9px] font-mono text-outline">Paused</span>
+                                        )}
+                                      </div>
+                                      <p className="text-xs text-on-surface-variant line-clamp-2 leading-relaxed">
+                                        {ct.description}
+                                      </p>
+                                      <div className="text-[10px] font-mono text-outline mt-1.5">
+                                        Source: {ct.source || 'Upload'}
+                                      </div>
+                                    </div>
+
+                                    <div className="flex items-center gap-1 shrink-0 pt-0.5">
+                                      <button
+                                        type="button"
+                                        onClick={() => {
+                                          convertTopicLifecycle(ct.id, 'permanent');
+                                          if (showToast) showToast(`"${ct.title}" kept permanently in library`, 'success');
+                                        }}
+                                        className="px-2 py-1 rounded bg-primary/15 hover:bg-primary/25 border border-primary/30 text-primary text-[10px] font-mono font-medium flex items-center gap-1 transition-colors cursor-pointer"
+                                        title="Pin to permanent collection"
+                                      >
+                                        <Pin size={11} />
+                                        <span>Keep Perm</span>
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => handleStartEdit(ct)}
+                                        className="p-1 rounded text-outline hover:text-primary transition-colors cursor-pointer"
+                                        title="Edit topic"
+                                        aria-label={`Edit ${ct.title}`}
+                                      >
+                                        <Edit2 size={13} />
+                                      </button>
+                                      <button
+                                        type="button"
+                                        onClick={() => deleteCustomTopic(ct.id)}
+                                        className="p-1 rounded text-outline hover:text-red-500 transition-colors cursor-pointer"
+                                        title="Delete topic"
+                                        aria-label={`Delete ${ct.title}`}
+                                      >
+                                        <Trash2 size={13} />
+                                      </button>
+                                    </div>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+
                     </div>
                   </motion.div>
                 )}

@@ -34,10 +34,24 @@ export const ToastContainer = () => {
               initial={{ opacity: 0, x: 40, scale: 0.95 }}
               animate={{ opacity: 1, x: 0, scale: 1 }}
               exit={{ opacity: 0, x: 40 }}
-              className={`px-4 py-3 rounded-xl border shadow-2xl flex items-center gap-2.5 font-medium text-xs transition-colors duration-300 pointer-events-auto ${bg}`}
+              className={`px-4 py-3 rounded-xl border shadow-2xl flex items-center justify-between gap-3 font-medium text-xs transition-colors duration-300 pointer-events-auto ${bg}`}
             >
-              <Icon size={18} className="shrink-0" />
-              <span>{toast.message}</span>
+              <div className="flex items-center gap-2.5">
+                <Icon size={18} className="shrink-0" />
+                <span>{toast.message}</span>
+              </div>
+              {toast.action && (
+                <button
+                  type="button"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    toast.action.onClick();
+                  }}
+                  className="px-2.5 py-1 rounded bg-black/10 dark:bg-white/10 hover:bg-black/20 dark:hover:bg-white/20 font-mono font-bold uppercase tracking-wider text-[11px] underline underline-offset-2 transition-all cursor-pointer shrink-0"
+                >
+                  {toast.action.label}
+                </button>
+              )}
             </motion.div>
           );
         })}

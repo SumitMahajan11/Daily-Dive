@@ -509,17 +509,28 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
     // Step 6: Tags & Categories
     const tags = extractTopKeywords(unitText, 4);
-    const { group_name, category } = inferCategory(unitText);
+    const { category: inferredCat } = inferCategory(unitText);
+    const enrichedTags = tags.length > 0 ? [...tags] : ['learning', 'research'];
+    if (inferredCat && inferredCat !== 'custom-notes' && !enrichedTags.includes(inferredCat)) {
+      enrichedTags.unshift(inferredCat);
+    }
+
+    const createdAt = new Date().toISOString();
+    const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
 
     candidateTopics.push({
       id: `custom-${timestamp}-${uIdx}`,
       title: synthesizedTitle,
       description: desc,
-      group_name,
-      category,
-      tags: tags.length > 0 ? tags : ['learning', 'research'],
+      group_name: 'custom',
+      category: 'custom-notes',
+      tags: enrichedTags,
       source: sourceFileName,
       is_custom: true,
+      lifecycle: 'temporary',
+      created_at: createdAt,
+      expires_at: expiresAt,
+      expiry_rule: '14_days',
       resources: []
     });
   });
@@ -614,15 +625,27 @@ ${truncatedText}
   }
 
   const timestamp = Date.now();
-  return parsed.map((item, idx) => ({
-    id: `custom-gemini-${timestamp}-${idx}`,
-    title: truncateAtWord(item.title || 'Untitled Topic', 60),
-    description: truncateAtWord((item.description || '').trim(), 175) + (!item.description?.trim().endsWith('.') ? '.' : ''),
-    group_name: item.group_name || 'custom',
-    category: item.category || 'custom-notes',
-    tags: Array.isArray(item.tags) ? item.tags.slice(0, 5) : ['study', 'extracted'],
-    source: sourceFileName,
-    is_custom: true,
-    resources: []
-  }));
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+  return parsed.map((item, idx) => {
+    const rawTags = Array.isArray(item.tags) ? item.tags.slice(0, 5) : ['study', 'extracted'];
+    if (item.category && item.category !== 'custom-notes' && !rawTags.includes(item.category)) {
+      rawTags.unshift(item.category);
+    }
+    return {
+      id: `custom-gemini-${timestamp}-${idx}`,
+      title: truncateAtWord(item.title || 'Untitled Topic', 60),
+      description: truncateAtWord((item.description || '').trim(), 175) + (!item.description?.trim().endsWith('.') ? '.' : ''),
+      group_name: 'custom',
+      category: 'custom-notes',
+      tags: rawTags,
+      source: sourceFileName,
+      is_custom: true,
+      lifecycle: 'temporary',
+      created_at: createdAt,
+      expires_at: expiresAt,
+      expiry_rule: '14_days',
+      resources: []
+    };
+  });
 }
