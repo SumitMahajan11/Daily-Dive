@@ -1,0 +1,131 @@
+{
+  "pdf": {
+    "status": "success",
+    "count": 10,
+    "topics": [
+      {
+        "index": 1,
+        "title": "What Is Wireshark?",
+        "badge": "Verified (80%)",
+        "reasons": []
+      },
+      {
+        "index": 2,
+        "title": "TCP Stream & Handshake Analysis",
+        "badge": "Needs review (60%)",
+        "reasons": [
+          "Length outlier (excessive length for topic title)"
+        ]
+      },
+      {
+        "index": 3,
+        "title": "Capture & File Architecture",
+        "badge": "Needs review (20%)",
+        "reasons": [
+          "Procedural step artifact"
+        ]
+      },
+      {
+        "index": 4,
+        "title": "Understanding the Interface",
+        "badge": "Verified (80%)",
+        "reasons": []
+      },
+      {
+        "index": 5,
+        "title": "Wireshark Packet Filtering",
+        "badge": "Needs review (20%)",
+        "reasons": [
+          "UI component artifact"
+        ]
+      },
+      {
+        "index": 6,
+        "title": "Analyzing Captured Traffic",
+        "badge": "Verified (80%)",
+        "reasons": []
+      },
+      {
+        "index": 7,
+        "title": "Network Protocol Hierarchy",
+        "badge": "Needs review (15%)",
+        "reasons": [
+          "Length outlier (excessive length for topic title)",
+          "Imperative procedural instruction"
+        ]
+      },
+      {
+        "index": 8,
+        "title": "Protocol & Application Architecture",
+        "badge": "Needs review (60%)",
+        "reasons": [
+          "Length outlier (excessive length for topic title)"
+        ]
+      },
+      {
+        "index": 9,
+        "title": "Extracting Files",
+        "badge": "Verified (80%)",
+        "reasons": []
+      },
+      {
+        "index": 10,
+        "title": "Identifying Attacks",
+        "badge": "Verified (80%)",
+        "reasons": []
+      }
+    ]
+  },
+  "image": {
+    "status": "success",
+    "count": 2,
+    "topics": [
+      {
+        "index": 1,
+        "title": "Feature & Maps Architecture",
+        "badge": "Needs review (45%)",
+        "reasons": [
+          "Length outlier (excessive length for topic title)"
+        ]
+      },
+      {
+        "index": 2,
+        "title": "Empircalvaldation & Benchmarks Architecture",
+        "badge": "Needs review (60%)",
+        "reasons": [
+          "Length outlier (excessive length for topic title)"
+        ]
+      }
+    ]
+  },
+  "video": {
+    "status": "success",
+    "count": 3,
+    "topics": [
+      {
+        "index": 1,
+        "title": "Microservices Architecture Patterns",
+        "badge": "Verified (95%)",
+        "reasons": []
+      },
+      {
+        "index": 2,
+        "title": "API Gateway Routing & Security",
+        "badge": "Verified (95%)",
+        "reasons": []
+      },
+      {
+        "index": 3,
+        "title": "Distributed Consensus & Paxos",
+        "badge": "Needs review (50%)",
+        "reasons": [
+          "Trailing punctuation or incomplete delimiter"
+        ]
+      }
+    ]
+  },
+  "docx": {
+    "status": "unsupported",
+    "rejection_message": "Unsupported file format. Please upload a PDF (.pdf), PowerPoint (.pptx), Text/Markdown (.txt, .md), Image (.png, .jpg), or Video (.mp4)."
+  }
+}

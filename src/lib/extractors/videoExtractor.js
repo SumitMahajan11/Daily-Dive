@@ -115,7 +115,25 @@ export async function extractFromVideo(file, onProgress = () => {}) {
       video.src = videoUrl;
     });
 
-    const duration = video.duration;
+    let duration = video.duration;
+    if (!isFinite(duration)) {
+      try {
+        video.currentTime = 1e10;
+        await new Promise((r) => {
+          const onTimeUpdate = () => {
+            video.removeEventListener('timeupdate', onTimeUpdate);
+            r();
+          };
+          video.addEventListener('timeupdate', onTimeUpdate);
+          setTimeout(r, 1000);
+        });
+        duration = isFinite(video.duration) ? video.duration : (video.currentTime || 10);
+        video.currentTime = 0;
+      } catch (durErr) {
+        duration = 10;
+      }
+    }
+
     if (!duration || isNaN(duration) || duration <= 0) {
       throw new Error('Video duration could not be determined. File may be corrupted.');
     }
@@ -130,11 +148,11 @@ export async function extractFromVideo(file, onProgress = () => {}) {
       }
     });
 
-    // Sample 2 to 6 timestamps across the duration
-    const sampleCount = Math.min(6, Math.max(2, Math.floor(duration / 2) || 2));
+    // Sample timestamps across the entire presentation duration
+    const sampleCount = Math.min(8, Math.max(3, Math.ceil(duration / 1.8) || 3));
     const timestamps = [];
-    const startOffset = Math.max(0.2, duration * 0.1);
-    const endOffset = Math.max(0.4, duration * 0.9);
+    const startOffset = Math.max(0.2, Math.min(0.5, duration * 0.08));
+    const endOffset = Math.max(startOffset + 0.5, duration - 0.25);
     const step = sampleCount > 1 ? (endOffset - startOffset) / (sampleCount - 1) : 0;
 
     for (let i = 0; i < sampleCount; i++) {
