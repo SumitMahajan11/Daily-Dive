@@ -870,8 +870,10 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
   validSections.forEach(sec => {
     let firstLine = sec.structuralTitle || sec.lines[0] || '';
-    if (!sec.structuralTitle && sec.lines.length > 1 && cleanTitle(firstLine).split(/\s+/).length === 1 && !/^[•\-*·]/.test(sec.lines[1])) {
-      firstLine = `${firstLine} ${sec.lines[1]}`;
+    if (!sec.structuralTitle && sec.lines.length > 1 && !/^[•\-*·]/.test(sec.lines[1])) {
+      if (cleanTitle(firstLine).split(/\s+/).length === 1 || /[:–—\-]\s*$/.test(firstLine.trim())) {
+        firstLine = `${firstLine} ${sec.lines[1]}`;
+      }
     }
     const cleanHead = cleanTitle(firstLine);
     const hasDelimiter = /[:–—\-]/.test(cleanHead);

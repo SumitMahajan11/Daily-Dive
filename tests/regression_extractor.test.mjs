@@ -109,10 +109,12 @@ const cleanTitleCases = [
   'Thermal Comfort Benchmarks',
   'Cross-Climate Prediction Gaps',
   'Adaptive Shelter Methodology',
-  'Integrated Shelter Architecture',
   'Wireshark Packet Filtering',
   'IPv4 Subnetting & Topology',
   'Dynamic Programming Foundations',
+  'Integrated Shelter Architecture',
+  'Decision-Support Framework',
+  'Climate-Adaptive Shelter Outcomes',
   'Saga Pattern Distributed Orchestration',
   'CQRS Read Model Synchronization',
   'Circuit Breaker Resilience Telemetry'
@@ -195,6 +197,7 @@ function displayDocumentAudit(title, fileName, sections, isMarkdown = false) {
     console.log('  (None - All topics met high confidence criteria)');
   } else {
     flaggedForReview.forEach((t, i) => {
+      console.log(`  [${i + 1}] "${t.title}"`);
       const displayRawHeading = t.raw_heading !== undefined
         ? (t.raw_heading.trim() ? `"${t.raw_heading}"` : '"" (empty)')
         : `"${t.title}"`;
