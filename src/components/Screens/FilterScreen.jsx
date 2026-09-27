@@ -121,20 +121,35 @@ export const FilterScreen = ({ onSpinActivePool }) => {
     });
   };
 
-  // Track expanded groups when in detailed view
-  const [expandedGroups, setExpandedGroups] = useState({
-    tech: true,
-    'money-career': true,
-    'mind-growth': true,
-    'world-ideas': true,
-    custom: true
+  // Track expanded groups when in detailed view, persisted independently in localStorage
+  const [expandedGroups, setExpandedGroups] = useState(() => {
+    const defaultState = {
+      tech: true,
+      'money-career': true,
+      'mind-growth': true,
+      'world-ideas': true,
+      custom: true
+    };
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_expanded_groups');
+        if (saved) return { ...defaultState, ...JSON.parse(saved) };
+      } catch (e) {}
+    }
+    return defaultState;
   });
 
   const toggleGroupAccordion = (group) => {
-    setExpandedGroups(prev => ({
-      ...prev,
-      [group]: !prev[group]
-    }));
+    setExpandedGroups(prev => {
+      const next = {
+        ...prev,
+        [group]: !prev[group]
+      };
+      try {
+        localStorage.setItem('daily_dive_expanded_groups', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
   };
 
   const hasAnyExplicitSetting = Object.keys(enabled).length > 0;

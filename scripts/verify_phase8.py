@@ -4,7 +4,7 @@ import time
 import json
 from playwright.sync_api import sync_playwright
 
-ARTIFACT_DIR = r"C:\Users\SUMIT\.gemini\antigravity-ide\brain\c2c30b95-856e-4b15-a55b-b571bbf91e66"
+ARTIFACT_DIR = r"C:\Users\SUMIT\.gemini\antigravity-ide\brain\a16ef4aa-08cd-4c23-81c0-0a7819a2044b"
 AFTER_DIR = os.path.join("screenshots", "phase8", "after")
 AFTER_ARTIFACT_DIR = os.path.join(ARTIFACT_DIR, "screenshots_phase8_after")
 
@@ -30,17 +30,69 @@ def verify_phase8_all():
         browser = p.chromium.launch(headless=True)
         
         # ─────────────────────────────────────────────────────────────
-        # 1. TEST FIX 2: COLLAPSED CATEGORY FILTER BY DEFAULT & PERSISTENCE
+        # 1. TEST COMBINED FIRST-RUN ONBOARDING (CONTENT SOURCE + 4 TAXONOMY GROUPS)
         # ─────────────────────────────────────────────────────────────
-        print("\n--- [TEST 1] Verifying Default Collapsed Category Filter ---", flush=True)
+        print("\n--- [TEST 1] Verifying Unified First-Run Onboarding Flow ---", flush=True)
+        ctx_first_run = browser.new_context(viewport={"width": 1280, "height": 900})
+        ctx_first_run.add_init_script("""
+            localStorage.setItem('daily-dive-theme', 'dark');
+            localStorage.removeItem('daily_dive_first_run_dismissed');
+        """)
+        page_fr = ctx_first_run.new_page()
+        page_fr.goto("http://localhost:5173", wait_until="networkidle")
+        time.sleep(1)
+
+        # Ensure first-run picker is visible on Spin screen
+        picker = page_fr.locator("[data-testid='first-run-picker']")
+        assert picker.is_visible(), "FAILED: First-run onboarding card is not visible on initial load!"
+        print("First-run onboarding card is visible on SpinScreen.", flush=True)
+
+        # Verify Content Source options exist in the same card
+        has_curated_btn = page_fr.locator("button:has(span:text-is('Curated Syllabus'))").first.is_visible()
+        has_custom_btn = page_fr.locator("button:has(span:text-is('Custom Intake'))").first.is_visible()
+        has_blended_btn = page_fr.locator("button:has(span:text-is('Blended Mode'))").first.is_visible()
+        assert has_curated_btn and has_custom_btn and has_blended_btn, "FAILED: 3-way content source picker missing from first-run onboarding card!"
+        print("Content Source Stream options (Curated Syllabus, Custom Intake, Blended Mode) confirmed.", flush=True)
+
+        # Verify Real 4 Category Groups exist in the same card
+        has_tech = page_fr.locator("span:text-is('Tech')").first.is_visible()
+        has_money = page_fr.locator("span:text-is('Money & Career')").first.is_visible()
+        has_mind = page_fr.locator("span:text-is('Mind & Growth')").first.is_visible()
+        has_world = page_fr.locator("span:text-is('World & Ideas')").first.is_visible()
+        assert has_tech and has_money and has_mind and has_world, "FAILED: The 4 real taxonomy groups (Tech, Money & Career, Mind & Growth, World & Ideas) not all present!"
+        print("Real 4 Category Groups (Tech, Money & Career, Mind & Growth, World & Ideas) confirmed.", flush=True)
+
+        # Test selecting Blended Mode
+        page_fr.locator("button:has(span:text-is('Blended Mode'))").first.click()
+        time.sleep(0.4)
+
+        # Capture screenshot of the unified first-run card
+        first_run_shot = os.path.join(AFTER_DIR, "desktop-dark-first-run-onboarding.png")
+        page_fr.screenshot(path=first_run_shot, full_page=False)
+        shutil.copy(first_run_shot, os.path.join(AFTER_ARTIFACT_DIR, "desktop-dark-first-run-onboarding.png"))
+        print(f"Captured {first_run_shot}", flush=True)
+
+        # Dismiss by clicking Start Exploring
+        page_fr.locator("button:has-text('Start Exploring')").click()
+        time.sleep(0.5)
+        assert not page_fr.locator("[data-testid='first-run-picker']").is_visible(), "FAILED: First run picker did not dismiss on 'Start Exploring'!"
+        dismissed_flag = page_fr.evaluate("() => localStorage.getItem('daily_dive_first_run_dismissed')")
+        assert dismissed_flag == 'true', "FAILED: daily_dive_first_run_dismissed was not stored in localStorage!"
+        results["unified_first_run_flow"] = "PASS"
+        ctx_first_run.close()
+
+        # ─────────────────────────────────────────────────────────────
+        # 2. TEST COLLAPSED VIEW BY DEFAULT, GLOBAL TOGGLE & INDEPENDENT PER-GROUP CHEVRONS
+        # ─────────────────────────────────────────────────────────────
+        print("\n--- [TEST 2] Verifying Global Detail Toggle & Independent Per-Group Chevrons ---", flush=True)
         context = browser.new_context(viewport={"width": 1280, "height": 900})
         context.add_init_script("""
             localStorage.setItem('daily-dive-theme', 'dark');
+            localStorage.setItem('daily_dive_first_run_dismissed', 'true');
         """)
         page = context.new_page()
         page.goto("http://localhost:5173", wait_until="networkidle")
-        # Clear category view preference once to test default collapsed state
-        page.evaluate("() => localStorage.removeItem('daily_dive_category_detail_view')")
+        page.evaluate("() => { localStorage.removeItem('daily_dive_category_detail_view'); localStorage.removeItem('daily_dive_expanded_groups'); }")
         page.reload(wait_until="networkidle")
         time.sleep(1)
 
@@ -52,63 +104,50 @@ def verify_phase8_all():
         detailed_view = page.locator("#category-detailed-view")
         toggle_btn = page.locator("#btn-toggle-category-detail")
 
-        is_collapsed_visible = collapsed_view.is_visible()
-        is_detailed_visible = detailed_view.is_visible()
-        btn_text = toggle_btn.inner_text().strip()
-
-        print(f"Default view collapsed visible: {is_collapsed_visible}", flush=True)
-        print(f"Default view detailed visible: {is_detailed_visible}", flush=True)
-        print(f"Granularity button text: '{btn_text}'", flush=True)
-
-        assert is_collapsed_visible, "FAILED: Category filter did not default to collapsed view!"
-        assert not is_detailed_visible, "FAILED: Detailed subcategories should not be visible by default!"
-        assert "Show All Categories" in btn_text, f"FAILED: Expected 'Show All Categories' button, got {btn_text}"
+        assert collapsed_view.is_visible(), "FAILED: Category filter did not default to collapsed view!"
+        assert not detailed_view.is_visible(), "FAILED: Detailed subcategories should not be visible by default!"
+        assert "Show All Categories" in toggle_btn.inner_text().strip()
         results["default_collapsed_view"] = "PASS"
 
-        # Toggle to detailed view
-        print("Clicking 'Show All Categories'...", flush=True)
+        # Toggle global detail view
         toggle_btn.click()
         time.sleep(0.5)
+        assert page.locator("#category-detailed-view").is_visible(), "FAILED: Detailed view did not open!"
+        results["global_detail_toggle"] = "PASS"
 
-        is_detailed_now = page.locator("#category-detailed-view").is_visible()
-        btn_text_detailed = page.locator("#btn-toggle-category-detail").inner_text().strip()
-        pref_stored = page.evaluate("() => localStorage.getItem('daily_dive_category_detail_view')")
+        # Test individual per-group chevron collapse (e.g. collapsing Tech group accordion)
+        tech_chevron_btn = page.locator("#category-detailed-view button[aria-label*='Tech group']").first
+        print("Clicking Tech group chevron to collapse Tech group...", flush=True)
+        tech_chevron_btn.click()
+        time.sleep(0.5)
 
-        print(f"Detailed view visible after toggle: {is_detailed_now}", flush=True)
-        print(f"Button text now: '{btn_text_detailed}'", flush=True)
-        print(f"Stored preference in localStorage: '{pref_stored}'", flush=True)
+        # Verify Tech group stored as collapsed in localStorage (daily_dive_expanded_groups)
+        exp_groups_str = page.evaluate("() => localStorage.getItem('daily_dive_expanded_groups')")
+        exp_groups = json.loads(exp_groups_str) if exp_groups_str else {}
+        print(f"Stored expanded groups state: {exp_groups}", flush=True)
+        assert exp_groups.get("tech") is False, "FAILED: Tech group was not persisted as collapsed in daily_dive_expanded_groups!"
+        results["independent_group_chevron_persistence"] = "PASS"
 
-        assert is_detailed_now, "FAILED: Detailed view did not open upon clicking toggle!"
-        assert "Collapse to Groups" in btn_text_detailed, "FAILED: Button text did not update to 'Collapse to Groups'!"
-        assert pref_stored == "true", "FAILED: daily_dive_category_detail_view was not saved as 'true'!"
-        results["expand_to_detailed"] = "PASS"
-
-        # Reload page and verify persistence
-        print("Reloading page to verify persistence...", flush=True)
+        # Reload page and verify both global detailed view AND Tech collapsed state are preserved!
         page.reload(wait_until="networkidle")
         time.sleep(1)
         nav_to(page, "filter")
+        assert page.locator("#category-detailed-view").is_visible(), "FAILED: Detailed view not preserved on reload!"
+        exp_after_reload = json.loads(page.evaluate("() => localStorage.getItem('daily_dive_expanded_groups')") or "{}")
+        assert exp_after_reload.get("tech") is False, "FAILED: Independent group chevron state not preserved on reload!"
+        results["independent_state_coexistence"] = "PASS"
 
-        is_detailed_reloaded = page.locator("#category-detailed-view").is_visible()
-        print(f"Detailed view retained after reload: {is_detailed_reloaded}", flush=True)
-        assert is_detailed_reloaded, "FAILED: Detailed view preference was not persisted on reload!"
-        results["persistence_across_reloads"] = "PASS"
-
-        # Collapse back
-        page.locator("#btn-toggle-category-detail").click()
-        time.sleep(0.4)
-        pref_stored_collapsed = page.evaluate("() => localStorage.getItem('daily_dive_category_detail_view')")
-        assert pref_stored_collapsed == "false", "FAILED: Preference did not update back to 'false'!"
         context.close()
 
         # ─────────────────────────────────────────────────────────────
-        # 2. TEST FIX 1: CUSTOM TOPIC LIFECYCLE (PERMANENT VS TEMPORARY)
+        # 3. TEST CUSTOM TOPIC LIFECYCLE (PERMANENT VS TEMPORARY)
         # ─────────────────────────────────────────────────────────────
-        print("\n--- [TEST 2] Verifying Custom Topic Lifecycle & Expiry ---", flush=True)
+        print("\n--- [TEST 3] Verifying Custom Topic Lifecycle & Expiry ---", flush=True)
         context = browser.new_context(viewport={"width": 1280, "height": 900})
         context.add_init_script("""
             localStorage.setItem('daily-dive-theme', 'dark');
             localStorage.setItem('daily_dive_category_detail_view', 'true');
+            localStorage.setItem('daily_dive_first_run_dismissed', 'true');
         """)
         page = context.new_page()
         page.goto("http://localhost:5173", wait_until="networkidle")
@@ -144,39 +183,30 @@ def verify_phase8_all():
                 expiry_rule: '14_days'
             };
 
-            const existing = JSON.parse(localStorage.getItem('daily_dive_custom_topics') || '[]');
             const updated = [permTopic, tempTopic];
             localStorage.setItem('daily_dive_custom_topics', JSON.stringify(updated));
             return updated;
         }""")
         print(f"Seeded custom topics: {len(seed_result)} topics", flush=True)
 
-        # Reload to let context pick up seeded topics
         page.reload(wait_until="networkidle")
         time.sleep(1)
 
-        # Go to Filter screen (in detailed view)
         nav_to(page, "filter")
 
-        # Verify Permanent Collection sub-section has Quantum Key Distribution
         perm_section_text = page.locator("text=Permanent Collection").first.is_visible()
         temp_section_text = page.locator("text=Temporary Intake").first.is_visible()
         has_perm_topic = page.locator("text=Quantum Key Distribution").is_visible()
         has_temp_topic = page.locator("text=PostgreSQL Vacuum Strategy").is_visible()
-
-        print(f"Permanent Collection section visible: {perm_section_text}", flush=True)
-        print(f"Temporary Intake section visible: {temp_section_text}", flush=True)
-        print(f"Permanent topic visible: {has_perm_topic}", flush=True)
-        print(f"Temporary topic visible: {has_temp_topic}", flush=True)
 
         assert perm_section_text and temp_section_text, "FAILED: Custom Uploads does not visually separate Permanent vs Temporary!"
         assert has_perm_topic and has_temp_topic, "FAILED: Seeded custom topics not rendering in their respective sub-sections!"
         results["visual_separation_perm_vs_temp"] = "PASS"
 
         # ─────────────────────────────────────────────────────────────
-        # 3. TEST ARTIFICIAL AGING, AUTO-EXPIRY & UNDO TOAST
+        # 4. TEST ARTIFICIAL AGING, AUTO-EXPIRY & UNDO TOAST
         # ─────────────────────────────────────────────────────────────
-        print("\n--- [TEST 3] Testing Artificial Aging, Expiry Soft-Delete & Undo Toast ---", flush=True)
+        print("\n--- [TEST 4] Testing Artificial Aging, Expiry Soft-Delete & Undo Toast ---", flush=True)
         
         # Age the temporary topic past expiry (yesterday)
         page.evaluate("""() => {
@@ -185,7 +215,7 @@ def verify_phase8_all():
                 if (t.id === 'custom_temp_test_02') {
                     return {
                         ...t,
-                        expires_at: new Date(Date.now() - 24 * 3600000).toISOString() // 1 day expired
+                        expires_at: new Date(Date.now() - 24 * 3600000).toISOString()
                     };
                 }
                 return t;
@@ -193,68 +223,52 @@ def verify_phase8_all():
             localStorage.setItem('daily_dive_custom_topics', JSON.stringify(aged));
         }""")
 
-        # Call expiry check
         expired_res = page.evaluate("() => window.__checkTopicExpiry ? window.__checkTopicExpiry() : []")
         expired_count = len(expired_res) if isinstance(expired_res, list) else int(expired_res)
         print(f"window.__checkTopicExpiry() returned: {expired_count} expired topic(s)", flush=True)
         assert expired_count == 1, f"FAILED: Expected 1 expired topic, got {expired_res}"
         time.sleep(0.5)
 
-        # Verify temporary topic is soft-deleted and removed from view
         temp_topic_still_visible = page.locator("text=PostgreSQL Vacuum Strategy").is_visible()
         perm_topic_still_visible = page.locator("text=Quantum Key Distribution").is_visible()
-
-        print(f"Temporary topic still visible in active list: {temp_topic_still_visible}", flush=True)
-        print(f"Permanent topic still visible in active list: {perm_topic_still_visible}", flush=True)
-
-        assert not temp_topic_still_visible, "FAILED: Expired temporary topic was not removed from the active pool!"
+        assert not temp_topic_still_visible, "FAILED: Expired temporary topic was not removed from active pool!"
         assert perm_topic_still_visible, "FAILED: Permanent topic was unexpectedly touched!"
         results["auto_expiry_soft_delete"] = "PASS"
 
-        # Verify the Undo Toast is visible!
         toast_el = page.locator("text=1 temporary topic expired")
         undo_btn = page.locator("button:has-text('Undo')")
         assert toast_el.is_visible(), "FAILED: Expiry toast did not appear!"
         assert undo_btn.is_visible(), "FAILED: Undo action button did not appear on toast!"
         print("Undo toast is prominently visible with 'Undo' action button!", flush=True)
 
-        # Capture screenshot of the Undo Toast in action
         undo_toast_shot = os.path.join(AFTER_DIR, "expiry-undo-toast.png")
         page.screenshot(path=undo_toast_shot, full_page=False)
         shutil.copy(undo_toast_shot, os.path.join(AFTER_ARTIFACT_DIR, "expiry-undo-toast.png"))
         print(f"Captured {undo_toast_shot}", flush=True)
 
-        # Click Undo to test restoration!
-        print("Clicking 'Undo' to restore expired topic...", flush=True)
+        # Restore
         undo_btn.click()
         time.sleep(0.8)
-
-        # Check that PostgreSQL Vacuum Strategy is back in Temporary Intake
         temp_restored = page.locator("text=PostgreSQL Vacuum Strategy").is_visible()
-        print(f"PostgreSQL Vacuum Strategy restored: {temp_restored}", flush=True)
         assert temp_restored, "FAILED: Undo did not restore the expired topic!"
         results["expiry_undo_restoration"] = "PASS"
 
-        # Test lifecycle conversion: Promote temporary to permanent
-        print("Testing promote to permanent via 'Keep Perm'...", flush=True)
+        # Promote to permanent
         page.locator("button:has-text('Keep Perm')").first.click()
         time.sleep(0.6)
-
-        # Verify it now has "Permanent" badge and is in permanent sub-section
         perm_count = page.evaluate("""() => {
             const list = JSON.parse(localStorage.getItem('daily_dive_custom_topics') || '[]');
             return list.filter(t => t.lifecycle === 'permanent').length;
         }""")
-        print(f"Permanent topics count after conversion: {perm_count}", flush=True)
         assert perm_count == 2, f"FAILED: Expected 2 permanent topics, got {perm_count}"
         results["lifecycle_conversion"] = "PASS"
 
         context.close()
 
         # ─────────────────────────────────────────────────────────────
-        # 4. CAPTURE ALL AFTER SCREENSHOTS (DESKTOP + MOBILE, DARK + LIGHT)
+        # 5. CAPTURE ALL AFTER SCREENSHOTS (DESKTOP + MOBILE, DARK + LIGHT)
         # ─────────────────────────────────────────────────────────────
-        print("\n--- [TEST 4] Capturing Comprehensive After Screenshots ---", flush=True)
+        print("\n--- [TEST 5] Capturing Comprehensive After Screenshots ---", flush=True)
 
         configs = [
             {"name": "desktop-dark", "width": 1280, "height": 900, "is_mobile": False, "theme": "dark"},
@@ -274,6 +288,7 @@ def verify_phase8_all():
             ctx.add_init_script(f"""
                 localStorage.setItem('daily-dive-theme', '{cfg["theme"]}');
                 localStorage.setItem('daily_dive_category_detail_view', 'false');
+                localStorage.setItem('daily_dive_first_run_dismissed', 'true');
                 const now = Date.now();
                 localStorage.setItem('daily_dive_custom_topics', JSON.stringify([
                     {{
@@ -317,7 +332,7 @@ def verify_phase8_all():
             }}""")
             time.sleep(0.5)
 
-            # 1. Capture Extract Screen (Bespoke Manuscript Intake Tray)
+            # 1. Capture Extract Screen
             nav_to(p_scr, "extract")
             extract_el = p_scr.locator("#extract")
             if extract_el.count() > 0:

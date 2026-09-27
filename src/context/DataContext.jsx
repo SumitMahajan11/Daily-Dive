@@ -1,6 +1,4 @@
 import React, { createContext, useContext, useEffect, useState, useMemo, useCallback } from 'react';
-import { useAuth } from './AuthContext';
-import { DataService } from '../lib/dataService';
 import {
   INITIAL_TOPICS,
   selectWeightedTopic,
@@ -16,8 +14,6 @@ import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications
 const DataContext = createContext(null);
 
 export const DataProvider = ({ children }) => {
-  const { user, loading: authLoading } = useAuth();
-  
   const [customTopics, setCustomTopics] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -73,6 +69,9 @@ export const DataProvider = ({ children }) => {
     Object.values(userProgressMap || {}).forEach(p => {
       if (p.last_seen) activeDates.add(p.last_seen.slice(0, 10));
     });
+    if (userStreaks?.last_active_date) {
+      activeDates.add(userStreaks.last_active_date);
+    }
     return getEffectiveStreak(userStreaks, new Date(), activeDates);
   }, [userStreaks, history, userProgressMap]);
   const [userSettings, setUserSettings] = useState(() => {
@@ -83,6 +82,7 @@ export const DataProvider = ({ children }) => {
       } catch (e) {}
     }
     return {
+      content_source: 'curated',
       enabled_categories: STARTER_ENABLED_CATEGORIES,
       reminder_time: '09:00 AM',
       notifications_enabled: false,
@@ -140,87 +140,52 @@ export const DataProvider = ({ children }) => {
     }
   }, [userSettings.notifications_enabled, userSettings.reminder_time]);
 
-  // Load app data for authenticated user or fallback for guest
-  const loadData = useCallback(async (userId) => {
+  // Load app data from local storage
+  const loadData = useCallback(() => {
     setLoadingData(true);
     try {
-      if (!userId) {
-        const dbTopics = await DataService.fetchTopics().catch(() => INITIAL_TOPICS);
-        const effectiveTopics = (dbTopics && dbTopics.length >= INITIAL_TOPICS.length) ? dbTopics : INITIAL_TOPICS;
-        let storedCustom = [];
-        try {
-          const sc = localStorage.getItem('daily_dive_custom_topics');
-          if (sc) storedCustom = JSON.parse(sc);
-        } catch (e) {}
-        const mergedTopics = [...storedCustom, ...effectiveTopics];
-        setTopics(mergedTopics);
-        
-        let guestProgress = {};
-        let guestStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
-        let guestCategories = STARTER_ENABLED_CATEGORIES;
-        let guestHistory = [];
-        try {
-          const savedProgress = localStorage.getItem('daily_dive_guest_progress');
-          if (savedProgress) guestProgress = JSON.parse(savedProgress);
-          const savedStreaks = localStorage.getItem('daily_dive_guest_streaks');
-          if (savedStreaks) guestStreaks = JSON.parse(savedStreaks);
-          const savedHistory = localStorage.getItem('daily_dive_history');
-          if (savedHistory) guestHistory = JSON.parse(savedHistory);
-          const savedSettings = localStorage.getItem('daily_dive_guest_settings');
-          if (savedSettings) {
-            const parsed = JSON.parse(savedSettings);
-            guestCategories = parsed?.enabled_categories || {};
-          }
-        } catch (e) {}
-
-        setUserProgressMap(guestProgress);
-        setUserStreaks(guestStreaks);
-        setHistory(guestHistory);
-        const initialSelected = selectWeightedTopic(mergedTopics, guestProgress, guestCategories);
-        setCurrentTopic(initialSelected || mergedTopics[0]);
-        return;
-      }
-
-      const [dbTopics, progress, streaks, settings] = await Promise.all([
-        DataService.fetchTopics().catch(() => INITIAL_TOPICS),
-        DataService.fetchUserProgress(userId).catch(() => ({})),
-        DataService.fetchUserStreaks(userId).catch(() => ({ current_streak: 0, longest_streak: 0, last_active_date: null })),
-        DataService.fetchUserSettings(userId).catch(() => null)
-      ]);
-
-      const effectiveTopics = (dbTopics && dbTopics.length >= INITIAL_TOPICS.length) ? dbTopics : INITIAL_TOPICS;
       let storedCustom = [];
       try {
         const sc = localStorage.getItem('daily_dive_custom_topics');
         if (sc) storedCustom = JSON.parse(sc);
       } catch (e) {}
-      const mergedTopics = [...storedCustom, ...effectiveTopics];
+      const mergedTopics = [...storedCustom, ...INITIAL_TOPICS];
       setTopics(mergedTopics);
-      setUserProgressMap(progress || {});
-      if (streaks) setUserStreaks(streaks);
-      if (settings) {
-        setUserSettings({
-          enabled_categories: settings.enabled_categories || {},
-          reminder_time: settings.reminder_time || '09:00 AM',
-          notifications_enabled: Boolean(settings.notifications_enabled),
-          sound_enabled: settings.sound_enabled !== false,
-          haptics_enabled: settings.haptics_enabled !== false
-        });
-      }
+      setCustomTopics(storedCustom);
+      
+      let guestProgress = {};
+      let guestStreaks = { current_streak: 0, longest_streak: 0, last_active_date: null };
+      let guestCategories = STARTER_ENABLED_CATEGORIES;
+      let guestHistory = [];
+      try {
+        const savedProgress = localStorage.getItem('daily_dive_guest_progress');
+        if (savedProgress) guestProgress = JSON.parse(savedProgress);
+        const savedStreaks = localStorage.getItem('daily_dive_guest_streaks');
+        if (savedStreaks) guestStreaks = JSON.parse(savedStreaks);
+        const savedHistory = localStorage.getItem('daily_dive_history');
+        if (savedHistory) guestHistory = JSON.parse(savedHistory);
+        const savedSettings = localStorage.getItem('daily_dive_guest_settings');
+        if (savedSettings) {
+          const parsed = JSON.parse(savedSettings);
+          guestCategories = parsed?.enabled_categories || {};
+        }
+      } catch (e) {}
 
-      const initialSelected = selectWeightedTopic(effectiveTopics, progress || {}, settings?.enabled_categories || {});
-      setCurrentTopic(initialSelected || effectiveTopics[0]);
+      setUserProgressMap(guestProgress);
+      setUserStreaks(guestStreaks);
+      setHistory(guestHistory);
+      const initialSelected = selectWeightedTopic(mergedTopics, guestProgress, guestCategories);
+      setCurrentTopic(initialSelected || mergedTopics[0]);
     } catch (err) {
       console.warn('Local topic data loaded as default fallback:', err);
     } finally {
       setLoadingData(false);
     }
-  }, [showToast]);
+  }, []);
 
   useEffect(() => {
-    if (authLoading) return;
-    loadData(user?.id);
-  }, [user?.id, authLoading, loadData]);
+    loadData();
+  }, [loadData]);
 
   // Filtered / eligible topics
   const eligibleTopics = useMemo(() => {
@@ -270,16 +235,9 @@ export const DataProvider = ({ children }) => {
         } catch (e) {}
         return updated;
       });
-
-      // 4. Sync with server if authenticated
-      if (user?.id) {
-        DataService.recordSpin(user.id, result.id, userProgressMap, userStreaks).catch(e => {
-          console.warn('Could not sync spin to server:', e);
-        });
-      }
     }
     return result;
-  }, [topics, userProgressMap, userSettings.enabled_categories, eligibleTopics, user, userStreaks]);
+  }, [topics, userProgressMap, userSettings.enabled_categories, eligibleTopics, userStreaks]);
 
   // Mark topic as learned with local & streak tracking
   const markCurrentTopicLearned = useCallback(async () => {
@@ -323,15 +281,8 @@ export const DataProvider = ({ children }) => {
       return updated;
     });
 
-    // 4. Sync with server if authenticated
-    if (user?.id) {
-      DataService.markTopicLearned(user.id, currentTopic.id, userProgressMap, userStreaks).catch(e => {
-        console.warn('Could not sync learned status to server:', e);
-      });
-    }
-
     showToast('Marked as learned! Streak updated.', 'success');
-  }, [currentTopic, showToast, user, userProgressMap, userStreaks]);
+  }, [currentTopic, showToast, userProgressMap, userStreaks]);
 
   // Clear local history
   const clearHistory = useCallback(() => {
@@ -342,41 +293,21 @@ export const DataProvider = ({ children }) => {
     showToast('Learning history cleared from this device.', 'info');
   }, [showToast]);
 
-  // Update Settings patch
-  const updateSettings = useCallback(async (patch) => {
-    if (!isOnline) {
-      showToast("You're offline — reconnect to save this", 'warning');
-      return;
-    }
-
-    const newSettings = { ...userSettings, ...patch };
-    setUserSettings(newSettings);
-
-    if (typeof window !== 'undefined') {
-      try {
-        localStorage.setItem('daily_dive_guest_settings', JSON.stringify(newSettings));
-      } catch (e) {}
-    }
-
-    if (user) {
-      try {
-        await DataService.updateUserSettings(user.id, patch);
-      } catch (err) {
-        console.warn('Could not sync user settings with server:', err);
+  // Update Settings patch (fully offline-first)
+  const updateSettings = useCallback((patch) => {
+    setUserSettings(prev => {
+      const newSettings = { ...prev, ...patch };
+      if (typeof window !== 'undefined') {
+        try {
+          localStorage.setItem('daily_dive_guest_settings', JSON.stringify(newSettings));
+        } catch (e) {}
       }
-    }
-  }, [isOnline, userSettings, user]);
+      return newSettings;
+    });
+  }, []);
 
   // Reset all data
-  const resetAllData = useCallback(async () => {
-    if (user) {
-      try {
-        await DataService.resetUserData(user.id);
-      } catch (err) {
-        console.warn('Could not reset server data:', err);
-      }
-    }
-
+  const resetAllData = useCallback(() => {
     if (typeof window !== 'undefined') {
       try {
         localStorage.removeItem('daily_dive_guest_settings');
@@ -389,23 +320,27 @@ export const DataProvider = ({ children }) => {
     setUserProgressMap({});
     setUserStreaks({ current_streak: 0, longest_streak: 0, last_active_date: null });
     showToast('All progress and streak records have been reset.', 'success');
-  }, [user, showToast]);
+  }, [showToast]);
 
   // Import JSON backup
-  const importDataBackup = useCallback(async (parsedBackup) => {
-    if (parsedBackup.user_progress) setUserProgressMap(parsedBackup.user_progress);
-    if (parsedBackup.user_streaks) setUserStreaks(parsedBackup.user_streaks);
-    if (parsedBackup.user_settings) setUserSettings(prev => ({ ...prev, ...parsedBackup.user_settings }));
-
-    if (user) {
-      try {
-        await DataService.importUserData(user.id, parsedBackup);
-      } catch (err) {
-        console.warn('Could not sync backup to server:', err);
-      }
+  const importDataBackup = useCallback((parsedBackup) => {
+    if (parsedBackup.user_progress) {
+      setUserProgressMap(parsedBackup.user_progress);
+      try { localStorage.setItem('daily_dive_guest_progress', JSON.stringify(parsedBackup.user_progress)); } catch (e) {}
+    }
+    if (parsedBackup.user_streaks) {
+      setUserStreaks(parsedBackup.user_streaks);
+      try { localStorage.setItem('daily_dive_guest_streaks', JSON.stringify(parsedBackup.user_streaks)); } catch (e) {}
+    }
+    if (parsedBackup.user_settings) {
+      setUserSettings(prev => {
+        const next = { ...prev, ...parsedBackup.user_settings };
+        try { localStorage.setItem('daily_dive_guest_settings', JSON.stringify(next)); } catch (e) {}
+        return next;
+      });
     }
     showToast('Backup imported successfully', 'success');
-  }, [user, showToast]);
+  }, [showToast]);
 
   // Restore expired topics from undo window
   const restoreExpiredTopics = useCallback((topicsToRestore) => {

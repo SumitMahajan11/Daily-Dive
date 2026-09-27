@@ -50,20 +50,6 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.pathname.includes('/rest/v1/topics'),
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'supabase-topics-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 * 7 // 7 days
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          },
-          {
             urlPattern: ({ url }) =>
               url.hostname.includes('fonts.googleapis.com') ||
               url.hostname.includes('fonts.gstatic.com'),

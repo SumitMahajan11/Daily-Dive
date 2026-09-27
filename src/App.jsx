@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion } from 'framer-motion';
-import { AuthProvider, useAuth } from './context/AuthContext';
 import { DataProvider, useData } from './context/DataContext';
 import { Navbar } from './components/Navbar/Navbar';
 import { BottomNavigation } from './components/Navbar/BottomNavigation';
@@ -9,7 +8,6 @@ import { ExtractScreen } from './components/Screens/ExtractScreen';
 import { FilterScreen } from './components/Screens/FilterScreen';
 import { ProgressScreen } from './components/Screens/ProgressScreen';
 import { SettingsScreen } from './components/Screens/SettingsScreen';
-import { AuthScreen } from './components/Auth/AuthScreen';
 import { Hero } from './components/Landing/Hero';
 import { ToastContainer } from './components/UI/Toast';
 import { Skeleton } from './components/UI/Skeleton';
@@ -42,7 +40,6 @@ const HorizontalSeparator = () => (
 );
 
 const MainLayout = () => {
-  const { user } = useAuth();
   const { topics, eligibleTopics, userProgressMap, loadingData } = useData();
   const [activeSection, setActiveSection] = useState('spin');
 
@@ -93,7 +90,7 @@ const MainLayout = () => {
     return () => observer.disconnect();
   }, []);
 
-  // Keyboard shortcuts: 1-4 scroll to sections
+  // Keyboard shortcuts: 1-5 scroll to sections
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
@@ -175,16 +172,12 @@ const MainLayout = () => {
         </aside>
 
         {/* Scrollable Content — all sections stacked vertically */}
-        {/* Scrollable Content — all sections stacked vertically */}
         <main className="flex-1 w-full overflow-x-hidden">
 
-          {/* Introductory Hero (only when not signed in) */}
-          {!user && (
-            <Hero
-              onGetStarted={() => scrollToSection('spin')}
-              onSignIn={() => scrollToSection('auth')}
-            />
-          )}
+          {/* Introductory Hero */}
+          <Hero
+            onGetStarted={() => scrollToSection('spin')}
+          />
 
           {/* ── SPIN ── */}
           <section
@@ -290,29 +283,6 @@ const MainLayout = () => {
             </motion.div>
           </section>
 
-          {/* Auth section (only when not signed in) */}
-          {!user && (
-            <>
-              <HorizontalSeparator />
-              <section
-                id="auth"
-                data-section="auth"
-                ref={setSectionRef('auth')}
-                className="px-4 sm:px-8 py-8 max-w-4xl mx-auto scroll-mt-20"
-              >
-                <motion.div
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true, amount: 0.2 }}
-                  transition={{ duration: 0.5, ease: 'easeOut' }}
-                >
-                  <SectionDivider label="Account & Sync" icon={RotateCw} />
-                  <AuthScreen onAuthSuccess={() => scrollToSection('spin')} />
-                </motion.div>
-              </section>
-            </>
-          )}
-
           {/* Bottom breathing room */}
           <div className="h-16" />
         </main>
@@ -328,10 +298,9 @@ const MainLayout = () => {
 
 export default function App() {
   return (
-    <AuthProvider>
-      <DataProvider>
-        <MainLayout />
-      </DataProvider>
-    </AuthProvider>
+    <DataProvider>
+      <MainLayout />
+    </DataProvider>
   );
 }
+

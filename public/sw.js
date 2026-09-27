@@ -10,7 +10,6 @@ const APP_SHELL = [
   './icons/icon-192-maskable.png',
   './icons/icon-512-maskable.png',
   'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap',
-  'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2',
   'https://unpkg.com/lucide@latest'
 ];
 
@@ -48,37 +47,10 @@ self.addEventListener('fetch', event => {
 
   // 1. Only handle GET requests
   if (event.request.method !== 'GET') {
-    return; // Pass through to network (writes require connectivity)
+    return; // Pass through to network
   }
 
-  // 2. Supabase Topics API: Network-First with cache fallback for offline reading
-  if (url.pathname.includes('/rest/v1/topics')) {
-    event.respondWith(
-      fetch(event.request)
-        .then(networkResponse => {
-          if (networkResponse && networkResponse.status === 200) {
-            const clonedResponse = networkResponse.clone();
-            caches.open(CACHE_NAME).then(cache => {
-              cache.put(event.request, clonedResponse);
-            });
-          }
-          return networkResponse;
-        })
-        .catch(async () => {
-          console.log('[SW] Network failed for topics query, serving cached topics');
-          const cachedResponse = await caches.match(event.request);
-          if (cachedResponse) {
-            return cachedResponse;
-          }
-          return new Response(JSON.stringify([]), {
-            headers: { 'Content-Type': 'application/json' }
-          });
-        })
-    );
-    return;
-  }
-
-  // 3. Google Fonts & CDNs: Cache-First with background revalidation
+  // 2. Google Fonts & CDNs: Cache-First with background revalidation
   if (
     url.hostname.includes('fonts.googleapis.com') ||
     url.hostname.includes('fonts.gstatic.com') ||

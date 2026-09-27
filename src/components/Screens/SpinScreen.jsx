@@ -6,6 +6,8 @@ import { CATEGORY_TREE } from '../../lib/roulette';
 import {
   RotateCw,
   BookOpen,
+  FileText,
+  Layers,
   ExternalLink,
   FilterX,
   Bot,
@@ -305,6 +307,26 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     return !localStorage.getItem('daily_dive_first_run_dismissed');
   });
 
+  const selectedSource = userSettings?.content_source || 'curated';
+
+  const handleSelectContentSource = (source) => {
+    let currentCategories = { ...(userSettings?.enabled_categories || {}) };
+    if (source === 'custom') {
+      currentCategories['custom'] = true;
+      currentCategories['custom::custom-notes'] = true;
+    } else if (source === 'curated') {
+      currentCategories['custom'] = false;
+      currentCategories['custom::custom-notes'] = false;
+    } else if (source === 'blended') {
+      currentCategories['custom'] = true;
+      currentCategories['custom::custom-notes'] = true;
+    }
+    updateSettings({
+      content_source: source,
+      enabled_categories: currentCategories
+    });
+  };
+
   const toggleBroadGroup = (groupKey) => {
     const groupDef = CATEGORY_TREE.find(g => g.group === groupKey);
     if (!groupDef) return;
@@ -523,7 +545,7 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
   return (
     <div className="flex flex-col w-full max-w-2xl mx-auto pb-6">
       
-      {/* ── LIGHTWEIGHT FIRST-RUN WELCOME & STARTER PICKER ── */}
+      {/* ── UNIFIED FIRST-RUN WELCOME: CONTENT SOURCE & STARTER CATEGORY ONBOARDING ── */}
       <AnimatePresence>
         {showFirstRunPicker && (
           <motion.div
@@ -547,10 +569,10 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
 
               <div className="flex items-center gap-2 mb-1.5">
                 <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-primary/10 text-primary border border-primary/25">
-                  <Sparkles size={11} /> Starter Focus Active
+                  <Sparkles size={11} /> First-Run Onboarding
                 </span>
                 <span className="text-[11px] font-mono text-outline">
-                  {eligibleTopics.length} topics selected
+                  {eligibleTopics.length} topics ready in pool
                 </span>
               </div>
 
@@ -558,43 +580,149 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
                 Welcome to Daily Dive
               </h2>
               <p className="text-xs sm:text-sm text-on-surface-variant mt-1 leading-relaxed max-w-xl">
-                To keep learning bite-sized and approachable, we’ve started you with a curated focus in Tech &amp; Cognition. Tap any broad area to customize your roulette:
+                Configure your learning intake in one place. Choose your primary content stream and customize your starter focus areas:
               </p>
 
-              {/* 4 Broad Category Toggles */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 mt-3.5">
-                {CATEGORY_TREE.map(groupDef => {
-                  const isGroupActive = userSettings?.enabled_categories?.[groupDef.group] !== false;
-                  return (
-                    <button
-                      key={groupDef.group}
-                      type="button"
-                      onClick={() => toggleBroadGroup(groupDef.group)}
-                      className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
-                        isGroupActive
-                          ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
-                          : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
-                      }`}
-                    >
-                      <div className="flex items-center justify-between w-full mb-1">
-                        <span className={`text-[10px] font-mono uppercase font-bold tracking-wider ${isGroupActive ? 'text-primary' : 'text-outline'}`}>
-                          {groupDef.label}
+              {/* ── STEP 1: CONTENT SOURCE SELECTION ── */}
+              <div className="mt-4 pt-3 border-t border-outline-variant/15">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-outline flex items-center gap-1.5">
+                    <Layers size={13} className="text-primary" /> 1. Content Source Stream
+                  </span>
+                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary">
+                    {selectedSource === 'curated' && 'Curated Syllabus'}
+                    {selectedSource === 'custom' && 'Custom Intake'}
+                    {selectedSource === 'blended' && 'Blended Mode'}
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  {/* Curated Syllabus */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectContentSource('curated')}
+                    className={`flex flex-col p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                      selectedSource === 'curated'
+                        ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
+                        : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <BookOpen size={13} className={selectedSource === 'curated' ? 'text-primary' : 'text-outline'} />
+                        <span className={`text-[11px] font-bold ${selectedSource === 'curated' ? 'text-primary' : 'text-on-surface'}`}>
+                          Curated Syllabus
                         </span>
-                        <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${isGroupActive ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
-                          {isGroupActive ? '✓' : ''}
-                        </div>
                       </div>
-                      <span className="text-[11px] leading-tight font-medium line-clamp-1">
-                        {groupDef.group === 'tech' && 'AI & Web Architecture'}
-                        {groupDef.group === 'money-career' && 'Finance & Strategy'}
-                        {groupDef.group === 'mind-growth' && 'Psychology & Logic'}
-                        {groupDef.group === 'world-ideas' && 'Science & History'}
-                      </span>
-                    </button>
-                  );
-                })}
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${selectedSource === 'curated' ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
+                        {selectedSource === 'curated' ? '✓' : ''}
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-outline leading-tight mt-0.5">
+                      692 vetted topics across Tech, Money, Mind &amp; Ideas.
+                    </span>
+                  </button>
+
+                  {/* Custom Document Intake */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectContentSource('custom')}
+                    className={`flex flex-col p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                      selectedSource === 'custom'
+                        ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
+                        : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <FileText size={13} className={selectedSource === 'custom' ? 'text-primary' : 'text-outline'} />
+                        <span className={`text-[11px] font-bold ${selectedSource === 'custom' ? 'text-primary' : 'text-on-surface'}`}>
+                          Custom Intake
+                        </span>
+                      </div>
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${selectedSource === 'custom' ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
+                        {selectedSource === 'custom' ? '✓' : ''}
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-outline leading-tight mt-0.5">
+                      Focus on uploaded PDFs, slides &amp; research notes.
+                    </span>
+                  </button>
+
+                  {/* Blended Mode */}
+                  <button
+                    type="button"
+                    onClick={() => handleSelectContentSource('blended')}
+                    className={`flex flex-col p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                      selectedSource === 'blended'
+                        ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
+                        : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
+                    }`}
+                  >
+                    <div className="flex items-center justify-between w-full mb-1">
+                      <div className="flex items-center gap-1.5">
+                        <Sparkles size={13} className={selectedSource === 'blended' ? 'text-primary' : 'text-outline'} />
+                        <span className={`text-[11px] font-bold ${selectedSource === 'blended' ? 'text-primary' : 'text-on-surface'}`}>
+                          Blended Mode
+                        </span>
+                      </div>
+                      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${selectedSource === 'blended' ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
+                        {selectedSource === 'blended' ? '✓' : ''}
+                      </div>
+                    </div>
+                    <span className="text-[10px] text-outline leading-tight mt-0.5">
+                      Harmonious mix of curated syllabus + your uploads.
+                    </span>
+                  </button>
+                </div>
               </div>
 
+              {/* ── STEP 2: STARTER FOCUS AREAS (REAL 4 CATEGORY GROUPS) ── */}
+              <div className="mt-3.5 pt-3 border-t border-outline-variant/15">
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-outline flex items-center gap-1.5">
+                    <Sliders size={13} className="text-primary" /> 2. Category Focus Areas
+                  </span>
+                  <span className="text-[10px] font-mono text-outline">
+                    {CATEGORY_TREE.filter(g => userSettings?.enabled_categories?.[g.group] !== false).length} of 4 groups active
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+                  {CATEGORY_TREE.map(groupDef => {
+                    const isGroupActive = userSettings?.enabled_categories?.[groupDef.group] !== false;
+                    return (
+                      <button
+                        key={groupDef.group}
+                        type="button"
+                        onClick={() => toggleBroadGroup(groupDef.group)}
+                        className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
+                          isGroupActive
+                            ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
+                            : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
+                        }`}
+                      >
+                        <div className="flex items-center justify-between w-full mb-1">
+                          <span className={`text-[10px] font-mono uppercase font-bold tracking-wider ${isGroupActive ? 'text-primary' : 'text-outline'}`}>
+                            {groupDef.label}
+                          </span>
+                          <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${isGroupActive ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
+                            {isGroupActive ? '✓' : ''}
+                          </div>
+                        </div>
+                        <span className="text-[11px] leading-tight font-medium line-clamp-1">
+                          {groupDef.group === 'tech' && 'AI & Web Architecture'}
+                          {groupDef.group === 'money-career' && 'Finance & Strategy'}
+                          {groupDef.group === 'mind-growth' && 'Psychology & Logic'}
+                          {groupDef.group === 'world-ideas' && 'Science & History'}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
+              {/* ── ACTIONS ── */}
               <div className="flex items-center justify-between flex-wrap gap-2.5 mt-4 pt-3 border-t border-outline-variant/20">
                 <Button
                   variant="primary"

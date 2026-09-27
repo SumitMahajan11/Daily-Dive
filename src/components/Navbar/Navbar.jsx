@@ -1,13 +1,11 @@
 import React from 'react';
 import { Flame, Disc, Sun, Moon } from 'lucide-react';
-import { useAuth } from '../../context/AuthContext';
 import { useData } from '../../context/DataContext';
 import { useTheme } from '../../context/ThemeContext';
 import { UserMenu } from './UserMenu';
 
 export const Navbar = ({ activeTab, onNavigateTab }) => {
-  const { user } = useAuth();
-  const { userStreaks, effectiveStreak, isOnline } = useData();
+  const { userStreaks, effectiveStreak } = useData();
   const { theme, toggleTheme } = useTheme();
 
   const streak = (effectiveStreak || userStreaks)?.current_streak || 0;
@@ -20,7 +18,6 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
       case 'filter': return 'Category Filters';
       case 'progress': return 'Progress & Metrics';
       case 'settings': return 'Settings & Preferences';
-      case 'auth': return 'Account Access';
       default: return 'Daily Dive';
     }
   };

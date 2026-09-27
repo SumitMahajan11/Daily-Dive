@@ -10,7 +10,7 @@ A distraction-free, privacy-first progressive web application (PWA) for daily mi
 - **500+ Curated Topics**: 9 core knowledge domains with concise summaries, actionable mental models, and verified authoritative reference links (arXiv, Stanford Encyclopedia of Philosophy, official docs, etc.).
 - **Spaced Repetition & Progress**: Tracks mastery counts, daily streak milestones, and upcoming review items.
 - **PWA & Offline First**: Full offline support via Service Worker caching and progressive install support on desktop and mobile.
-- **Optional Cloud Sync**: Guest mode by default with Supabase authentication and cross-device synchronization.
+- **Local Device Storage & Privacy-First**: 100% account-free, privacy-first local architecture. No cloud database or credentials required.
 
 ---
 
@@ -19,9 +19,9 @@ A distraction-free, privacy-first progressive web application (PWA) for daily mi
 ```text
 ├── public/                 # Static assets, PWA manifest.json, sw.js, and icons
 ├── src/                    # Application source code
-│   ├── components/         # UI screens, navbar, modals, and auth widgets
-│   ├── context/            # React Context providers (AuthContext, DataContext)
-│   ├── lib/                # Roulette engine, Supabase client, audio, data service
+│   ├── components/         # UI screens (Spin, Extract, Filter, Progress, Settings), navbar, modals
+│   ├── context/            # React Context providers (DataContext, ThemeContext)
+│   ├── lib/                # Roulette engine, audio synthesis, topic extractors, notifications
 │   ├── App.jsx             # Main layout & navigation container
 │   ├── index.css           # Tailwind design tokens & base typography
 │   └── main.jsx            # React root mount
@@ -80,24 +80,11 @@ To regenerate SQL seed scripts from the CSV files:
 python scripts/generation/generate_sql_seed.py
 ```
 
----
+## Production Deployment (Vercel / Netlify / Static Hosting)
 
-## Production Deployment
-
-### 1. Supabase Setup
-1. Create a project on [Supabase](https://supabase.com).
-2. Run [`seeds/supabase_schema.sql`](seeds/supabase_schema.sql) in the **SQL Editor** to create tables and RLS security policies.
-3. Run the 9 `seeds/seed_topics_*.sql` scripts in the **SQL Editor** to populate topic datasets.
-4. Under **Authentication -> URL Configuration**, set your **Site URL** and add your production domain to **Redirect URLs**.
-
-### 2. Vercel Deployment
-1. Import the repository in [Vercel](https://vercel.com).
-2. Set the Framework Preset to **Vite**.
-3. Add the following environment variables for Production:
-   - `VITE_SUPABASE_URL`: `https://<your-project-ref>.supabase.co`
-   - `VITE_SUPABASE_ANON_KEY`: `<your-supabase-anon-key>`
-   - `VITE_AUTH_REDIRECT_URL`: `https://<your-app>.vercel.app`
-4. Deploy.
+1. Import the repository in [Vercel](https://vercel.com) or your preferred static host.
+2. Set the Framework Preset to **Vite** with build command `npm run build` and output directory `dist`.
+3. Deploy — zero external database credentials or API keys needed.
 
 ---
 
