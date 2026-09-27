@@ -153,7 +153,7 @@ function inferCategory(text) {
  */
 function cleanTitle(line) {
   return (line || '')
-    .replace(/^(\d+[\.\)]\s*|slide\s*\d+:?\s*|chapter\s*\d+:?\s*|[#\-*•·]\s*)/i, '')
+    .replace(/^(?:\d+[\.\)]\s*|slide\s*\d+:?\s*|chapter\s*\d+:?\s*|#{1,6}\s*|[#\-*•·]+\s*)/i, '')
     .replace(/^(?:practical|experiment|lab|assignment|exercise|task)\s*\d+[:\s-]*/i, '')
     .replace(/[\s\-_|•·\d:]+$/, '')
     .replace(/\s+/g, ' ')
@@ -270,6 +270,200 @@ export function isTruncatedOrNonTerminal(str) {
   if (openBracket !== closeBracket) return true;
 
   return false;
+}
+
+export const CONFIDENCE_THRESHOLD = 75;
+
+/**
+ * Evaluates candidate title quality and returns a confidence score (0-100)
+ * along with specific review reasons and flags.
+ * 
+ * Rules:
+ * - Base score: 70
+ * - Structural XML placeholder: +20
+ * - Domain concept terms: +15
+ * - Well-formed Title Case noun phrase: +10
+ * - Deductions:
+ *   - Trailing punctuation (, ; : - – — / \ etc.): -45
+ *   - Open date ranges (e.g. "2021–"): -40
+ *   - ALL-CAPS raw heading: -35
+ *   - Table-like shape or column header: -45
+ *   - Mid-sentence fragment / conversational prefix: -45
+ *   - Leading action verb / incomplete predicate: -40
+ *   - Trailing non-terminal connector / preposition: -40
+ *   - Length outlier (< 5 chars: -40, > 55 chars: -25)
+ *   - Unbalanced brackets/parentheses: -35
+ *   - UI / procedural / diagram artifact: -50
+ *   - Generic structural section header: -25
+ */
+export function scoreCandidateTitle(title, context = {}) {
+  const { isStructuralTitle = false, unitText = '', docBaseLower = '' } = context;
+  const raw = (title || '').trim();
+  const reasons = [];
+  const deductions = [];
+  const boosts = [];
+
+  if (!raw || raw.length === 0) {
+    return {
+      confidence: 0,
+      confidence_rating: 'low',
+      isHighConfidence: false,
+      needsReview: true,
+      reviewReasons: ['Empty title candidate'],
+      deductions: ['Empty (-100)'],
+      boosts: []
+    };
+  }
+
+  let score = 70;
+
+  // ── Boosts ──
+  // 1. Structural title from slide XML
+  if (isStructuralTitle) {
+    score += 20;
+    boosts.push('Extracted from slide XML title placeholder (+20)');
+  }
+
+  // 2. Domain concept keywords
+  const domainConceptRegex = /\b(?:architecture|algorithm|framework|protocol|analysis|pipeline|optimization|consensus|replication|filtering|subnetting|benchmarks?|methodology|foundations?|principles?|isolation|concurrency|caching|indexing|clustering|security|governance|scalability|models?|heuristics?|comfort|thermal)\b/i;
+  if (domainConceptRegex.test(raw)) {
+    score += 15;
+    boosts.push('Recognized domain technical concept (+15)');
+  }
+
+  // 3. Well-formed Title Case noun phrase
+  const words = raw.split(/\s+/).filter(Boolean);
+  const minorWords = new Set(['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'over', 'in', 'of', 'into', 'with', 'vs', '&']);
+  const isTitleCased = words.length >= 2 && words.every((w, idx) => {
+    if (idx > 0 && minorWords.has(w.toLowerCase())) return true;
+    return /^[A-Z0-9]/.test(w);
+  });
+  if (isTitleCased && words.length >= 2 && words.length <= 6) {
+    score += 10;
+    boosts.push('Well-formed Title Case noun phrase (+10)');
+  }
+
+  // ── Deductions ──
+  // 1. Trailing punctuation
+  if (/[,;:\-–—/\\&+([]\s*$/.test(raw)) {
+    score -= 45;
+    reasons.push('Trailing punctuation or incomplete delimiter');
+    deductions.push('Trailing punctuation (-45)');
+  }
+
+  // 2. Open date ranges or year spans (e.g. "2021–", "2020-")
+  if (/\b\d{4}\s*[\-–—]\s*$/.test(raw)) {
+    score -= 40;
+    reasons.push('Open date range or trailing hyphen');
+    deductions.push('Open date range (-40)');
+  }
+
+  // 3. Trailing non-terminal tokens, prepositions, or conjunctions
+  if (/\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)\s*$/i.test(raw)) {
+    score -= 40;
+    reasons.push('Ends with non-terminal connector or preposition');
+    deductions.push('Trailing connector (-40)');
+  }
+
+  // 4. ALL-CAPS raw heading
+  const letters = raw.replace(/[^A-Za-z]/g, '');
+  if (letters.length >= 3 && letters === letters.toUpperCase()) {
+    score -= 35;
+    reasons.push('ALL-CAPS raw heading');
+    deductions.push('ALL-CAPS (-35)');
+  }
+
+  // 5. Table-like shape or column headers
+  const tableHeaderRegex = /^(?:paper|method|reported\s*results?|results?|metrics?|dataset|author|year|accuracy|precision|recall|f1[\s-]score|parameters?)\b/i;
+  if (tableHeaderRegex.test(raw) || /[\t|]/.test(raw) || /\s{3,}/.test(raw)) {
+    score -= 45;
+    reasons.push('Table-like structure or column header');
+    deductions.push('Table/matrix structure (-45)');
+  }
+
+  // 6. Mid-sentence fragments or incomplete predicates
+  if (/^(?:existing\s+research\s+includes?|studies\s+show\s+that|we\s+propose|this\s+paper\s+presents|in\s+order\s+to|as\s+shown\s+in|according\s+to)\b/i.test(raw)) {
+    score -= 45;
+    reasons.push('Mid-sentence introductory fragment');
+    deductions.push('Introductory fragment (-45)');
+  }
+
+  // 7. Action verbs / imperative predicates at start of title
+  if (/^(?:compare|comparing|predicts?|demonstrates?|describes?|shows?|evaluates?|requires?|focuses?|develops?|illustrates?|presents?|compares?|improves?|combines?)\b/i.test(raw)) {
+    score -= 40;
+    reasons.push('Incomplete predicate or leading action verb');
+    deductions.push('Leading action verb (-40)');
+  }
+
+  // 8. Length outliers
+  if (raw.length < 5 || words.length <= 1) {
+    score -= 40;
+    reasons.push('Length outlier (too short or single word)');
+    deductions.push('Too short (-40)');
+  } else if (raw.length > 55) {
+    score -= 25;
+    reasons.push('Length outlier (excessive length for topic title)');
+    deductions.push('Excessive length (-25)');
+  }
+
+  // 9. Unbalanced brackets or parentheses
+  const openParen = (raw.match(/\(/g) || []).length;
+  const closeParen = (raw.match(/\)/g) || []).length;
+  const openBracket = (raw.match(/\[/g) || []).length;
+  const closeBracket = (raw.match(/\]/g) || []).length;
+  if (openParen !== closeParen || openBracket !== closeBracket) {
+    score -= 35;
+    reasons.push('Unbalanced parentheses or brackets');
+    deductions.push('Unbalanced parentheses (-35)');
+  }
+
+  // 10. UI widgets, diagrams, procedural steps
+  const uiRegex = /^(?:the\s+)?(?:display\s+filter\s+bar|main\s+toolbar|menu\s+bar|packet\s+(?:list|details|bytes)\s+pane|status\s+bar|scroll\s+bar|title\s+bar|navigation\s+pane|side\s+panel|dialog\s+box|window|button|tab)\b/i;
+  const stepRegex = /^(?:step|task|activity|exercise|part|phase|stage|question|q\s*\.?)\s*\d+[\s:.\-]/i;
+  const figureRegex = /^(?:\[?(?:figure|fig\.?|diagram|screenshot|photo|image|table|graph|chart|output|observation)[\s:\]\d]|\b(?:screenshot of|diagram showing|network diagram)\b)/i;
+  const imperativeRegex = /^(?:click\s+on|select\s+the|choose\s+a|double[\s-]click|right[\s-]click|press\s+enter|navigate\s+to|open\s+the|close\s+the|wait\s+for|measure\s+and|enter\s+the|type\s+the|drag\s+the|scroll\s+down|check\s+the|switch\s+to|run\s+the)\b/i;
+
+  if (uiRegex.test(raw)) {
+    score -= 50;
+    reasons.push('UI component artifact');
+    deductions.push('UI artifact (-50)');
+  }
+  if (stepRegex.test(raw)) {
+    score -= 50;
+    reasons.push('Procedural step artifact');
+    deductions.push('Procedural step (-50)');
+  }
+  if (figureRegex.test(raw)) {
+    score -= 50;
+    reasons.push('Figure or diagram label artifact');
+    deductions.push('Figure label (-50)');
+  }
+  if (imperativeRegex.test(raw)) {
+    score -= 45;
+    reasons.push('Imperative procedural instruction');
+    deductions.push('Imperative instruction (-45)');
+  }
+
+  // 11. Generic structural academic markers
+  const genericHeaders = /^(?:aim|objective|introduction|overview|background|theory|procedure|conclusion|summary|methodology|proposed\s+work|research\s+gap|problem\s+statement)$/i;
+  if (genericHeaders.test(raw.replace(/^[\d\.\)]+\s*/, '').trim())) {
+    score -= 25;
+    reasons.push('Generic structural section heading');
+    deductions.push('Generic heading (-25)');
+  }
+
+  const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+  const isHighConfidence = finalScore >= CONFIDENCE_THRESHOLD;
+
+  return {
+    confidence: finalScore,
+    confidence_rating: finalScore >= 75 ? 'high' : finalScore >= 50 ? 'medium' : 'low',
+    isHighConfidence,
+    needsReview: !isHighConfidence,
+    reviewReasons: reasons,
+    deductions,
+    boosts
+  };
 }
 
 /**
@@ -583,28 +777,55 @@ export function stripRepeatingBoilerplate(rawPages = []) {
  * @param {string} sourceFileName
  * @returns {Array<{ id: string, title: string, description: string, category: string, group_name: string, tags: string[], source: string, is_custom: boolean }>}
  */
-export function extractTopicsLocally(fullText, rawSections = [], sourceFileName = 'uploaded_file') {
+export function extractTopicsLocally(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
   const docBaseName = sourceFileName
     .replace(/\.[^/.]+$/, '')
     .replace(/[_\-]+/g, ' ')
     .trim();
   const docBaseLower = docBaseName.toLowerCase();
 
-  // Step 1: Strip repeating page headers, footers & metadata boilerplate across sections
-  let cleanedSections = rawSections && rawSections.length > 0 ? stripRepeatingBoilerplate(rawSections) : [];
+  // Normalize sections and attach structural title metadata if provided
+  const slideMetadata = options.slideMetadata || [];
+  const normalizedSections = (rawSections && rawSections.length > 0 ? rawSections : []).map((sec, idx) => {
+    if (typeof sec === 'string') {
+      const meta = slideMetadata[idx] || {};
+      return {
+        text: sec,
+        structuralTitle: meta.structuralTitle || null,
+        slideNumber: meta.slideNumber || (idx + 1)
+      };
+    } else if (sec && typeof sec === 'object') {
+      return {
+        text: sec.text || '',
+        structuralTitle: sec.structuralTitle || null,
+        slideNumber: sec.slideNumber || (idx + 1)
+      };
+    }
+    return { text: String(sec), structuralTitle: null, slideNumber: idx + 1 };
+  });
 
-  // Step 2: Filter out non-content structural slides (cover, outline, references, closing)
+  const rawSectionTexts = normalizedSections.map(s => s.text);
+  let cleanedSectionTexts = rawSectionTexts.length > 0 ? stripRepeatingBoilerplate(rawSectionTexts) : [];
+
+  // Filter out non-content structural slides (cover, outline, references, closing)
   const validSections = [];
-  (cleanedSections || []).forEach((sec, idx) => {
-    const rawSec = rawSections[idx] || sec;
-    const rawLines = rawSec.split('\n').map(l => cleanText(l)).filter(Boolean);
-    const lines = sec.split('\n').map(l => cleanText(l)).filter(Boolean);
+  (cleanedSectionTexts || []).forEach((secText, idx) => {
+    const origSec = normalizedSections[idx];
+    const rawText = origSec ? origSec.text : secText;
+    const rawLines = rawText.split('\n').map(l => cleanText(l)).filter(Boolean);
+    const lines = secText.split('\n').map(l => cleanText(l)).filter(Boolean);
     if (lines.length === 0) return;
     if (isCoverSlide(rawLines) || isCoverSlide(lines)) return;
     if (isOutlineSlide(rawLines) || isOutlineSlide(lines)) return;
     if (isReferencesSlide(rawLines) || isReferencesSlide(lines)) return;
     if (isClosingSlide(rawLines) || isClosingSlide(lines)) return;
-    validSections.push({ index: idx, lines, text: lines.join('\n') });
+    validSections.push({
+      index: idx,
+      lines,
+      text: lines.join('\n'),
+      structuralTitle: origSec?.structuralTitle || null,
+      slideNumber: origSec?.slideNumber || (idx + 1)
+    });
   });
 
   // Fallback: If raw sections were not provided or all filtered, parse from fullText
@@ -616,7 +837,13 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     splitByBreaks.forEach((b, idx) => {
       const lines = b.split('\n').map(l => cleanText(l)).filter(Boolean);
       if (lines.length > 0 && !isCoverSlide(lines) && !isOutlineSlide(lines) && !isReferencesSlide(lines)) {
-        validSections.push({ index: idx, lines, text: b });
+        validSections.push({
+          index: idx,
+          lines,
+          text: b,
+          structuralTitle: null,
+          slideNumber: idx + 1
+        });
       }
     });
   }
@@ -626,19 +853,23 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   let currentGroup = null;
 
   validSections.forEach(sec => {
-    const firstLine = sec.lines[0] || '';
+    const firstLine = sec.structuralTitle || sec.lines[0] || '';
     const cleanHead = cleanTitle(firstLine);
     const headPrefix = cleanHead.split(/[:–—\-]/)[0].trim().toLowerCase();
 
-    // Check if this slide is a continuation of the previous slide (e.g. shared prefix like "literature review")
+    // Check if this slide is a continuation of previous slide (e.g. shared prefix like "literature review")
     if (currentGroup && currentGroup.prefix && currentGroup.prefix === headPrefix && headPrefix.length > 4) {
       currentGroup.sections.push(sec);
       currentGroup.allLines.push(...sec.lines);
+      if (!currentGroup.structuralTitle && sec.structuralTitle) {
+        currentGroup.structuralTitle = sec.structuralTitle;
+      }
     } else {
       if (currentGroup) conceptualUnits.push(currentGroup);
       currentGroup = {
         prefix: headPrefix.length > 4 ? headPrefix : '',
         primaryHeader: cleanHead,
+        structuralTitle: sec.structuralTitle || null,
         sections: [sec],
         allLines: [...sec.lines]
       };
@@ -646,7 +877,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   });
   if (currentGroup) conceptualUnits.push(currentGroup);
 
-  // Step 4: Synthesize Candidate Topics
+  // Step 4: Synthesize Candidate Topics with Confidence Scoring
   const candidateTopics = [];
   const seenTitles = new Set();
   const timestamp = Date.now();
@@ -659,59 +890,103 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     const tokens = tokenize(unitText);
     if (tokens.length < 15) return;
 
-    // Determine heading candidate from first 4 non-bullet lines
-    let headingCandidate = '';
-    for (let i = 0; i < Math.min(4, lines.length); i++) {
-      const l = cleanTitle(lines[i]);
-      if (/^[•\-*·]\s*/.test(lines[i].trim())) continue;
-      // Skip lone numbers like "9" or "5."
-      if (/^\d+[\.\)]?$/.test(l)) continue;
-      if (
-        l.length >= 4 &&
-        l.length <= 60 &&
-        !l.endsWith('.') &&
-        !isNonTopicHeading(l) &&
-        !isTruncatedOrNonTerminal(l) &&
-        !isStructuralOrAllCaps(l)
-      ) {
-        headingCandidate = l;
-        break;
+    let candidateTitle = '';
+    let isStructural = false;
+
+    // Requirement 1: If structural title exists from slide XML placeholder, use it directly!
+    if (unit.structuralTitle && unit.structuralTitle.trim().length >= 3) {
+      candidateTitle = cleanTitle(unit.structuralTitle);
+      isStructural = true;
+    } else {
+      // Fallback: heading-detection heuristics from first 4 non-bullet lines
+      for (let i = 0; i < Math.min(4, lines.length); i++) {
+        const l = cleanTitle(lines[i]);
+        if (/^[•\-*·]\s*/.test(lines[i].trim())) continue;
+        if (/^\d+[\.\)]?$/.test(l)) continue;
+        if (
+          l.length >= 4 &&
+          l.length <= 60 &&
+          !l.endsWith('.') &&
+          !isNonTopicHeading(l) &&
+          !isTruncatedOrNonTerminal(l) &&
+          !isStructuralOrAllCaps(l)
+        ) {
+          candidateTitle = l;
+          break;
+        }
+      }
+      if (!candidateTitle && lines.length > 0) {
+        const rawFirst = cleanTitle(lines[0]);
+        if (rawFirst.length >= 4 && !/^\d+[\.\)]?$/.test(rawFirst)) {
+          candidateTitle = rawFirst;
+        }
       }
     }
 
     // Strip leading numbering: "5. Methodology" -> "Methodology"
-    headingCandidate = headingCandidate.replace(/^\d+[\.\)]\s*/, '').trim();
+    candidateTitle = candidateTitle.replace(/^\d+[\.\)]\s*/, '').trim();
 
-    // Synthesize clean, distinct title
-    let synthesizedTitle = '';
-    const lowerHead = headingCandidate.toLowerCase();
-
+    // Check if candidate matches document name repeat
+    const lowerHead = candidateTitle.toLowerCase();
     const isDocTitleRepeat = (
       lowerHead === docBaseLower ||
       (docBaseLower.length > 10 && lowerHead.includes(docBaseLower)) ||
       (lowerHead.length > 10 && docBaseLower.includes(lowerHead))
     );
 
-    if (
-      headingCandidate &&
-      !isDocTitleRepeat &&
-      !isNonTopicHeading(headingCandidate) &&
-      !isTruncatedOrNonTerminal(headingCandidate) &&
-      !isStructuralOrAllCaps(headingCandidate)
-    ) {
-      synthesizedTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(headingCandidate)), 45);
+    // Requirement 2: Score candidate title using confidence engine
+    const scoreResult = scoreCandidateTitle(candidateTitle, {
+      isStructuralTitle: isStructural,
+      unitText,
+      docBaseLower
+    });
+
+    let finalTitle = '';
+    let needsReview = scoreResult.needsReview;
+    let confidence = scoreResult.confidence;
+    let confidenceRating = scoreResult.confidence_rating;
+    let reviewReasons = [...scoreResult.reviewReasons];
+
+    if (scoreResult.isHighConfidence && !isDocTitleRepeat) {
+      finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(candidateTitle)), 45);
+      needsReview = false;
+      confidence = Math.max(75, scoreResult.confidence);
+      confidenceRating = 'high';
     } else {
-      synthesizedTitle = synthesizeDomainTitle(unitText, docBaseLower);
+      // Low confidence or flawed raw title: synthesize domain recommendation
+      const domainSynthesized = synthesizeDomainTitle(unitText, docBaseLower);
+      const synthScore = scoreCandidateTitle(domainSynthesized, { isStructuralTitle: false, unitText, docBaseLower });
+
+      if (domainSynthesized && synthScore.isHighConfidence) {
+        finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(domainSynthesized)), 45);
+        if (scoreResult.confidence < CONFIDENCE_THRESHOLD) {
+          needsReview = true;
+          confidence = scoreResult.confidence;
+          confidenceRating = scoreResult.confidence_rating;
+          if (reviewReasons.length === 0) {
+            reviewReasons.push('Low confidence raw heading: auto-synthesized');
+          }
+        } else {
+          confidence = synthScore.confidence;
+          confidenceRating = 'high';
+          needsReview = false;
+        }
+      } else {
+        finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(candidateTitle || domainSynthesized)), 45);
+        needsReview = true;
+        confidence = scoreResult.confidence;
+        confidenceRating = scoreResult.confidence_rating;
+      }
     }
 
-    // Standardize title length, Title Case, and word-boundary truncation (NEVER truncate mid-word or leave trailing non-terminal tokens)
-    synthesizedTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(synthesizedTitle)), 45);
+    // Standardize title length and formatting
+    finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(finalTitle)), 45);
 
     // Dedup check
-    if (seenTitles.has(synthesizedTitle.toLowerCase()) || synthesizedTitle.length < 4) {
+    if (seenTitles.has(finalTitle.toLowerCase()) || finalTitle.length < 4) {
       return;
     }
-    seenTitles.add(synthesizedTitle.toLowerCase());
+    seenTitles.add(finalTitle.toLowerCase());
 
     // Step 5: Synthesize Description (1-2 complete sentences, max 175 chars, ending with period)
     let desc = '';
@@ -728,7 +1003,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       const sentences = [];
       lines.forEach(l => {
         const cleaned = cleanTitle(l);
-        if (cleaned === headingCandidate || cleaned.length < 15) return;
+        if (cleaned === candidateTitle || cleaned.length < 15) return;
         if (/^(?:paper|method|reported result|table|figure)\b/i.test(cleaned)) return;
         if (/^\d+[\.\)]?$/.test(cleaned)) return;
         const sList = cleaned.split(/(?<=[.!?])\s+/);
@@ -749,7 +1024,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
         }
       } else {
         const fallbackSubstantive = lines
-          .filter(l => cleanTitle(l) !== headingCandidate && l.trim().length > 15)
+          .filter(l => cleanTitle(l) !== candidateTitle && l.trim().length > 15)
           .join(' ')
           .replace(/^[•\-*·\d\.\)]\s*/gm, '')
           .replace(/\s+/g, ' ')
@@ -778,7 +1053,14 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
     candidateTopics.push({
       id: `custom-${timestamp}-${uIdx}`,
-      title: synthesizedTitle,
+      title: finalTitle,
+      raw_heading: candidateTitle,
+      confidence,
+      confidence_rating: confidenceRating,
+      needs_review: needsReview,
+      is_confirmed: !needsReview,
+      review_reasons: reviewReasons,
+      is_structural_title: isStructural,
       description: desc,
       group_name: 'custom',
       category: 'custom-notes',
@@ -793,9 +1075,8 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     });
   });
 
-  // Calculate sane yield range based on substantive words
-  const totalWords = tokenize(fullText).length;
-  const maxAllowedYield = Math.max(3, Math.min(15, Math.round(totalWords / 75)));
+  // Calculate sane yield range (allow all valid conceptual units up to a maximum cap of 15)
+  const maxAllowedYield = Math.min(15, Math.max(3, candidateTopics.length));
 
   return candidateTopics.slice(0, maxAllowedYield);
 }

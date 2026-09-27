@@ -23,14 +23,15 @@ import {
   FileUp,
   Clock,
   Pin,
-  Layers
+  Layers,
+  Check
 } from 'lucide-react';
 import { useData } from '../../context/DataContext';
 import { extractFromPdf } from '../../lib/extractors/pdfExtractor';
 import { extractFromPptx } from '../../lib/extractors/pptxExtractor';
 import { extractFromImage } from '../../lib/extractors/imageExtractor';
 import { extractFromVideo } from '../../lib/extractors/videoExtractor';
-import { extractTopicsLocally, extractTopicsWithGemini } from '../../lib/topicExtractor';
+import { extractTopicsLocally, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD } from '../../lib/topicExtractor';
 import { Button } from '../UI/Button';
 
 export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
@@ -241,16 +242,33 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
       if (useByok && geminiApiKey.trim()) {
         try {
           topics = await extractTopicsWithGemini(extractionResult.text, geminiApiKey, file.name);
+          topics = topics.map(t => {
+            const sc = scoreCandidateTitle(t.title);
+            return {
+              ...t,
+              confidence: sc.confidence,
+              confidence_rating: sc.confidence_rating,
+              needs_review: sc.needsReview,
+              is_confirmed: !sc.needsReview,
+              review_reasons: sc.reviewReasons
+            };
+          });
         } catch (byokErr) {
           console.warn('BYOK Gemini failed, falling back to local NLP:', byokErr);
           showToast(`Gemini API failed (${byokErr.message}). Using local NLP engine.`, 'warning');
-          topics = extractTopicsLocally(extractionResult.text, extractionResult.rawSections || extractionResult.rawPages || extractionResult.rawSlides || extractionResult.rawFrames, file.name);
+          topics = extractTopicsLocally(
+            extractionResult.text,
+            extractionResult.rawSections || extractionResult.rawPages || extractionResult.rawSlides || extractionResult.rawFrames,
+            file.name,
+            { slideMetadata: extractionResult.slideMetadata }
+          );
         }
       } else {
         topics = extractTopicsLocally(
           extractionResult.text,
           extractionResult.rawSections || extractionResult.rawPages || extractionResult.rawSlides || extractionResult.rawFrames,
-          file.name
+          file.name,
+          { slideMetadata: extractionResult.slideMetadata }
         );
       }
 
@@ -292,6 +310,42 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
     setSelectedTopicIds(new Set());
   };
 
+  // Confirm single flagged topic
+  const handleConfirmTopic = (id) => {
+    setCandidateTopics(prev => prev.map(t => {
+      if (t.id !== id) return t;
+      return { ...t, is_confirmed: true, needs_review: false };
+    }));
+    showToast('Topic title confirmed!', 'success');
+  };
+
+  // Confirm all flagged topics at once
+  const handleConfirmAllFlagged = () => {
+    setCandidateTopics(prev => prev.map(t => ({
+      ...t,
+      is_confirmed: true,
+      needs_review: false
+    })));
+    showToast('All flagged topics confirmed!', 'success');
+  };
+
+  // Live title change with dynamic re-scoring
+  const handleTitleChange = (id, newTitle) => {
+    const scoreResult = scoreCandidateTitle(newTitle);
+    setCandidateTopics(prev => prev.map(t => {
+      if (t.id !== id) return t;
+      return {
+        ...t,
+        title: newTitle,
+        confidence: scoreResult.confidence,
+        confidence_rating: scoreResult.confidence_rating,
+        needs_review: scoreResult.needsReview,
+        is_confirmed: !scoreResult.needsReview,
+        review_reasons: scoreResult.reviewReasons
+      };
+    }));
+  };
+
   // Edit candidate topic fields inline
   const updateCandidateTopic = (id, field, value) => {
     setCandidateTopics(prev => prev.map(t => {
@@ -305,6 +359,16 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
     const rawSelected = candidateTopics.filter(t => selectedTopicIds.has(t.id));
     if (rawSelected.length === 0) {
       showToast('Please select at least one topic to add to your spin pool', 'warning');
+      return;
+    }
+
+    // Requirement 3: Enforce confirmation of any topic flagged below the confidence threshold
+    const unconfirmed = rawSelected.filter(t => t.needs_review && !t.is_confirmed);
+    if (unconfirmed.length > 0) {
+      showToast(
+        `Action Required: ${unconfirmed.length} topic${unconfirmed.length > 1 ? 's' : ''} flagged with "Needs review" must be confirmed or edited before entering the spin pool.`,
+        'warning'
+      );
       return;
     }
 
@@ -883,12 +947,31 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                 <FileCheck size={18} className="text-emerald-500" />
                 Review Extracted Topics ({selectedTopicIds.size} of {candidateTopics.length} selected)
               </h3>
-              <p className="text-xs text-on-surface-variant mt-0.5">
-                Deselect any irrelevant topics or refine titles and descriptions before adding to your roulette wheel.
-              </p>
+              <div className="flex items-center gap-3 mt-1 flex-wrap">
+                <span className="inline-flex items-center gap-1 text-xs font-mono font-medium text-emerald-600 dark:text-emerald-400">
+                  <CheckCircle2 size={13} />
+                  {candidateTopics.filter(t => !t.needs_review || t.is_confirmed).length} Verified (High Confidence)
+                </span>
+                {candidateTopics.some(t => t.needs_review && !t.is_confirmed) && (
+                  <span className="inline-flex items-center gap-1 text-xs font-mono font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-2 py-0.5 rounded-md border border-amber-500/30">
+                    <AlertTriangle size={13} className="text-amber-500" />
+                    {candidateTopics.filter(t => t.needs_review && !t.is_confirmed).length} Needs Review (Low Confidence)
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="flex items-center gap-2 self-end sm:self-auto">
+            <div className="flex items-center gap-2 self-end sm:self-auto flex-wrap">
+              {candidateTopics.some(t => t.needs_review && !t.is_confirmed) && (
+                <button
+                  type="button"
+                  onClick={handleConfirmAllFlagged}
+                  className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-mono font-bold text-xs flex items-center gap-1 cursor-pointer transition-all shadow-xs"
+                >
+                  <Check size={12} />
+                  <span>Confirm All Flagged</span>
+                </button>
+              )}
               <Button
                 variant="secondary"
                 size="sm"
@@ -896,7 +979,7 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                 className="flex items-center gap-1.5 text-xs"
               >
                 <Plus size={14} />
-                <span>Add Missing Topic</span>
+                <span>Add Missing</span>
               </Button>
               <button
                 type="button"
@@ -1098,29 +1181,48 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
             {candidateTopics.map((topic) => {
               const isSelected = selectedTopicIds.has(topic.id);
               const currentLifecycle = topic.lifecycle || reviewBatchLifecycle || 'temporary';
+              const needsReview = topic.needs_review && !topic.is_confirmed;
+
               return (
                 <div
                   key={topic.id}
                   className={`candidate-topic-card p-4 sm:p-5 rounded-2xl border transition-all duration-200 flex flex-col justify-between gap-3 ${
-                    isSelected
+                    needsReview
+                      ? 'bg-amber-500/[0.04] border-amber-500/60 shadow-md ring-1 ring-amber-500/30'
+                      : isSelected
                       ? 'bg-surface-container border-primary/40 shadow-sm'
                       : 'bg-surface-container-lowest/50 border-outline-variant/20 opacity-60'
                   }`}
                 >
                   <div className="space-y-2.5">
-                    {/* Header Row: Checkbox + Lifecycle Pill + Source */}
+                    {/* Header Row: Checkbox + Status Badge + Lifecycle Pill + Source */}
                     <div className="flex items-center justify-between gap-2 flex-wrap">
-                      <label className="flex items-center gap-2.5 cursor-pointer">
-                        <input
-                          type="checkbox"
-                          checked={isSelected}
-                          onChange={() => toggleTopicSelection(topic.id)}
-                          className="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer"
-                        />
-                        <span className="text-xs font-mono font-semibold text-primary uppercase tracking-wider">
-                          {topic.tags?.[0] || 'custom'}
-                        </span>
-                      </label>
+                      <div className="flex items-center gap-2">
+                        <label className="flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => toggleTopicSelection(topic.id)}
+                            className="rounded border-outline-variant text-primary focus:ring-primary w-4 h-4 cursor-pointer"
+                          />
+                          <span className="text-xs font-mono font-semibold text-primary uppercase tracking-wider">
+                            {topic.tags?.[0] || 'custom'}
+                          </span>
+                        </label>
+
+                        {/* Visible Confidence Status Badge (Requirement 3) */}
+                        {needsReview ? (
+                          <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-bold bg-amber-500/20 text-amber-700 dark:text-amber-300 border border-amber-500/40 shadow-xs animate-pulse">
+                            <AlertTriangle size={11} className="text-amber-500" />
+                            Needs review ({topic.confidence || 0}%)
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-mono font-semibold bg-emerald-500/15 text-emerald-600 dark:text-emerald-400 border border-emerald-500/30">
+                            <CheckCircle2 size={11} className="text-emerald-500" />
+                            Verified ({topic.confidence || 95}%)
+                          </span>
+                        )}
+                      </div>
 
                       <div className="flex items-center gap-2">
                         {/* Interactive Lifecycle Pill */}
@@ -1152,23 +1254,64 @@ export const ExtractScreen = ({ onNavigateSpin, onNavigateFilter }) => {
                       </div>
                     </div>
 
-                    {/* Editable Title */}
-                    <input
-                      type="text"
-                      value={topic.title}
-                      onChange={(e) => updateCandidateTopic(topic.id, 'title', e.target.value)}
-                      placeholder="Topic Title"
-                      className="w-full font-display font-bold text-base text-on-surface bg-transparent border-b border-transparent hover:border-outline-variant/50 focus:border-primary focus:outline-none py-0.5"
-                    />
+                    {/* Needs Review Alert & Confirm Bar */}
+                    {needsReview && (
+                      <div className="p-2.5 rounded-xl bg-amber-500/10 border border-amber-500/30 text-[11px] text-amber-900 dark:text-amber-100 flex items-center justify-between gap-2">
+                        <div className="space-y-0.5 min-w-0">
+                          <div className="font-bold flex items-center gap-1 text-amber-600 dark:text-amber-400">
+                            <AlertTriangle size={12} className="shrink-0" />
+                            <span>Action Required: Low Confidence Title</span>
+                          </div>
+                          {topic.review_reasons && topic.review_reasons.length > 0 && (
+                            <p className="text-[10px] text-amber-700 dark:text-amber-300 font-mono truncate">
+                              Deductions: {topic.review_reasons.join(' · ')}
+                            </p>
+                          )}
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => handleConfirmTopic(topic.id)}
+                          className="px-2.5 py-1 rounded-lg bg-amber-500 hover:bg-amber-400 text-black font-mono font-bold text-xs flex items-center gap-1 cursor-pointer transition-all shadow-xs shrink-0"
+                          title="Accept title as valid"
+                        >
+                          <Check size={12} />
+                          <span>Confirm</span>
+                        </button>
+                      </div>
+                    )}
+
+                    {/* Editable Title with Dynamic Re-scoring */}
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-outline uppercase tracking-wider flex items-center justify-between">
+                        <span>Topic Title</span>
+                        {needsReview && (
+                          <span className="text-amber-600 dark:text-amber-400 lowercase">
+                            edit to re-score or confirm
+                          </span>
+                        )}
+                      </label>
+                      <input
+                        type="text"
+                        value={topic.title}
+                        onChange={(e) => handleTitleChange(topic.id, e.target.value)}
+                        placeholder="Topic Title"
+                        className="w-full font-display font-bold text-base text-on-surface bg-surface/40 border border-outline-variant/30 rounded-xl px-3 py-1.5 hover:border-outline-variant/60 focus:border-primary focus:outline-none"
+                      />
+                    </div>
 
                     {/* Editable Description */}
-                    <textarea
-                      rows={3}
-                      value={topic.description}
-                      onChange={(e) => updateCandidateTopic(topic.id, 'description', e.target.value)}
-                      placeholder="Topic explanation and key takeaways..."
-                      className="w-full text-xs text-on-surface-variant bg-surface/50 border border-outline-variant/30 rounded-xl p-2.5 resize-none focus:outline-none focus:border-primary leading-relaxed"
-                    />
+                    <div className="space-y-1">
+                      <label className="text-[10px] font-mono text-outline uppercase tracking-wider">
+                        Description & Takeaways
+                      </label>
+                      <textarea
+                        rows={3}
+                        value={topic.description}
+                        onChange={(e) => updateCandidateTopic(topic.id, 'description', e.target.value)}
+                        placeholder="Topic explanation and key takeaways..."
+                        className="w-full text-xs text-on-surface-variant bg-surface/50 border border-outline-variant/30 rounded-xl p-2.5 resize-none focus:outline-none focus:border-primary leading-relaxed"
+                      />
+                    </div>
 
                     {/* Tags preview */}
                     <div className="flex flex-wrap gap-1.5 pt-1">

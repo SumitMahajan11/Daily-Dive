@@ -43,6 +43,7 @@ export async function extractFromPptx(file, onProgress = () => {}) {
 
   const parser = new DOMParser();
   const rawSlides = [];
+  const slideMetadataList = [];
   const totalSlides = slideEntries.length;
 
   for (let i = 0; i < totalSlides; i++) {
@@ -62,6 +63,57 @@ export async function extractFromPptx(file, onProgress = () => {}) {
       const parserError = xmlDoc.querySelector('parsererror');
       if (parserError) {
         console.warn(`XML parse warning on slide ${slide.slideNumber}`);
+      }
+
+      // ── Structural Title Extraction from Slide XML Placeholder ──
+      let structuralTitle = null;
+      const shapes = xmlDoc.getElementsByTagName('p:sp');
+      for (let s = 0; s < shapes.length; s++) {
+        const sp = shapes[s];
+        let isTitlePlaceholder = false;
+
+        // Check for placeholder tags: <p:ph type="title">, <p:ph type="ctrTitle">, <p:ph idx="0">
+        const phElements = sp.getElementsByTagName('p:ph');
+        if (phElements.length > 0) {
+          const phType = (phElements[0].getAttribute('type') || '').toLowerCase();
+          const phIdx = phElements[0].getAttribute('idx');
+          if (phType === 'title' || phType === 'ctrtitle' || phIdx === '0' || !phType) {
+            isTitlePlaceholder = true;
+          }
+        }
+
+        // Check for named title shapes: <p:cNvPr name="Title 1" />
+        const cNvPr = sp.getElementsByTagName('p:cNvPr')[0];
+        if (cNvPr) {
+          const shapeName = (cNvPr.getAttribute('name') || '').toLowerCase();
+          if (shapeName.startsWith('title') || shapeName.includes('slide title')) {
+            isTitlePlaceholder = true;
+          }
+        }
+
+        // Check for prominent font styling sz >= 2400 (24pt+) at top of slide
+        if (!isTitlePlaceholder) {
+          const defRPr = sp.getElementsByTagName('a:defRPr')[0];
+          const rPr = sp.getElementsByTagName('a:rPr')[0];
+          const sz = parseInt(defRPr?.getAttribute('sz') || rPr?.getAttribute('sz') || '0', 10);
+          if (sz >= 2400) {
+            isTitlePlaceholder = true;
+          }
+        }
+
+        if (isTitlePlaceholder) {
+          const titleTextNodes = sp.getElementsByTagName('a:t');
+          const extractedTitle = Array.from(titleTextNodes)
+            .map(t => t.textContent || '')
+            .join(' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+
+          if (extractedTitle && extractedTitle.length >= 3 && extractedTitle.length <= 100) {
+            structuralTitle = extractedTitle;
+            break;
+          }
+        }
       }
 
       // Collect text by paragraph (<a:p>) to preserve bullet points and line structure
@@ -90,11 +142,26 @@ export async function extractFromPptx(file, onProgress = () => {}) {
         if (allText) slideParagraphs.push(allText);
       }
 
+      // Ensure structural title is at the front of slide paragraphs if not already there
+      if (structuralTitle && !slideParagraphs.some(p => p.toLowerCase() === structuralTitle.toLowerCase())) {
+        slideParagraphs.unshift(structuralTitle);
+      }
+
       const slideText = slideParagraphs.join('\n');
       rawSlides.push(slideText);
+      slideMetadataList.push({
+        slideNumber: slide.slideNumber,
+        structuralTitle,
+        text: slideText
+      });
     } catch (slideErr) {
       console.warn(`Error reading slide ${slide.slideNumber}:`, slideErr);
       rawSlides.push('');
+      slideMetadataList.push({
+        slideNumber: slide.slideNumber,
+        structuralTitle: null,
+        text: ''
+      });
     }
   }
 
@@ -108,6 +175,7 @@ export async function extractFromPptx(file, onProgress = () => {}) {
   return {
     text: combinedText,
     rawSlides,
+    slideMetadata: slideMetadataList,
     slideCount: totalSlides,
     sourceFormat: 'pptx'
   };
