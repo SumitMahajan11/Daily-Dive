@@ -195,8 +195,10 @@ function displayDocumentAudit(title, fileName, sections, isMarkdown = false) {
     console.log('  (None - All topics met high confidence criteria)');
   } else {
     flaggedForReview.forEach((t, i) => {
-      console.log(`  [${i + 1}] "${t.title}" [NEEDS REVIEW BADGE]`);
-      console.log(`      Confidence: ${t.confidence}% (${t.confidence_rating}) | Raw Heading: "${t.raw_heading || t.title}"`);
+      const displayRawHeading = t.raw_heading !== undefined
+        ? (t.raw_heading.trim() ? `"${t.raw_heading}"` : '"" (empty)')
+        : `"${t.title}"`;
+      console.log(`      Confidence: ${t.confidence}% (${t.confidence_rating}) | Raw Heading: ${displayRawHeading}`);
       console.log(`      Review Reasons: ${t.review_reasons.join(' · ') || 'Low structural score'}`);
       console.log(`      Description: "${t.description}"`);
     });
