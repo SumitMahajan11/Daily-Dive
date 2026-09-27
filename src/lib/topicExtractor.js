@@ -594,6 +594,12 @@ export function synthesizeDomainTitle(unitText, docBaseLower = '') {
   if (/\b(?:conversations?|endpoints?)\b/i.test(text) && /\bpacket\s+capture\b/i.test(text)) {
     return 'Network Conversation & Endpoints';
   }
+  if (/\b(?:packet\s+capture|capture\s+packets?)\b/i.test(text)) {
+    return 'Packet Capture Workflow';
+  }
+  if (/\btransport\s+layer\b/i.test(text) && /\b(?:udp|tcp|application\s+protocol|ip\s+layer)\b/i.test(text)) {
+    return 'Transport Layer Protocol Analysis';
+  }
   if (/\bextract(?:ing)?\s+files\b/i.test(text) || (/\bextract\b/i.test(text) && /\bfiles\b/i.test(text) && /\bpackets?\b/i.test(text))) {
     return 'Packet File Reconstruction';
   }
@@ -626,6 +632,9 @@ export function synthesizeDomainTitle(unitText, docBaseLower = '') {
   }
   if (/\b(?:replication|sharding)\b/i.test(text)) {
     return 'Distributed Data Replication';
+  }
+  if (/\b(?:multithreading|concurrency)\b/i.test(text) || (/\bthreads?\b/i.test(text) && /\b(?:parallel|workload|scaling|join)\b/i.test(text))) {
+    return 'Multithreading Scaling Simulation';
   }
   // Latency & Benchmark Domain
   if (/\blatency\b/i.test(text) && /\b(?:benchmarks?|profiling|metrics?|p99|load\s*tests?)\b/i.test(text)) {
@@ -953,7 +962,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     let confidenceRating = scoreResult.confidence_rating;
     let reviewReasons = [...scoreResult.reviewReasons];
 
-    if (scoreResult.isHighConfidence && !isDocTitleRepeat) {
+    if (scoreResult.isHighConfidence && !isDocTitleRepeat && !isNonTopicHeading(candidateTitle)) {
       finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(candidateTitle)), 45);
       needsReview = false;
       confidence = Math.max(75, scoreResult.confidence);
@@ -983,7 +992,14 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
         // No valid domain title could be synthesized.
         // When OCR or extraction text quality is too low, DO NOT synthesize a fake garbled title.
         // Retain the cleaned raw text line so the user can easily see what was read and rewrite it.
-        finalTitle = truncateAtWord(cleanCandidateTitle(candidateTitle), 45);
+        let fallback = candidateTitle;
+        if (isNonTopicHeading(fallback)) {
+          fallback = fallback
+            .replace(/^(?:step|task|activity|part|phase)\s*\d+[\s:.\-]\s*/i, '')
+            .replace(/^\d+[\.\)]\s*/, '')
+            .replace(/^(?:wait for|click on|select the|open the|close the)\s*/i, '');
+        }
+        finalTitle = truncateAtWord(cleanCandidateTitle(fallback || candidateTitle), 45);
         needsReview = true;
         confidence = Math.min(scoreResult.confidence, 40);
         confidenceRating = 'low';
