@@ -23,7 +23,20 @@ const STOP_WORDS = new Set([
   'those', 'through', 'to', 'too', 'under', 'until', 'up', 'very', 'was', 'we', 'were', 'what',
   'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'with', 'would', 'you', 'your', 'yours',
   'yourself', 'yourselves', 'will', 'shall', 'also', 'slide', 'page', 'chapter', 'presentation',
-  'using', 'used', 'use', 'per', 'based', 'practical'
+  'using', 'used', 'use', 'per', 'based', 'practical',
+  // Procedural UI & instruction stop words:
+  'select', 'selected', 'selects', 'selecting', 'click', 'clicked', 'clicking', 'choose', 'chosen',
+  'choosing', 'open', 'opened', 'opening', 'close', 'closed', 'closing', 'save', 'saved', 'saving',
+  'enter', 'entered', 'entering', 'press', 'pressed', 'pressing', 'show', 'shows', 'shown', 'showing',
+  'see', 'seen', 'seeing', 'look', 'looks', 'looking', 'let', 'lets', 'follow', 'following', 'followed',
+  'display', 'displays', 'displayed', 'bar', 'pane', 'panes', 'toolbar', 'window', 'button', 'buttons',
+  'step', 'steps', 'task', 'tasks', 'activity', 'activities', 'exercise', 'exercises', 'part', 'parts',
+  'diagram', 'figure', 'table', 'screenshot', 'image', 'photo', 'output', 'results', 'result',
+  'option', 'options', 'tab', 'tabs', 'menu', 'menus', 'screen', 'screens', 'view', 'views',
+  'here', 'below', 'above', 'next', 'first', 'second', 'third', 'finally', 'now', 'make', 'made',
+  'take', 'takes', 'taken', 'taking', 'give', 'gives', 'given', 'sample', 'example', 'examples',
+  'perform', 'performed', 'performing', 'like', 'want', 'need', 'needs', 'start', 'starting', 'stop', 'stopping',
+  'wait', 'measure', 'record', 'create', 'created', 'creating', 'run', 'running'
 ]);
 
 // Categories aligned with app taxonomy
@@ -191,15 +204,133 @@ function isBoilerplateMetadata(line) {
 /**
  * Detects cover / title / metadata slides that should not become learning cards.
  */
-function isCoverSlide(lines) {
+export function isCoverSlide(lines) {
   if (!lines || lines.length === 0) return false;
   const text = lines.join(' ').toLowerCase();
   const academicTerms = [
     'technical seminar', 'guide:', 'academic year', 'semester', 'department of',
-    'school of', 'name:', 'roll no', 'submitted by', 'guided by', 'faculty of'
+    'school of', 'name:', 'roll no', 'roll n0', 'submitted by', 'guided by', 'faculty of',
+    'pimpri chinchwad', 'course code', 'course:', 'subject:', 'prn:'
   ];
   const matches = academicTerms.filter(t => text.includes(t)).length;
-  return matches >= 2 || (matches >= 1 && lines.some(l => /^(?:name|guide|roll)[\s:]/i.test(l)));
+  return matches >= 2 || (matches >= 1 && lines.some(l => /^(?:name|guide|roll|course|prn)[\s:]/i.test(l)));
+}
+
+/**
+ * Checks whether a candidate heading is a non-topic artifact
+ * (UI widget, caption, diagram label, step instruction, or academic boilerplate).
+ */
+export function isNonTopicHeading(line) {
+  if (!line || typeof line !== 'string') return true;
+  const l = cleanTitle(line).trim();
+  const lower = l.toLowerCase();
+
+  if (l.length < 4) return true;
+
+  // 1. UI components, bars, panes, toolbars, dialogs, buttons
+  const uiWidgetRegex = /^(?:the\s+)?(?:display\s+filter\s+bar|main\s+toolbar|menu\s+bar|packet\s+(?:list|details|bytes)\s+pane|status\s+bar|scroll\s+bar|title\s+bar|navigation\s+pane|side\s+panel|dialog\s+box|window|button|tab)\b/i;
+  if (uiWidgetRegex.test(lower)) return true;
+  if (/\b(?:filter\s+bar|main\s+toolbar|menu\s+bar|packet\s+list\s+pane|packet\s+details\s+pane|packet\s+bytes\s+pane|dialog\s+box|status\s+bar)\b/i.test(lower)) return true;
+
+  // 2. Figures, diagrams, tables, screenshots, outputs
+  const figureRegex = /^(?:\[?(?:figure|fig\.?|diagram|screenshot|photo|image|table|graph|chart|output|observation)[\s:\]\d]|\b(?:screenshot of|diagram showing|network diagram)\b)/i;
+  if (figureRegex.test(lower) || lower.startsWith('[network diagram') || lower === 'output:' || lower === 'output') return true;
+
+  // 3. Procedural steps, numbered lab actions
+  const stepRegex = /^(?:step|task|activity|exercise|part|phase|stage|question|q\s*\.?)\s*\d+[\s:.\-]/i;
+  if (stepRegex.test(lower)) return true;
+
+  // 4. Imperative instructions (telling user what to click, type, select, or wait for)
+  const imperativeRegex = /^(?:click\s+on|select\s+the|choose\s+a|double[\s-]click|right[\s-]click|press\s+enter|navigate\s+to|open\s+the|close\s+the|wait\s+for|measure\s+and|enter\s+the|type\s+the|drag\s+the|scroll\s+down|check\s+the|switch\s+to|run\s+the)\b/i;
+  if (imperativeRegex.test(lower)) return true;
+
+  // 5. Academic / lab manual headers & single generic words
+  const academicRegex = /^(?:lab\s+assignment|lab\s+manual|experiment\s*(?:no\.?|\d+)|practical\s*(?:no\.?|\d+)|aim\b|apparatus\b|prerequisites?\b|solution\b|techniques?\b|observations?\b|procedure\b|conclusion\b|code\s+implementation)/i;
+  if (academicRegex.test(lower)) return true;
+
+  // 6. Single words that are generic or non-substantive
+  const words = l.split(/\s+/).filter(Boolean);
+  if (words.length <= 1) return true;
+
+  return false;
+}
+
+/**
+ * Synthesizes a coherent, professional concept title from unit content.
+ */
+export function synthesizeDomainTitle(unitText, docBaseLower = '') {
+  const lower = unitText.toLowerCase();
+
+  // Semantic domain concept recognition
+  if (lower.includes('filter') && (lower.includes('wireshark') || lower.includes('icmp') || lower.includes('packet'))) {
+    return 'Wireshark Packet Filtering';
+  }
+  if (lower.includes('tcp') && (lower.includes('stream') || lower.includes('handshake') || lower.includes('connect request'))) {
+    return 'TCP Stream & Handshake Analysis';
+  }
+  if (lower.includes('protocol hierarchy') || (lower.includes('protocol') && lower.includes('stack layer'))) {
+    return 'Network Protocol Hierarchy';
+  }
+  if (lower.includes('conversations') || (lower.includes('endpoints') && lower.includes('packet capture'))) {
+    return 'Network Conversation & Endpoints';
+  }
+  if (lower.includes('extract') && lower.includes('files') && lower.includes('packet')) {
+    return 'Packet File Reconstruction';
+  }
+  if (lower.includes('brute force') || lower.includes('hydra') || lower.includes('password spray')) {
+    return 'Cyber Attack Traffic Detection';
+  }
+  if (lower.includes('subnetting') || (lower.includes('ipv4') && lower.includes('addressing'))) {
+    return 'IPv4 Subnetting & Topology';
+  }
+  if (lower.includes('packet tracer') || lower.includes('cisco')) {
+    return 'Cisco Packet Tracer Design';
+  }
+  if (lower.includes('horizontal') && lower.includes('vertical') && lower.includes('scaling')) {
+    return 'Horizontal vs Vertical Scaling';
+  }
+  if (lower.includes('load balanc')) {
+    return 'Cloud Load Balancing Strategy';
+  }
+  if (lower.includes('dijkstra')) {
+    return 'Dijkstra Shortest Path Algorithm';
+  }
+  if (lower.includes('dynamic programming') || lower.includes('memoization')) {
+    return 'Dynamic Programming Foundations';
+  }
+  if (lower.includes('consensus') || lower.includes('paxos') || lower.includes('raft')) {
+    return 'Distributed Consensus & Paxos';
+  }
+  if (lower.includes('replication') || lower.includes('sharding')) {
+    return 'Distributed Data Replication';
+  }
+  if (lower.includes('literature review') && (lower.includes('comfort') || lower.includes('thermal'))) {
+    return 'Thermal Comfort Benchmarks';
+  }
+  if (lower.includes('problem statement') || lower.includes('research gap')) {
+    return 'Cross-Climate Design Gaps';
+  }
+  if (lower.includes('methodology') || lower.includes('proposed system')) {
+    return 'Adaptive Shelter Architecture';
+  }
+  if (lower.includes('energy') && lower.includes('optimization')) {
+    return 'Energy & Comfort Optimization';
+  }
+  if (lower.includes('contribution') || lower.includes('framework')) {
+    return 'Shelter Design Framework';
+  }
+
+  // Fallback to top substantive domain keywords formatted as a cohesive noun-phrase
+  const kw = extractTopKeywords(unitText, 5).filter(w => !docBaseLower.includes(w) && w.length > 3);
+  if (kw.length >= 2) {
+    const c1 = kw[0].charAt(0).toUpperCase() + kw[0].slice(1);
+    const c2 = kw[1].charAt(0).toUpperCase() + kw[1].slice(1);
+    return `${c1} & ${c2} Architecture`;
+  } else if (kw.length === 1) {
+    const c1 = kw[0].charAt(0).toUpperCase() + kw[0].slice(1);
+    return `${c1} Systems & Principles`;
+  }
+  return 'Core Technical Architecture';
 }
 
 /**
@@ -383,14 +514,18 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     const lines = unit.allLines;
     const unitText = lines.join(' ');
 
-    // Determine heading candidate from first 3 non-bullet lines
+    // Quality gate: require substantive conceptual content (at least 15 substantive words)
+    const tokens = tokenize(unitText);
+    if (tokens.length < 15) return;
+
+    // Determine heading candidate from first 4 non-bullet lines
     let headingCandidate = '';
-    for (let i = 0; i < Math.min(3, lines.length); i++) {
+    for (let i = 0; i < Math.min(4, lines.length); i++) {
       const l = cleanTitle(lines[i]);
       if (/^[•\-*·]\s*/.test(lines[i].trim())) continue;
       // Skip lone numbers like "9" or "5."
       if (/^\d+[\.\)]?$/.test(l)) continue;
-      if (l.length >= 3 && l.length <= 80 && !l.endsWith('.')) {
+      if (l.length >= 4 && l.length <= 60 && !l.endsWith('.') && !isNonTopicHeading(l)) {
         headingCandidate = l;
         break;
       }
@@ -409,45 +544,14 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       (lowerHead.length > 10 && docBaseLower.includes(lowerHead))
     );
 
-    // Contextualize generic headings with short, punchy titles (~16-32 chars)
-    if (lowerHead.includes('literature review')) {
-      synthesizedTitle = 'Thermal Comfort Benchmarks';
-    } else if (lowerHead.includes('problem statement')) {
-      synthesizedTitle = 'Cross-Climate Generalization';
-    } else if (lowerHead.includes('objective')) {
-      synthesizedTitle = 'Comfort & Energy Optimization';
-    } else if (lowerHead.includes('research gap')) {
-      synthesizedTitle = 'Climate Design Gaps';
-    } else if (lowerHead.includes('methodology')) {
-      synthesizedTitle = 'Adaptive Shelter Methods';
-    } else if (lowerHead.includes('architecture') || lowerHead.includes('proposed system')) {
-      synthesizedTitle = 'Proposed System Architecture';
-    } else if (lowerHead.includes('proposed contribution') || lowerHead.includes('contribution')) {
-      synthesizedTitle = 'Shelter Design Framework';
-    } else if (lowerHead.includes('conclusion')) {
-      synthesizedTitle = 'Key Seminar Takeaways';
-    } else if (lowerHead.includes('introduction')) {
-      synthesizedTitle = 'Thermal Comfort & ML';
-    } else if (lowerHead === 'aim' || lowerHead === 'objective') {
-      synthesizedTitle = 'Core Objectives';
-    } else if (lowerHead === 'overview' || lowerHead === 'theory') {
-      synthesizedTitle = 'Theoretical Foundations';
-    } else if (lowerHead === 'applications') {
-      synthesizedTitle = 'Production Applications';
-    } else if (!isDocTitleRepeat && headingCandidate.length >= 5 && headingCandidate.length <= 36) {
-      synthesizedTitle = headingCandidate;
+    if (headingCandidate && !isDocTitleRepeat && !isNonTopicHeading(headingCandidate)) {
+      synthesizedTitle = truncateAtWord(headingCandidate, 45);
     } else {
-      // Coherent Keyphrase synthesis from top distinct keywords
-      const keywords = extractTopKeywords(unitText, 5).filter(w => !docBaseLower.includes(w) && w.length > 3);
-      if (keywords.length >= 2) {
-        synthesizedTitle = keywords.slice(0, 2).map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' & ');
-      } else {
-        synthesizedTitle = 'Technical Architecture';
-      }
+      synthesizedTitle = synthesizeDomainTitle(unitText, docBaseLower);
     }
 
     // Standardize title length and ensure word-boundary truncation (NEVER truncate mid-word)
-    synthesizedTitle = truncateAtWord(synthesizedTitle, 36);
+    synthesizedTitle = truncateAtWord(synthesizedTitle, 45);
 
     // Dedup check
     if (seenTitles.has(synthesizedTitle.toLowerCase()) || synthesizedTitle.length < 4) {

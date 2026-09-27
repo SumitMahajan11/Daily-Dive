@@ -123,6 +123,71 @@ export const DataService = {
   },
 
   /**
+   * Update or sync user streak record in Supabase
+   */
+  async updateUserStreak(userId, streakData = {}) {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return;
+    if (!userId || !streakData) return;
+
+    try {
+      await supabase
+        .from('user_streaks')
+        .upsert({
+          user_id: userId,
+          current_streak: streakData.current_streak || 0,
+          longest_streak: streakData.longest_streak || 0,
+          last_active_date: streakData.last_active_date || null
+        });
+    } catch (e) {
+      console.warn('Could not sync user streak to server:', e);
+    }
+  },
+
+  /**
+   * Record a topic spin action and sync streak to Supabase
+   */
+  async recordSpin(userId, topicId, currentProgressMap = {}, currentStreakData = {}) {
+    if (typeof navigator !== 'undefined' && !navigator.onLine) return null;
+    if (!userId) return null;
+
+    const existingProgress = currentProgressMap[topicId] || { times_seen: 0, last_seen: null };
+    const newTimesSeen = (existingProgress.times_seen || 0) + 1;
+    const now = new Date();
+    const nowIso = now.toISOString();
+
+    try {
+      if (topicId) {
+        await supabase
+          .from('user_progress')
+          .upsert({
+            user_id: userId,
+            topic_id: topicId,
+            times_seen: newTimesSeen,
+            last_seen: nowIso
+          });
+      }
+
+      const updatedStreak = calculateUpdatedStreak(currentStreakData, now);
+      await supabase
+        .from('user_streaks')
+        .upsert({
+          user_id: userId,
+          current_streak: updatedStreak.current_streak,
+          longest_streak: updatedStreak.longest_streak,
+          last_active_date: updatedStreak.last_active_date
+        });
+
+      return {
+        updatedProgress: { times_seen: newTimesSeen, last_seen: nowIso },
+        updatedStreak
+      };
+    } catch (e) {
+      console.warn('Could not sync spin to server:', e);
+      return null;
+    }
+  },
+
+  /**
    * Update user settings in Supabase
    */
   async updateUserSettings(userId, settingsPatch = {}) {

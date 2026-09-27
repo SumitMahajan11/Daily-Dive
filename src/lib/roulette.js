@@ -199,15 +199,98 @@ export function getLocalYesterdayDate(date = new Date()) {
 }
 
 /**
- * Computes the effective streak status without mutating stored data.
- * Checks whether the streak is currently active today, pending today's spin, or lapsed.
+ * Reconciles stored streak metadata with the user's actual activity dates
+ * (from session history, topic progress, and previous streak records) so the
+ * streak status card and activity matrix are mathematically guaranteed to agree.
+ * 
+ * @param {Object} streakData { current_streak, longest_streak, last_active_date }
+ * @param {Set<string>|Array<string>} activeDates Dates with logged activity (YYYY-MM-DD)
+ * @param {Date} nowDate 
+ * @returns {Object} Reconciled streak metrics
  */
-export function getEffectiveStreak(streakData = {}, nowDate = new Date()) {
+export function reconcileStreakWithActivity(streakData = {}, activeDates = new Set(), nowDate = new Date()) {
   const todayStr = getLocalCalendarDate(nowDate);
   const yesterdayStr = getLocalYesterdayDate(nowDate);
-  const lastActive = streakData.last_active_date;
-  const currentStreak = streakData.current_streak || 0;
-  const longestStreak = streakData.longest_streak || 0;
+
+  const storedCurrent = streakData?.current_streak || 0;
+  const storedLongest = streakData?.longest_streak || 0;
+  const storedLast = streakData?.last_active_date || null;
+
+  const dateSet = activeDates instanceof Set ? new Set(activeDates) : new Set(activeDates || []);
+  if (storedLast) {
+    dateSet.add(storedLast);
+  }
+
+  const hasToday = dateSet.has(todayStr);
+  const hasYesterday = dateSet.has(yesterdayStr);
+
+  // Count contiguous active days backwards from today (if active today) or yesterday
+  let contiguousDays = 0;
+  if (hasToday) {
+    const cur = new Date(nowDate.getTime());
+    while (dateSet.has(getLocalCalendarDate(cur))) {
+      contiguousDays++;
+      cur.setDate(cur.getDate() - 1);
+    }
+  } else if (hasYesterday) {
+    const cur = new Date(nowDate.getTime());
+    cur.setDate(cur.getDate() - 1);
+    while (dateSet.has(getLocalCalendarDate(cur))) {
+      contiguousDays++;
+      cur.setDate(cur.getDate() - 1);
+    }
+  }
+
+  if (hasToday) {
+    const streak = Math.max(storedCurrent, contiguousDays, 1);
+    const longest = Math.max(storedLongest, streak);
+    return {
+      current_streak: streak,
+      longest_streak: longest,
+      last_active_date: todayStr,
+      is_active_today: true,
+      is_broken: false
+    };
+  }
+
+  if (hasYesterday) {
+    const streak = Math.max(storedCurrent, contiguousDays, 1);
+    const longest = Math.max(storedLongest, streak);
+    return {
+      current_streak: streak,
+      longest_streak: longest,
+      last_active_date: yesterdayStr,
+      is_active_today: false,
+      is_broken: false
+    };
+  }
+
+  // Neither today nor yesterday had any activity
+  const hadPastActivity = dateSet.size > 0 || Boolean(storedLast);
+  return {
+    current_streak: 0,
+    longest_streak: Math.max(storedLongest, storedCurrent),
+    last_active_date: storedLast,
+    is_active_today: false,
+    is_broken: hadPastActivity
+  };
+}
+
+/**
+ * Computes the effective streak status without mutating stored data.
+ * Checks whether the streak is currently active today, pending today's spin, or lapsed.
+ * Optionally reconciles with active activity dates when provided.
+ */
+export function getEffectiveStreak(streakData = {}, nowDate = new Date(), activeDates = null) {
+  if (activeDates && (activeDates.size > 0 || (Array.isArray(activeDates) && activeDates.length > 0))) {
+    return reconcileStreakWithActivity(streakData, activeDates, nowDate);
+  }
+
+  const todayStr = getLocalCalendarDate(nowDate);
+  const yesterdayStr = getLocalYesterdayDate(nowDate);
+  const lastActive = streakData?.last_active_date;
+  const currentStreak = streakData?.current_streak || 0;
+  const longestStreak = streakData?.longest_streak || 0;
 
   if (!lastActive) {
     return {

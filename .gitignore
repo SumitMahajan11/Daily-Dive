@@ -32,6 +32,7 @@ __pycache__/
 # Testing & screenshots
 screenshots/
 screenshots_*/
+artifacts/
 
 
 .vercel

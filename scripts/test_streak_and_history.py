@@ -182,9 +182,6 @@ for i in range(200):
     old_hist = append_history_entry(old_hist, t, "spin", d)
 
 assert len(old_hist) <= 150, f"History length {len(old_hist)} exceeded cap of 150"
-for item in old_hist:
-    item_dt = datetime.fromisoformat(item["timestamp"].replace("Z", "+00:00"))
-    days_old = (datetime(2026, 9, 26, 12, 0, 0) - item_dt.replace(tzinfo=None)).total_seconds() / 86400
-    print(f"[PASS] Test 9 Passed: History retention successfully capped at {len(old_hist)} entries and pruned >60d items")
+print(f"[PASS] Test 9 Passed: History retention successfully capped at {len(old_hist)} entries and pruned items")
 
 print("\nALL 9 PHASE 4 TESTS PASSED ACCURATELY!")

@@ -28,6 +28,7 @@ import { Button } from '../UI/Button';
 import { Skeleton } from '../UI/Skeleton';
 import {
   getLocalCalendarDate,
+  reconcileStreakWithActivity,
   MAX_HISTORY_ENTRIES,
   MAX_HISTORY_AGE_DAYS
 } from '../../lib/roulette';
@@ -62,27 +63,8 @@ export const ProgressScreen = ({ onReviewTopic }) => {
   const [historyFilter, setHistoryFilter] = useState('all');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
-  // ── CORE METRICS ──
-  const activeStreak = (effectiveStreak || userStreaks)?.current_streak || 0;
-  const longestStreak = (effectiveStreak || userStreaks)?.longest_streak || 0;
-  const isActiveToday = Boolean(effectiveStreak?.is_active_today);
-  const isStreakBroken = Boolean(effectiveStreak?.is_broken);
-
-  const totalTopics = topics.length || 692;
-  const uniqueExploredCount = Object.keys(userProgressMap).filter(id => userProgressMap[id]?.times_seen > 0).length;
-  const percentageExplored = Math.round((uniqueExploredCount / totalTopics) * 100);
-
-  const learnedCount = Object.keys(userProgressMap).filter(id => userProgressMap[id]?.learned).length;
-  const percentageLearned = Math.round((learnedCount / totalTopics) * 100);
-
-  const totalSpinsCount = useMemo(() => {
-    const fromHist = history.filter(h => h.action === 'spin').length;
-    const fromProg = Object.values(userProgressMap).reduce((sum, p) => sum + (p.times_seen || 0), 0);
-    return Math.max(fromHist, fromProg);
-  }, [history, userProgressMap]);
-
-  // ── 14-DAY STREAK ACTIVITY STRIP ──
-  const streakDays = useMemo(() => {
+  // ── 14-DAY STREAK ACTIVITY STRIP & CANONICAL RECONCILED STREAK ──
+  const { streakDays, reconciledStreak } = useMemo(() => {
     const today = new Date();
     const todayStr = getLocalCalendarDate(today);
     const days = [];
@@ -92,7 +74,7 @@ export const ProgressScreen = ({ onReviewTopic }) => {
     history.forEach(h => {
       if (h.local_date) activeDates.add(h.local_date);
     });
-    Object.values(userProgressMap).forEach(p => {
+    Object.values(userProgressMap || {}).forEach(p => {
       if (p.last_seen) activeDates.add(p.last_seen.slice(0, 10));
     });
     if (userStreaks?.last_active_date) {
@@ -117,8 +99,29 @@ export const ProgressScreen = ({ onReviewTopic }) => {
       });
     }
 
-    return days;
+    const reconciled = reconcileStreakWithActivity(userStreaks, activeDates, today);
+
+    return { streakDays: days, reconciledStreak: reconciled };
   }, [history, userProgressMap, userStreaks]);
+
+  // ── CORE METRICS (RECONCILED TO GROUND TRUTH) ──
+  const activeStreak = reconciledStreak.current_streak;
+  const longestStreak = reconciledStreak.longest_streak;
+  const isActiveToday = Boolean(reconciledStreak.is_active_today);
+  const isStreakBroken = Boolean(reconciledStreak.is_broken);
+
+  const totalTopics = topics.length || 692;
+  const uniqueExploredCount = Object.keys(userProgressMap).filter(id => userProgressMap[id]?.times_seen > 0).length;
+  const percentageExplored = Math.round((uniqueExploredCount / totalTopics) * 100);
+
+  const learnedCount = Object.keys(userProgressMap).filter(id => userProgressMap[id]?.learned).length;
+  const percentageLearned = Math.round((learnedCount / totalTopics) * 100);
+
+  const totalSpinsCount = useMemo(() => {
+    const fromHist = history.filter(h => h.action === 'spin').length;
+    const fromProg = Object.values(userProgressMap).reduce((sum, p) => sum + (p.times_seen || 0), 0);
+    return Math.max(fromHist, fromProg);
+  }, [history, userProgressMap]);
 
   // ── CATEGORY & SOURCE COVERAGE ──
   const categoryCoverage = useMemo(() => {

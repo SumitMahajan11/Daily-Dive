@@ -37,8 +37,24 @@ export const DataProvider = ({ children }) => {
     }
     return [...initialCustom, ...INITIAL_TOPICS];
   });
-  const [userProgressMap, setUserProgressMap] = useState({});
-  const [userStreaks, setUserStreaks] = useState({ current_streak: 0, longest_streak: 0, last_active_date: null });
+  const [userProgressMap, setUserProgressMap] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_guest_progress');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return {};
+  });
+  const [userStreaks, setUserStreaks] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_guest_streaks');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return { current_streak: 0, longest_streak: 0, last_active_date: null };
+  });
   const [history, setHistory] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -50,8 +66,15 @@ export const DataProvider = ({ children }) => {
   });
 
   const effectiveStreak = useMemo(() => {
-    return getEffectiveStreak(userStreaks);
-  }, [userStreaks]);
+    const activeDates = new Set();
+    (history || []).forEach(h => {
+      if (h.local_date) activeDates.add(h.local_date);
+    });
+    Object.values(userProgressMap || {}).forEach(p => {
+      if (p.last_seen) activeDates.add(p.last_seen.slice(0, 10));
+    });
+    return getEffectiveStreak(userStreaks, new Date(), activeDates);
+  }, [userStreaks, history, userProgressMap]);
   const [userSettings, setUserSettings] = useState(() => {
     if (typeof window !== 'undefined') {
       try {
@@ -247,9 +270,16 @@ export const DataProvider = ({ children }) => {
         } catch (e) {}
         return updated;
       });
+
+      // 4. Sync with server if authenticated
+      if (user?.id) {
+        DataService.recordSpin(user.id, result.id, userProgressMap, userStreaks).catch(e => {
+          console.warn('Could not sync spin to server:', e);
+        });
+      }
     }
     return result;
-  }, [topics, userProgressMap, userSettings.enabled_categories, eligibleTopics]);
+  }, [topics, userProgressMap, userSettings.enabled_categories, eligibleTopics, user, userStreaks]);
 
   // Mark topic as learned with local & streak tracking
   const markCurrentTopicLearned = useCallback(async () => {
@@ -293,8 +323,15 @@ export const DataProvider = ({ children }) => {
       return updated;
     });
 
+    // 4. Sync with server if authenticated
+    if (user?.id) {
+      DataService.markTopicLearned(user.id, currentTopic.id, userProgressMap, userStreaks).catch(e => {
+        console.warn('Could not sync learned status to server:', e);
+      });
+    }
+
     showToast('Marked as learned! Streak updated.', 'success');
-  }, [currentTopic, showToast]);
+  }, [currentTopic, showToast, user, userProgressMap, userStreaks]);
 
   // Clear local history
   const clearHistory = useCallback(() => {
