@@ -171,16 +171,136 @@ function cleanText(text) {
 }
 
 /**
- * Truncates string at a whole word boundary to avoid cutting words mid-token.
+ * Converts a string to Title Case while keeping minor words lowercase unless first or last.
  */
-export function truncateAtWord(str, maxLen = 38) {
-  if (!str || str.length <= maxLen) return (str || '').trim();
-  const sub = str.slice(0, maxLen);
-  const lastSpace = sub.lastIndexOf(' ');
-  if (lastSpace > 10) {
-    return sub.slice(0, lastSpace).replace(/[\s,;:\-–—\.]+$/, '').trim();
+export function toTitleCase(str) {
+  if (!str) return '';
+  const minorWords = new Set(['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'over', 'in', 'of', 'into', 'with', 'vs']);
+  const words = str.trim().split(/\s+/);
+  return words.map((w, idx) => {
+    const lower = w.toLowerCase();
+    if (w.includes('-')) {
+      return w.split('-').map(part => toTitleCase(part)).join('-');
+    }
+    if (idx > 0 && idx < words.length - 1 && minorWords.has(lower)) {
+      return lower;
+    }
+    if (/^[A-Z]{2,4}$/.test(w)) return w;
+    return lower.charAt(0).toUpperCase() + lower.slice(1);
+  }).join(' ');
+}
+
+/**
+ * Truncates string at a whole word boundary and strips trailing non-terminal tokens/punctuation.
+ */
+export function truncateAtWord(str, maxLen = 45) {
+  if (!str) return '';
+  let s = str.trim();
+  if (s.length > maxLen) {
+    const sub = s.slice(0, maxLen);
+    const lastSpace = sub.lastIndexOf(' ');
+    if (lastSpace > 10) {
+      s = sub.slice(0, lastSpace);
+    } else {
+      s = sub;
+    }
   }
-  return sub.trim();
+  // Strip trailing punctuation & non-terminal connectors
+  s = s.replace(/[\s,;:\-–—/\\&+([.]+$/, '')
+       .replace(/\s+\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)$/i, '')
+       .replace(/[\s,;:\-–—/\\&+([.]+$/, '')
+       .trim();
+
+  return s;
+}
+
+/**
+ * Cleans a candidate heading, stripping prefix numbering, trailing non-terminal tokens,
+ * and normalizing casing.
+ */
+export function cleanCandidateTitle(str) {
+  if (!str) return '';
+  let s = cleanTitle(str)
+    .replace(/[\s,;:\-–—/\\&+([.]+$/, '')
+    .replace(/\s+\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)$/i, '')
+    .replace(/[\s,;:\-–—/\\&+([.]+$/, '')
+    .trim();
+
+  const letters = s.replace(/[^A-Za-z]/g, '');
+  if (letters.length >= 3 && (letters === letters.toUpperCase() || letters === letters.toLowerCase())) {
+    s = toTitleCase(s);
+  }
+  return s;
+}
+
+/**
+ * Checks whether a candidate title is truncated, non-terminal, or a conversational fragment.
+ */
+export function isTruncatedOrNonTerminal(str) {
+  if (!str || typeof str !== 'string') return true;
+  const s = str.trim();
+  if (s.length < 4) return true;
+
+  // 1. Trailing non-terminal punctuation (comma, colon, semicolon, dash, hyphen, slash, etc.)
+  if (/[,;:\-–—/\\&+([]\s*$/.test(s)) return true;
+
+  // 2. Trailing open date ranges or year spans (e.g. "2021–", "2020-")
+  if (/\b\d{4}\s*[\-–—]\s*$/.test(s)) return true;
+
+  // 3. Trailing non-terminal words, prepositions, or conjunctions
+  if (/\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)\s*$/i.test(s)) {
+    return true;
+  }
+
+  // 4. Starts with mid-sentence conversational fragments, verbs, or incomplete predicates
+  if (/^(?:existing\s+research\s+includes?|studies\s+show\s+that|we\s+propose|this\s+paper\s+presents|in\s+order\s+to|as\s+shown\s+in|according\s+to|compare|comparing|discussing)\b/i.test(s)) {
+    return true;
+  }
+  if (/^(?:predicts?|demonstrates?|describes?|shows?|evaluates?|requires?|focuses?|develops?|illustrates?|presents?|compares?|improves?|combines?)\b/i.test(s)) {
+    return true;
+  }
+
+  // 5. Unbalanced parentheses or brackets
+  const openParen = (s.match(/\(/g) || []).length;
+  const closeParen = (s.match(/\)/g) || []).length;
+  if (openParen !== closeParen) return true;
+
+  const openBracket = (s.match(/\[/g) || []).length;
+  const closeBracket = (s.match(/\]/g) || []).length;
+  if (openBracket !== closeBracket) return true;
+
+  return false;
+}
+
+/**
+ * Checks if a candidate title is an ALL-CAPS raw heading or a generic document structural marker
+ * (e.g. "RESEARCH GAP", "PROBLEM STATEMENT", "OBJECTIVES", "LITERATURE REVIEW", "METHODOLOGY").
+ * These must be routed to synthesizeDomainTitle to produce high-value domain topics.
+ */
+export function isStructuralOrAllCaps(str) {
+  if (!str || typeof str !== 'string') return false;
+  const s = str.trim();
+
+  // 1. ALL-CAPS check: >= 3 letters and all alphabetic characters are uppercase
+  const letters = s.replace(/[^A-Za-z]/g, '');
+  if (letters.length >= 3 && letters === letters.toUpperCase()) {
+    return true;
+  }
+
+  // 2. Generic academic / document structure sections
+  const structuralPatterns = [
+    /^(?:outline|table\s+of\s+contents|agenda|index)\b/i,
+    /^(?:introduction|overview|background)\b/i,
+    /^(?:problem\s+statement|research\s+gap|motivation|identified\s+gaps?)\b/i,
+    /^(?:objectives?|goals?|aims?|scope)\b/i,
+    /^(?:literature\s+review|related\s+work|prior\s+work|state\s+of\s+the\s+art|(?:existing|prior|related)\s+research)(?:\s*[:–—\-].*)?$/i,
+    /^(?:methodology|proposed\s+system|proposed\s+work|proposed\s+architecture|system\s+architecture|system\s+model)\b/i,
+    /^(?:data\s+collection|datasets?|data\s+preprocessing)\b/i,
+    /^(?:results?(?:\s+and\s+discussion)?|discussion|findings|evaluation)\b/i,
+    /^(?:conclusion|conclusions|summary|future\s+(?:scope|work)|proposed\s+contribution)\b/i
+  ];
+
+  return structuralPatterns.some(p => p.test(s));
 }
 
 /**
@@ -248,7 +368,11 @@ export function isNonTopicHeading(line) {
   const academicRegex = /^(?:lab\s+assignment|lab\s+manual|experiment\s*(?:no\.?|\d+)|practical\s*(?:no\.?|\d+)|aim\b|apparatus\b|prerequisites?\b|solution\b|techniques?\b|observations?\b|procedure\b|conclusion\b|code\s+implementation)/i;
   if (academicRegex.test(lower)) return true;
 
-  // 6. Single words that are generic or non-substantive
+  // 6. Table column headers and matrix labels (e.g. "Paper", "Method", "Reported result")
+  const tableHeaderRegex = /^(?:paper|method|reported\s*results?|results?|metrics?|dataset|author|year|accuracy|precision|recall|f1[\s-]score|parameters?)\b/i;
+  if (tableHeaderRegex.test(lower)) return true;
+
+  // 7. Single words that are generic or non-substantive
   const words = l.split(/\s+/).filter(Boolean);
   if (words.length <= 1) return true;
 
@@ -304,30 +428,47 @@ export function synthesizeDomainTitle(unitText, docBaseLower = '') {
   if (lower.includes('replication') || lower.includes('sharding')) {
     return 'Distributed Data Replication';
   }
+
+  // Environmental / Shelter / Climate / Comfort Domain Recognition
   if (lower.includes('literature review') && (lower.includes('comfort') || lower.includes('thermal'))) {
     return 'Thermal Comfort Benchmarks';
   }
-  if (lower.includes('problem statement') || lower.includes('research gap')) {
+  if (lower.includes('problem statement') || (lower.includes('problem') && lower.includes('comfort'))) {
+    return 'Cross-Climate Prediction Gaps';
+  }
+  if (lower.includes('research gap') || lower.includes('identified gaps')) {
     return 'Cross-Climate Design Gaps';
   }
-  if (lower.includes('methodology') || lower.includes('proposed system')) {
-    return 'Adaptive Shelter Architecture';
+  if (lower.includes('objectives') && (lower.includes('comfort') || lower.includes('prediction') || lower.includes('thermal'))) {
+    return 'Thermal Comfort ML Objectives';
+  }
+  if (lower.includes('methodology') || (lower.includes('data collection') && lower.includes('preprocessing'))) {
+    return 'Adaptive Shelter Methodology';
+  }
+  if (lower.includes('system architecture') || (lower.includes('climate data') && lower.includes('occupant data'))) {
+    return 'Integrated Shelter Architecture';
+  }
+  if (lower.includes('contribution') || lower.includes('decision-support')) {
+    return 'Decision-Support Framework';
+  }
+  if (lower.includes('conclusion') && (lower.includes('shelter') || lower.includes('comfort'))) {
+    return 'Climate-Adaptive Shelter Outcomes';
   }
   if (lower.includes('energy') && lower.includes('optimization')) {
     return 'Energy & Comfort Optimization';
   }
-  if (lower.includes('contribution') || lower.includes('framework')) {
-    return 'Shelter Design Framework';
+  if (lower.includes('thermal comfort') || (lower.includes('pmv') && lower.includes('temperature'))) {
+    return 'Thermal Comfort Fundamentals';
   }
 
   // Fallback to top substantive domain keywords formatted as a cohesive noun-phrase
-  const kw = extractTopKeywords(unitText, 5).filter(w => !docBaseLower.includes(w) && w.length > 3);
+  const kw = extractTopKeywords(unitText, 6).filter(w => !docBaseLower.includes(w) && w.length > 3);
   if (kw.length >= 2) {
-    const c1 = kw[0].charAt(0).toUpperCase() + kw[0].slice(1);
-    const c2 = kw[1].charAt(0).toUpperCase() + kw[1].slice(1);
+    const c1 = toTitleCase(kw[0]);
+    const c2 = toTitleCase(kw[1]);
     return `${c1} & ${c2} Architecture`;
   } else if (kw.length === 1) {
-    const c1 = kw[0].charAt(0).toUpperCase() + kw[0].slice(1);
+    const c1 = toTitleCase(kw[0]);
     return `${c1} Systems & Principles`;
   }
   return 'Core Technical Architecture';
@@ -525,7 +666,14 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       if (/^[•\-*·]\s*/.test(lines[i].trim())) continue;
       // Skip lone numbers like "9" or "5."
       if (/^\d+[\.\)]?$/.test(l)) continue;
-      if (l.length >= 4 && l.length <= 60 && !l.endsWith('.') && !isNonTopicHeading(l)) {
+      if (
+        l.length >= 4 &&
+        l.length <= 60 &&
+        !l.endsWith('.') &&
+        !isNonTopicHeading(l) &&
+        !isTruncatedOrNonTerminal(l) &&
+        !isStructuralOrAllCaps(l)
+      ) {
         headingCandidate = l;
         break;
       }
@@ -544,14 +692,20 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       (lowerHead.length > 10 && docBaseLower.includes(lowerHead))
     );
 
-    if (headingCandidate && !isDocTitleRepeat && !isNonTopicHeading(headingCandidate)) {
-      synthesizedTitle = truncateAtWord(headingCandidate, 45);
+    if (
+      headingCandidate &&
+      !isDocTitleRepeat &&
+      !isNonTopicHeading(headingCandidate) &&
+      !isTruncatedOrNonTerminal(headingCandidate) &&
+      !isStructuralOrAllCaps(headingCandidate)
+    ) {
+      synthesizedTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(headingCandidate)), 45);
     } else {
       synthesizedTitle = synthesizeDomainTitle(unitText, docBaseLower);
     }
 
-    // Standardize title length and ensure word-boundary truncation (NEVER truncate mid-word)
-    synthesizedTitle = truncateAtWord(synthesizedTitle, 45);
+    // Standardize title length, Title Case, and word-boundary truncation (NEVER truncate mid-word or leave trailing non-terminal tokens)
+    synthesizedTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(synthesizedTitle)), 45);
 
     // Dedup check
     if (seenTitles.has(synthesizedTitle.toLowerCase()) || synthesizedTitle.length < 4) {
@@ -587,10 +741,10 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       });
 
       if (sentences.length > 0) {
-        desc = sentences[0];
+        desc = sentences[0].replace(/[,\s;:–—\-.]+$/, '');
         if (!desc.endsWith('.')) desc += '.';
         if (sentences.length > 1 && (desc.length + sentences[1].length + 1) <= 175) {
-          const second = sentences[1].endsWith('.') ? sentences[1] : sentences[1] + '.';
+          const second = sentences[1].replace(/[,\s;:–—\-.]+$/, '') + '.';
           desc += ' ' + second;
         }
       } else {
@@ -606,9 +760,9 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
     if (desc.length > 175) {
       const truncated = truncateAtWord(desc, 170);
-      desc = truncated.replace(/[,\s;:\-]+$/, '') + '.';
-    } else if (!desc.endsWith('.')) {
-      desc = desc + '.';
+      desc = truncated.replace(/[,\s;:–—\-.]+$/, '') + '.';
+    } else {
+      desc = desc.replace(/[,\s;:–—\-.]+$/, '') + '.';
     }
 
     // Step 6: Tags & Categories
