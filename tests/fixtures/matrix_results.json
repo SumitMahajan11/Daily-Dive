@@ -1,7 +1,7 @@
 {
   "pdf": {
     "status": "success",
-    "count": 10,
+    "count": 11,
     "topics": [
       {
         "index": 1,
@@ -11,7 +11,7 @@
       },
       {
         "index": 2,
-        "title": "TCP Stream & Handshake Analysis",
+        "title": "Packet File Reconstruction",
         "badge": "Needs review (60%)",
         "reasons": [
           "Length outlier (excessive length for topic title)"
@@ -19,10 +19,11 @@
       },
       {
         "index": 3,
-        "title": "Capture & File Architecture",
+        "title": "Step 3: Stopping the packet capture",
         "badge": "Needs review (20%)",
         "reasons": [
-          "Procedural step artifact"
+          "Procedural step artifact",
+          "Unverified raw text: user rewrite recommended"
         ]
       },
       {
@@ -56,10 +57,11 @@
       },
       {
         "index": 8,
-        "title": "Protocol & Application Architecture",
-        "badge": "Needs review (60%)",
+        "title": "Following the IP layer is the transport",
+        "badge": "Needs review (40%)",
         "reasons": [
-          "Length outlier (excessive length for topic title)"
+          "Length outlier (excessive length for topic title)",
+          "Unverified raw text: user rewrite recommended"
         ]
       },
       {
@@ -73,6 +75,15 @@
         "title": "Identifying Attacks",
         "badge": "Verified (80%)",
         "reasons": []
+      },
+      {
+        "index": 11,
+        "title": "TCP Stream & Handshake Analysis",
+        "badge": "Needs review (5%)",
+        "reasons": [
+          "Ends with non-terminal connector or preposition",
+          "Length outlier (excessive length for topic title)"
+        ]
       }
     ]
   },
@@ -82,18 +93,20 @@
     "topics": [
       {
         "index": 1,
-        "title": "Feature & Maps Architecture",
-        "badge": "Needs review (45%)",
+        "title": "Feature maps detect edge orientations spall",
+        "badge": "Needs review (40%)",
         "reasons": [
-          "Length outlier (excessive length for topic title)"
+          "Length outlier (excessive length for topic title)",
+          "Unverified raw text: user rewrite recommended"
         ]
       },
       {
         "index": 2,
-        "title": "Empircalvaldation & Benchmarks Architecture",
-        "badge": "Needs review (60%)",
+        "title": "Empircalvaldation benchmarks indicate tha",
+        "badge": "Needs review (40%)",
         "reasons": [
-          "Length outlier (excessive length for topic title)"
+          "Length outlier (excessive length for topic title)",
+          "Unverified raw text: user rewrite recommended"
         ]
       }
     ]
@@ -116,7 +129,7 @@
       },
       {
         "index": 3,
-        "title": "Distributed Consensus & Paxos",
+        "title": "Latency & Performance Benchmarks",
         "badge": "Needs review (50%)",
         "reasons": [
           "Trailing punctuation or incomplete delimiter"

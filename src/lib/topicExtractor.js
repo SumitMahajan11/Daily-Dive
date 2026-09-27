@@ -575,97 +575,103 @@ export function isNonTopicHeading(line) {
 
 /**
  * Synthesizes a coherent, professional concept title from unit content.
+ * Returns null if no high-confidence domain pattern is matched.
  */
 export function synthesizeDomainTitle(unitText, docBaseLower = '') {
-  const lower = unitText.toLowerCase();
+  const text = unitText || '';
+  const lower = text.toLowerCase();
 
-  // Semantic domain concept recognition
-  if (lower.includes('filter') && (lower.includes('wireshark') || lower.includes('icmp') || lower.includes('packet'))) {
+  // 1. Networking & Packet Analysis (Experiment 2 CN)
+  if (/\b(?:wireshark|icmp|pcap)\b/i.test(text) && /\bfilter(?:ing|s)?\b/i.test(text)) {
     return 'Wireshark Packet Filtering';
   }
-  if (lower.includes('tcp') && (lower.includes('stream') || lower.includes('handshake') || lower.includes('connect request'))) {
+  if (/\btcp\b/i.test(text) && /\b(?:stream|handshake|syn|ack)\b/i.test(text)) {
     return 'TCP Stream & Handshake Analysis';
   }
-  if (lower.includes('protocol hierarchy') || (lower.includes('protocol') && lower.includes('stack layer'))) {
+  if (/\bprotocol\s+hierarchy\b/i.test(text) || (/\bprotocols?\b/i.test(text) && /\bstack\s+layers?\b/i.test(text))) {
     return 'Network Protocol Hierarchy';
   }
-  if (lower.includes('conversations') || (lower.includes('endpoints') && lower.includes('packet capture'))) {
+  if (/\b(?:conversations?|endpoints?)\b/i.test(text) && /\bpacket\s+capture\b/i.test(text)) {
     return 'Network Conversation & Endpoints';
   }
-  if (lower.includes('extract') && lower.includes('files') && lower.includes('packet')) {
+  if (/\bextract(?:ing)?\s+files\b/i.test(text) || (/\bextract\b/i.test(text) && /\bfiles\b/i.test(text) && /\bpackets?\b/i.test(text))) {
     return 'Packet File Reconstruction';
   }
-  if (lower.includes('brute force') || lower.includes('hydra') || lower.includes('password spray')) {
+  if (/\b(?:brute\s*force|hydra|password\s*spray)\b/i.test(text)) {
     return 'Cyber Attack Traffic Detection';
   }
-  if (lower.includes('subnetting') || (lower.includes('ipv4') && lower.includes('addressing'))) {
+  if (/\bsubnet(?:ting|s)?\b/i.test(text) || (/\bipv4\b/i.test(text) && /\baddressing\b/i.test(text))) {
     return 'IPv4 Subnetting & Topology';
   }
-  if (lower.includes('packet tracer') || lower.includes('cisco')) {
+  if (/\bcisco\b/i.test(text) || /\bpacket\s*tracer\b/i.test(text)) {
     return 'Cisco Packet Tracer Design';
   }
-  if (lower.includes('horizontal') && lower.includes('vertical') && lower.includes('scaling')) {
+
+  // 2. Distributed Systems & Cloud Architecture
+  if (/\bhorizontal\b/i.test(text) && /\bvertical\b/i.test(text) && /\bscaling\b/i.test(text)) {
     return 'Horizontal vs Vertical Scaling';
   }
-  if (lower.includes('load balanc')) {
+  if (/\bload\s+balanc(?:ing|er|ers)?\b/i.test(text)) {
     return 'Cloud Load Balancing Strategy';
   }
-  if (lower.includes('dijkstra')) {
+  if (/\bdijkstra\b/i.test(text)) {
     return 'Dijkstra Shortest Path Algorithm';
   }
-  if (lower.includes('dynamic programming') || lower.includes('memoization')) {
+  if (/\bdynamic\s+programming\b/i.test(text) || /\bmemoization\b/i.test(text)) {
     return 'Dynamic Programming Foundations';
   }
-  if (lower.includes('consensus') || lower.includes('paxos') || lower.includes('raft')) {
+  // Word-boundary check: raft must not match draft or aircraft!
+  if (/\b(?:consensus|paxos)\b/i.test(text) || (/\braft\b/i.test(text) && !/\bdraft\b/i.test(text))) {
     return 'Distributed Consensus & Paxos';
   }
-  if (lower.includes('replication') || lower.includes('sharding')) {
+  if (/\b(?:replication|sharding)\b/i.test(text)) {
     return 'Distributed Data Replication';
   }
+  // Latency & Benchmark Domain
+  if (/\blatency\b/i.test(text) && /\b(?:benchmarks?|profiling|metrics?|p99|load\s*tests?)\b/i.test(text)) {
+    return 'Latency & Performance Benchmarks';
+  }
+  if (/\bapi\s+gateway\b/i.test(text) && /\b(?:routing|security|rate\s*limit)\b/i.test(text)) {
+    return 'API Gateway Routing & Security';
+  }
+  if (/\bmicroservices?\b/i.test(text) && /\b(?:architecture|patterns?|decomposition)\b/i.test(text)) {
+    return 'Microservices Architecture Patterns';
+  }
 
-  // Environmental / Shelter / Climate / Comfort Domain Recognition
-  if (lower.includes('literature review') && (lower.includes('comfort') || lower.includes('thermal'))) {
+  // 3. Environmental / Shelter / Climate / Comfort Domain (Document 6)
+  if (/\bliterature\s+review\b/i.test(text) && /\b(?:comfort|thermal)\b/i.test(text)) {
     return 'Thermal Comfort Benchmarks';
   }
-  if (lower.includes('problem statement') || (lower.includes('problem') && lower.includes('comfort'))) {
+  if (/\bproblem\s+statement\b/i.test(text) || (/\bproblem\b/i.test(text) && /\bcomfort\b/i.test(text))) {
     return 'Cross-Climate Prediction Gaps';
   }
-  if (lower.includes('research gap') || lower.includes('identified gaps')) {
+  if (/\bresearch\s+gap\b/i.test(text) || /\bidentified\s+gaps\b/i.test(text)) {
     return 'Cross-Climate Design Gaps';
   }
-  if (lower.includes('objectives') && (lower.includes('comfort') || lower.includes('prediction') || lower.includes('thermal'))) {
+  if (/\bobjectives?\b/i.test(text) && /\b(?:comfort|prediction|thermal)\b/i.test(text)) {
     return 'Thermal Comfort ML Objectives';
   }
-  if (lower.includes('methodology') || (lower.includes('data collection') && lower.includes('preprocessing'))) {
+  if (/\bmethodology\b/i.test(text) || (/\bdata\s+collection\b/i.test(text) && /\bpreprocessing\b/i.test(text))) {
     return 'Adaptive Shelter Methodology';
   }
-  if (lower.includes('system architecture') || (lower.includes('climate data') && lower.includes('occupant data'))) {
+  if (/\bsystem\s+architecture\b/i.test(text) || (/\bclimate\s+data\b/i.test(text) && /\boccupant\s+data\b/i.test(text))) {
     return 'Integrated Shelter Architecture';
   }
-  if (lower.includes('contribution') || lower.includes('decision-support')) {
+  if (/\bcontribution\b/i.test(text) || /\bdecision-support\b/i.test(text)) {
     return 'Decision-Support Framework';
   }
-  if (lower.includes('conclusion') && (lower.includes('shelter') || lower.includes('comfort'))) {
+  if (/\bconclusion\b/i.test(text) && /\b(?:shelter|comfort)\b/i.test(text)) {
     return 'Climate-Adaptive Shelter Outcomes';
   }
-  if (lower.includes('energy') && lower.includes('optimization')) {
+  if (/\benergy\b/i.test(text) && /\boptimization\b/i.test(text)) {
     return 'Energy & Comfort Optimization';
   }
-  if (lower.includes('thermal comfort') || (lower.includes('pmv') && lower.includes('temperature'))) {
+  if (/\bthermal\s+comfort\b/i.test(text) || (/\bpmv\b/i.test(text) && /\btemperature\b/i.test(text))) {
     return 'Thermal Comfort Fundamentals';
   }
 
-  // Fallback to top substantive domain keywords formatted as a cohesive noun-phrase
-  const kw = extractTopKeywords(unitText, 6).filter(w => !docBaseLower.includes(w) && w.length > 3);
-  if (kw.length >= 2) {
-    const c1 = toTitleCase(kw[0]);
-    const c2 = toTitleCase(kw[1]);
-    return `${c1} & ${c2} Architecture`;
-  } else if (kw.length === 1) {
-    const c1 = toTitleCase(kw[0]);
-    return `${c1} Systems & Principles`;
-  }
-  return 'Core Technical Architecture';
+  // Do not invent fake titles with naive word concatenation when OCR or text quality is poor.
+  return null;
 }
 
 /**
@@ -955,9 +961,11 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     } else {
       // Low confidence or flawed raw title: synthesize domain recommendation
       const domainSynthesized = synthesizeDomainTitle(unitText, docBaseLower);
-      const synthScore = scoreCandidateTitle(domainSynthesized, { isStructuralTitle: false, unitText, docBaseLower });
+      const synthScore = domainSynthesized
+        ? scoreCandidateTitle(domainSynthesized, { isStructuralTitle: false, unitText, docBaseLower })
+        : null;
 
-      if (domainSynthesized && synthScore.isHighConfidence) {
+      if (domainSynthesized && synthScore && synthScore.isHighConfidence) {
         finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(domainSynthesized)), 45);
         if (scoreResult.confidence < CONFIDENCE_THRESHOLD) {
           needsReview = true;
@@ -972,15 +980,25 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
           needsReview = false;
         }
       } else {
-        finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(candidateTitle || domainSynthesized)), 45);
+        // No valid domain title could be synthesized.
+        // When OCR or extraction text quality is too low, DO NOT synthesize a fake garbled title.
+        // Retain the cleaned raw text line so the user can easily see what was read and rewrite it.
+        finalTitle = truncateAtWord(cleanCandidateTitle(candidateTitle), 45);
         needsReview = true;
-        confidence = scoreResult.confidence;
-        confidenceRating = scoreResult.confidence_rating;
+        confidence = Math.min(scoreResult.confidence, 40);
+        confidenceRating = 'low';
+        if (!reviewReasons.includes('Unverified raw text: user rewrite recommended')) {
+          reviewReasons.push('Unverified raw text: user rewrite recommended');
+        }
       }
     }
 
-    // Standardize title length and formatting
-    finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(finalTitle)), 45);
+    // Standardize title length and formatting without forcing TitleCase on unverified raw OCR text
+    if (!needsReview) {
+      finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(finalTitle)), 45);
+    } else {
+      finalTitle = truncateAtWord(cleanCandidateTitle(finalTitle), 45);
+    }
 
     // Dedup check
     if (seenTitles.has(finalTitle.toLowerCase()) || finalTitle.length < 4) {
