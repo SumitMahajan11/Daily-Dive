@@ -4,7 +4,7 @@
 class AudioSynthesizer {
   constructor() {
     this.ctx = null;
-    this.soundEnabled = true;
+    this.soundEnabled = false;
   }
 
   init() {
