@@ -141,5 +141,10 @@ export const starterTopics = ${JSON.stringify(starterTopicsList, null, 2)};
   console.log(`Generated ${starterTopicsFile} (16 starter topics)`);
 }
 
-console.log(`\n[SUCCESS]: Successfully partitioned all ${topics.length} topics across 4 group modules and generated topic files.\n`);
+// Write topicIds.json containing every curated topic id
+const topicIdsFile = path.join(rootDir, 'src', 'data', 'topicIds.json');
+const allTopicIds = topics.map(t => t.id);
+fs.writeFileSync(topicIdsFile, JSON.stringify(allTopicIds, null, 2), 'utf8');
+console.log(`Generated ${topicIdsFile} (${allTopicIds.length} topic ids)`);
 
+console.log(`\n[SUCCESS]: Successfully partitioned all ${topics.length} topics across 4 group modules, starterTopics.js, and topicIds.json.\n`);

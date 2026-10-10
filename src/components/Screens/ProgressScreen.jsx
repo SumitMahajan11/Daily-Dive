@@ -20,6 +20,7 @@ import {
   selectStreakMetrics,
   selectFilteredHistory
 } from '../../lib/selectors';
+import { SCHEMA_VERSION } from '../../lib/customTopics';
 
 export const ProgressScreen = ({ onReviewTopic }) => {
   const {
@@ -103,8 +104,8 @@ export const ProgressScreen = ({ onReviewTopic }) => {
     } catch (e) {}
 
     const backupData = {
-      schemaVersion: 2,
-      version: '2.1.0',
+      schemaVersion: SCHEMA_VERSION,
+      version: '3.0.0',
       exported_at: nowIso,
       last_backup_at: nowIso,
       user_progress: userProgressMap,

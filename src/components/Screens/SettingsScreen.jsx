@@ -18,6 +18,7 @@ import { ResetConfirmationModal } from '../Modals/ResetConfirmationModal';
 import { Toggle } from '../UI/Toggle';
 import { Button } from '../UI/Button';
 import { downloadCalendarReminder } from '../../lib/calendar';
+import { SCHEMA_VERSION } from '../../lib/customTopics';
 
 const formatTo24Hour = (time12) => {
   if (!time12 || typeof time12 !== 'string') return '09:00';
@@ -164,8 +165,8 @@ export const SettingsScreen = () => {
     } catch (e) {}
 
     const backupData = {
-      schemaVersion: 2,
-      version: '2.1.0',
+      schemaVersion: SCHEMA_VERSION,
+      version: '3.0.0',
       exported_at: nowIso,
       last_backup_at: nowIso,
       user_progress: userProgressMap,
