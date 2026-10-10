@@ -1,0 +1,66 @@
+{
+  "schemaVersion": 3,
+  "version": "3.0.0",
+  "exported_at": "2026-10-10T12:00:00.000Z",
+  "last_backup_at": "2026-10-10T12:00:00.000Z",
+  "user_progress": {
+    "mixture-of-experts-moe": {
+      "times_seen": 2,
+      "last_seen": "2026-10-09T14:00:00.000Z",
+      "learned": false
+    },
+    "consistent-custom-note-1": {
+      "times_seen": 3,
+      "last_seen": "2026-10-10T08:00:00.000Z",
+      "learned": true
+    }
+  },
+  "history": [
+    {
+      "id": "h-builtin-no-progress",
+      "topic_id": "multi-head-self-attention",
+      "title": "Scaled Dot-Product",
+      "action": "spin",
+      "timestamp": "2026-10-08T10:00:00.000Z"
+    },
+    {
+      "id": "h-nonexistent-ghost",
+      "topic_id": "ghost-topic-id-that-exists-nowhere-99999",
+      "title": "Ghost Topic From The Ether",
+      "action": "spin",
+      "timestamp": "2026-10-07T09:00:00.000Z"
+    },
+    {
+      "id": "h-consistent-custom",
+      "topic_id": "consistent-custom-note-1",
+      "title": "Consistent Architecture Note",
+      "action": "spin",
+      "timestamp": "2026-10-10T08:00:00.000Z"
+    }
+  ],
+  "custom_topics": [
+    {
+      "id": "consistent-custom-note-1",
+      "title": "Consistent Architecture Note",
+      "description": "Valid custom note in sync with progress and history",
+      "group": "custom",
+      "category": "custom-notes",
+      "lifecycle": "permanent"
+    }
+  ],
+  "expired_custom_topics": [],
+  "user_streaks": {
+    "current_streak": 2,
+    "longest_streak": 5,
+    "last_active_date": "2026-10-10"
+  },
+  "user_settings": {
+    "content_source": "blended",
+    "enabled_categories": {
+      "tech": true,
+      "custom": true
+    }
+  },
+  "theme": "dark",
+  "first_run_dismissed": true
+}
