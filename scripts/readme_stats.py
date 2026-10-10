@@ -4,7 +4,7 @@ from pathlib import Path
 
 def main():
     root = Path(__file__).resolve().parent.parent
-    topics_path = root / 'src' / 'data' / 'compiledTopics.json'
+    topics_path = root / 'data' / 'topics.curated.json'
     readme_path = root / 'README.md'
 
     with open(topics_path, 'r', encoding='utf-8') as f:

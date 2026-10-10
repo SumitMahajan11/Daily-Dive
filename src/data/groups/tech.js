@@ -1,6 +1,7 @@
 /**
  * Daily Dive Topics Group: tech
  * Total topics: 313
+ * Generated automatically from data/topics.curated.json
  */
 
 export const topics = [

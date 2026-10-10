@@ -1,6 +1,7 @@
 /**
  * Daily Dive Topics Group: money-career
  * Total topics: 113
+ * Generated automatically from data/topics.curated.json
  */
 
 export const topics = [

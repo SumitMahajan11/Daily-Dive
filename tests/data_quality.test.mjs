@@ -1,95 +1,101 @@
 import { describe, it } from 'node:test';
-import assert from 'node:assert';
-import fs from 'fs';
-import path from 'path';
+import assert from 'node:assert/strict';
+import fs from 'node:fs';
+import path from 'node:path';
 
-describe('A.5: Data Quality & Regression Invariants', () => {
-  const jsonPath = path.resolve('src/data/compiledTopics.json');
-  const topics = JSON.parse(fs.readFileSync(jsonPath, 'utf-8'));
+// Import the actual group modules used by the runtime application
+import techTopics from '../src/data/groups/tech.js';
+import moneyCareerTopics from '../src/data/groups/money-career.js';
+import mindGrowthTopics from '../src/data/groups/mind-growth.js';
+import worldIdeasTopics from '../src/data/groups/world-ideas.js';
 
-  it('validates exact total topic count of 692', () => {
-    assert.strictEqual(topics.length, 692, `Expected exactly 692 topics, got ${topics.length}`);
+describe('Data Quality: Imported Runtime Topic Modules', () => {
+  const canonicalPath = path.resolve('data/topics.curated.json');
+  const canonicalTopics = JSON.parse(fs.readFileSync(canonicalPath, 'utf8'));
+
+  const allImportedTopics = [
+    ...techTopics,
+    ...moneyCareerTopics,
+    ...mindGrowthTopics,
+    ...worldIdeasTopics
+  ];
+
+  it('proves total imported topic count matches canonical count of 692', () => {
+    assert.equal(allImportedTopics.length, 692, `Expected 692 topics, got ${allImportedTopics.length}`);
+    assert.equal(canonicalTopics.length, 692);
   });
 
-  it('validates exact group breakdown counts (tech 313, money-career 113, mind-growth 176, world-ideas 90)', () => {
-    const groupCounts = {};
-    for (const t of topics) {
-      const g = t.group_name || t.group;
-      assert.ok(g, `Topic ${t.id} missing group`);
-      groupCounts[g] = (groupCounts[g] || 0) + 1;
+  it('proves group modules deep-equal the curated canonical dataset', () => {
+    const canonicalMap = new Map(canonicalTopics.map(t => [t.id, {
+      id: t.id,
+      title: t.title,
+      description: t.description,
+      category: t.category,
+      group: t.group_name || t.group,
+      group_name: t.group_name || t.group,
+      tags: Array.isArray(t.tags) ? t.tags : [],
+      resources: Array.isArray(t.resources) ? t.resources : []
+    }]));
+
+    assert.equal(allImportedTopics.length, canonicalMap.size, 'All IDs must be unique and present');
+
+    for (const topic of allImportedTopics) {
+      const canonicalTopic = canonicalMap.get(topic.id);
+      assert.ok(canonicalTopic, `Topic ${topic.id} missing in canonical file`);
+      assert.deepEqual(topic, canonicalTopic, `Topic mismatch for ${topic.id}`);
+    }
+  });
+
+  it('asserts every imported topic description is <= 165 characters', () => {
+    const oversized = allImportedTopics.filter(t => (t.description || '').length > 165);
+    if (oversized.length > 0) {
+      const sample = oversized.slice(0, 3).map(t => `[${t.title}] (${t.description.length}): ${t.description}`).join('\n');
+      assert.fail(`Found ${oversized.length} topic descriptions exceeding 165 chars:\n${sample}`);
+    }
+  });
+
+  it('asserts every imported topic title is <= 71 characters', () => {
+    const oversized = allImportedTopics.filter(t => (t.title || '').length > 71);
+    if (oversized.length > 0) {
+      const sample = oversized.slice(0, 3).map(t => `[${t.title}] (${t.title.length})`).join('\n');
+      assert.fail(`Found ${oversized.length} topic titles exceeding 71 chars:\n${sample}`);
+    }
+  });
+
+  it('asserts zero duplicate titles across the entire catalog', () => {
+    const titles = new Set();
+    const duplicates = [];
+
+    for (const t of allImportedTopics) {
+      const normalized = (t.title || '').trim().toLowerCase();
+      if (titles.has(normalized)) {
+        duplicates.push(t.title);
+      }
+      titles.add(normalized);
     }
 
-    assert.strictEqual(groupCounts['tech'], 313, 'Expected 313 tech topics');
-    assert.strictEqual(groupCounts['money-career'], 113, 'Expected 113 money-career topics');
-    assert.strictEqual(groupCounts['mind-growth'], 176, 'Expected 176 mind-growth topics');
-    assert.strictEqual(groupCounts['world-ideas'], 90, 'Expected 90 world-ideas topics');
+    assert.equal(duplicates.length, 0, `Found duplicate titles: ${duplicates.join(', ')}`);
   });
 
-  it('validates zero duplicate titles or IDs', () => {
-    const seenTitles = new Set();
-    const seenIds = new Set();
-    for (const t of topics) {
-      assert.ok(!seenIds.has(t.id), `Duplicate topic ID found: ${t.id}`);
-      seenIds.add(t.id);
-
-      const normTitle = t.title.trim().toLowerCase();
-      assert.ok(!seenTitles.has(normTitle), `Duplicate topic title found: ${t.title}`);
-      seenTitles.add(normTitle);
-    }
-  });
-
-  it('validates title and description length constraints (punchy titles, max description 175)', () => {
-    let maxTitleLen = 0;
-    let maxDescLen = 0;
-    let totalTitleLen = 0;
-    let totalDescLen = 0;
-
-    for (const t of topics) {
-      assert.ok(t.title && t.title.trim().length > 0, `Topic ${t.id} has empty title`);
-      assert.ok(t.description && t.description.trim().length > 0, `Topic ${t.id} has empty description`);
-
-      const titleLen = t.title.length;
-      const descLen = t.description.length;
-
-      totalTitleLen += titleLen;
-      totalDescLen += descLen;
-
-      if (titleLen > maxTitleLen) maxTitleLen = titleLen;
-      if (descLen > maxDescLen) maxDescLen = descLen;
-
-      assert.ok(
-        descLen <= 175,
-        `Topic '${t.title}' (${t.id}) description exceeds 175 chars: ${descLen} chars -> "${t.description}"`
-      );
-    }
-
-    const avgTitle = totalTitleLen / topics.length;
-    const avgDesc = totalDescLen / topics.length;
-
-    console.log(`[PASS] Verified 692 topics: Avg Title = ${avgTitle.toFixed(2)} chars (max: ${maxTitleLen}), Avg Desc = ${avgDesc.toFixed(2)} chars (max: ${maxDescLen})`);
-  });
-
-  it('validates every topic has category, group, and at least one valid resource source link', () => {
-    for (const t of topics) {
-      assert.ok(t.category, `Topic ${t.id} missing category`);
-      assert.ok(t.group_name || t.group, `Topic ${t.id} missing group`);
-      assert.ok(Array.isArray(t.resources), `Topic ${t.id} resources must be an array`);
-      assert.ok(t.resources.length >= 1, `Topic ${t.id} must have at least 1 resource link`);
-
+  it('asserts every topic contains valid group, category, and resources', () => {
+    for (const t of allImportedTopics) {
+      assert.ok(t.id && typeof t.id === 'string', `Invalid ID: ${t.id}`);
+      assert.ok(t.title && t.title.trim().length > 0, `Empty title on ${t.id}`);
+      assert.ok(t.description && t.description.trim().length > 0, `Empty description on ${t.id}`);
+      assert.ok(t.category && typeof t.category === 'string', `Missing category on ${t.id}`);
+      assert.ok(t.group && typeof t.group === 'string', `Missing group on ${t.id}`);
+      assert.ok(Array.isArray(t.resources) && t.resources.length > 0, `Topic ${t.id} has no resources`);
       for (const res of t.resources) {
-        assert.ok(res.url && res.url.startsWith('http'), `Topic ${t.id} resource has invalid URL: ${res.url}`);
-        assert.ok(res.label || res.title, `Topic ${t.id} resource has missing label/title`);
+        assert.ok(res.label && res.label.length > 0, `Resource missing label in ${t.id}`);
+        assert.ok(res.url && res.url.startsWith('http'), `Resource invalid url in ${t.id}: ${res.url}`);
       }
     }
   });
 
-  it('validates that group chunk files in src/data/groups match compiledTopics.json', () => {
-    const groups = ['tech', 'money-career', 'mind-growth', 'world-ideas'];
-    for (const g of groups) {
-      const groupFilePath = path.resolve(`src/data/groups/${g}.js`);
-      assert.ok(fs.existsSync(groupFilePath), `Missing group chunk file: ${groupFilePath}`);
-      const content = fs.readFileSync(groupFilePath, 'utf-8');
-      assert.ok(content.includes('export const topics ='), `Group chunk ${g}.js missing export`);
-    }
+  it('asserts exact partition counts across all 4 groups (tech=313, money-career=113, mind-growth=176, world-ideas=90)', () => {
+    assert.equal(techTopics.length, 313, `Tech group expected 313, got ${techTopics.length}`);
+    assert.equal(moneyCareerTopics.length, 113, `Money-career group expected 113, got ${moneyCareerTopics.length}`);
+    assert.equal(mindGrowthTopics.length, 176, `Mind-growth group expected 176, got ${mindGrowthTopics.length}`);
+    assert.equal(worldIdeasTopics.length, 90, `World-ideas group expected 90, got ${worldIdeasTopics.length}`);
   });
 });

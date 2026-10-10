@@ -1,6 +1,7 @@
 /**
  * Daily Dive Topics Group: world-ideas
  * Total topics: 90
+ * Generated automatically from data/topics.curated.json
  */
 
 export const topics = [

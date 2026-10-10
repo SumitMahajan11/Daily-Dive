@@ -1,6 +1,7 @@
 /**
  * Daily Dive Topics Group: mind-growth
  * Total topics: 176
+ * Generated automatically from data/topics.curated.json
  */
 
 export const topics = [
