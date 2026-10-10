@@ -32,7 +32,12 @@ export const topics = [
         "label": "Harvard Business Review: The Necessary Art of Persuasion (Jay A. Conger)",
         "url": "https://hbr.org/1998/05/the-necessary-art-of-persuasion"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Aristotle showed that persuasive communication rests on three pillars: credibility, emotional connection, and logical reasoning.",
+      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing all three creates enduring persuasion.",
+      "example": "A doctor explaining a vaccine shares medical trials for logic, personal clinical experience for credibility, and a patient story for empathy."
+    }
   },
   {
     "id": "cialdini-principles-of-persuasion",
@@ -61,7 +66,12 @@ export const topics = [
         "label": "Harvard Business Review: Harnessing the Science of Persuasion",
         "url": "https://hbr.org/2001/10/harnessing-the-science-of-persuasion"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
+      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
+      "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
+    }
   },
   {
     "id": "framing-effects-and-cognitive-anchoring-in-persuasion",
@@ -119,7 +129,12 @@ export const topics = [
         "label": "Journal of Consumer Research: Testing the Central and Peripheral Routes to Persuasion",
         "url": "https://academic.oup.com/jcr"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
+      "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
+      "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
+    }
   },
   {
     "id": "monroe-motivated-sequence-persuasive-speech",
@@ -148,7 +163,12 @@ export const topics = [
         "label": "Toastmasters International: Using Monroe's Motivated Sequence in Persuasive Speeches",
         "url": "https://www.toastmasters.org/resources/using-monroes-motivated-sequence"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Monroe's sequence is a five-step speech framework: grab attention, establish a need, satisfy the problem, visualize the positive outcome, and call for action.",
+      "why": "Listeners resist abrupt demands to change behavior. Walking through human psychological stages builds momentum naturally toward commitment.",
+      "example": "A speaker highlights ocean pollution, explains the harm, proposes reusable water bottles, paints a picture of clean beaches, and asks attendees to sign a pledge."
+    }
   },
   {
     "id": "inoculation-theory-building-cognitive-resistance",
@@ -177,7 +197,12 @@ export const topics = [
         "label": "Cambridge University Department of Psychology: Inoculation Theory Research Lab",
         "url": "https://www.psychol.cam.ac.uk/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Inoculation theory suggests that exposing people to a weakened counter-argument alongside strong rebuttals builds mental immunity against future persuasion attempts.",
+      "why": "Beliefs that are never challenged can crumble quickly under intense pressure. Preempting deceptive arguments strengthens personal conviction before opponents strike.",
+      "example": "A public health campaign explains a common myth before refuting it with clear scientific evidence, preparing citizens to spot false claims later."
+    }
   },
   {
     "id": "enthymeme-and-syllogistic-reasoning-in-arguments",

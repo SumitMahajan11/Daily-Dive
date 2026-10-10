@@ -22,7 +22,12 @@ export const topics = [
         "label": "Rudolf Clausius — The Mechanical Theory of Heat (1867)",
         "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
+      "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
+      "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
+    }
   },
   {
     "id": "wave-particle-duality-double-slit",
@@ -98,7 +103,12 @@ export const topics = [
         "label": "Francis Crick — Central Dogma of Molecular Biology (Nature 1970)",
         "url": "https://www.nature.com/articles/227561a0"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "The central dogma describes the primary flow of genetic information inside living cells from DNA storage to RNA messengers to functional proteins.",
+      "why": "Proteins perform nearly all biological work in living bodies. Understanding this flow explains how genetic code translates into physical traits and diseases.",
+      "example": "A cell reads the DNA blueprint for insulin, transcribes it into messenger RNA, and translates that RNA into active insulin proteins."
+    }
   },
   {
     "id": "natural-selection-genetic-drift",

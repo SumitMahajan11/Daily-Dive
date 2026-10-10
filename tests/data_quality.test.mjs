@@ -12,6 +12,8 @@ import worldIdeasTopics from '../src/data/groups/world-ideas.js';
 describe('Data Quality: Imported Runtime Topic Modules', () => {
   const canonicalPath = path.resolve('data/topics.curated.json');
   const canonicalTopics = JSON.parse(fs.readFileSync(canonicalPath, 'utf8'));
+  const lessonsPath = path.resolve('data/lessons.json');
+  const lessonsMap = fs.existsSync(lessonsPath) ? JSON.parse(fs.readFileSync(lessonsPath, 'utf8')) : {};
 
   const allImportedTopics = [
     ...techTopics,
@@ -26,16 +28,22 @@ describe('Data Quality: Imported Runtime Topic Modules', () => {
   });
 
   it('proves group modules deep-equal the curated canonical dataset', () => {
-    const canonicalMap = new Map(canonicalTopics.map(t => [t.id, {
-      id: t.id,
-      title: t.title,
-      description: t.description,
-      category: t.category,
-      group: t.group_name || t.group,
-      group_name: t.group_name || t.group,
-      tags: Array.isArray(t.tags) ? t.tags : [],
-      resources: Array.isArray(t.resources) ? t.resources : []
-    }]));
+    const canonicalMap = new Map(canonicalTopics.map(t => {
+      const entry = {
+        id: t.id,
+        title: t.title,
+        description: t.description,
+        category: t.category,
+        group: t.group_name || t.group,
+        group_name: t.group_name || t.group,
+        tags: Array.isArray(t.tags) ? t.tags : [],
+        resources: Array.isArray(t.resources) ? t.resources : []
+      };
+      if (lessonsMap[t.id]) {
+        entry.lesson = lessonsMap[t.id];
+      }
+      return [t.id, entry];
+    }));
 
     assert.equal(allImportedTopics.length, canonicalMap.size, 'All IDs must be unique and present');
 
@@ -43,6 +51,24 @@ describe('Data Quality: Imported Runtime Topic Modules', () => {
       const canonicalTopic = canonicalMap.get(topic.id);
       assert.ok(canonicalTopic, `Topic ${topic.id} missing in canonical file`);
       assert.deepEqual(topic, canonicalTopic, `Topic mismatch for ${topic.id}`);
+    }
+  });
+
+  it('asserts every key in data/lessons.json is a real curated topic id, and every lesson has 3 non-empty fields', () => {
+    const lessonsRaw = fs.readFileSync(path.resolve('data/lessons.json'), 'utf8');
+    const lessons = JSON.parse(lessonsRaw);
+    const canonicalIdSet = new Set(canonicalTopics.map(t => t.id));
+
+    const keys = Object.keys(lessons);
+    assert.ok(keys.length >= 1, 'Expected at least 1 lesson');
+
+    for (const key of keys) {
+      assert.ok(canonicalIdSet.has(key), `Lesson key '${key}' must exist in curated topics dataset`);
+      const lesson = lessons[key];
+      assert.ok(lesson && typeof lesson === 'object', `Lesson for '${key}' must be an object`);
+      assert.ok(typeof lesson.idea === 'string' && lesson.idea.trim().length > 0, `Lesson '${key}' must have non-empty 'idea'`);
+      assert.ok(typeof lesson.why === 'string' && lesson.why.trim().length > 0, `Lesson '${key}' must have non-empty 'why'`);
+      assert.ok(typeof lesson.example === 'string' && lesson.example.trim().length > 0, `Lesson '${key}' must have non-empty 'example'`);
     }
   });
 

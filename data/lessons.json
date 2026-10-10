@@ -1,0 +1,92 @@
+{
+  "multi-head-self-attention": {
+    "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
+    "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
+    "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
+  },
+  "mamba-state-space-models": {
+    "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
+    "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
+    "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
+  },
+  "discounted-cash-flow-dcf-valuation": {
+    "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
+    "why": "Relying purely on past earnings can mislead investors about future performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
+    "example": "A buyer projects a local bakery will make fifty thousand dollars next year and discounts that cash to forty-five thousand dollars in today's terms."
+  },
+  "weighted-average-cost-of-capital-wacc": {
+    "idea": "This metric calculates the average interest rate a company pays to finance its business through both borrowed debt and shareholder equity.",
+    "why": "A company must earn a return higher than this financing rate to create real economic value. It acts as the minimum hurdle rate for approving new corporate projects.",
+    "example": "If a manufacturing firm borrows at five percent and shareholders expect nine percent, its overall cost might be seven percent, meaning new factories must beat seven percent."
+  },
+  "capital-structure-and-modigliani-miller-theorem": {
+    "idea": "This financial theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
+    "why": "Understanding this baseline helps financial managers focus on real-world market imperfections like tax benefits from debt interest and the risks of insolvency.",
+    "example": "A software business evaluates whether taking a bank loan or issuing new stock slices the corporate pie differently without changing its underlying operating power."
+  },
+  "mergers-and-acquisitions-accretion-dilution": {
+    "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
+    "why": "Shareholders track earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
+    "example": "A profitable retailer buys a growing supplier with cash; because the supplier's profits exceed the lost bank interest, earnings per share rise, making the deal accretive."
+  },
+  "aristotelian-rhetorical-triangle-ethos-pathos-logos": {
+    "idea": "Aristotle showed that persuasive communication rests on three pillars: credibility, emotional connection, and logical reasoning.",
+    "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing all three creates enduring persuasion.",
+    "example": "A doctor explaining a vaccine shares medical trials for logic, personal clinical experience for credibility, and a patient story for empathy."
+  },
+  "cialdini-principles-of-persuasion": {
+    "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
+    "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
+    "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
+  },
+  "elaboration-likelihood-model-central-vs-peripheral": {
+    "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
+    "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
+    "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
+  },
+  "entropy-second-law-thermodynamics": {
+    "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
+    "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
+    "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
+  },
+  "vision-transformers-vit": {
+    "idea": "Vision Transformers process images by splitting pictures into a grid of small square patches and treating each patch like a word token in text.",
+    "why": "Traditional vision models use rigid spatial filters across pixels. Vision transformers learn global relationships across the entire image from the start.",
+    "example": "An image of a cat is divided into sixteen smaller squares, and the model analyzes how the ear patch relates to the paw patch across the photo."
+  },
+  "swin-transformer-shifted-windows": {
+    "idea": "Swin Transformers compute self-attention inside small local windows and shift window boundaries across successive layers to allow cross-window communication.",
+    "why": "Calculating attention across every pixel in high-resolution images is too slow. Shifted windows maintain linear computation while connecting distant image regions.",
+    "example": "A camera system inspects an ultra-wide panorama by analyzing local grids first, then shifting grid borders to detect large objects crossing grid lines."
+  },
+  "dividend-policy-vs-share-buybacks": {
+    "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
+    "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer tax flexibility and increase remaining owners' percentage stake.",
+    "example": "A mature tech company repurchases ten million shares, reducing total share count and raising future earnings per share for all remaining shareholders."
+  },
+  "working-capital-management-cash-conversion-cycle": {
+    "idea": "The cash conversion cycle measures how many days it takes for a company to convert investments in inventory into collected cash from customers.",
+    "why": "Shorter cycles free up working capital without requiring outside loans. Companies with negative cycles get paid by customers before paying suppliers.",
+    "example": "An online bookstore sells books in twenty days but pays publishers in forty-five days, allowing it to fund operations with suppliers' money."
+  },
+  "leveraged-buyouts-lbo-mechanics": {
+    "idea": "A leveraged buyout is the acquisition of a company using a large portion of borrowed money, with the acquired firm's assets serving as collateral.",
+    "why": "Using debt amplifies returns for the buying group if the acquired company generates steady cash to pay down the loans over time.",
+    "example": "A private equity firm purchases a family-owned tool company with seventy percent debt, using the factory's cash flows to retire the debt over five years."
+  },
+  "monroe-motivated-sequence-persuasive-speech": {
+    "idea": "Monroe's sequence is a five-step speech framework: grab attention, establish a need, satisfy the problem, visualize the positive outcome, and call for action.",
+    "why": "Listeners resist abrupt demands to change behavior. Walking through human psychological stages builds momentum naturally toward commitment.",
+    "example": "A speaker highlights ocean pollution, explains the harm, proposes reusable water bottles, paints a picture of clean beaches, and asks attendees to sign a pledge."
+  },
+  "inoculation-theory-building-cognitive-resistance": {
+    "idea": "Inoculation theory suggests that exposing people to a weakened counter-argument alongside strong rebuttals builds mental immunity against future persuasion attempts.",
+    "why": "Beliefs that are never challenged can crumble quickly under intense pressure. Preempting deceptive arguments strengthens personal conviction before opponents strike.",
+    "example": "A public health campaign explains a common myth before refuting it with clear scientific evidence, preparing citizens to spot false claims later."
+  },
+  "central-dogma-molecular-biology": {
+    "idea": "The central dogma describes the primary flow of genetic information inside living cells from DNA storage to RNA messengers to functional proteins.",
+    "why": "Proteins perform nearly all biological work in living bodies. Understanding this flow explains how genetic code translates into physical traits and diseases.",
+    "example": "A cell reads the DNA blueprint for insulin, transcribes it into messenger RNA, and translates that RNA into active insulin proteins."
+  }
+}

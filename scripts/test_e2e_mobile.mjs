@@ -328,7 +328,7 @@ async function runMobileE2ETests() {
 
     // Locate the 3 action buttons
     const learnedBtn = postSpinCard.locator('button:has-text("Learned"), button:has-text("Mark as learned")').first();
-    const spinAgainBtn = postSpinCard.locator('button:has-text("Spin again")').first();
+    const spinAgainBtn = postSpinCard.locator('button:has-text("Spin another"), button:has-text("Spin again")').first();
     const shareBtn = postSpinCard.locator('button[aria-label="Share topic"]').first();
 
     await learnedBtn.waitFor({ state: 'visible', timeout: 3000 });

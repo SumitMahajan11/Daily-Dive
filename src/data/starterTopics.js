@@ -1,6 +1,7 @@
 /**
  * Curated first-spin starter topic set (16 topics across all 4 groups).
  * Hydrates instant spin with zero chunk delay on initial load.
+ * Generated automatically by scripts/split_topics_by_group.mjs
  */
 export const starterTopics = [
   {
@@ -28,7 +29,12 @@ export const starterTopics = [
         "label": "PyTorch MultiheadAttention Docs",
         "url": "https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
+      "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
+      "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
+    }
   },
   {
     "id": "mixture-of-experts-moe",
@@ -82,7 +88,12 @@ export const starterTopics = [
         "label": "Mamba GitHub Repository",
         "url": "https://github.com/state-spaces/mamba"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
+      "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
+      "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
+    }
   },
   {
     "id": "rotary-positional-embeddings-rope",
@@ -138,7 +149,12 @@ export const starterTopics = [
         "label": "Corporate Finance Institute: DCF Model Training & Formula Guide",
         "url": "https://corporatefinanceinstitute.com/resources/valuation/dcf-formula-discounted-cash-flow/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
+      "why": "Relying purely on past earnings can mislead investors about future performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
+      "example": "A buyer projects a local bakery will make fifty thousand dollars next year and discounts that cash to forty-five thousand dollars in today's terms."
+    }
   },
   {
     "id": "weighted-average-cost-of-capital-wacc",
@@ -167,7 +183,12 @@ export const starterTopics = [
         "label": "Harvard Business Review: A Refresher on Cost of Capital",
         "url": "https://hbr.org/2015/04/a-refresher-on-cost-of-capital"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "This metric calculates the average interest rate a company pays to finance its business through both borrowed debt and shareholder equity.",
+      "why": "A company must earn a return higher than this financing rate to create real economic value. It acts as the minimum hurdle rate for approving new corporate projects.",
+      "example": "If a manufacturing firm borrows at five percent and shareholders expect nine percent, its overall cost might be seven percent, meaning new factories must beat seven percent."
+    }
   },
   {
     "id": "capital-structure-and-modigliani-miller-theorem",
@@ -196,7 +217,12 @@ export const starterTopics = [
         "label": "CFA Institute: Capital Structure Decisions and Leverage Theory",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/capital-structure"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "This financial theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
+      "why": "Understanding this baseline helps financial managers focus on real-world market imperfections like tax benefits from debt interest and the risks of insolvency.",
+      "example": "A software business evaluates whether taking a bank loan or issuing new stock slices the corporate pie differently without changing its underlying operating power."
+    }
   },
   {
     "id": "mergers-and-acquisitions-accretion-dilution",
@@ -225,7 +251,12 @@ export const starterTopics = [
         "label": "Aswath Damodaran: The Value of Synergy in Mergers & Acquisitions",
         "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/synergy.pdf"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
+      "why": "Shareholders track earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
+      "example": "A profitable retailer buys a growing supplier with cash; because the supplier's profits exceed the lost bank interest, earnings per share rise, making the deal accretive."
+    }
   },
   {
     "id": "aristotelian-rhetorical-triangle-ethos-pathos-logos",
@@ -254,7 +285,12 @@ export const starterTopics = [
         "label": "Harvard Business Review: The Necessary Art of Persuasion (Jay A. Conger)",
         "url": "https://hbr.org/1998/05/the-necessary-art-of-persuasion"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Aristotle showed that persuasive communication rests on three pillars: credibility, emotional connection, and logical reasoning.",
+      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing all three creates enduring persuasion.",
+      "example": "A doctor explaining a vaccine shares medical trials for logic, personal clinical experience for credibility, and a patient story for empathy."
+    }
   },
   {
     "id": "cialdini-principles-of-persuasion",
@@ -283,7 +319,12 @@ export const starterTopics = [
         "label": "Harvard Business Review: Harnessing the Science of Persuasion",
         "url": "https://hbr.org/2001/10/harnessing-the-science-of-persuasion"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
+      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
+      "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
+    }
   },
   {
     "id": "framing-effects-and-cognitive-anchoring-in-persuasion",
@@ -341,7 +382,12 @@ export const starterTopics = [
         "label": "Journal of Consumer Research: Testing the Central and Peripheral Routes to Persuasion",
         "url": "https://academic.oup.com/jcr"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
+      "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
+      "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
+    }
   },
   {
     "id": "entropy-second-law-thermodynamics",
@@ -360,7 +406,12 @@ export const starterTopics = [
         "label": "Rudolf Clausius — The Mechanical Theory of Heat (1867)",
         "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
+      "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
+      "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
+    }
   },
   {
     "id": "wave-particle-duality-double-slit",
@@ -420,5 +471,3 @@ export const starterTopics = [
     ]
   }
 ];
-
-export default starterTopics;
