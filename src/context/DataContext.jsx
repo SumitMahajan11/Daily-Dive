@@ -185,7 +185,18 @@ export const DataProvider = ({ children }) => {
 
   useEffect(() => {
     loadData();
-    loadAllBuiltinTopics().catch(() => {});
+    // Defer pre-caching remaining topic groups until idle to protect initial paint & LCP
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => {
+          loadAllBuiltinTopics().catch(() => {});
+        }, { timeout: 3000 });
+      } else {
+        setTimeout(() => {
+          loadAllBuiltinTopics().catch(() => {});
+        }, 1500);
+      }
+    }
   }, [loadData]);
 
   // Dynamically load additional category groups when user updates settings
