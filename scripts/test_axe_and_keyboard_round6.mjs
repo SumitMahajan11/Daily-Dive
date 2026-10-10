@@ -1,13 +1,51 @@
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+
+function serveStatic(distDir, port = 4186) {
+  const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.woff2': 'font/woff2',
+    '.webmanifest': 'application/manifest+json'
+  };
+
+  const server = http.createServer((req, res) => {
+    let reqPath = req.url.split('?')[0];
+    if (reqPath === '/') reqPath = '/index.html';
+    const filePath = path.join(distDir, reqPath);
+
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      const ext = path.extname(filePath);
+      res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'application/octet-stream' });
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      const indexFile = path.join(distDir, 'index.html');
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      fs.createReadStream(indexFile).pipe(res);
+    }
+  });
+
+  return new Promise((resolve) => {
+    server.listen(port, () => resolve(server));
+  });
+}
 
 async function runAudit() {
+  const distDir = path.resolve('dist');
+  const server = await serveStatic(distDir, 4186);
+
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
 
   console.log('=== AXE ACCESSIBILITY & KEYBOARD VALIDATION (ROUND 6) ===');
-  await page.goto('http://localhost:5173');
+  await page.goto('http://localhost:4186');
   await page.evaluate(() => {
     localStorage.setItem('daily_dive_onboarding_seen', 'true');
   });
@@ -80,6 +118,7 @@ async function runAudit() {
   console.log(`Enter on Progress Tab scrolled Progress into view: ${progressInView}`);
 
   console.log('\n[PASS]: Axe accessibility and keyboard navigation successfully verified.');
+  server.close();
   await browser.close();
 }
 
