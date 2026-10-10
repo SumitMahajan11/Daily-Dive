@@ -453,7 +453,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               <button
                 type="button"
                 onClick={handleDismissFirstRun}
-                className="absolute top-3.5 right-3.5 p-1 rounded-lg text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
+                className="absolute top-3.5 right-3.5 p-1.5 rounded-lg text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
                 title="Dismiss welcome guide"
                 aria-label="Dismiss welcome guide"
               >
@@ -463,10 +463,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               <h1 className="font-display text-lg sm:text-xl font-bold text-on-surface">
                 Welcome to Daily Dive
               </h1>
-              <p className="text-sm text-on-surface-variant mt-1 leading-relaxed">
+              <p className="text-sm text-on-surface mt-1 leading-relaxed">
                 Spin the dial to discover one bite-sized concept every day across technology, career, mental models, and world ideas.
               </p>
-              <p className="text-xs text-on-surface-variant/80 mt-1">
+              <p className="text-xs text-on-surface-variant mt-1">
                 All data is stored locally on your device with zero tracking.
               </p>
 
@@ -482,18 +482,22 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                       <button
                         key={groupDef.group}
                         type="button"
+                        aria-pressed={isGroupActive}
                         onClick={() => toggleBroadGroup(groupDef.group)}
                         className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none min-h-[56px] ${
                           isGroupActive
-                            ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
-                            : 'bg-surface-container-lowest/60 border-outline-variant/30 text-on-surface-variant hover:border-outline-variant/60'
+                            ? 'bg-primary-container/30 border-primary/50 text-on-surface shadow-xs'
+                            : 'bg-surface-container border-outline-variant text-on-surface hover:border-outline-variant/80'
                         }`}
                       >
                         <div className="flex items-center justify-between w-full mb-0.5">
-                          <span className={`text-xs font-bold ${isGroupActive ? 'text-primary' : 'text-on-surface-variant'}`}>
+                          <span className={`text-xs font-bold ${isGroupActive ? 'text-primary dark:text-orange-400' : 'text-on-surface'}`}>
                             {groupDef.label}
                           </span>
-                          <div className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold ${isGroupActive ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
+                          <div
+                            aria-hidden="true"
+                            className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold ${isGroupActive ? 'bg-primary text-white' : 'bg-surface-container-highest text-on-surface'}`}
+                          >
                             {isGroupActive ? '✓' : ''}
                           </div>
                         </div>
@@ -600,48 +604,74 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
           <div className="absolute inset-y-0 left-0 w-16 sm:w-28 bg-gradient-to-r from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
           <div className="absolute inset-y-0 right-0 w-16 sm:w-28 bg-gradient-to-l from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
 
-          {/* Kinetic Card Strip */}
-          <motion.div
-            className="flex items-center absolute left-0"
-            style={{ gap: `${ITEM_GAP}px` }}
-            animate={{ x: translateX }}
-            transition={
-              isSpinning
-                ? { duration: SPIN_DURATION_MS / 1000, ease: SPIN_EASING }
-                : { duration: 0 }
-            }
-            onUpdate={(latest) => {
-              const curX = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x);
-              if (isNaN(curX)) return;
-              motionX.set(curX);
-
-              if (isSpinningRef.current) {
-                const nearestIdx = Math.round(((containerWidth - ITEM_WIDTH) / 2 - curX) / ITEM_STEP);
-                if (nearestIdx !== lastFiredIndexRef.current) {
-                  lastFiredIndexRef.current = nearestIdx;
-                  const elapsed = Date.now() - spinStartTimeRef.current;
-                  const progress = Math.min(1, Math.max(0, elapsed / SPIN_DURATION_MS));
-                  AudioController.playTick(progress);
-                }
+          {/* Kinetic Card Strip or Skeleton Reel */}
+          {loadingData ? (
+            <div data-testid="reel-skeleton" className="flex items-center absolute left-0 w-full justify-center gap-4 px-4">
+              {[1, 2, 3, 4, 5].map(i => (
+                <div
+                  key={i}
+                  className="w-[180px] sm:w-[220px] h-[75px] sm:h-[85px] rounded-2xl bg-surface-container/60 border border-outline-variant/30 animate-pulse flex flex-col justify-center p-3 shrink-0"
+                >
+                  <div className="h-2.5 w-14 bg-surface-container-high rounded mb-2" />
+                  <div className="h-3.5 w-28 bg-surface-container-high rounded" />
+                </div>
+              ))}
+            </div>
+          ) : (
+            <motion.div
+              className="flex items-center absolute left-0"
+              style={{ gap: `${ITEM_GAP}px` }}
+              animate={{ x: translateX }}
+              transition={
+                isSpinning
+                  ? { duration: SPIN_DURATION_MS / 1000, ease: SPIN_EASING }
+                  : { duration: 0 }
               }
-            }}
-          >
-            {reelStrip.map((item, idx) => (
-              <PrecisionReelCard
-                key={`${item.name}-${idx}`}
-                item={item}
-                idx={idx}
-                motionX={motionX}
-                containerWidth={containerWidth}
-                isSelectedTarget={isLanded && (idx === reelIndex)}
-              />
-            ))}
-          </motion.div>
+              onUpdate={(latest) => {
+                const curX = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x);
+                if (isNaN(curX)) return;
+                motionX.set(curX);
+
+                if (isSpinningRef.current) {
+                  const nearestIdx = Math.round(((containerWidth - ITEM_WIDTH) / 2 - curX) / ITEM_STEP);
+                  if (nearestIdx !== lastFiredIndexRef.current) {
+                    lastFiredIndexRef.current = nearestIdx;
+                    const elapsed = Date.now() - spinStartTimeRef.current;
+                    const progress = Math.min(1, Math.max(0, elapsed / SPIN_DURATION_MS));
+                    AudioController.playTick(progress);
+                  }
+                }
+              }}
+            >
+              {reelStrip.map((item, idx) => (
+                <PrecisionReelCard
+                  key={`${item.name}-${idx}`}
+                  item={item}
+                  idx={idx}
+                  motionX={motionX}
+                  containerWidth={containerWidth}
+                  isSelectedTarget={isLanded && (idx === reelIndex)}
+                />
+              ))}
+            </motion.div>
+          )}
         </div>
       </div>
 
       {/* ── PRIMARY SPIN BUTTON OR EMPTY POOL STATE ── */}
-      {eligibleTopics.length === 0 ? (
+      {loadingData ? (
+        <div className="flex flex-col items-center my-3">
+          <Button
+            variant="primary"
+            data-testid="primary-spin-button"
+            disabled={true}
+            className="w-full max-w-sm h-12 text-sm font-semibold tracking-wide opacity-75 cursor-not-allowed"
+          >
+            <RotateCw size={17} className="animate-spin mr-1.5" />
+            <span>Loading pool...</span>
+          </Button>
+        </div>
+      ) : eligibleTopics.length === 0 ? (
         <div data-testid="empty-spin-pool" className="mt-4 w-full journal-card rounded-2xl p-6 text-center flex flex-col items-center justify-center border border-outline-variant/30">
           <h2 className="font-display text-base font-bold text-on-surface">No active topics</h2>
           <p className="text-sm text-on-surface-variant mt-1 max-w-sm">
@@ -661,7 +691,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             variant="primary"
             data-testid="primary-spin-button"
             onClick={handleSpin}
-            disabled={isSpinning || loadingData}
+            disabled={isSpinning}
             className="w-full max-w-sm h-12 text-sm font-semibold tracking-wide shadow-lg shadow-primary/20 hover:shadow-primary/30 transition-all cursor-pointer relative overflow-hidden"
           >
             <RotateCw
@@ -700,10 +730,12 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               <div className="flex items-center justify-between pb-3 mb-3.5 border-b border-outline-variant/20 flex-wrap gap-2">
                 <div className="flex items-center gap-2 text-xs font-medium">
                   <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider text-[10px]">
-                    {group}
+                    {CATEGORY_TREE.find(g => g.group === currentTopic.group)?.label || currentTopic.group || 'Topic'}
                   </span>
                   <span className="text-outline">/</span>
-                  <span className="text-on-surface font-semibold">{category}</span>
+                  <span className="text-on-surface font-semibold">
+                    {CATEGORY_META[currentTopic.category]?.shortLabel || currentTopic.category}
+                  </span>
                 </div>
 
                 <div className="flex items-center gap-2">
@@ -820,7 +852,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       {/* ── ARIA LIVE REGION FOR SCREEN READERS ── */}
       <div aria-live="polite" aria-atomic="true" className="sr-only">
         {showResult && currentTopic
-          ? `Selected concept: ${currentTopic.title} in ${category}.`
+          ? `Selected concept: ${currentTopic.title} in ${CATEGORY_TREE.find(g => g.group === currentTopic.group)?.label || currentTopic.group || 'Topic Collection'}.`
           : isSpinning
           ? 'Spinning topic reel...'
           : ''}
