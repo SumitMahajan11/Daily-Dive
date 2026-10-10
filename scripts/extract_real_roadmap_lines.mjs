@@ -1,15 +1,11 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { fileURLToPath } from 'node:url';
 import { extractTopicsLocally, isMetaOrAsideLine } from '../src/lib/topicExtractor.js';
 
-let roadmapPath = 'd:/Projects/Reverse/docs/ROADMAP.md';
-if (!fs.existsSync(roadmapPath)) {
-  roadmapPath = path.resolve('tests/fixtures/real_roadmap.md');
-}
-if (!fs.existsSync(roadmapPath)) {
-  roadmapPath = path.resolve('tests/fixtures/markdown_roadmap.md');
-}
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const roadmapPath = path.resolve(__dirname, '../tests/fixtures/real_roadmap.md');
 
 if (!fs.existsSync(roadmapPath)) {
   console.error('File not found:', roadmapPath);

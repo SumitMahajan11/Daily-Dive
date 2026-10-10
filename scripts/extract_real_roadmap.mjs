@@ -1,15 +1,17 @@
 import fs from 'fs';
 import crypto from 'crypto';
 import path from 'path';
+import { fileURLToPath } from 'url';
 import { extractTopicsLocally } from '../src/lib/topicExtractor.js';
 
-const roadmapPath = 'd:\\Projects\\Reverse\\docs\\ROADMAP.md';
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const roadmapPath = path.resolve(__dirname, '../tests/fixtures/real_roadmap.md');
 
 console.log(`COMMAND: node scripts/extract_real_roadmap.mjs`);
 console.log(`FILE PATH: ${roadmapPath}`);
 
 if (!fs.existsSync(roadmapPath)) {
-  console.log('NOT RUN: File d:\\Projects\\Reverse\\docs\\ROADMAP.md does not exist.');
+  console.log('NOT RUN: File real_roadmap.md fixture does not exist.');
   process.exit(1);
 }
 
