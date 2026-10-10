@@ -3,7 +3,7 @@ name: Daily Dive E2E Tests
 on:
   workflow_dispatch:
   push:
-    branches: [ 'polish/**' ]
+    branches: [ 'polish/**', 'redesign/**' ]
 
 jobs:
   e2e-tests:

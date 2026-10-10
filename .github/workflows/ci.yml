@@ -2,7 +2,7 @@ name: Daily Dive CI
 
 on:
   push:
-    branches: [ main, 'polish/**' ]
+    branches: [ main, 'polish/**', 'redesign/**' ]
   pull_request:
     branches: [ main ]
 
