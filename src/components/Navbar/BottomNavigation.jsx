@@ -21,10 +21,10 @@ export const BottomNavigation = ({ activeTab, onSelectTab }) => {
               type="button"
               data-nav-id={tab.id}
               onClick={() => onSelectTab(tab.id)}
-              className={`relative min-w-[72px] min-h-[48px] px-3 py-1.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors z-10 cursor-pointer ${
+              className={`relative min-w-[72px] min-h-[48px] px-3 py-1.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors z-10 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary ${
                 isActive
-                  ? 'text-primary font-semibold'
-                  : 'text-on-surface-variant hover:text-on-surface'
+                  ? 'text-on-surface font-bold'
+                  : 'text-on-surface-variant hover:text-on-surface font-medium'
               }`}
             >
               {isActive && (

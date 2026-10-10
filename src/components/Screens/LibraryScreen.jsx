@@ -2,10 +2,6 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { CATEGORY_TREE, isTopicEligible, STARTER_ENABLED_CATEGORIES } from '../../lib/roulette';
-import { extractFromPdf } from '../../lib/extractors/pdfExtractor';
-import { extractFromPptx } from '../../lib/extractors/pptxExtractor';
-import { extractFromImage } from '../../lib/extractors/imageExtractor';
-import { extractFromVideo } from '../../lib/extractors/videoExtractor';
 import { extractTopicsLocally, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD } from '../../lib/topicExtractor';
 import {
   Terminal,
@@ -367,12 +363,16 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       const ext = file.name.split('.').pop().toLowerCase();
 
       if (ext === 'pdf') {
+        const { extractFromPdf } = await import('../../lib/extractors/pdfExtractor');
         rawText = await extractFromPdf(file, (p) => setProgress(p));
       } else if (ext === 'pptx') {
+        const { extractFromPptx } = await import('../../lib/extractors/pptxExtractor');
         rawText = await extractFromPptx(file, (p) => setProgress(p));
       } else if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
+        const { extractFromImage } = await import('../../lib/extractors/imageExtractor');
         rawText = await extractFromImage(file, (p) => setProgress(p));
       } else if (['mp4', 'webm', 'mov'].includes(ext)) {
+        const { extractFromVideo } = await import('../../lib/extractors/videoExtractor');
         rawText = await extractFromVideo(file, (p) => setProgress(p));
       } else if (['txt', 'md'].includes(ext)) {
         rawText = await file.text();

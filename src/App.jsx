@@ -99,13 +99,13 @@ const MainLayout = () => {
                   type="button"
                   data-nav-id={item.id}
                   onClick={() => scrollToSection(item.id)}
-                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition-all cursor-pointer ${
+                  className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive
-                      ? 'text-primary bg-primary-container/20 border border-primary-container/30 font-semibold'
-                      : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container border border-transparent'
+                      ? 'text-on-surface bg-primary-container/20 border border-primary-container/30 font-bold'
+                      : 'text-on-surface-variant hover:text-on-surface hover:bg-surface-container border border-transparent font-medium'
                   }`}
                 >
-                  <Icon size={18} />
+                  <Icon size={18} className={isActive ? 'text-primary' : ''} />
                   <span>{item.label}</span>
                   <kbd className="ml-auto font-mono text-[10px] px-1.5 py-0.5 bg-surface-container text-outline rounded border border-outline-variant/30">
                     {item.kbd}

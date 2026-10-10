@@ -127,6 +127,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     topics,
     eligibleTopics,
     currentTopic,
+    setCurrentTopic,
     userProgressMap,
     userSettings,
     userStreaks,
@@ -258,6 +259,29 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     return () => ro.disconnect();
   }, []);
 
+  // Check URL deeplink ?t=<slug> on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const slugParam = params.get('t');
+      if (!slugParam) return;
+      const cleanSlug = slugParam.trim().toLowerCase();
+      const matched = topics?.find(t => {
+        const idMatch = t.id && t.id.toLowerCase() === cleanSlug;
+        const slugMatch = t.slug && t.slug.toLowerCase() === cleanSlug;
+        const titleSlug = t.title ? t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+        return idMatch || slugMatch || titleSlug === cleanSlug;
+      });
+
+      if (matched) {
+        setCurrentTopic(matched);
+        setShowResult(true);
+        setIsLanded(true);
+      }
+    } catch (e) {}
+  }, [topics, setCurrentTopic]);
+
   // Keyboard shortcut: Space triggers spin
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -281,6 +305,9 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       return;
     }
 
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const duration = prefersReducedMotion ? 150 : SPIN_DURATION_MS;
+
     isSpinningRef.current = true;
     spinStartTimeRef.current = Date.now();
     lastFiredIndexRef.current = Math.round(((containerWidth - ITEM_WIDTH) / 2 - translateX) / ITEM_STEP);
@@ -291,7 +318,9 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     setShowLandingHalo(false);
 
     AudioController.init();
-    AudioController.playWhoosh(SPIN_DURATION_MS);
+    if (!prefersReducedMotion) {
+      AudioController.playWhoosh(duration);
+    }
 
     const selected = spinNextTopic();
 
@@ -324,14 +353,16 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       setShowLandingHalo(true);
       setTimeout(() => setShowLandingHalo(false), 800);
 
-      try {
-        confetti({
-          particleCount: 45,
-          spread: 70,
-          origin: { y: 0.62 },
-          colors: ['#e06841', '#f59e0b', '#94a88f', '#ff8c69']
-        });
-      } catch (e) {}
+      if (!prefersReducedMotion) {
+        try {
+          confetti({
+            particleCount: 45,
+            spread: 70,
+            origin: { y: 0.62 },
+            colors: ['#e06841', '#f59e0b', '#94a88f', '#ff8c69']
+          });
+        } catch (e) {}
+      }
 
       if (userSettings?.haptics_enabled && navigator.vibrate) {
         try { navigator.vibrate([30, 50, 90]); } catch (e) {}
@@ -340,34 +371,54 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       setTimeout(() => {
         setReelIndex(prev => (prev % activeReelCategories.length) + (3 * activeReelCategories.length));
       }, 500);
-    }, SPIN_DURATION_MS);
+    }, duration);
   };
 
   const handleMarkLearned = async () => {
     await markCurrentTopicLearned();
-    try {
-      confetti({
-        particleCount: 40,
-        spread: 60,
-        origin: { y: 0.8 },
-        colors: ['#e06841', '#f59e0b', '#94a88f']
-      });
-    } catch (e) {}
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+      try {
+        confetti({
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.8 },
+          colors: ['#e06841', '#f59e0b', '#94a88f']
+        });
+      } catch (e) {}
+    }
     if (showToast) {
       showToast('Topic recorded in your journal!', 'success');
     }
   };
 
-  const handleCopySummary = () => {
+  const handleShareTopic = async () => {
     if (!currentTopic) return;
-    const textToCopy = `Daily Dive: ${currentTopic.title}\n\n${currentTopic.description || currentTopic.desc}\n\nLearn more: https://daily-dive.vercel.app`;
+    const slug = currentTopic.slug || currentTopic.id || (currentTopic.title ? currentTopic.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'topic');
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://daily-dive.vercel.app';
+    const shareUrl = `${origin}/?t=${encodeURIComponent(slug)}`;
+    const shareData = {
+      title: `Daily Dive: ${currentTopic.title}`,
+      text: `Explore today's concept on Daily Dive: ${currentTopic.title}`,
+      url: shareUrl
+    };
+
+    if (typeof navigator !== 'undefined' && navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
     try {
-      navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(shareUrl);
       if (showToast) {
-        showToast('Topic insight copied to clipboard!', 'info');
+        showToast('Link copied to clipboard!', 'info');
       }
     } catch (e) {
-      if (showToast) showToast('Could not copy text', 'error');
+      if (showToast) showToast('Could not copy link', 'error');
     }
   };
 
@@ -618,7 +669,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               className={`transition-transform ${isSpinning ? 'animate-spin' : 'group-hover:rotate-45'}`}
             />
             <span>{isSpinning ? 'Spinning...' : 'Spin'}</span>
-            <span className="hidden [@media(pointer:fine)]:inline text-xs opacity-75 font-normal ml-1.5">
+            <span className="hidden [@media(pointer:fine)]:inline text-xs text-white font-medium ml-1.5 opacity-90">
               (Space)
             </span>
           </Button>
@@ -743,7 +794,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                   variant="ghost"
                   onClick={handleSpin}
                   disabled={isSpinning}
-                  className="h-11 px-4 text-sm font-medium border border-outline-variant/30 hover:border-outline-variant/60 cursor-pointer"
+                  aria-label="Spin topic dial again"
+                  className="h-11 px-4 text-sm font-medium border border-outline-variant/30 hover:border-outline-variant/60 focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
                 >
                   <RotateCw size={15} />
                   <span>Spin again</span>
@@ -751,10 +803,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
 
                 <button
                   type="button"
-                  onClick={handleCopySummary}
-                  aria-label="Copy summary"
-                  title="Copy summary to clipboard"
-                  className="h-11 w-11 rounded-xl border border-outline-variant/30 hover:border-outline-variant/60 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer shrink-0"
+                  onClick={handleShareTopic}
+                  aria-label="Share topic"
+                  title="Share topic link"
+                  className="h-11 w-11 rounded-xl border border-outline-variant/30 hover:border-outline-variant/60 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors focus-visible:ring-2 focus-visible:ring-primary cursor-pointer shrink-0"
                 >
                   <Share2 size={16} />
                 </button>
@@ -764,6 +816,15 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
           )}
         </AnimatePresence>
       )}
+
+      {/* ── ARIA LIVE REGION FOR SCREEN READERS ── */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {showResult && currentTopic
+          ? `Selected concept: ${currentTopic.title} in ${category}.`
+          : isSpinning
+          ? 'Spinning topic reel...'
+          : ''}
+      </div>
 
     </div>
   );

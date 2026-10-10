@@ -1,15 +1,14 @@
-import { createWorker } from 'tesseract.js';
-
 /**
  * Extracts text from an image file using Tesseract.js client-side OCR.
  * Handles PNG, JPG, WebP, BMP formats directly in the browser.
+ * Dynamically imports tesseract.js on demand.
  * 
  * @param {File|Blob} file 
  * @param {Function} onProgress ({ stage, percent, detail })
  * @returns {Promise<{ text: string, confidence: number, sourceFormat: 'image' }>}
  */
 export async function extractFromImage(file, onProgress = () => {}) {
-  onProgress({ stage: 'Initializing OCR engine', percent: 10, detail: 'Starting local Tesseract worker...' });
+  onProgress({ stage: 'Initializing OCR engine', percent: 10, detail: 'Loading OCR modules...' });
 
   // Basic image MIME validation
   if (!file.type.startsWith('image/')) {
@@ -18,6 +17,8 @@ export async function extractFromImage(file, onProgress = () => {}) {
 
   let worker;
   try {
+    const { createWorker } = await import('tesseract.js');
+    
     worker = await createWorker('eng', 1, {
       logger: m => {
         if (m.status === 'loading tesseract core') {
@@ -58,17 +59,13 @@ export async function extractFromImage(file, onProgress = () => {}) {
       sourceFormat: 'image'
     };
   } catch (err) {
-    if (err.message?.includes('No readable text detected')) {
+    if (err.message && err.message.includes('No readable text detected')) {
       throw err;
     }
-    throw new Error('Image text recognition failed: ' + (err.message || 'Unknown OCR error'));
+    throw new Error('Failed to process image OCR: ' + (err.message || 'Unknown error'));
   } finally {
     if (worker) {
-      try {
-        await worker.terminate();
-      } catch (termErr) {
-        console.warn('Worker terminate warning:', termErr);
-      }
+      await worker.terminate();
     }
   }
 }

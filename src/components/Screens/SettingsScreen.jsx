@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import {
   Clock,
+  Calendar,
   Smartphone,
   Download,
   Upload,
@@ -10,11 +11,13 @@ import {
   Volume2,
   Vibrate,
   ShieldCheck,
-  Info
+  Info,
+  MessageSquare
 } from 'lucide-react';
 import { ResetConfirmationModal } from '../Modals/ResetConfirmationModal';
 import { Toggle } from '../UI/Toggle';
 import { Button } from '../UI/Button';
+import { downloadCalendarReminder } from '../../lib/calendar';
 
 const formatTo24Hour = (time12) => {
   if (!time12 || typeof time12 !== 'string') return '09:00';
@@ -236,14 +239,14 @@ export const SettingsScreen = () => {
           <div className="flex items-center gap-2.5">
             <Clock size={18} className="text-primary" />
             <div>
-              <h2 className="font-display text-base font-bold text-on-surface">Daily Reminders</h2>
-              <p className="text-xs text-on-surface-variant">Get notified once a day for your learning spin.</p>
+              <h2 className="font-display text-base font-bold text-on-surface">Daily In-App Reminder</h2>
+              <p className="text-xs text-on-surface-variant">In-app reminder when Daily Dive is open in your browser.</p>
             </div>
           </div>
           <Toggle
             checked={Boolean(userSettings.notifications_enabled)}
             onChange={handleToggleReminder}
-            ariaLabel="Toggle daily reminders"
+            ariaLabel="Toggle daily in-app reminders"
           />
         </div>
 
@@ -256,7 +259,7 @@ export const SettingsScreen = () => {
                   key={preset}
                   type="button"
                   onClick={() => handleTimePreset(preset)}
-                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer transition-colors ${
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-primary ${
                     userSettings.reminder_time === preset
                       ? 'bg-primary text-white border-primary'
                       : 'bg-surface-container border-outline-variant/30 text-on-surface-variant hover:text-on-surface'
@@ -270,11 +273,28 @@ export const SettingsScreen = () => {
                 type="time"
                 value={formatTo24Hour(userSettings.reminder_time)}
                 onChange={handleCustomTimeChange}
-                className="px-2.5 py-1.5 rounded-lg bg-surface border border-outline-variant/40 text-xs font-mono text-on-surface"
+                aria-label="Custom reminder time"
+                className="px-2.5 py-1.5 rounded-lg bg-surface border border-outline-variant/40 text-xs font-mono text-on-surface focus-visible:ring-2 focus-visible:ring-primary"
               />
             </div>
           </div>
         )}
+
+        {/* Client-side recurring .ics calendar reminder */}
+        <div className="pt-3 border-t border-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span className="text-xs font-semibold text-on-surface block">Calendar Reminder</span>
+            <span className="text-[11px] text-on-surface-variant">Export a recurring daily event (.ics) to Apple Calendar, Google Calendar, or Outlook.</span>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => downloadCalendarReminder(userSettings.reminder_time)}
+            className="h-9 px-3 text-xs font-semibold shrink-0 cursor-pointer flex items-center gap-1.5 border-outline-variant/40 hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <Calendar size={14} className="text-primary" />
+            <span>Add to calendar</span>
+          </Button>
+        </div>
       </section>
 
       {/* ── SECTION 2: SOUND AND HAPTICS ── */}
@@ -376,6 +396,17 @@ export const SettingsScreen = () => {
           <p className="text-on-surface font-medium">
             Your data stays on this device. Daily Dive does not use cookies, trackers, or remote accounts.
           </p>
+          <div className="pt-2 border-t border-outline-variant/20">
+            <a
+              href="https://github.com/SumitMahajan11/Daily-Dive/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline focus-visible:ring-2 focus-visible:ring-primary rounded"
+            >
+              <MessageSquare size={13} />
+              <span>Send feedback / Report an issue</span>
+            </a>
+          </div>
         </div>
       </section>
 

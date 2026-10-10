@@ -1,51 +1,110 @@
 # Daily Dive
 
-A distraction-free, privacy-first progressive web application (PWA) for daily micro-learning on demand. Spin for curated learning topics across technical, psychological, philosophical, and financial disciplines, maintain daily streaks, and review concepts using spaced repetition.
+A distraction-free, privacy-first progressive web application (PWA) designed for daily micro-learning on demand. Spin a tactile roulette wheel for curated, high-signal knowledge across technical, philosophical, financial, and psychological disciplines, maintain daily learning streaks, and retain key concepts through spaced repetition.
 
 ---
 
-## Features
+## 30-Second Pitch
 
-- **Weighted Roulette Engine**: Selects topics dynamically based on spaced repetition weights, categories, and past activity.
-- **500+ Curated Topics**: 9 core knowledge domains with concise summaries, actionable mental models, and verified authoritative reference links (arXiv, Stanford Encyclopedia of Philosophy, official docs, etc.).
-- **Spaced Repetition & Progress**: Tracks mastery counts, daily streak milestones, and upcoming review items.
-- **PWA & Offline First**: Full offline support via Service Worker caching and progressive install support on desktop and mobile.
-- **Local Device Storage & Privacy-First**: 100% account-free, privacy-first local architecture. No cloud database or credentials required.
+Most online learning platforms trap you in endless feeds or require heavy multi-week course commitments. **Daily Dive** takes the opposite approach: **one high-signal micro-dive a day, zero clutter, zero accounts, and 100% local privacy**.
+
+- **Open & Spin**: Receive a curated concept with a 2-minute overview, core mental model, real-world application, and verified authoritative sources.
+- **Learn & Retain**: Add topics to your spaced repetition queue to reinforce knowledge over 1, 3, 7, and 14-day intervals.
+- **Convert Your Content**: Upload PDFs, presentations, documents, videos, or audio files to turn personal materials into bite-sized dive cards locally in your browser.
+- **Own Your Data**: Everything stays in your browser's local storage. No tracking, no cloud sync lock-in, and offline-capable from day one.
 
 ---
 
-## Directory Structure
+## Screenshots
 
-```text
-├── public/                 # Static assets, PWA manifest.json, sw.js, and icons
-├── src/                    # Application source code
-│   ├── components/         # UI screens (Spin, Extract, Filter, Progress, Settings), navbar, modals
-│   ├── context/            # React Context providers (DataContext, ThemeContext)
-│   ├── lib/                # Roulette engine, audio synthesis, topic extractors, notifications
-│   ├── App.jsx             # Main layout & navigation container
-│   ├── index.css           # Tailwind design tokens & base typography
-│   └── main.jsx            # React root mount
-├── seeds/                  # Production CSV and SQL seed datasets
-│   ├── topics_*.csv        # Curated topic CSVs across 9 categories
-│   ├── seed_topics_*.sql   # PostgreSQL insert statements with JSONB resources
-│   └── supabase_schema.sql # Database schema, RLS policies, and triggers
-├── scripts/
-│   ├── generation/         # Domain-specific topic generation & icon build scripts
-│   └── validation/         # URL verification, title deduplication, and schema validation
-├── docs/
-│   └── prototypes/         # Initial static HTML/CSS design mocks & prototypes
-├── package.json            # Node.js dependencies & scripts
-├── vite.config.js          # Vite build & plugin configuration
-└── tailwind.config.js      # Tailwind CSS configuration
+### Desktop & Mobile Experience
+| Daily Dive Roulette (Desktop) | Daily Dive Roulette (Mobile) |
+| :---: | :---: |
+| ![Desktop Spin Screen](docs/screenshots/spin_screen_desktop.png) | ![Mobile Spin Screen](docs/screenshots/spin_screen_mobile.png) |
+
+| Spaced Repetition & Progress (Desktop) | Ingestion & Library (Desktop) |
+| :---: | :---: |
+| ![Progress & Streaks](docs/screenshots/progress_screen_desktop.png) | ![Library & Ingestion](docs/screenshots/library_screen_desktop.png) |
+
+---
+
+## Core Features
+
+- 🎡 **Weighted Roulette Engine**: Spin for random or interest-targeted concepts. The wheel settles smoothly into focused study cards with fluid animations and tactile sound effects.
+- 🎯 **Interest Customization**: Filter spins across 12 distinct knowledge domains across technical systems, career strategy, psychology, and philosophy.
+- 📥 **Local Ingestion Engine**: Drop PDFs, images, PowerPoint slides (`.pptx`), Word documents (`.docx`), audio, or videos. Text extraction, OCR, and transcriptions run on-demand in-browser.
+- 🔁 **Spaced Repetition Queue**: Mark topics as explored or queue them for interval reviews (1d, 3d, 7d, 14d) to lock in long-term retention.
+- 🔥 **Streak & History Tracking**: Track daily learning consistency with reconciled streak tracking, completion calendars, and exploration logs.
+- 🔗 **Deep Linking & Web Share**: Share any topic card via native Web Share API or copy direct deep-links (`?t=<slug>`) with seamless fallbacks.
+- 📅 **Add to Calendar**: Export recurring daily reminder `.ics` calendar events (floating local time) to keep learning consistent.
+- 📱 **100% Offline PWA**: Built with Service Worker precaching and installable on iOS, Android, macOS, and Windows.
+- 💾 **Durable Backup & Export**: Export your entire exploration history, custom topics, and queue to JSON anytime, or restore from a previous backup file.
+
+---
+
+## Topic Dataset Breakdown
+
+Daily Dive compiles **692 curated micro-topics** spanning **12 categories** and 4 primary knowledge pillars:
+
+| Pillar | Category | Topic Count | Focus Areas |
+| :--- | :--- | :---: | :--- |
+| **Tech & Systems** | Data Structures & Algorithms | 73 | Trees, graphs, dynamic programming, sorting |
+| | Cloud & Infrastructure | 64 | Kubernetes, networking, serverless, edge computing |
+| | AI & Machine Learning | 63 | LLMs, embeddings, transformer architectures, MLOps |
+| | Systems & Distributed Computing | 57 | Raft, Paxos, replication, CAP theorem, caching |
+| | Web Development & Architecture | 56 | DOM performance, rendering pipelines, security |
+| **Mind & Growth** | Psychology & Decision Making | 80 | Cognitive biases, mental models, behavioral science |
+| | Communication & Negotiation | 54 | Framing, persuasion, executive presence, feedback |
+| | Philosophy & Critical Thinking | 42 | Epistemology, ethics, logic, first principles |
+| **Money & Career** | Personal Finance & Economics | 68 | Compound interest, macroeconomics, capital markets |
+| | Career Strategy & Leadership | 45 | Leverage, org design, talent density, negotiations |
+| **World & Ideas** | Science & Nature | 45 | Quantum mechanics, thermodynamics, biology |
+| | History of Innovation | 45 | Breakthrough inventions, industrial revolutions, tech shifts |
+| **Total** | | **692 Topics** | |
+
+---
+
+## Privacy Policy & Data Architecture
+
+- **100% Local Storage**: All topic progress, streaks, notes, custom uploads, and settings are saved exclusively in your browser's `localStorage` and `IndexedDB`.
+- **Zero Remote Accounts & Zero Analytics**: No third-party trackers, no cookies, no user identification, and no cloud databases.
+- **Optional Gemini API Key (BYOK)**: If you provide an optional Google Gemini API key in Settings to synthesize custom uploaded documents, requests are sent **directly from your browser to Google's API endpoints**. Your key is stored solely in local device storage and is never transmitted to any proxy server.
+
+---
+
+## Topic Schema Structure
+
+Topics are stored as structured JSON objects conforming to the following specification:
+
+```json
+{
+  "id": "raft-consensus",
+  "slug": "raft-consensus",
+  "title": "Raft Consensus Algorithm",
+  "category": "systems-distributed-computing",
+  "group": "tech",
+  "summary": "A consensus algorithm designed to be more understandable than Paxos while providing equivalent fault tolerance.",
+  "mentalModel": "Understand leader election, log replication, and safety invariants in distributed state machines.",
+  "actionableTakeaway": "Use quorum-based leader election to prevent split-brain states in clustered applications.",
+  "difficulty": "Advanced",
+  "estimatedMinutes": 3,
+  "resources": [
+    {
+      "title": "In Search of an Understandable Consensus Algorithm (USENIX ATC '14)",
+      "url": "https://raft.github.io/raft.pdf",
+      "type": "Paper"
+    }
+  ]
+}
 ```
 
 ---
 
-## Getting Started Locally
+## Development & Build Pipeline
 
 ### Prerequisites
-- Node.js 18+ and npm
-- Python 3.10+ (optional, for seed generation scripts)
+- [Node.js](https://nodejs.org/) (v18.0.0 or higher)
+- [Python](https://www.python.org/) (v3.10+ for topic compilation and validation scripts)
 
 ### Installation
 ```bash
@@ -53,40 +112,72 @@ A distraction-free, privacy-first progressive web application (PWA) for daily mi
 git clone https://github.com/SumitMahajan11/Daily-Dive.git
 cd Daily-Dive
 
-# Install dependencies
+# Install Node dependencies
 npm install
-
-# Start development server
-npm run dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+### Running Locally
+```bash
+# Start Vite development server
+npm run dev
+```
+Navigate to `http://localhost:5173`.
+
+### Compiling & Validating Topic Seeds
+```bash
+# Validate CSV datasets against schema and check URL health
+python scripts/validation/validate_and_fix_all_seeds.py
+
+# Recompile expanded topics into client bundle
+python scripts/build_expanded_topics.py
+```
+
+### Running Tests & Audits
+```bash
+# Production build
+npm run build
+
+# Run unit and regression test suites
+node tests/regression_extractor.test.mjs
+node scripts/test_part_a_invariants.mjs
+node scripts/test_part_c_durability.mjs
+node scripts/test_part_d_backup.mjs
+node scripts/test_part_c_share_and_calendar.mjs
+
+# Run Playwright end-to-end and accessibility audits
+python scripts/test_accessibility_axe.py
+python scripts/test_reduced_motion.py
+python scripts/test_lazy_load_proof.py
+python scripts/test_pwa_offline.py
+```
 
 ---
 
-## Seed Data & Validation
+## Production Deployment (Vercel)
 
-All seed datasets live under the [`seeds/`](seeds/) directory:
-- **CSV format**: [`seeds/topics_*.csv`](seeds/)
-- **SQL format**: [`seeds/seed_topics_*.sql`](seeds/)
+Daily Dive is optimized for zero-config static deployment on Vercel:
 
-To re-run the end-to-end dataset validator (validates non-empty fields, JSON schema, title uniqueness, and URL syntax):
-```bash
-python scripts/validation/validate_and_fix_all_seeds.py
-```
+1. Push your changes to GitHub.
+2. Import the repository into [Vercel](https://vercel.com).
+3. Select the **Vite** framework preset:
+   - **Build Command**: `npm run build`
+   - **Output Directory**: `dist`
+   - **Install Command**: `npm install`
+4. Deploy! **No environment variables or backend configurations are required.**
 
-To regenerate SQL seed scripts from the CSV files:
-```bash
-python scripts/generation/generate_sql_seed.py
-```
+---
 
-## Production Deployment (Vercel / Netlify / Static Hosting)
+## Contributing
 
-1. Import the repository in [Vercel](https://vercel.com) or your preferred static host.
-2. Set the Framework Preset to **Vite** with build command `npm run build` and output directory `dist`.
-3. Deploy — zero external database credentials or API keys needed.
+Contributions are welcome!
+1. Fork the project.
+2. Create a feature branch (`git checkout -b feature/topic-expansion`).
+3. If adding or editing topics in `seeds/*.csv`, run `python scripts/validation/validate_and_fix_all_seeds.py` and `python scripts/build_expanded_topics.py`.
+4. Ensure all tests pass (`npm run build`).
+5. Commit your changes and open a Pull Request.
 
 ---
 
 ## License
-MIT
+
+Distributed under the MIT License. See `LICENSE` for details.

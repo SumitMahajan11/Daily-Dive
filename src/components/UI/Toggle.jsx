@@ -24,10 +24,12 @@ export const Toggle = ({
   className = '',
   id,
   name,
-  'aria-label': ariaLabel,
+  ariaLabel,
+  'aria-label': ariaLabelKebab,
   ...props
 }) => {
   const sizeConfig = SIZES[size] || SIZES.md;
+  const labelText = ariaLabelKebab || ariaLabel;
 
   const handleChange = (e) => {
     if (disabled) return;
@@ -47,10 +49,12 @@ export const Toggle = ({
         type="checkbox"
         id={id}
         name={name}
-        checked={checked}
+        role="switch"
+        aria-checked={Boolean(checked)}
+        checked={Boolean(checked)}
         onChange={handleChange}
         disabled={disabled}
-        aria-label={ariaLabel}
+        aria-label={labelText}
         className="sr-only peer"
       />
       <span
