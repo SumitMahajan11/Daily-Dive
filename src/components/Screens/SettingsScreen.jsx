@@ -164,8 +164,8 @@ export const SettingsScreen = () => {
     } catch (e) {}
 
     const backupData = {
-      schemaVersion: 2,
-      version: '2.1.0',
+      schemaVersion: 3,
+      version: '3.0.0',
       exported_at: nowIso,
       last_backup_at: nowIso,
       user_progress: userProgressMap,

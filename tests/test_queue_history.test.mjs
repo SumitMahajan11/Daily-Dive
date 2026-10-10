@@ -1,5 +1,6 @@
 import { test, describe, beforeEach } from 'node:test';
 import assert from 'node:assert/strict';
+import fs from 'node:fs';
 import {
   selectExploredCount,
   selectLearnedCount,
@@ -12,6 +13,10 @@ import {
   appendHistoryEntry,
   calculateUpdatedStreak
 } from '../src/lib/roulette.js';
+import {
+  removeCustomTopicRecords,
+  repairProgressFromHistory
+} from '../src/lib/customTopics.js';
 
 // Setup browser localStorage mock in node environment
 const storageStore = new Map();
@@ -63,20 +68,6 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     state.history = [];
     state.customTopics = [];
     state.topics = [...INITIAL_TOPICS];
-    return state;
-  }
-
-  function simulateDeleteCustomTopic(topicId, state) {
-    state.customTopics = (state.customTopics || []).filter(t => t.id !== topicId);
-    state.topics = (state.topics || []).filter(t => t.id !== topicId);
-    if (state.userProgressMap && state.userProgressMap[topicId]) {
-      const nextMap = { ...state.userProgressMap };
-      delete nextMap[topicId];
-      state.userProgressMap = nextMap;
-    }
-    if (state.history) {
-      state.history = state.history.filter(h => h.topic_id !== topicId);
-    }
     return state;
   }
 
@@ -236,8 +227,12 @@ describe('Round 11: Review Queue vs History Invariants', () => {
 
     assert.strictEqual(selectExploredCount(state.userProgressMap), 2);
     
-    // Delete custom topic using simulated real operation
-    simulateDeleteCustomTopic(customTopic.id, state);
+    // Delete custom topic using real removeCustomTopicRecords function
+    state.customTopics = (state.customTopics || []).filter(t => t.id !== customTopic.id);
+    state.topics = (state.topics || []).filter(t => t.id !== customTopic.id);
+    const { progressMap, history } = removeCustomTopicRecords(state.userProgressMap, state.history, [customTopic.id]);
+    state.userProgressMap = progressMap;
+    state.history = history;
 
     const exploredAfter = selectExploredCount(state.userProgressMap);
     const queueAfter = selectReviewQueue(state.topics, state.userProgressMap, 4);
@@ -247,4 +242,179 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     assert.strictEqual(queueAfter.some(t => t.id === customTopic.id), false, 'Deleted topic must not appear in review queue');
     assert.strictEqual(historyAfter.some(h => h.topic_id === customTopic.id), false, 'Deleted topic must not appear in history');
   });
+
+  test('3a: Undo after delete restores the topic, its progress record, and its history without losing progress', () => {
+    const customTopic = {
+      id: 'custom_note_undo_test',
+      title: 'Undo Test Note',
+      group: 'custom',
+      category: 'custom-notes',
+      is_custom: true
+    };
+
+    let state = {
+      customTopics: [customTopic],
+      topics: [customTopic, ...INITIAL_TOPICS],
+      userProgressMap: {
+        [customTopic.id]: { times_seen: 3, last_seen: '2026-10-09T10:00:00.000Z', learned: true }
+      },
+      history: [
+        { topic_id: customTopic.id, title: customTopic.title, action: 'spin', timestamp: '2026-10-09T10:00:00.000Z' }
+      ]
+    };
+
+    // Snapshot before delete
+    const savedTopic = customTopic;
+    const savedProgress = state.userProgressMap[customTopic.id];
+    const savedHistory = state.history.filter(h => h.topic_id === customTopic.id);
+
+    // Delete
+    state.customTopics = state.customTopics.filter(t => t.id !== customTopic.id);
+    state.topics = state.topics.filter(t => t.id !== customTopic.id);
+    const deleteResult = removeCustomTopicRecords(state.userProgressMap, state.history, [customTopic.id]);
+    state.userProgressMap = deleteResult.progressMap;
+    state.history = deleteResult.history;
+
+    assert.strictEqual(selectExploredCount(state.userProgressMap), 0, 'Explored count is 0 after deletion');
+    assert.strictEqual(state.history.length, 0, 'History is empty after deletion');
+
+    // Undo delete
+    state.customTopics = [savedTopic, ...state.customTopics];
+    state.topics = [savedTopic, ...state.topics];
+    state.userProgressMap = { ...state.userProgressMap, [savedTopic.id]: savedProgress };
+    state.history = [...savedHistory, ...state.history];
+
+    assert.strictEqual(selectExploredCount(state.userProgressMap), 1, 'Explored count is restored to 1 on Undo');
+    assert.strictEqual(state.userProgressMap[customTopic.id].times_seen, 3, 'Progress times_seen is preserved');
+    assert.strictEqual(state.userProgressMap[customTopic.id].learned, true, 'Progress learned status is preserved');
+    assert.strictEqual(state.history.length, 1, 'History is fully restored on Undo');
+    assert.strictEqual(selectReviewQueue(state.topics, state.userProgressMap, 4).length, 1, 'Topic appears in review queue');
+  });
+
+  test('3b: 14-day expiry cleans progress & history without leaving ghosts, and Undo restores them', () => {
+    const temporaryTopic = {
+      id: 'temp_note_14d_expiry',
+      title: 'Temporary Note 14-Day',
+      lifecycle: 'temporary',
+      expires_at: '2026-10-01T00:00:00.000Z', // Past date
+      is_custom: true
+    };
+
+    let state = {
+      customTopics: [temporaryTopic],
+      topics: [temporaryTopic, ...INITIAL_TOPICS],
+      userProgressMap: {
+        [temporaryTopic.id]: { times_seen: 2, last_seen: '2026-09-30T12:00:00.000Z', learned: false }
+      },
+      history: [
+        { topic_id: temporaryTopic.id, title: temporaryTopic.title, action: 'spin', timestamp: '2026-09-30T12:00:00.000Z' }
+      ]
+    };
+
+    // On expiry: cascade remove from active pool
+    const savedProgress = state.userProgressMap[temporaryTopic.id];
+    const savedHistory = state.history.filter(h => h.topic_id === temporaryTopic.id);
+
+    state.customTopics = [];
+    state.topics = state.topics.filter(t => t.id !== temporaryTopic.id);
+    const expiredCascade = removeCustomTopicRecords(state.userProgressMap, state.history, [temporaryTopic.id]);
+    state.userProgressMap = expiredCascade.progressMap;
+    state.history = expiredCascade.history;
+
+    // No ghost records remain in active state
+    assert.strictEqual(selectExploredCount(state.userProgressMap), 0, 'No ghost explored count after expiry');
+    assert.strictEqual(state.history.length, 0, 'No ghost history after expiry');
+    assert.strictEqual(selectReviewQueue(state.topics, state.userProgressMap, 4).length, 0, 'No ghost in review queue');
+
+    // On restore / Undo expiry:
+    state.customTopics = [{ ...temporaryTopic, lifecycle: 'temporary', expires_at: new Date(Date.now() + 14 * 86400000).toISOString() }];
+    state.topics = [state.customTopics[0], ...state.topics];
+    state.userProgressMap = { ...state.userProgressMap, [temporaryTopic.id]: savedProgress };
+    state.history = [...savedHistory, ...state.history];
+
+    assert.strictEqual(selectExploredCount(state.userProgressMap), 1, 'Explored count restored on Undo');
+    assert.strictEqual(state.userProgressMap[temporaryTopic.id].times_seen, 2, 'Times seen restored');
+    assert.strictEqual(state.history.length, 1, 'History restored');
+  });
+
+  test('3c: Clear All removes all custom topics, progress, and history without leaving ghosts', () => {
+    const custom1 = { id: 'c1', title: 'Custom 1', is_custom: true };
+    const custom2 = { id: 'c2', title: 'Custom 2', is_custom: true };
+
+    let state = {
+      customTopics: [custom1, custom2],
+      topics: [custom1, custom2, ...INITIAL_TOPICS],
+      userProgressMap: {
+        [custom1.id]: { times_seen: 1, last_seen: new Date().toISOString() },
+        [custom2.id]: { times_seen: 4, last_seen: new Date().toISOString() },
+        [INITIAL_TOPICS[0].id]: { times_seen: 2, last_seen: new Date().toISOString() }
+      },
+      history: [
+        { topic_id: custom1.id, title: custom1.title, action: 'spin', timestamp: new Date().toISOString() },
+        { topic_id: custom2.id, title: custom2.title, action: 'spin', timestamp: new Date().toISOString() },
+        { topic_id: INITIAL_TOPICS[0].id, title: INITIAL_TOPICS[0].title, action: 'spin', timestamp: new Date().toISOString() }
+      ]
+    };
+
+    assert.strictEqual(selectExploredCount(state.userProgressMap), 3);
+
+    const customIds = state.customTopics.map(t => t.id);
+    state.customTopics = [];
+    state.topics = state.topics.filter(t => !t.is_custom);
+    const { progressMap, history } = removeCustomTopicRecords(state.userProgressMap, state.history, customIds);
+    state.userProgressMap = progressMap;
+    state.history = history;
+
+    assert.strictEqual(selectExploredCount(state.userProgressMap), 1, 'Explored count only has built-in topic');
+    assert.strictEqual(state.history.length, 1, 'History only has built-in topic');
+    assert.strictEqual(state.history[0].topic_id, INITIAL_TOPICS[0].id);
+    assert.strictEqual(state.userProgressMap[custom1.id], undefined, 'No ghost for custom1');
+    assert.strictEqual(state.userProgressMap[custom2.id], undefined, 'No ghost for custom2');
+  });
+
+  test('Real Data: Import evidence/real-backup.json and verify repair on import / load', () => {
+    const raw = fs.readFileSync('evidence/real-backup.json', 'utf8');
+    const backup = JSON.parse(raw);
+
+    const rawProgress = backup.user_progress || {};
+    const rawHistory = backup.history || [];
+    const customTopics = backup.custom_topics || [];
+    const topics = [...customTopics, ...INITIAL_TOPICS];
+
+    // Pre-repair checks on raw backup
+    const rawHistoryIdsNoProgress = rawHistory
+      .map(h => h.topic_id)
+      .filter(id => !rawProgress[id] || !rawProgress[id].times_seen);
+
+    // Apply real repair on import / load
+    const { progressMap: repairedProgress, repairedCount } = repairProgressFromHistory(rawProgress, rawHistory);
+
+    const exploredCount = selectExploredCount(repairedProgress);
+    const historyLength = rawHistory.length;
+    const queue = selectReviewQueue(topics, repairedProgress, 4);
+    const queueIds = queue.map(t => t.id);
+    const totalDives = selectTotalSpins({ userProgressMap: repairedProgress, history: rawHistory });
+
+    const historyIdsWithNoProgressAfter = rawHistory
+      .map(h => h.topic_id)
+      .filter(id => !repairedProgress[id] || Number(repairedProgress[id].times_seen) < 1);
+
+    const historyTopicIdSet = new Set(rawHistory.map(h => h.topic_id));
+    const queueIdsWithNoHistory = queueIds.filter(id => !historyTopicIdSet.has(id));
+
+    console.log('\n--- REAL BACKUP IMPORT AUDIT METRICS ---');
+    console.log(`explored count:                       ${exploredCount}`);
+    console.log(`history length:                       ${historyLength}`);
+    console.log(`queue ids:                            ${JSON.stringify(queueIds)}`);
+    console.log(`total dives:                          ${totalDives}`);
+    console.log(`history ids with no progress record:  ${JSON.stringify(historyIdsWithNoProgressAfter)}`);
+    console.log(`queue ids with no history entry:      ${JSON.stringify(queueIdsWithNoHistory)}`);
+    console.log(`repaired count from history:          ${repairedCount}`);
+    console.log('----------------------------------------\n');
+
+    assert.strictEqual(historyIdsWithNoProgressAfter.length, 0, 'All history entries must have a progress record after repair');
+    assert.ok(exploredCount >= 4, 'Explored count must reflect all explored topics');
+    assert.ok(totalDives >= historyLength, 'Total dives must be >= history length');
+  });
 });
+

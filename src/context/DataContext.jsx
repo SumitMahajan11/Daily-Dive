@@ -8,6 +8,7 @@ import {
   STARTER_ENABLED_CATEGORIES
 } from '../lib/roulette';
 import { selectStreakMetrics } from '../lib/selectors';
+import { removeCustomTopicRecords, repairProgressFromHistory } from '../lib/customTopics';
 import { loadTopicsForEnabledCategories, loadAllBuiltinTopics } from '../lib/topicLoader';
 import { AudioController } from '../lib/audio';
 import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications';
@@ -164,6 +165,15 @@ export const DataProvider = ({ children }) => {
           guestCategories = parsed?.enabled_categories || STARTER_ENABLED_CATEGORIES;
         }
       } catch (e) {}
+
+      // One-time repair on load to ensure history topic IDs have progress records
+      const { progressMap: repairedLoadProgress, repairedCount: loadRepairs } = repairProgressFromHistory(guestProgress, guestHistory);
+      if (loadRepairs > 0) {
+        guestProgress = repairedLoadProgress;
+        try {
+          localStorage.setItem('daily_dive_guest_progress', JSON.stringify(repairedLoadProgress));
+        } catch (e) {}
+      }
 
       setUserProgressMap(guestProgress);
       setUserStreaks(guestStreaks);
@@ -363,7 +373,7 @@ export const DataProvider = ({ children }) => {
       throw new Error('Invalid backup file: Top-level data must be a JSON object.');
     }
 
-    // Schema version check (allow schemaVersion or legacy version string)
+    // Schema version check (allow schemaVersion 3, 2, or legacy version string)
     const schemaVer = parsedBackup.schemaVersion || (parsedBackup.version ? 1 : null);
     if (!schemaVer && !parsedBackup.user_progress && !parsedBackup.user_streaks && !parsedBackup.user_settings) {
       throw new Error('Malformed backup: Missing recognizable Daily Dive backup signature.');
@@ -404,38 +414,12 @@ export const DataProvider = ({ children }) => {
 
     // Validation passed! Now atomically perform all writes
     try {
-      if (parsedBackup.user_progress) {
-        const normalizedProgress = { ...parsedBackup.user_progress };
-        // Backfill times_seen if missing on legacy records
-        Object.keys(normalizedProgress).forEach(id => {
-          const entry = normalizedProgress[id];
-          if (entry && typeof entry === 'object') {
-            if (typeof entry.times_seen === 'undefined' || entry.times_seen === null) {
-              normalizedProgress[id] = {
-                ...entry,
-                times_seen: (entry.learned || entry.last_seen) ? 1 : 0
-              };
-            }
-          }
-        });
-        // Backfill from history entries if available
-        if (Array.isArray(parsedBackup.history)) {
-          parsedBackup.history.forEach(h => {
-            if (h && h.topic_id) {
-              const current = normalizedProgress[h.topic_id] || { times_seen: 0 };
-              if (!current.times_seen || current.times_seen === 0) {
-                normalizedProgress[h.topic_id] = {
-                  ...current,
-                  times_seen: 1,
-                  last_seen: current.last_seen || h.timestamp
-                };
-              }
-            }
-          });
-        }
-        setUserProgressMap(normalizedProgress);
-        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(normalizedProgress));
-      }
+      const rawProgress = parsedBackup.user_progress || {};
+      const rawHistory = parsedBackup.history || [];
+      const { progressMap: normalizedProgress } = repairProgressFromHistory(rawProgress, rawHistory);
+
+      setUserProgressMap(normalizedProgress);
+      localStorage.setItem('daily_dive_guest_progress', JSON.stringify(normalizedProgress));
 
       if (parsedBackup.user_streaks) {
         setUserStreaks(parsedBackup.user_streaks);
@@ -492,14 +476,17 @@ export const DataProvider = ({ children }) => {
     if (!topicsToRestore || topicsToRestore.length === 0) return;
 
     const now = Date.now();
-    const restored = topicsToRestore.map(t => ({
-      ...t,
-      lifecycle: t.lifecycle || 'temporary',
-      // Refresh expiry window for 14 more days
-      expires_at: new Date(now + 14 * 86400000).toISOString(),
-      expiry_rule: '14_days',
-      restored_at: new Date().toISOString()
-    }));
+    const restored = topicsToRestore.map(t => {
+      const { _savedProgress, _savedHistory, ...cleanTopic } = t;
+      return {
+        ...cleanTopic,
+        lifecycle: cleanTopic.lifecycle || 'temporary',
+        // Refresh expiry window for 14 more days
+        expires_at: new Date(now + 14 * 86400000).toISOString(),
+        expiry_rule: '14_days',
+        restored_at: new Date().toISOString()
+      };
+    });
 
     setCustomTopics(prev => {
       const updated = [...restored, ...prev.filter(p => !restored.some(r => r.id === p.id))];
@@ -512,6 +499,40 @@ export const DataProvider = ({ children }) => {
     setTopics(prev => {
       return [...restored, ...prev.filter(t => !restored.some(r => r.id === t.id))];
     });
+
+    // Restore saved progress records if available
+    const restoredProgressEntries = {};
+    topicsToRestore.forEach(t => {
+      if (t._savedProgress) {
+        restoredProgressEntries[t.id] = t._savedProgress;
+      }
+    });
+    if (Object.keys(restoredProgressEntries).length > 0) {
+      setUserProgressMap(prev => {
+        const updated = { ...prev, ...restoredProgressEntries };
+        try {
+          localStorage.setItem('daily_dive_guest_progress', JSON.stringify(updated));
+        } catch (e) {}
+        return updated;
+      });
+    }
+
+    // Restore saved history records if available
+    const restoredHistoryEntries = [];
+    topicsToRestore.forEach(t => {
+      if (Array.isArray(t._savedHistory)) {
+        restoredHistoryEntries.push(...t._savedHistory);
+      }
+    });
+    if (restoredHistoryEntries.length > 0) {
+      setHistory(prev => {
+        const updated = [...restoredHistoryEntries, ...(prev || [])];
+        try {
+          localStorage.setItem('daily_dive_history', JSON.stringify(updated));
+        } catch (e) {}
+        return updated;
+      });
+    }
 
     // Remove from expired storage
     try {
@@ -559,19 +580,43 @@ export const DataProvider = ({ children }) => {
       });
 
       if (expired.length > 0) {
-        // 1. Save to expired registry for undo
+        const expiredIds = expired.map(t => t.id);
+
+        // 1. Save to expired registry for undo, capturing their progress/history so undo restores them perfectly
+        const expiredWithData = expired.map(t => ({
+          ...t,
+          _savedProgress: userProgressMap[t.id] || null,
+          _savedHistory: (history || []).filter(h => h && h.topic_id === t.id)
+        }));
+
         let prevExpired = [];
         try {
           const storedExp = localStorage.getItem('daily_dive_expired_custom_topics');
           if (storedExp) prevExpired = JSON.parse(storedExp);
         } catch (e) {}
-        const mergedExpired = [...expired, ...prevExpired.filter(p => !expired.some(e => e.id === p.id))];
+        const mergedExpired = [...expiredWithData, ...prevExpired.filter(p => !expired.some(e => e.id === p.id))];
         localStorage.setItem('daily_dive_expired_custom_topics', JSON.stringify(mergedExpired));
 
-        // 2. Soft-delete from active pool
+        // 2. Soft-delete from active pool & cascade progress/history
         localStorage.setItem('daily_dive_custom_topics', JSON.stringify(active));
         setCustomTopics(active);
         setTopics(prev => prev.filter(t => !expired.some(e => e.id === t.id)));
+
+        setUserProgressMap(prev => {
+          const { progressMap: next } = removeCustomTopicRecords(prev, null, expiredIds);
+          try {
+            localStorage.setItem('daily_dive_guest_progress', JSON.stringify(next));
+          } catch (e) {}
+          return next;
+        });
+
+        setHistory(prev => {
+          const { history: next } = removeCustomTopicRecords(null, prev, expiredIds);
+          try {
+            localStorage.setItem('daily_dive_history', JSON.stringify(next));
+          } catch (e) {}
+          return next;
+        });
 
         // 3. Trigger undo notification toast with action
         const count = expired.length;
@@ -581,7 +626,7 @@ export const DataProvider = ({ children }) => {
           {
             label: 'Undo',
             onClick: () => {
-              restoreExpiredTopics(expired);
+              restoreExpiredTopics(expiredWithData);
             }
           }
         );
@@ -591,7 +636,7 @@ export const DataProvider = ({ children }) => {
       console.warn('Error evaluating topic expiry:', e);
     }
     return [];
-  }, [showToast, restoreExpiredTopics]);
+  }, [userProgressMap, history, showToast, restoreExpiredTopics]);
 
   // Hook topic expiry check on mount and expose for debug/testing
   useEffect(() => {
@@ -696,6 +741,10 @@ export const DataProvider = ({ children }) => {
 
   // Remove a custom topic
   const deleteCustomTopic = useCallback((topicId) => {
+    const deletedTopic = (customTopics || []).find(t => t.id === topicId) || (topics || []).find(t => t.id === topicId);
+    const deletedProgress = userProgressMap?.[topicId];
+    const deletedHistory = (history || []).filter(h => h && h.topic_id === topicId);
+
     setCustomTopics(prev => {
       const updated = prev.filter(t => t.id !== topicId);
       try {
@@ -705,9 +754,7 @@ export const DataProvider = ({ children }) => {
     });
 
     setUserProgressMap(prev => {
-      if (!prev || !prev[topicId]) return prev;
-      const next = { ...prev };
-      delete next[topicId];
+      const { progressMap: next } = removeCustomTopicRecords(prev, null, [topicId]);
       try {
         localStorage.setItem('daily_dive_guest_progress', JSON.stringify(next));
       } catch (e) {}
@@ -715,8 +762,7 @@ export const DataProvider = ({ children }) => {
     });
 
     setHistory(prev => {
-      if (!prev) return prev;
-      const next = prev.filter(h => h.topic_id !== topicId);
+      const { history: next } = removeCustomTopicRecords(null, prev, [topicId]);
       try {
         localStorage.setItem('daily_dive_history', JSON.stringify(next));
       } catch (e) {}
@@ -724,44 +770,73 @@ export const DataProvider = ({ children }) => {
     });
 
     setTopics(prev => prev.filter(t => t.id !== topicId));
-    showToast('Topic removed from your pool', 'info');
-  }, [showToast]);
+
+    if (deletedTopic) {
+      showToast('Topic removed from your pool', 'info', {
+        label: 'Undo',
+        onClick: () => {
+          setCustomTopics(prev => {
+            const updated = [deletedTopic, ...prev.filter(t => t.id !== topicId)];
+            try {
+              localStorage.setItem('daily_dive_custom_topics', JSON.stringify(updated));
+            } catch (e) {}
+            return updated;
+          });
+          setTopics(prev => [deletedTopic, ...prev.filter(t => t.id !== topicId)]);
+          if (deletedProgress) {
+            setUserProgressMap(prev => {
+              const updated = { ...prev, [topicId]: deletedProgress };
+              try {
+                localStorage.setItem('daily_dive_guest_progress', JSON.stringify(updated));
+              } catch (e) {}
+              return updated;
+            });
+          }
+          if (deletedHistory && deletedHistory.length > 0) {
+            setHistory(prev => {
+              const updated = [...deletedHistory, ...(prev || []).filter(h => h.topic_id !== topicId)];
+              try {
+                localStorage.setItem('daily_dive_history', JSON.stringify(updated));
+              } catch (e) {}
+              return updated;
+            });
+          }
+          showToast(`Restored "${deletedTopic.title}"`, 'success');
+        }
+      });
+    } else {
+      showToast('Topic removed from your pool', 'info');
+    }
+  }, [customTopics, topics, userProgressMap, history, showToast]);
 
   // Clear all custom topics
   const clearCustomTopics = useCallback(() => {
-    setCustomTopics(prev => {
-      const customIds = new Set(prev.map(t => t.id));
-      setUserProgressMap(pMap => {
-        const next = { ...pMap };
-        let changed = false;
-        customIds.forEach(id => {
-          if (next[id]) {
-            delete next[id];
-            changed = true;
-          }
-        });
-        if (changed) {
-          try {
-            localStorage.setItem('daily_dive_guest_progress', JSON.stringify(next));
-          } catch (e) {}
-        }
-        return changed ? next : pMap;
-      });
-      setHistory(hList => {
-        const next = (hList || []).filter(h => !customIds.has(h.topic_id));
-        try {
-          localStorage.setItem('daily_dive_history', JSON.stringify(next));
-        } catch (e) {}
-        return next;
-      });
-      return [];
-    });
+    const customIds = (customTopics || []).map(t => t.id);
+
+    setCustomTopics([]);
     try {
       localStorage.removeItem('daily_dive_custom_topics');
     } catch (e) {}
+
+    setUserProgressMap(prevMap => {
+      const { progressMap: nextMap } = removeCustomTopicRecords(prevMap, null, customIds);
+      try {
+        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(nextMap));
+      } catch (e) {}
+      return nextMap;
+    });
+
+    setHistory(prevHist => {
+      const { history: nextHist } = removeCustomTopicRecords(null, prevHist, customIds);
+      try {
+        localStorage.setItem('daily_dive_history', JSON.stringify(nextHist));
+      } catch (e) {}
+      return nextHist;
+    });
+
     setTopics(prev => prev.filter(t => !t.is_custom));
     showToast('All custom topics removed from your pool', 'info');
-  }, [showToast]);
+  }, [customTopics, showToast]);
 
   return (
     <DataContext.Provider value={{
