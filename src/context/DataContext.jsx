@@ -86,8 +86,8 @@ export const DataProvider = ({ children }) => {
       enabled_categories: STARTER_ENABLED_CATEGORIES,
       reminder_time: '09:00 AM',
       notifications_enabled: false,
-      sound_enabled: true,
-      haptics_enabled: true
+      sound_enabled: false,
+      haptics_enabled: false
     };
   });
 
@@ -520,7 +520,11 @@ export const DataProvider = ({ children }) => {
     const patch = { ...currentEnabled };
     patch['custom'] = true;
     patch['custom::custom-notes'] = true;
-    updateSettings({ enabled_categories: patch });
+    const settingsPatch = { enabled_categories: patch };
+    if (!userSettings?.content_source || userSettings.content_source === 'curated') {
+      settingsPatch.content_source = 'blended';
+    }
+    updateSettings(settingsPatch);
 
     // Set first newly added topic as current preview
     if (normalized[0]) {
