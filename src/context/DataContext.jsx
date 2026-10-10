@@ -393,8 +393,36 @@ export const DataProvider = ({ children }) => {
     // Validation passed! Now atomically perform all writes
     try {
       if (parsedBackup.user_progress) {
-        setUserProgressMap(parsedBackup.user_progress);
-        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(parsedBackup.user_progress));
+        const normalizedProgress = { ...parsedBackup.user_progress };
+        // Backfill times_seen if missing on legacy records
+        Object.keys(normalizedProgress).forEach(id => {
+          const entry = normalizedProgress[id];
+          if (entry && typeof entry === 'object') {
+            if (typeof entry.times_seen === 'undefined' || entry.times_seen === null) {
+              normalizedProgress[id] = {
+                ...entry,
+                times_seen: (entry.learned || entry.last_seen) ? 1 : 0
+              };
+            }
+          }
+        });
+        // Backfill from history entries if available
+        if (Array.isArray(parsedBackup.history)) {
+          parsedBackup.history.forEach(h => {
+            if (h && h.topic_id) {
+              const current = normalizedProgress[h.topic_id] || { times_seen: 0 };
+              if (!current.times_seen || current.times_seen === 0) {
+                normalizedProgress[h.topic_id] = {
+                  ...current,
+                  times_seen: 1,
+                  last_seen: current.last_seen || h.timestamp
+                };
+              }
+            }
+          });
+        }
+        setUserProgressMap(normalizedProgress);
+        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(normalizedProgress));
       }
 
       if (parsedBackup.user_streaks) {
