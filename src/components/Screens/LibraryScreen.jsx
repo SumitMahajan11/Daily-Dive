@@ -392,10 +392,10 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           candidates = await extractTopicsWithGemini(rawText, geminiApiKey.trim(), file.name);
         } catch (geminiErr) {
           console.warn('Gemini extraction failed, falling back to local extractor:', geminiErr);
-          candidates = await extractTopicsLocally(rawText, file.name);
+          candidates = await extractTopicsLocally(rawText, [], file.name);
         }
       } else {
-        candidates = await extractTopicsLocally(rawText, file.name);
+        candidates = await extractTopicsLocally(rawText, [], file.name);
       }
 
       if (!candidates || candidates.length === 0) {
@@ -403,13 +403,12 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       }
 
       const scored = candidates.map(t => {
-        const scoreInfo = scoreCandidateTitle(t.title, rawText);
         return {
           ...t,
           id: t.id || `ext_${Date.now()}_${Math.random().toString(36).substr(2, 6)}`,
-          confidence: scoreInfo.confidence,
-          needs_review: scoreInfo.needs_review,
-          review_reasons: scoreInfo.reasons,
+          confidence: typeof t.confidence === 'number' ? t.confidence : 75,
+          needs_review: Boolean(t.needs_review),
+          review_reasons: t.review_reasons || [],
           lifecycle: 'temporary'
         };
       });
@@ -990,9 +989,16 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                       {topic.description}
                     </p>
                     {topic.needs_review && (
-                      <span className="inline-block mt-1 text-[10px] text-amber-500 font-medium">
-                        Flagged for review: {topic.review_reasons?.join(', ')}
-                      </span>
+                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
+                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                          Needs review
+                        </span>
+                        {topic.review_reasons?.length > 0 && (
+                          <span className="text-[10px] text-on-surface-variant/80 truncate">
+                            {topic.review_reasons.join(' · ')}
+                          </span>
+                        )}
+                      </div>
                     )}
                   </div>
                 );

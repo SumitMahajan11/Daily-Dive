@@ -149,11 +149,83 @@ function inferCategory(text) {
 }
 
 /**
+ * Strips markdown formatting, links, bold, italic, code, list markers, and headers.
+ */
+export function stripMarkdownSyntax(text) {
+  if (!text) return '';
+  return text
+    // Fenced code blocks
+    .replace(/```[\s\S]*?```/g, ' ')
+    // Markdown badge images linked: [![alt](img_url)](link_url)
+    .replace(/\[\s*!\[[^\]]*\]\([^)]*\)\s*\]\([^)]*\)/g, '')
+    // Markdown images: ![alt](url)
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '')
+    // Markdown links with text: [text](url) -> text
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    // Empty links: [](url)
+    .replace(/\[\s*\]\([^)]*\)/g, '')
+    // HTML tags: <tag>...</tag> or <tag/>
+    .replace(/<[^>]+>/g, ' ')
+    // Table divider rows |---|---|
+    .replace(/^\|?[\s\-:|]+\|?$/gm, '')
+    // Table pipes | col | col | -> col col
+    .replace(/^\||\|$/gm, '')
+    .replace(/\|/g, ' ')
+    // Markdown headings #, ##, etc.
+    .replace(/^#{1,6}\s+/gm, '')
+    // Task list checkboxes - [ ] or - [x]
+    .replace(/^[\s\-*+]*\[[ xX]\]\s*/gm, '')
+    // Bullet and ordered list markers
+    .replace(/^[\s]*[-*+•·]\s+/gm, '')
+    .replace(/^[\s]*\d+[\.\)]\s+/gm, '')
+    // Bold / italic (***, **, *, ___, __, _)
+    .replace(/(\*{1,3}|_{1,3})((?:(?!\1)[\s\S])+?)\1/g, '$2')
+    // Inline code `code`
+    .replace(/`([^`]+)`/g, '$1')
+    // Strikethrough ~~text~~
+    .replace(/~~([^~]+)~~/g, '$1')
+    // Blockquotes >
+    .replace(/^>\s*/gm, '')
+    // Horizontal rules
+    .replace(/^[\s\-*_]{3,}\s*$/gm, '')
+    .replace(/[ \t]+/g, ' ')
+    .trim();
+}
+
+/**
+ * Checks if a line is a file reference, "Note:" aside, code syntax, or pure meta.
+ */
+export function isMetaOrAsideLine(line) {
+  if (!line || typeof line !== 'string') return true;
+  const l = line.trim();
+  if (l.length === 0) return true;
+
+  // 1. "Note:" asides and pure meta
+  if (/^(?:note|n\.b\.|aside|fyi|meta|todo|ps|warning|caution|important)[\s:]/i.test(l)) return true;
+  if (/\bnote:\s*.*(?:see\s+[a-z0-9_\-]+\.[a-z]+|decisions_log|readme|changelog)/i.test(l)) return true;
+
+  // 2. File references
+  if (/\bsee\s+[a-z0-9_\-\.\/]+\.(?:md|js|ts|jsx|tsx|py|json|html|css|txt|ya?ml)\b/i.test(l)) return true;
+  if (/^[a-z0-9_\-\.\/]+\.(?:md|js|ts|jsx|tsx|py|json|html|css|txt|ya?ml)$/i.test(l)) return true;
+  if (/\b(?:decisions_log\.md|readme\.md|changelog\.md|package\.json|tsconfig\.json)\b/i.test(l)) return true;
+
+  // 3. Pure meta lines / build order references
+  if (/^(?:internal build-and-test order|build order|test order|roadmap overview|milestones overview)[\s:]*$/i.test(l)) return true;
+
+  // 4. Code syntax / keywords / braces
+  if (/^(?:function\b|class\b|const\b|let\b|var\b|import\b|export\b|return\b|promise\b|\{|\}|\(\)\s*=>)/i.test(l)) return true;
+  if (/[{};]$/.test(l) && /\b(?:const|let|var|function|return|import|export)\b/.test(l)) return true;
+
+  return false;
+}
+
+/**
  * Cleans extracted line to form a title.
  */
 function cleanTitle(line) {
-  return (line || '')
+  return stripMarkdownSyntax(line || '')
     .replace(/^(?:\d+[\.\)]\s*|slide\s*\d+:?\s*|chapter\s*\d+:?\s*|#{1,6}\s*|[#\-*•·]+\s*)/i, '')
+    .replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]+/i, '')
     .replace(/^(?:practical|experiment|lab|assignment|exercise|task)\s*\d+[:\s-]*/i, '')
     .replace(/[\s\-_|•·\d:]+$/, '')
     .replace(/\s+/g, ' ')
@@ -225,6 +297,8 @@ export function cleanCandidateTitle(str) {
     .replace(/\s+\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)$/i, '')
     .replace(/[\s,;:\-–—/\\&+([.]+$/, '')
     .trim();
+
+  s = s.replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]+/i, '').trim();
 
   const letters = s.replace(/[^A-Za-z]/g, '');
   if (letters.length >= 3 && (letters === letters.toUpperCase() || letters === letters.toLowerCase())) {
@@ -846,17 +920,21 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
   // Fallback: If raw sections were not provided or all filtered, parse from fullText
   if (validSections.length === 0 && fullText.trim()) {
-    const splitByBreaks = fullText
+    const preCleaned = fullText.replace(/```[\s\S]*?```/g, '\n');
+    const splitByBreaks = preCleaned
       .split(/\n\s*\n+|(?=^#{1,3}\s)/m)
       .map(s => s.trim())
-      .filter(s => s.length > 50);
+      .filter(s => s.length > 20);
     splitByBreaks.forEach((b, idx) => {
-      const lines = b.split('\n').map(l => cleanText(l)).filter(Boolean);
+      const rawLines = b.split('\n');
+      const lines = rawLines
+        .map(l => stripMarkdownSyntax(cleanText(l)))
+        .filter(l => Boolean(l) && !isMetaOrAsideLine(l));
       if (lines.length > 0 && !isCoverSlide(lines) && !isOutlineSlide(lines) && !isReferencesSlide(lines)) {
         validSections.push({
           index: idx,
           lines,
-          text: b,
+          text: lines.join('\n'),
           structuralTitle: null,
           slideNumber: idx + 1
         });
@@ -1043,14 +1121,18 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     } else {
       const sentences = [];
       lines.forEach(l => {
-        const cleaned = cleanTitle(l);
+        if (isMetaOrAsideLine(l)) return;
+        const cleanedMd = stripMarkdownSyntax(l);
+        const cleaned = cleanTitle(cleanedMd);
         if (cleaned === candidateTitle || cleaned.length < 15) return;
         if (/^(?:paper|method|reported result|table|figure)\b/i.test(cleaned)) return;
         if (/^\d+[\.\)]?$/.test(cleaned)) return;
-        const sList = cleaned.split(/(?<=[.!?])\s+/);
+        if (isMetaOrAsideLine(cleaned)) return;
+
+        const sList = cleanedMd.split(/(?<=[.!?])\s+/);
         sList.forEach(s => {
-          const trimmed = s.trim();
-          if (trimmed.length > 20 && !trimmed.endsWith(':')) {
+          const trimmed = stripMarkdownSyntax(s.trim());
+          if (trimmed.length > 20 && !trimmed.endsWith(':') && !isMetaOrAsideLine(trimmed)) {
             sentences.push(trimmed);
           }
         });
@@ -1065,12 +1147,13 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
         }
       } else {
         const fallbackSubstantive = lines
-          .filter(l => cleanTitle(l) !== candidateTitle && l.trim().length > 15)
+          .filter(l => !isMetaOrAsideLine(l) && cleanTitle(stripMarkdownSyntax(l)) !== candidateTitle && l.trim().length > 15)
+          .map(l => stripMarkdownSyntax(l))
           .join(' ')
           .replace(/^[•\-*·\d\.\)]\s*/gm, '')
           .replace(/\s+/g, ' ')
           .trim();
-        desc = fallbackSubstantive || unitText.replace(/\s+/g, ' ').trim();
+        desc = fallbackSubstantive || 'Core architectural concepts and implementation models.';
       }
     }
 
@@ -1081,12 +1164,11 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       desc = desc.replace(/[,\s;:–—\-.]+$/, '') + '.';
     }
 
-    // Step 6: Tags & Categories
-    const tags = extractTopKeywords(unitText, 4);
-    const { category: inferredCat } = inferCategory(unitText);
-    const enrichedTags = tags.length > 0 ? [...tags] : ['learning', 'research'];
-    if (inferredCat && inferredCat !== 'custom-notes' && !enrichedTags.includes(inferredCat)) {
-      enrichedTags.unshift(inferredCat);
+    // Step 6: Tags & Categories (No default built-in category injection on custom uploads)
+    const tags = extractTopKeywords(stripMarkdownSyntax(unitText), 4);
+    const enrichedTags = tags.length > 0 ? [...tags] : ['custom-notes'];
+    if (!enrichedTags.includes('custom-notes')) {
+      enrichedTags.unshift('custom-notes');
     }
 
     const createdAt = new Date().toISOString();

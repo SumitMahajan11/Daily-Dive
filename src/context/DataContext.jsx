@@ -322,24 +322,106 @@ export const DataProvider = ({ children }) => {
     showToast('All progress and streak records have been reset.', 'success');
   }, [showToast]);
 
-  // Import JSON backup
+  // Validate and atomically import JSON backup without partial writes
   const importDataBackup = useCallback((parsedBackup) => {
-    if (parsedBackup.user_progress) {
-      setUserProgressMap(parsedBackup.user_progress);
-      try { localStorage.setItem('daily_dive_guest_progress', JSON.stringify(parsedBackup.user_progress)); } catch (e) {}
+    if (!parsedBackup || typeof parsedBackup !== 'object' || Array.isArray(parsedBackup)) {
+      throw new Error('Invalid backup file: Top-level data must be a JSON object.');
     }
-    if (parsedBackup.user_streaks) {
-      setUserStreaks(parsedBackup.user_streaks);
-      try { localStorage.setItem('daily_dive_guest_streaks', JSON.stringify(parsedBackup.user_streaks)); } catch (e) {}
+
+    // Schema version check (allow schemaVersion or legacy version string)
+    const schemaVer = parsedBackup.schemaVersion || (parsedBackup.version ? 1 : null);
+    if (!schemaVer && !parsedBackup.user_progress && !parsedBackup.user_streaks && !parsedBackup.user_settings) {
+      throw new Error('Malformed backup: Missing recognizable Daily Dive backup signature.');
     }
-    if (parsedBackup.user_settings) {
-      setUserSettings(prev => {
-        const next = { ...prev, ...parsedBackup.user_settings };
-        try { localStorage.setItem('daily_dive_guest_settings', JSON.stringify(next)); } catch (e) {}
-        return next;
-      });
+
+    // Validate sub-structures
+    if (parsedBackup.user_streaks !== undefined) {
+      if (typeof parsedBackup.user_streaks !== 'object' || parsedBackup.user_streaks === null) {
+        throw new Error('Malformed backup: user_streaks must be an object.');
+      }
+      if (typeof parsedBackup.user_streaks.current_streak !== 'undefined' && typeof parsedBackup.user_streaks.current_streak !== 'number') {
+        throw new Error('Malformed backup: user_streaks.current_streak must be a number.');
+      }
+      if (typeof parsedBackup.user_streaks.longest_streak !== 'undefined' && typeof parsedBackup.user_streaks.longest_streak !== 'number') {
+        throw new Error('Malformed backup: user_streaks.longest_streak must be a number.');
+      }
     }
-    showToast('Backup imported successfully', 'success');
+
+    if (parsedBackup.user_progress !== undefined && (typeof parsedBackup.user_progress !== 'object' || parsedBackup.user_progress === null)) {
+      throw new Error('Malformed backup: user_progress must be an object.');
+    }
+
+    if (parsedBackup.history !== undefined && !Array.isArray(parsedBackup.history)) {
+      throw new Error('Malformed backup: history must be an array.');
+    }
+
+    if (parsedBackup.custom_topics !== undefined && !Array.isArray(parsedBackup.custom_topics)) {
+      throw new Error('Malformed backup: custom_topics must be an array.');
+    }
+
+    if (parsedBackup.expired_custom_topics !== undefined && !Array.isArray(parsedBackup.expired_custom_topics)) {
+      throw new Error('Malformed backup: expired_custom_topics must be an array.');
+    }
+
+    if (parsedBackup.user_settings !== undefined && (typeof parsedBackup.user_settings !== 'object' || parsedBackup.user_settings === null)) {
+      throw new Error('Malformed backup: user_settings must be an object.');
+    }
+
+    // Validation passed! Now atomically perform all writes
+    try {
+      if (parsedBackup.user_progress) {
+        setUserProgressMap(parsedBackup.user_progress);
+        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(parsedBackup.user_progress));
+      }
+
+      if (parsedBackup.user_streaks) {
+        setUserStreaks(parsedBackup.user_streaks);
+        localStorage.setItem('daily_dive_guest_streaks', JSON.stringify(parsedBackup.user_streaks));
+      }
+
+      if (parsedBackup.user_settings) {
+        setUserSettings(prev => {
+          const next = { ...prev, ...parsedBackup.user_settings };
+          localStorage.setItem('daily_dive_guest_settings', JSON.stringify(next));
+          return next;
+        });
+      }
+
+      if (parsedBackup.history) {
+        setHistory(parsedBackup.history);
+        localStorage.setItem('daily_dive_history', JSON.stringify(parsedBackup.history));
+      }
+
+      if (parsedBackup.custom_topics) {
+        setCustomTopics(parsedBackup.custom_topics);
+        localStorage.setItem('daily_dive_custom_topics', JSON.stringify(parsedBackup.custom_topics));
+        setTopics([...parsedBackup.custom_topics, ...INITIAL_TOPICS]);
+      }
+
+      if (parsedBackup.expired_custom_topics) {
+        localStorage.setItem('daily_dive_expired_custom_topics', JSON.stringify(parsedBackup.expired_custom_topics));
+      }
+
+      if (parsedBackup.theme) {
+        localStorage.setItem('daily_dive_theme', parsedBackup.theme);
+        if (typeof document !== 'undefined') {
+          document.documentElement.classList.toggle('dark', parsedBackup.theme === 'dark');
+        }
+      }
+
+      if (typeof parsedBackup.first_run_dismissed === 'boolean') {
+        localStorage.setItem('daily_dive_first_run_dismissed', String(parsedBackup.first_run_dismissed));
+      }
+
+      if (parsedBackup.last_backup_at) {
+        localStorage.setItem('daily_dive_last_backup_at', parsedBackup.last_backup_at);
+      }
+
+      showToast('Backup imported successfully', 'success');
+      return true;
+    } catch (writeErr) {
+      throw new Error('Failed to persist imported backup: ' + writeErr.message);
+    }
   }, [showToast]);
 
   // Restore expired topics from undo window

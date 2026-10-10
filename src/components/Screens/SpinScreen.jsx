@@ -31,6 +31,8 @@ import confetti from 'canvas-confetti';
 import { Button } from '../UI/Button';
 import { Skeleton } from '../UI/Skeleton';
 
+import { requestStoragePersistence, isIOSSafariNonStandalone } from '../../lib/storage';
+
 // Visual metadata for categories
 const CATEGORY_META = {
   'ai-ml': { icon: Bot, shortLabel: 'AI & Machine Learning', bgBadge: 'bg-primary/15 text-primary border-primary/30', accentColor: '#e06841' },
@@ -47,7 +49,7 @@ const CATEGORY_META = {
   'history-innovation': { icon: Landmark, shortLabel: 'History of Ideas', bgBadge: 'bg-amber-500/10 text-amber-400 border-amber-500/25', accentColor: '#f59e0b' }
 };
 
-const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
+export const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
   groupDef.categories.map(cat => {
     const meta = CATEGORY_META[cat.name] || {
       icon: Cpu,
@@ -65,25 +67,7 @@ const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
   })
 );
 
-const REEL_CATEGORIES = [
-  ...BASE_REEL_CATEGORIES,
-  {
-    group: 'custom',
-    groupLabel: 'Custom',
-    name: 'custom-notes',
-    label: 'Custom Notes',
-    icon: Sparkles,
-    shortLabel: 'Custom Notes',
-    bgBadge: 'bg-primary/15 text-primary border-primary/30',
-    accentColor: '#e06841'
-  }
-];
-
 const REPEAT_COUNT = 14;
-const REEL_STRIP = Array.from({ length: REPEAT_COUNT }, (_, r) =>
-  REEL_CATEGORIES.map(cat => ({ ...cat, repeatIdx: r }))
-).flat();
-
 const ITEM_WIDTH = 144;
 const ITEM_GAP = 12;
 const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 156px
@@ -147,6 +131,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     userSettings,
     userStreaks,
     effectiveStreak,
+    history = [],
     updateSettings,
     spinNextTopic,
     markCurrentTopicLearned,
@@ -160,16 +145,59 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     return !localStorage.getItem('daily_dive_first_run_dismissed');
   });
 
+  const [showSafariNudge, setShowSafariNudge] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (localStorage.getItem('daily_dive_safari_nudge_dismissed')) return false;
+    return isIOSSafariNonStandalone();
+  });
+
+  const handleDismissSafariNudge = () => {
+    setShowSafariNudge(false);
+    try {
+      localStorage.setItem('daily_dive_safari_nudge_dismissed', 'true');
+    } catch (e) {}
+  };
+
+  // Derive active reel categories strictly from enabled categories & custom pool
+  const activeReelCategories = useMemo(() => {
+    const enabledMap = userSettings?.enabled_categories || {};
+    const filtered = BASE_REEL_CATEGORIES.filter(cat => {
+      if (enabledMap[cat.group] === false) return false;
+      if (enabledMap[`${cat.group}::${cat.name}`] === false) return false;
+      return true;
+    });
+
+    const hasCustom = (topics || []).some(t => t.is_custom);
+    if (hasCustom && enabledMap['custom'] !== false) {
+      filtered.push({
+        group: 'custom',
+        groupLabel: 'Custom',
+        name: 'custom-notes',
+        label: 'Custom Notes',
+        icon: Sparkles,
+        shortLabel: 'Custom Notes',
+        bgBadge: 'bg-primary/15 text-primary border-primary/30',
+        accentColor: '#e06841'
+      });
+    }
+
+    return filtered.length > 0 ? filtered : BASE_REEL_CATEGORIES;
+  }, [userSettings?.enabled_categories, topics]);
+
+  const reelStrip = useMemo(() => {
+    return Array.from({ length: REPEAT_COUNT }, (_, r) =>
+      activeReelCategories.map(cat => ({ ...cat, repeatIdx: r }))
+    ).flat();
+  }, [activeReelCategories]);
+
   const toggleBroadGroup = (groupKey) => {
     const groupDef = CATEGORY_TREE.find(g => g.group === groupKey);
     if (!groupDef) return;
     const currentCategories = { ...(userSettings?.enabled_categories || {}) };
     
-    // Check active count
     const isCurrentlyOn = currentCategories[groupKey] !== false;
     const activeCount = CATEGORY_TREE.filter(g => currentCategories[g.group] !== false).length;
     
-    // Prevent unchecking if it's the last remaining active group
     if (isCurrentlyOn && activeCount <= 1) {
       if (showToast) showToast('At least one topic group must remain active.', 'warning');
       return;
@@ -201,8 +229,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
 
   const [reelIndex, setReelIndex] = useState(() => {
     const initCat = currentTopic?.category || currentTopic?.sub;
-    const foundIdx = REEL_CATEGORIES.findIndex(c => c.name === initCat);
-    return (3 * REEL_CATEGORIES.length) + (foundIdx >= 0 ? foundIdx : 0);
+    const foundIdx = activeReelCategories.findIndex(c => c.name === initCat);
+    return (3 * activeReelCategories.length) + (foundIdx >= 0 ? foundIdx : 0);
   });
 
   const translateX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
@@ -267,17 +295,20 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
 
     const selected = spinNextTopic();
 
+    // Call persistent storage request after completed/triggered spin
+    requestStoragePersistence().catch(() => {});
+
     const targetCat = selected?.category || selected?.sub;
-    let foundIdx = REEL_CATEGORIES.findIndex(c => c.name === targetCat);
+    let foundIdx = activeReelCategories.findIndex(c => c.name === targetCat);
     if (foundIdx < 0 && selected?.is_custom) {
-      foundIdx = REEL_CATEGORIES.findIndex(c => c.name === 'custom-notes');
+      foundIdx = activeReelCategories.findIndex(c => c.name === 'custom-notes');
     }
     const baseIndex = foundIdx >= 0 ? foundIdx : 0;
 
-    const currentBase = reelIndex % REEL_CATEGORIES.length;
+    const currentBase = reelIndex % activeReelCategories.length;
     let forwardOffset = baseIndex - currentBase;
-    if (forwardOffset <= 0) forwardOffset += REEL_CATEGORIES.length;
-    const travelCards = (4 * REEL_CATEGORIES.length) + forwardOffset;
+    if (forwardOffset <= 0) forwardOffset += activeReelCategories.length;
+    const travelCards = (4 * activeReelCategories.length) + forwardOffset;
     const targetIndex = reelIndex + travelCards;
     setReelIndex(targetIndex);
 
@@ -287,7 +318,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       setShowResult(true);
       setIsLanded(true);
 
-      const landedCatDef = REEL_CATEGORIES[baseIndex];
+      const landedCatDef = activeReelCategories[baseIndex];
       AudioController.playLanding();
       setActiveAccentColor(landedCatDef?.accentColor || '#e06841');
       setShowLandingHalo(true);
@@ -307,7 +338,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       }
 
       setTimeout(() => {
-        setReelIndex(prev => (prev % REEL_CATEGORIES.length) + (3 * REEL_CATEGORIES.length));
+        setReelIndex(prev => (prev % activeReelCategories.length) + (3 * activeReelCategories.length));
       }, 500);
     }, SPIN_DURATION_MS);
   };
@@ -457,6 +488,24 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
         </div>
       )}
 
+      {/* ── QUIET DISMISSIBLE IOS SAFARI NON-STANDALONE NUDGE ── */}
+      {showSafariNudge && (
+        <div
+          data-testid="ios-safari-install-nudge"
+          className="w-full mb-3 p-3 rounded-xl bg-surface-container-low border border-outline-variant/30 flex items-center justify-between text-xs text-on-surface-variant gap-2"
+        >
+          <span>Add to Home Screen to keep your progress safe.</span>
+          <button
+            type="button"
+            onClick={handleDismissSafariNudge}
+            className="p-1 text-on-surface-variant hover:text-on-surface cursor-pointer text-sm leading-none"
+            aria-label="Dismiss Home Screen tip"
+          >
+            ×
+          </button>
+        </div>
+      )}
+
       {/* ── REEL CHASSIS ── */}
       <div className="w-full py-1 relative flex flex-col items-center">
         <div
@@ -526,7 +575,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               }
             }}
           >
-            {REEL_STRIP.map((item, idx) => (
+            {reelStrip.map((item, idx) => (
               <PrecisionReelCard
                 key={`${item.name}-${idx}`}
                 item={item}

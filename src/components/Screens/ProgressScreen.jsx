@@ -79,11 +79,14 @@ export const ProgressScreen = ({ onReviewTopic }) => {
 
   const learnedCount = Object.keys(userProgressMap).filter(id => userProgressMap[id]?.learned).length;
 
+  // Single Source of Truth derivations
   const totalSpinsCount = useMemo(() => {
-    const fromHist = history.filter(h => h.action === 'spin').length;
-    const fromProg = Object.values(userProgressMap).reduce((sum, p) => sum + (p.times_seen || 0), 0);
-    return Math.max(fromHist, fromProg);
-  }, [history, userProgressMap]);
+    return history.filter(h => h.action === 'spin' || !h.action).length;
+  }, [history]);
+
+  const uniqueExploredCount = useMemo(() => {
+    return new Set(history.map(h => h.topic_id)).size;
+  }, [history]);
 
   const filteredHistory = useMemo(() => {
     const todayStr = getLocalCalendarDate(new Date());
@@ -102,17 +105,96 @@ export const ProgressScreen = ({ onReviewTopic }) => {
     });
   }, [history, historyFilter, userProgressMap]);
 
-  // Review Queue (sorted by oldest last_seen)
+  // Review Queue: derived strictly from topics present in history log
   const reviewQueue = useMemo(() => {
+    const historyTopicIds = new Set(history.map(h => h.topic_id));
     return topics
-      .filter(t => userProgressMap[t.id]?.times_seen > 0)
+      .filter(t => historyTopicIds.has(t.id))
       .sort((a, b) => {
         const aTime = new Date(userProgressMap[a.id]?.last_seen || 0).getTime();
         const bTime = new Date(userProgressMap[b.id]?.last_seen || 0).getTime();
         return aTime - bTime;
       })
       .slice(0, 4);
-  }, [topics, userProgressMap]);
+  }, [topics, history, userProgressMap]);
+
+  // 14-day backup reminder logic (dismissible, max once per week)
+  const [showBackupNudge, setShowBackupNudge] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    if (!history || history.length === 0) return false;
+    const lastBackupAt = localStorage.getItem('daily_dive_last_backup_at');
+    const dismissedAt = localStorage.getItem('daily_dive_backup_nudge_dismissed_at');
+    const now = Date.now();
+
+    // Check if dismissed within the last 7 days (max once per week)
+    if (dismissedAt) {
+      const dismissedMs = new Date(dismissedAt).getTime();
+      if (!isNaN(dismissedMs) && (now - dismissedMs) < 7 * 86400000) {
+        return false;
+      }
+    }
+
+    // If never backed up, or last backup was > 14 days ago
+    if (!lastBackupAt) return true;
+    const backupMs = new Date(lastBackupAt).getTime();
+    return isNaN(backupMs) || (now - backupMs) >= 14 * 86400000;
+  });
+
+  const handleDismissBackupNudge = () => {
+    setShowBackupNudge(false);
+    try {
+      localStorage.setItem('daily_dive_backup_nudge_dismissed_at', new Date().toISOString());
+    } catch (e) {}
+  };
+
+  const handleTriggerBackupExport = () => {
+    const nowIso = new Date().toISOString();
+    try {
+      localStorage.setItem('daily_dive_last_backup_at', nowIso);
+    } catch (e) {}
+
+    let customTopics = [];
+    let expiredTopics = [];
+    try {
+      const ct = localStorage.getItem('daily_dive_custom_topics');
+      if (ct) customTopics = JSON.parse(ct);
+      const et = localStorage.getItem('daily_dive_expired_custom_topics');
+      if (et) expiredTopics = JSON.parse(et);
+    } catch (e) {}
+
+    const backupData = {
+      schemaVersion: 2,
+      version: '2.1.0',
+      exported_at: nowIso,
+      last_backup_at: nowIso,
+      user_progress: userProgressMap,
+      user_streaks: userStreaks,
+      user_settings: {
+        content_source: 'curated',
+        reminder_time: '09:00 AM',
+        notifications_enabled: false,
+        sound_enabled: false,
+        haptics_enabled: false
+      },
+      history: history,
+      custom_topics: customTopics,
+      expired_custom_topics: expiredTopics,
+      theme: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_theme') || 'dark' : 'dark',
+      first_run_dismissed: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_first_run_dismissed') === 'true' : false
+    };
+
+    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `daily-dive-backup-${nowIso.slice(0, 10)}.json`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+    setShowBackupNudge(false);
+    if (showToast) showToast('Backup saved to downloads', 'success');
+  };
 
   const handleReviewClick = (topic) => {
     setCurrentTopic(topic);
@@ -139,11 +221,37 @@ export const ProgressScreen = ({ onReviewTopic }) => {
   return (
     <div className="flex flex-col w-full max-w-3xl mx-auto pb-8 space-y-6">
       
-      {/* ── SCREEN H1 HEADER ── */}
-      <div>
+      {/* ── SCREEN H1 HEADER & BACKUP REMINDER ── */}
+      <div className="flex flex-col gap-1.5">
         <h1 className="font-display text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
           Progress &amp; Stats
         </h1>
+        {showBackupNudge && (
+          <div
+            data-testid="backup-reminder-line"
+            className="flex items-center justify-between text-xs py-1.5 px-3 rounded-lg bg-surface-container-low border border-primary/25 text-on-surface-variant"
+          >
+            <div className="flex items-center gap-2">
+              <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+              <span>It’s been a while since your last backup.</span>
+              <button
+                type="button"
+                onClick={handleTriggerBackupExport}
+                className="font-semibold text-primary hover:underline cursor-pointer"
+              >
+                Back up your progress
+              </button>
+            </div>
+            <button
+              type="button"
+              onClick={handleDismissBackupNudge}
+              className="text-on-surface-variant hover:text-on-surface p-0.5 cursor-pointer"
+              aria-label="Dismiss backup reminder"
+            >
+              ×
+            </button>
+          </div>
+        )}
       </div>
 
       {/* ── THREE METRIC TILES ── */}
