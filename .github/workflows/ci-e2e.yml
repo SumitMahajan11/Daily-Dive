@@ -1,0 +1,32 @@
+name: Daily Dive E2E Tests
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ 'polish/**' ]
+
+jobs:
+  e2e-tests:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js 20
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Install Playwright Chromium with dependencies
+        run: npx playwright install --with-deps chromium
+
+      - name: Build data and production bundle
+        run: npm run build
+
+      - name: Run E2E Test Suite
+        run: npm run test:e2e
