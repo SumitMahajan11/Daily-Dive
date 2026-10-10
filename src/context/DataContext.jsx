@@ -704,13 +704,58 @@ export const DataProvider = ({ children }) => {
       return updated;
     });
 
+    setUserProgressMap(prev => {
+      if (!prev || !prev[topicId]) return prev;
+      const next = { ...prev };
+      delete next[topicId];
+      try {
+        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+
+    setHistory(prev => {
+      if (!prev) return prev;
+      const next = prev.filter(h => h.topic_id !== topicId);
+      try {
+        localStorage.setItem('daily_dive_history', JSON.stringify(next));
+      } catch (e) {}
+      return next;
+    });
+
     setTopics(prev => prev.filter(t => t.id !== topicId));
     showToast('Topic removed from your pool', 'info');
   }, [showToast]);
 
   // Clear all custom topics
   const clearCustomTopics = useCallback(() => {
-    setCustomTopics([]);
+    setCustomTopics(prev => {
+      const customIds = new Set(prev.map(t => t.id));
+      setUserProgressMap(pMap => {
+        const next = { ...pMap };
+        let changed = false;
+        customIds.forEach(id => {
+          if (next[id]) {
+            delete next[id];
+            changed = true;
+          }
+        });
+        if (changed) {
+          try {
+            localStorage.setItem('daily_dive_guest_progress', JSON.stringify(next));
+          } catch (e) {}
+        }
+        return changed ? next : pMap;
+      });
+      setHistory(hList => {
+        const next = (hList || []).filter(h => !customIds.has(h.topic_id));
+        try {
+          localStorage.setItem('daily_dive_history', JSON.stringify(next));
+        } catch (e) {}
+        return next;
+      });
+      return [];
+    });
     try {
       localStorage.removeItem('daily_dive_custom_topics');
     } catch (e) {}
