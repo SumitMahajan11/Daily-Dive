@@ -32,7 +32,12 @@ export const topics = [
         "label": "Corporate Finance Institute: DCF Model Training & Formula Guide",
         "url": "https://corporatefinanceinstitute.com/resources/valuation/dcf-formula-discounted-cash-flow/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
+      "why": "Relying purely on past earnings can mislead investors about future performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
+      "example": "A buyer projects a local bakery will make fifty thousand dollars next year and discounts that cash to forty-five thousand dollars in today's terms."
+    }
   },
   {
     "id": "weighted-average-cost-of-capital-wacc",
@@ -61,7 +66,12 @@ export const topics = [
         "label": "Harvard Business Review: A Refresher on Cost of Capital",
         "url": "https://hbr.org/2015/04/a-refresher-on-cost-of-capital"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "This metric calculates the average interest rate a company pays to finance its business through both borrowed debt and shareholder equity.",
+      "why": "A company must earn a return higher than this financing rate to create real economic value. It acts as the minimum hurdle rate for approving new corporate projects.",
+      "example": "If a manufacturing firm borrows at five percent and shareholders expect nine percent, its overall cost might be seven percent, meaning new factories must beat seven percent."
+    }
   },
   {
     "id": "capital-structure-and-modigliani-miller-theorem",
@@ -90,7 +100,12 @@ export const topics = [
         "label": "CFA Institute: Capital Structure Decisions and Leverage Theory",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/capital-structure"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "This financial theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
+      "why": "Understanding this baseline helps financial managers focus on real-world market imperfections like tax benefits from debt interest and the risks of insolvency.",
+      "example": "A software business evaluates whether taking a bank loan or issuing new stock slices the corporate pie differently without changing its underlying operating power."
+    }
   },
   {
     "id": "mergers-and-acquisitions-accretion-dilution",
@@ -119,7 +134,12 @@ export const topics = [
         "label": "Aswath Damodaran: The Value of Synergy in Mergers & Acquisitions",
         "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/synergy.pdf"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
+      "why": "Shareholders track earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
+      "example": "A profitable retailer buys a growing supplier with cash; because the supplier's profits exceed the lost bank interest, earnings per share rise, making the deal accretive."
+    }
   },
   {
     "id": "dividend-policy-vs-share-buybacks",
@@ -147,7 +167,12 @@ export const topics = [
         "label": "Michael Mauboussin: Capital Allocation: Returns, Reinvestment, and Shareholder Value",
         "url": "https://www.morganstanley.com/im/publication/insights/articles/article_capitalallocation_us.pdf"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
+      "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer tax flexibility and increase remaining owners' percentage stake.",
+      "example": "A mature tech company repurchases ten million shares, reducing total share count and raising future earnings per share for all remaining shareholders."
+    }
   },
   {
     "id": "working-capital-management-cash-conversion-cycle",
@@ -176,7 +201,12 @@ export const topics = [
         "label": "Corporate Finance Institute: Cash Conversion Cycle Guide",
         "url": "https://corporatefinanceinstitute.com/resources/commercial-lending/cash-conversion-cycle-ccc/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "The cash conversion cycle measures how many days it takes for a company to convert investments in inventory into collected cash from customers.",
+      "why": "Shorter cycles free up working capital without requiring outside loans. Companies with negative cycles get paid by customers before paying suppliers.",
+      "example": "An online bookstore sells books in twenty days but pays publishers in forty-five days, allowing it to fund operations with suppliers' money."
+    }
   },
   {
     "id": "roic-vs-wacc-economic-value-added",
@@ -206,7 +236,12 @@ export const topics = [
         "label": "CFA Institute: Measures of Value Added (EVA and MVA)",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/economic-value-added"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Return on invested capital measures the cash profit generated from operations relative to the total capital invested in the business.",
+      "why": "A firm only creates true shareholder wealth when its return on capital exceeds the cost of obtaining that capital. If return is below cost, growth destroys value.",
+      "example": "A logistics fleet earns a fifteen percent return on its vehicles against an eight percent cost of capital, generating substantial economic value."
+    }
   },
   {
     "id": "enterprise-value-vs-equity-value-bridge",
@@ -264,7 +299,12 @@ export const topics = [
         "label": "Steven N. Kaplan & Per Strömberg: Leveraged Buyouts and Private Equity (Journal of Economic Perspectives 2009)",
         "url": "https://www.aeaweb.org/articles?id=10.1257/jep.23.1.121"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "A leveraged buyout is the acquisition of a company using a large portion of borrowed money, with the acquired firm's assets serving as collateral.",
+      "why": "Using debt amplifies returns for the buying group if the acquired company generates steady cash to pay down the loans over time.",
+      "example": "A private equity firm purchases a family-owned tool company with seventy percent debt, using the factory's cash flows to retire the debt over five years."
+    }
   },
   {
     "id": "time-value-of-money-npv-and-irr",

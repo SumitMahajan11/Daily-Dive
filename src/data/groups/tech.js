@@ -30,7 +30,12 @@ export const topics = [
         "label": "PyTorch MultiheadAttention Docs",
         "url": "https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
+      "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
+      "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
+    }
   },
   {
     "id": "mixture-of-experts-moe",
@@ -57,7 +62,12 @@ export const topics = [
         "label": "Mixtral of Experts Paper",
         "url": "https://arxiv.org/abs/2401.04088"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "A Mixture of Experts model splits a massive neural network into smaller specialized sub-networks called experts. A fast router selects only the best two or three experts to process each specific word.",
+      "why": "Running huge models usually requires enormous computing power for every calculation. Activating only a small fraction of the model per token keeps inference fast and cost-effective.",
+      "example": "When translating technical documents, the router sends coding terms to a programming expert and casual greetings to a conversational expert."
+    }
   },
   {
     "id": "mamba-state-space-models",
@@ -84,7 +94,12 @@ export const topics = [
         "label": "Mamba GitHub Repository",
         "url": "https://github.com/state-spaces/mamba"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
+      "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
+      "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
+    }
   },
   {
     "id": "rotary-positional-embeddings-rope",
@@ -111,7 +126,12 @@ export const topics = [
         "label": "Hugging Face RoPE Implementation in Llama",
         "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Rotary position embeddings represent word order by rotating vectors geometrically in mathematical space. The angle difference between two words naturally captures their relative distance.",
+      "why": "Language models need to understand word order to grasp meaning correctly. This rotation technique allows models to generalize smoothly across texts longer than those seen during training.",
+      "example": "A model recognizes that 'cat chased dog' differs from 'dog chased cat' because the rotation angle between the words indicates who acted first."
+    }
   },
   {
     "id": "residual-connections-resnet",
@@ -138,7 +158,12 @@ export const topics = [
         "label": "PyTorch ResNet Implementation",
         "url": "https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Residual connections add an identity shortcut that passes the original input directly around a neural layer to combine with its output.",
+      "why": "Very deep neural networks suffer from vanishing signals during training, causing learning to stall. Shortcuts allow training networks with hundreds of layers effectively.",
+      "example": "An image recognition network passes input pixels directly through skip connections, allowing gradient signals to flow smoothly during backward learning."
+    }
   },
   {
     "id": "vision-transformers-vit",
@@ -165,7 +190,12 @@ export const topics = [
         "label": "Hugging Face Vision Transformer Guide",
         "url": "https://huggingface.co/docs/transformers/model_doc/vit"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Vision Transformers process images by splitting pictures into a grid of small square patches and treating each patch like a word token in text.",
+      "why": "Traditional vision models use rigid spatial filters across pixels. Vision transformers learn global relationships across the entire image from the start.",
+      "example": "An image of a cat is divided into sixteen smaller squares, and the model analyzes how the ear patch relates to the paw patch across the photo."
+    }
   },
   {
     "id": "swin-transformer-shifted-windows",
@@ -192,7 +222,12 @@ export const topics = [
         "label": "PyTorch SwinTransformer Implementation",
         "url": "https://pytorch.org/vision/main/models/swin_transformer.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Swin Transformers compute self-attention inside small local windows and shift window boundaries across successive layers to allow cross-window communication.",
+      "why": "Calculating attention across every pixel in high-resolution images is too slow. Shifted windows maintain linear computation while connecting distant image regions.",
+      "example": "A camera system inspects an ultra-wide panorama by analyzing local grids first, then shifting grid borders to detect large objects crossing grid lines."
+    }
   },
   {
     "id": "sliding-window-and-longformer-attention",
@@ -246,7 +281,12 @@ export const topics = [
         "label": "Llama 3 Technical Report (Meta AI)",
         "url": "https://arxiv.org/abs/2407.21783"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Grouped-query attention shares a single key and value head across multiple query heads in large language models.",
+      "why": "Standard attention stores separate key and value caches for every head, eating up valuable graphics memory during chat sessions. Grouping saves memory while keeping response quality high.",
+      "example": "An open-source language model running on a consumer laptop fits double the context length by grouping eight query heads per memory head."
+    }
   },
   {
     "id": "lora-low-rank-adaptation",

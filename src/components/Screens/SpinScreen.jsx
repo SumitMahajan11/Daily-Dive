@@ -29,6 +29,7 @@ import confetti from 'canvas-confetti';
 import { Button } from '../UI/Button';
 import { Skeleton } from '../UI/Skeleton';
 import { requestStoragePersistence } from '../../lib/storage';
+import { loadAllBuiltinTopics } from '../../lib/topicLoader';
 
 // Visual metadata for categories
 const CATEGORY_META = {
@@ -280,27 +281,47 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     return () => ro.disconnect();
   }, []);
 
-  // Check URL deeplink ?t=<slug> on mount
+  // Check URL deeplink ?topic=<id> or ?t=<slug> on mount
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    try {
-      const params = new URLSearchParams(window.location.search);
-      const slugParam = params.get('t');
-      if (!slugParam) return;
-      const cleanSlug = slugParam.trim().toLowerCase();
-      const matched = topics?.find(t => {
-        const idMatch = t.id && t.id.toLowerCase() === cleanSlug;
-        const slugMatch = t.slug && t.slug.toLowerCase() === cleanSlug;
-        const titleSlug = t.title ? t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
-        return idMatch || slugMatch || titleSlug === cleanSlug;
-      });
+    let isMounted = true;
 
-      if (matched) {
-        setCurrentTopic(matched);
-        setShowResult(true);
-        setIsLanded(true);
-      }
-    } catch (e) {}
+    async function resolveTopicFromUrl() {
+      try {
+        const params = new URLSearchParams(window.location.search);
+        const topicParam = params.get('topic') || params.get('t');
+        if (!topicParam) return;
+        const cleanSlug = topicParam.trim().toLowerCase();
+
+        // 1. Check in currently loaded topics
+        let matched = topics?.find(t => {
+          const idMatch = t.id && t.id.toLowerCase() === cleanSlug;
+          const slugMatch = t.slug && t.slug.toLowerCase() === cleanSlug;
+          const titleSlug = t.title ? t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+          return idMatch || slugMatch || titleSlug === cleanSlug;
+        });
+
+        // 2. If not found, load all builtin topics
+        if (!matched) {
+          const allTopics = await loadAllBuiltinTopics();
+          matched = allTopics.find(t => {
+            const idMatch = t.id && t.id.toLowerCase() === cleanSlug;
+            const slugMatch = t.slug && t.slug.toLowerCase() === cleanSlug;
+            const titleSlug = t.title ? t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+            return idMatch || slugMatch || titleSlug === cleanSlug;
+          });
+        }
+
+        if (matched && isMounted) {
+          setCurrentTopic(matched);
+          setShowResult(true);
+          setIsLanded(true);
+        }
+      } catch (e) {}
+    }
+
+    resolveTopicFromUrl();
+    return () => { isMounted = false; };
   }, [topics, setCurrentTopic]);
 
   // Keyboard shortcut: Space triggers spin
@@ -428,9 +449,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
 
   const handleShareTopic = async () => {
     if (!currentTopic) return;
-    const slug = currentTopic.slug || currentTopic.id || (currentTopic.title ? currentTopic.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'topic');
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://daily-dive.vercel.app';
-    const shareUrl = `${origin}/?t=${encodeURIComponent(slug)}`;
+    const shareUrl = `${origin}/?topic=${encodeURIComponent(currentTopic.id)}`;
     const shareData = {
       title: `Daily Dive: ${currentTopic.title}`,
       text: `Explore today's concept on Daily Dive: ${currentTopic.title}`,
@@ -449,7 +469,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     try {
       await navigator.clipboard.writeText(shareUrl);
       if (showToast) {
-        showToast('Link copied to clipboard!', 'info');
+        showToast('Link copied', 'info');
       }
     } catch (e) {
       if (showToast) showToast('Could not copy link', 'error');
@@ -541,10 +561,12 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                     <span>Custom</span>
                   </span>
                 )}
-                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-xs">
-                  <Clock size={11} className="text-outline" />
-                  <span>~2 min dive</span>
-                </div>
+                {currentTopic?.lesson && (
+                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-xs">
+                    <Clock size={11} className="text-outline" />
+                    <span>~2 min dive</span>
+                  </div>
+                )}
               </div>
             </div>
 
@@ -553,46 +575,64 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               {currentTopic.title}
             </h2>
 
-            {/* Topic Description */}
-            <div className="mt-2.5 text-sm sm:text-base text-on-surface/90 leading-relaxed font-normal space-y-2">
-              <p className="leading-relaxed">
-                {currentTopic.description || currentTopic.desc}
-              </p>
-            </div>
+            {/* Topic Lesson Blocks or Fallback Description */}
+            {currentTopic?.lesson ? (
+              <div className="mt-3.5 space-y-3" data-testid="topic-lesson-blocks">
+                <div className="rounded-xl p-3 bg-surface-container/50 border border-outline-variant/20">
+                  <div className="text-xs font-bold uppercase tracking-wider text-primary mb-1">
+                    The idea
+                  </div>
+                  <p className="text-xs sm:text-sm text-on-surface/90 leading-relaxed font-normal">
+                    {currentTopic.lesson.idea}
+                  </p>
+                </div>
+
+                <div className="rounded-xl p-3 bg-surface-container/50 border border-outline-variant/20">
+                  <div className="text-xs font-bold uppercase tracking-wider text-primary mb-1">
+                    Why it matters
+                  </div>
+                  <p className="text-xs sm:text-sm text-on-surface/90 leading-relaxed font-normal">
+                    {currentTopic.lesson.why}
+                  </p>
+                </div>
+
+                <div className="rounded-xl p-3 bg-surface-container/50 border border-outline-variant/20">
+                  <div className="text-xs font-bold uppercase tracking-wider text-primary mb-1">
+                    Example
+                  </div>
+                  <p className="text-xs sm:text-sm text-on-surface/90 leading-relaxed font-normal">
+                    {currentTopic.lesson.example}
+                  </p>
+                </div>
+              </div>
+            ) : (
+              <div className="mt-2.5 text-sm sm:text-base text-on-surface/90 leading-relaxed font-normal space-y-2">
+                <p className="leading-relaxed">
+                  {currentTopic.description || currentTopic.desc}
+                </p>
+              </div>
+            )}
 
             {/* References & Deep Dives */}
             {resources.length > 0 && (() => {
               const firstSource = resources[0];
               const moreSources = resources.slice(1);
+              const firstSourceTitle = firstSource.label || firstSource.title || 'Explore Reference';
 
               return (
-                <div className="mt-4 pt-3 border-t border-outline-variant/20 space-y-2">
-                  <div className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5 mb-1.5">
-                    <BookOpen size={12} className="text-primary" />
-                    <span>Go deeper</span>
-                  </div>
-
-                  {/* First source: full-width link, full title wrapped, no ellipsis */}
+                <div className="mt-4 pt-3 border-t border-outline-variant/20 space-y-2.5">
+                  {/* First source: full-width solid button */}
                   <a
                     href={firstSource.url || '#'}
                     rel="noopener noreferrer"
                     target="_blank"
-                    className="group flex flex-col p-3 rounded-xl bg-surface-container/70 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 transition-all shadow-xs w-full"
+                    data-testid="go-deeper-button"
+                    className="w-full flex items-center justify-between p-3.5 rounded-xl bg-primary text-on-primary font-medium hover:bg-primary/90 transition-all shadow-xs text-left cursor-pointer group break-words leading-snug gap-2"
                   >
-                    <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary text-[10px] font-mono uppercase font-bold tracking-wider">
-                        {firstSource.type || 'SOURCE'}
-                      </span>
-                      <ExternalLink size={13} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
-                    </div>
-                    <span className="text-xs sm:text-sm text-on-surface font-semibold group-hover:text-primary transition-colors break-words leading-snug">
-                      {firstSource.label || firstSource.title || 'Explore Reference'}
+                    <span className="text-xs sm:text-sm font-semibold break-words leading-snug flex-1">
+                      {`Go deeper: ${firstSourceTitle}`}
                     </span>
-                    {firstSource.desc && (
-                      <p className="text-xs text-on-surface-variant mt-1 break-words leading-relaxed">
-                        {firstSource.desc}
-                      </p>
-                    )}
+                    <ExternalLink size={15} className="shrink-0 text-on-primary/80 group-hover:text-on-primary transition-colors" />
                   </a>
 
                   {/* Other sources under "More sources" toggle */}
@@ -633,7 +673,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               );
             })()}
 
-            {/* Action Toolbar: Learned, Spin again, Share in ONE row */}
+            {/* Action Toolbar: Learned, Spin another, Share in ONE row */}
             <div className="mt-4 pt-3 border-t border-outline-variant/20 flex flex-row items-center justify-between gap-2 w-full">
               <Button
                 variant={isLearned ? 'outline' : 'primary'}
@@ -655,11 +695,11 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                 variant="ghost"
                 onClick={handleSpin}
                 disabled={isSpinning}
-                aria-label="Spin topic dial again"
+                aria-label="Spin another topic"
                 className="h-10 px-3 text-xs sm:text-sm font-medium border border-outline-variant/30 hover:border-outline-variant/60 focus-visible:ring-2 focus-visible:ring-primary cursor-pointer whitespace-nowrap flex-1 min-w-0"
               >
                 <RotateCw size={14} />
-                <span className="truncate">Spin again</span>
+                <span className="truncate">Spin another</span>
               </Button>
 
               <button
@@ -784,6 +824,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
         ) : (
           <button
             type="button"
+            id="spin-button"
             data-testid="primary-spin-button"
             onClick={handleSpin}
             disabled={isSpinning}

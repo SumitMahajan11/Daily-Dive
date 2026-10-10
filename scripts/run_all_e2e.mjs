@@ -12,7 +12,8 @@ const suites = [
   'scripts/test_upload_real_roadmap.mjs',
   'scripts/test_e2e_spin_toggles.mjs',
   'scripts/verify_round9_hero.mjs',
-  'scripts/test_e2e_mobile.mjs'
+  'scripts/test_e2e_mobile.mjs',
+  'scripts/test_e2e_topic_card.mjs'
 ];
 
 console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');

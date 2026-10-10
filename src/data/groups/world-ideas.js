@@ -22,7 +22,12 @@ export const topics = [
         "label": "Rudolf Clausius — The Mechanical Theory of Heat (1867)",
         "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
+      "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
+      "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
+    }
   },
   {
     "id": "wave-particle-duality-double-slit",
@@ -41,7 +46,12 @@ export const topics = [
         "label": "Richard Feynman — The Character of Physical Law (MIT Press)",
         "url": "https://mitpress.mit.edu"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Quantum entities like electrons and photons behave as continuous waves when travelling and as discrete particles when detected.",
+      "why": "This fundamental reality overturned classical physics, revealing that microscopic matter does not have fixed physical properties until observed.",
+      "example": "In the double-slit experiment, individual photons fired through two slits create an interference pattern on a screen as if each photon traveled through both slits at once."
+    }
   },
   {
     "id": "quantum-entanglement-bell-theorem",
@@ -60,7 +70,12 @@ export const topics = [
         "label": "John S. Bell — Speakable and Unspeakable in Quantum Mechanics (Cambridge)",
         "url": "https://www.cambridge.org"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Entangled quantum particles share an interconnected state where measuring one instantly reveals the condition of the other, regardless of distance.",
+      "why": "Bell proved that the universe cannot be explained by hidden local variables, confirming that physical reality has intrinsic non-local connections.",
+      "example": "Two entangled electrons with opposite spins are separated by miles; observing one spinning clockwise immediately confirms the other is spinning counterclockwise."
+    }
   },
   {
     "id": "crispr-cas9-gene-editing",
@@ -79,7 +94,12 @@ export const topics = [
         "label": "Doudna & Charpentier — A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity (Science 2012)",
         "url": "https://www.science.org/doi/10.1126/science.1225829"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "CRISPR-Cas9 is a molecular tool adapted from bacteria that cuts DNA at precise target sequences to modify living genomes.",
+      "why": "Older genetic engineering methods were slow and inaccurate. CRISPR enables fast, low-cost gene modification for curing inherited diseases and improving crop resilience.",
+      "example": "Scientists use guide molecules to find a mutated genetic sequence causing sickle cell disease and replace it with a healthy DNA segment."
+    }
   },
   {
     "id": "central-dogma-molecular-biology",
@@ -98,7 +118,12 @@ export const topics = [
         "label": "Francis Crick — Central Dogma of Molecular Biology (Nature 1970)",
         "url": "https://www.nature.com/articles/227561a0"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "The central dogma describes the primary flow of genetic information inside living cells from DNA storage to RNA messengers to functional proteins.",
+      "why": "Proteins perform nearly all biological work in living bodies. Understanding this flow explains how genetic code translates into physical traits and diseases.",
+      "example": "A cell reads the DNA blueprint for insulin, transcribes it into messenger RNA, and translates that RNA into active insulin proteins."
+    }
   },
   {
     "id": "natural-selection-genetic-drift",
@@ -136,7 +161,12 @@ export const topics = [
         "label": "Donald Hebb — The Organization of Behavior (1949)",
         "url": "https://en.wikipedia.org/wiki/Hebbian_theory"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "The human brain continuously reorganizes neural pathways in response to learning, strengthening frequently used connections while pruning inactive synapses.",
+      "why": "The brain remains dynamic throughout life rather than fixed during childhood. Synaptic pruning eliminates unnecessary connections to keep thinking fast and energy-efficient.",
+      "example": "A musician practicing scales daily develops denser neural connections in finger motor regions, while unpracticed foreign vocabulary words gradually fade away."
+    }
   },
   {
     "id": "blood-brain-barrier-pharmacology",
@@ -174,7 +204,12 @@ export const topics = [
         "label": "Peter Mitchell — Chemiosmotic Hypothesis (Nobel Prize in Chemistry 1978)",
         "url": "https://www.nobelprize.org"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Cellular respiration breaks down dietary sugars to pump protons across membranes, powering the ATP synthase rotary motor to generate cellular fuel.",
+      "why": "ATP is the universal energy currency that powers muscle movement, nerve signaling, and chemical synthesis across all complex life.",
+      "example": "When a runner sprints, muscle cells rapidly spin thousands of microscopic ATP synthase enzymes to produce the chemical energy required for stride power."
+    }
   },
   {
     "id": "photosynthesis-calvin-cycle",

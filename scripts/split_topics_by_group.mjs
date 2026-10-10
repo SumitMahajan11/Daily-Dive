@@ -7,7 +7,10 @@ const __dirname = path.dirname(__filename);
 const rootDir = path.resolve(__dirname, '..');
 
 const canonicalFile = path.join(rootDir, 'data', 'topics.curated.json');
+const lessonsFile = path.join(rootDir, 'data', 'lessons.json');
 const groupsDir = path.join(rootDir, 'src', 'data', 'groups');
+const starterTopicsFile = path.join(rootDir, 'src', 'data', 'starterTopics.js');
+const topicIdsFile = path.join(rootDir, 'src', 'data', 'topicIds.json');
 
 if (!fs.existsSync(groupsDir)) {
   fs.mkdirSync(groupsDir, { recursive: true });
@@ -19,6 +22,12 @@ if (!fs.existsSync(canonicalFile)) {
 
 const rawData = fs.readFileSync(canonicalFile, 'utf8');
 const topics = JSON.parse(rawData);
+
+let lessonsMap = {};
+if (fs.existsSync(lessonsFile)) {
+  lessonsMap = JSON.parse(fs.readFileSync(lessonsFile, 'utf8'));
+  console.log(`Loaded ${Object.keys(lessonsMap).length} lessons from ${lessonsFile}`);
+}
 
 if (topics.length !== 692) {
   throw new Error(`FATAL: Expected exactly 692 topics, found ${topics.length}`);
@@ -37,6 +46,27 @@ const grouped = {
   'mind-growth': [],
   'world-ideas': []
 };
+
+const starterTopicIds = [
+  'multi-head-self-attention',
+  'mixture-of-experts-moe',
+  'mamba-state-space-models',
+  'rotary-positional-embeddings-rope',
+  'discounted-cash-flow-dcf-valuation',
+  'weighted-average-cost-of-capital-wacc',
+  'capital-structure-and-modigliani-miller-theorem',
+  'mergers-and-acquisitions-accretion-dilution',
+  'aristotelian-rhetorical-triangle-ethos-pathos-logos',
+  'cialdini-principles-of-persuasion',
+  'framing-effects-and-cognitive-anchoring-in-persuasion',
+  'elaboration-likelihood-model-central-vs-peripheral',
+  'entropy-second-law-thermodynamics',
+  'wave-particle-duality-double-slit',
+  'quantum-entanglement-bell-theorem',
+  'crispr-cas9-gene-editing'
+];
+
+const starterTopicsList = [];
 
 for (let i = 0; i < topics.length; i++) {
   const t = topics[i];
@@ -57,7 +87,15 @@ for (let i = 0; i < topics.length; i++) {
     resources: Array.isArray(t.resources) ? t.resources : []
   };
 
+  if (lessonsMap[t.id]) {
+    cleanedTopic.lesson = lessonsMap[t.id];
+  }
+
   grouped[group].push(cleanedTopic);
+
+  if (starterTopicIds.includes(t.id)) {
+    starterTopicsList.push(cleanedTopic);
+  }
 }
 
 // Validate group counts
@@ -86,4 +124,23 @@ export default topics;
   console.log(`Generated ${outFile} (${groupTopics.length} topics)`);
 }
 
-console.log(`\n[SUCCESS]: Successfully partitioned all ${topics.length} topics across 4 group modules.\n`);
+// Write starterTopics.js
+if (starterTopicsList.length === 16) {
+  const starterContent = `/**
+ * Curated first-spin starter topic set (16 topics across all 4 groups).
+ * Hydrates instant spin with zero chunk delay on initial load.
+ * Generated automatically by scripts/split_topics_by_group.mjs
+ */
+export const starterTopics = ${JSON.stringify(starterTopicsList, null, 2)};
+`;
+  fs.writeFileSync(starterTopicsFile, starterContent, 'utf8');
+  console.log(`Generated ${starterTopicsFile} (16 starter topics)`);
+}
+
+// Write topicIds.json
+const allTopicIds = topics.map(t => t.id);
+fs.writeFileSync(topicIdsFile, JSON.stringify(allTopicIds, null, 2), 'utf8');
+console.log(`Generated ${topicIdsFile} (${allTopicIds.length} topic ids)`);
+
+console.log(`\n[SUCCESS]: Successfully partitioned all ${topics.length} topics across 4 group modules and generated topic files.\n`);
+
