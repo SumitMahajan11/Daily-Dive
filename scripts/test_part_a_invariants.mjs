@@ -1,12 +1,19 @@
 import {
   INITIAL_TOPICS,
-  isTopicEligible,
-  reconcileStreakWithActivity,
-  computeMaxHistoricalStreak,
   STARTER_ENABLED_CATEGORIES,
   CATEGORY_TREE,
   BASE_REEL_CATEGORIES
 } from '../src/lib/roulette.js';
+import {
+  selectTotalSpins,
+  selectExploredCount,
+  selectLearnedCount,
+  selectReviewQueue,
+  selectStreakMetrics,
+  selectBestStreak,
+  selectEligibleTopics
+} from '../src/lib/selectors.js';
+import { loadAllBuiltinTopics } from '../src/lib/topicLoader.js';
 
 console.log('================================================================');
 console.log('     PART A INVARIANT & NUMBERS RECONCILIATION TEST SUITE       ');
@@ -26,8 +33,8 @@ function assert(condition, message) {
   }
 }
 
-// ── TEST 1: LEAD 1 & INVARIANT (totalSpins == history spin entries, explored == unique topic ids in history) ──
-console.log('\n[1/5] Invariant 1: totalSpins == history spin entries & explored == unique topic ids in history');
+// ── TEST 1: LEAD 1 & INVARIANT (totalSpins & explored count from selectors) ──
+console.log('\n[1/5] Invariant 1: selectTotalSpins & selectExploredCount from single source of truth');
 
 const mockHistory = [
   { id: 'h1', topic_id: 't1', action: 'spin', local_date: '2026-10-01' },
@@ -38,70 +45,73 @@ const mockHistory = [
   { id: 'h6', topic_id: 't4', action: 'spin', local_date: '2026-10-05' }
 ];
 
-const totalSpinsCount = mockHistory.filter(h => h.action === 'spin' || !h.action).length;
-const uniqueExploredCount = new Set(mockHistory.map(h => h.topic_id)).size;
+const mockProgressMap = {
+  t1: { times_seen: 2, last_seen: '2026-10-03T10:00:00Z', learned: true },
+  t2: { times_seen: 1, last_seen: '2026-10-02T10:00:00Z' },
+  t3: { times_seen: 1, last_seen: '2026-10-04T10:00:00Z' },
+  t4: { times_seen: 1, last_seen: '2026-10-05T10:00:00Z' }
+};
 
-assert(totalSpinsCount === 5, `totalSpins (${totalSpinsCount}) equals exactly the 5 spin actions in history`);
-assert(uniqueExploredCount === 4, `explored count (${uniqueExploredCount}) equals exactly the 4 unique topic IDs (t1, t2, t3, t4) in history`);
+const totalSpinsCount = selectTotalSpins({ userProgressMap: mockProgressMap, history: mockHistory });
+const uniqueExploredCount = selectExploredCount(mockProgressMap);
+const learnedCount = selectLearnedCount(mockProgressMap);
 
-// ── TEST 2: LEAD 2 & INVARIANT (Every review-queue item exists in history) ──
-console.log('\n[2/5] Invariant 2: Every review-queue item exists in history');
+assert(totalSpinsCount === 5, `selectTotalSpins (${totalSpinsCount}) returns exactly 5 total spins`);
+assert(uniqueExploredCount === 4, `selectExploredCount (${uniqueExploredCount}) returns exactly 4 explored topics from persistent progress`);
+assert(learnedCount === 1, `selectLearnedCount (${learnedCount}) returns 1 learned topic`);
+
+// ── TEST 2: LEAD 2 & INVARIANT (Review Queue derives from persistent user_progress) ──
+console.log('\n[2/5] Invariant 2: selectReviewQueue derives from persistent user_progress');
 
 const mockTopics = [
   { id: 't1', title: 'Raft Consensus' },
   { id: 't2', title: 'CQRS Architecture' },
   { id: 't3', title: 'Saga Pattern' },
   { id: 't4', title: 'Circuit Breaker' },
-  { id: 't_orphaned', title: 'Kubernetes StatefulSets' } // In userProgressMap but NOT in history
+  { id: 't_unseen', title: 'Kubernetes StatefulSets' }
 ];
 
-const mockProgressMap = {
-  t1: { times_seen: 2, last_seen: '2026-10-03T10:00:00Z' },
-  t2: { times_seen: 1, last_seen: '2026-10-02T10:00:00Z' },
-  t3: { times_seen: 1, last_seen: '2026-10-04T10:00:00Z' },
-  t_orphaned: { times_seen: 1, last_seen: '2026-09-15T10:00:00Z' } // 25 days ago, orphaned
-};
-
-// Derived selector: strictly filtered by history topic ids
-const historyTopicIds = new Set(mockHistory.map(h => h.topic_id));
-const reviewQueue = mockTopics
-  .filter(t => historyTopicIds.has(t.id))
-  .sort((a, b) => {
-    const aTime = new Date(mockProgressMap[a.id]?.last_seen || 0).getTime();
-    const bTime = new Date(mockProgressMap[b.id]?.last_seen || 0).getTime();
-    return aTime - bTime;
-  })
-  .slice(0, 4);
+const reviewQueue = selectReviewQueue(mockTopics, mockProgressMap, 4);
 
 assert(
-  !reviewQueue.some(t => t.id === 't_orphaned'),
-  'Orphaned topic "Kubernetes StatefulSets" is correctly excluded from review queue because it does not exist in history'
+  !reviewQueue.some(t => t.id === 't_unseen'),
+  'Unseen topic "Kubernetes StatefulSets" is correctly excluded from review queue'
 );
 assert(
-  reviewQueue.every(t => historyTopicIds.has(t.id)),
-  'Every item in the review queue is guaranteed to exist in the history log'
+  reviewQueue.length === 4,
+  'Review queue includes all 4 seen topics sorted by oldest seen first'
+);
+assert(
+  reviewQueue[0].id === 't2',
+  `Oldest seen topic is first in review queue ("${reviewQueue[0].title}", seen on 2026-10-02)`
 );
 
 // ── TEST 3: LEAD 3 & INVARIANT (best >= current always, and best >= any past streak) ──
-console.log('\n[3/5] Invariant 3: Best streak reconciliation (2-day streak -> lapse -> new 1-day streak -> best == 2)');
+console.log('\n[3/5] Invariant 3: selectStreakMetrics reconciliation');
 
 // User had active days on Sep 26 and Sep 27 (2-day streak), then lapsed, and spun today (Oct 10, 1-day streak)
-const activeDates = new Set(['2026-09-26', '2026-09-27', '2026-10-10']);
-const todayDate = new Date('2026-10-10T12:00:00');
+const streakHistory = [
+  { local_date: '2026-09-26', timestamp: '2026-09-26T10:00:00Z' },
+  { local_date: '2026-09-27', timestamp: '2026-09-27T10:00:00Z' },
+  { local_date: '2026-10-10', timestamp: '2026-10-10T10:00:00Z' }
+];
 const storedStreakData = { current_streak: 1, longest_streak: 1, last_active_date: '2026-10-10' };
+const todayDate = new Date('2026-10-10T12:00:00');
 
-const maxHistorical = computeMaxHistoricalStreak(activeDates);
-assert(maxHistorical === 2, `Historical max streak calculated across activeDates is 2 (Sep 26 & 27)`);
+const streakMetrics = selectStreakMetrics({
+  userStreaks: storedStreakData,
+  history: streakHistory,
+  userProgressMap: {},
+  nowDate: todayDate
+});
 
-const reconciled = reconcileStreakWithActivity(storedStreakData, activeDates, todayDate);
-assert(reconciled.current_streak === 1, `Current streak is 1`);
-assert(reconciled.longest_streak === 2, `Longest streak is reconciled to 2 (best >= any past streak)`);
-assert(reconciled.longest_streak >= reconciled.current_streak, `Longest streak (${reconciled.longest_streak}) >= current streak (${reconciled.current_streak})`);
+assert(streakMetrics.current_streak === 1, `Current streak is 1`);
+assert(streakMetrics.longest_streak === 2, `Longest streak is reconciled to 2 (best >= any past streak)`);
+assert(streakMetrics.longest_streak >= streakMetrics.current_streak, `Longest streak (${streakMetrics.longest_streak}) >= current streak (${streakMetrics.current_streak})`);
 
-// ── TEST 4: LEAD 4 & INVARIANT (Reel only contains topics/categories eligible under current filters) ──
+// ── TEST 4: LEAD 4 & INVARIANT (Reel only contains categories eligible under current filters) ──
 console.log('\n[4/5] Invariant 4: Reel only contains categories eligible under current filters');
 
-// User toggled off 'mind-growth' and 'money-career'
 const filteredSettings = {
   enabled_categories: {
     'tech': true,
@@ -129,8 +139,9 @@ assert(
 // ── TEST 5: LEAD 5 (Preset removal & accurate category group pool counts) ──
 console.log('\n[5/5] Lead 5 Verification: Category Group Counts & No Presets');
 
+const allTopics = await loadAllBuiltinTopics();
 CATEGORY_TREE.forEach(groupDef => {
-  const groupTopics = INITIAL_TOPICS.filter(t => (t.group_name || t.group) === groupDef.group);
+  const groupTopics = allTopics.filter(t => (t.group_name || t.group) === groupDef.group);
   const subcategoryCount = groupDef.categories.length;
   assert(groupTopics.length > 0, `Group "${groupDef.label}" has ${groupTopics.length} real topics across ${subcategoryCount} subcategories`);
 });

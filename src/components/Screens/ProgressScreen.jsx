@@ -13,9 +13,13 @@ import { useData } from '../../context/DataContext';
 import { Button } from '../UI/Button';
 import { Skeleton } from '../UI/Skeleton';
 import {
-  getLocalCalendarDate,
-  reconcileStreakWithActivity
-} from '../../lib/roulette';
+  selectTotalSpins,
+  selectExploredCount,
+  selectLearnedCount,
+  selectReviewQueue,
+  selectStreakMetrics,
+  selectFilteredHistory
+} from '../../lib/selectors';
 
 export const ProgressScreen = ({ onReviewTopic }) => {
   const {
@@ -33,90 +37,26 @@ export const ProgressScreen = ({ onReviewTopic }) => {
   const [historyFilter, setHistoryFilter] = useState('all');
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
-  // ── 7-DAY STREAK ACTIVITY STRIP ──
-  const { streakDays, reconciledStreak } = useMemo(() => {
-    const today = new Date();
-    const todayStr = getLocalCalendarDate(today);
-    const days = [];
-
-    const activeDates = new Set();
-    history.forEach(h => {
-      if (h.local_date) activeDates.add(h.local_date);
+  // ── UNIFIED DERIVATIONS VIA SELECTORS (Single Source of Truth) ──
+  const streakMetrics = useMemo(() => {
+    return selectStreakMetrics({
+      userStreaks,
+      history,
+      userProgressMap,
+      nowDate: new Date()
     });
-    Object.values(userProgressMap || {}).forEach(p => {
-      if (p.last_seen) activeDates.add(p.last_seen.slice(0, 10));
-    });
-    if (userStreaks?.last_active_date) {
-      activeDates.add(userStreaks.last_active_date);
-    }
+  }, [userStreaks, history, userProgressMap]);
 
-    const DAY_NAMES = ['Su', 'Mo', 'Tu', 'We', 'Th', 'Fr', 'Sa'];
+  const { streakDays } = streakMetrics;
+  const activeStreak = streakMetrics.current_streak;
+  const longestStreak = streakMetrics.longest_streak;
+  const isActiveToday = streakMetrics.is_active_today;
 
-    // 7 days window
-    for (let i = 6; i >= 0; i--) {
-      const d = new Date(today);
-      d.setDate(today.getDate() - i);
-      const dateStr = getLocalCalendarDate(d);
-      const isToday = dateStr === todayStr;
-      const hasActivity = activeDates.has(dateStr);
-
-      days.push({
-        dateStr,
-        dayName: DAY_NAMES[d.getDay()],
-        dayNum: d.getDate(),
-        isToday,
-        hasActivity
-      });
-    }
-
-    const reconciled = reconcileStreakWithActivity(userStreaks, activeDates, today);
-    return { streakDays: days, reconciledStreak: reconciled };
-  }, [history, userProgressMap, userStreaks]);
-
-  const activeStreak = reconciledStreak.current_streak;
-  const longestStreak = reconciledStreak.longest_streak;
-  const isActiveToday = Boolean(reconciledStreak.is_active_today);
-
-  const learnedCount = Object.keys(userProgressMap).filter(id => userProgressMap[id]?.learned).length;
-
-  // Single Source of Truth derivations
-  const totalSpinsCount = useMemo(() => {
-    return history.filter(h => h.action === 'spin' || !h.action).length;
-  }, [history]);
-
-  const uniqueExploredCount = useMemo(() => {
-    return new Set(history.map(h => h.topic_id)).size;
-  }, [history]);
-
-  const filteredHistory = useMemo(() => {
-    const todayStr = getLocalCalendarDate(new Date());
-    const weekAgoMs = Date.now() - (7 * 86400000);
-
-    return history.filter(item => {
-      if (historyFilter === 'today') return item.local_date === todayStr;
-      if (historyFilter === 'week') {
-        const itemTime = new Date(item.timestamp).getTime();
-        return !isNaN(itemTime) && itemTime >= weekAgoMs;
-      }
-      if (historyFilter === 'learned') {
-        return item.action === 'learned' || userProgressMap[item.topic_id]?.learned;
-      }
-      return true;
-    });
-  }, [history, historyFilter, userProgressMap]);
-
-  // Review Queue: derived strictly from topics present in history log
-  const reviewQueue = useMemo(() => {
-    const historyTopicIds = new Set(history.map(h => h.topic_id));
-    return topics
-      .filter(t => historyTopicIds.has(t.id))
-      .sort((a, b) => {
-        const aTime = new Date(userProgressMap[a.id]?.last_seen || 0).getTime();
-        const bTime = new Date(userProgressMap[b.id]?.last_seen || 0).getTime();
-        return aTime - bTime;
-      })
-      .slice(0, 4);
-  }, [topics, history, userProgressMap]);
+  const learnedCount = useMemo(() => selectLearnedCount(userProgressMap), [userProgressMap]);
+  const totalSpinsCount = useMemo(() => selectTotalSpins({ userProgressMap, history }), [userProgressMap, history]);
+  const uniqueExploredCount = useMemo(() => selectExploredCount(userProgressMap), [userProgressMap]);
+  const filteredHistory = useMemo(() => selectFilteredHistory(history, historyFilter, userProgressMap), [history, historyFilter, userProgressMap]);
+  const reviewQueue = useMemo(() => selectReviewQueue(topics, userProgressMap, 4), [topics, userProgressMap]);
 
   // 14-day backup reminder logic (dismissible, max once per week)
   const [showBackupNudge, setShowBackupNudge] = useState(() => {
@@ -271,10 +211,10 @@ export const ProgressScreen = ({ onReviewTopic }) => {
           </p>
         </div>
 
-        {/* 2. Spins Tile */}
+        {/* 2. Dives Tile */}
         <div className="journal-card p-4 sm:p-5 rounded-2xl border border-outline-variant/30 flex flex-col justify-between">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-on-surface-variant">Total Spins</span>
+            <span className="text-xs font-semibold text-on-surface-variant">Total Dives</span>
             <RotateCw size={18} className="text-primary" />
           </div>
           <div className="my-2">
