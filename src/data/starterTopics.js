@@ -5,139 +5,131 @@
  */
 export const starterTopics = [
   {
-    "id": "aristotelian-rhetorical-triangle-ethos-pathos-logos",
-    "title": "The Aristotelian Rhetorical Triangle",
-    "description": "Persuasion balances three core appeals: Ethos (credibility), Pathos (emotional resonance), and Logos (reasoning) to inspire lasting conviction.",
-    "category": "communication",
-    "group": "mind-growth",
-    "group_name": "mind-growth",
+    "id": "multi-head-self-attention",
+    "title": "Scaled Dot-Product",
+    "description": "Calculates pairwise dynamic compatibility across token representations via query-key dot products to route value embeddings across multiple representation subspaces.",
+    "category": "ai-ml",
+    "group": "tech",
+    "group_name": "tech",
     "tags": [
-      "rhetoric",
-      "persuasion",
-      "classical-rhetoric",
-      "argumentation",
-      "philosophy"
+      "deep-learning",
+      "transformers",
+      "nlp"
     ],
     "resources": [
       {
-        "label": "Aristotle: Rhetoric (Translated by W. Rhys Roberts, MIT Classics)",
-        "url": "http://classics.mit.edu/Aristotle/rhetoric.html"
+        "label": "Attention Is All You Need (Vaswani et al., 2017)",
+        "url": "https://arxiv.org/abs/1706.03762"
       },
       {
-        "label": "Stanford Encyclopedia of Philosophy: Aristotle's Rhetoric",
-        "url": "https://plato.stanford.edu/entries/aristotle-rhetoric/"
+        "label": "The Illustrated Transformer (Jay Alammar)",
+        "url": "https://jalammar.github.io/illustrated-transformer/"
       },
       {
-        "label": "Harvard Business Review: The Necessary Art of Persuasion (Jay A. Conger)",
-        "url": "https://hbr.org/1998/05/the-necessary-art-of-persuasion"
+        "label": "PyTorch MultiheadAttention Docs",
+        "url": "https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html"
       }
     ],
     "lesson": {
-      "idea": "Aristotle showed that persuasive communication rests on three pillars: credibility, emotional connection, and logical reasoning.",
-      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing all three creates enduring persuasion.",
-      "example": "A doctor explaining a vaccine shares medical trials for logic, personal clinical experience for credibility, and a patient story for empathy."
+      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
+      "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
+      "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
     }
   },
   {
-    "id": "cialdini-principles-of-persuasion",
-    "title": "Cialdini's Six Principles of Influence",
-    "description": "Six behavioral triggers—Reciprocity, Scarcity, Authority, Consistency, Liking, and Consensus—that guide human compliance and decision-making.",
-    "category": "communication",
-    "group": "mind-growth",
-    "group_name": "mind-growth",
+    "id": "mixture-of-experts-moe",
+    "title": "Sparse Mixture of Experts (MoE)",
+    "description": "Replaces dense feed-forward networks with multiple specialized expert sub-networks dynamically selected per token by a top-k router.",
+    "category": "ai-ml",
+    "group": "tech",
+    "group_name": "tech",
     "tags": [
-      "persuasion",
-      "influence",
-      "cialdini",
-      "behavioral-psychology",
-      "social-proof"
+      "transformers",
+      "sparse-computing",
+      "llm-architecture"
     ],
     "resources": [
       {
-        "label": "Robert B. Cialdini: Influence: The Psychology of Persuasion (Harper Business)",
-        "url": "https://www.influenceatwork.com/our-founder/robert-cialdini-phd/"
+        "label": "Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer",
+        "url": "https://arxiv.org/abs/1701.06538"
       },
       {
-        "label": "Association for Psychological Science: The Science of Social Influence",
-        "url": "https://www.psychologicalscience.org/observer/the-science-of-influence"
+        "label": "Hugging Face Mixture of Experts Explained",
+        "url": "https://huggingface.co/blog/moe"
       },
       {
-        "label": "Harvard Business Review: Harnessing the Science of Persuasion",
-        "url": "https://hbr.org/2001/10/harnessing-the-science-of-persuasion"
+        "label": "Mixtral of Experts Paper",
+        "url": "https://arxiv.org/abs/2401.04088"
       }
     ],
     "lesson": {
-      "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
-      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
-      "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
+      "idea": "A Mixture of Experts model splits a massive neural network into smaller specialized sub-networks called experts. A fast router selects only the best two or three experts to process each specific word.",
+      "why": "Running huge models usually requires enormous computing power for every calculation. Activating only a small fraction of the model per token keeps inference fast and cost-effective.",
+      "example": "When translating technical documents, the router sends coding terms to a programming expert and casual greetings to a conversational expert."
     }
   },
   {
-    "id": "framing-effects-and-cognitive-anchoring-in-persuasion",
-    "title": "Framing Effects",
-    "description": "Identical choices produce different decisions based on framing: emphasizing loss activates far greater urgency than highlighting equivalent gain.",
-    "category": "communication",
-    "group": "mind-growth",
-    "group_name": "mind-growth",
+    "id": "mamba-state-space-models",
+    "title": "Mamba & Selective State Space Models",
+    "description": "Sub-quadratic sequence models that parameterize continuous-time state spaces with input-dependent selection mechanisms and hardware-aware scan kernels.",
+    "category": "ai-ml",
+    "group": "tech",
+    "group_name": "tech",
     "tags": [
-      "framing",
-      "cognitive-bias",
-      "kahneman-tversky",
-      "persuasion",
-      "decision-making"
+      "sequence-models",
+      "state-space-models",
+      "deep-learning"
     ],
     "resources": [
       {
-        "label": "Amos Tversky & Daniel Kahneman: The Framing of Decisions and the Psychology of Choice (Science 1981)",
-        "url": "https://www.science.org/doi/10.1126/science.7455683"
+        "label": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
+        "url": "https://arxiv.org/abs/2312.00752"
       },
       {
-        "label": "Daniel Kahneman: Thinking, Fast and Slow (Farrar, Straus and Giroux)",
-        "url": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow"
+        "label": "State Space Models Annotated (Albert Gu & Tri Dao)",
+        "url": "https://srush.github.io/annotated-s4/"
       },
       {
-        "label": "American Psychological Association: Decision Framing and Behavioral Economics",
-        "url": "https://www.apa.org/pubs/journals/xge"
+        "label": "Mamba GitHub Repository",
+        "url": "https://github.com/state-spaces/mamba"
       }
     ],
     "lesson": {
-      "idea": "How information is presented strongly shapes judgment, and the initial number heard acts as an anchor that pulls subsequent estimates.",
-      "why": "Identical facts lead to opposite decisions when framed around gains versus losses. Recognizing anchors protects negotiators from accepting unfavorable terms.",
-      "example": "A snack labeled 'ninety percent fat-free' sells better than one labeled 'ten percent fat', even though both packages hold identical contents."
+      "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
+      "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
+      "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
     }
   },
   {
-    "id": "elaboration-likelihood-model-central-vs-peripheral",
-    "title": "The Elaboration Likelihood Model (ELM)",
-    "description": "Persuasion operates via two pathways: the Central Route using deep logical scrutiny for lasting change, and the Peripheral Route relying on surface cues.",
-    "category": "communication",
-    "group": "mind-growth",
-    "group_name": "mind-growth",
+    "id": "rotary-positional-embeddings-rope",
+    "title": "Rotary Position Embeddings (RoPE)",
+    "description": "Encodes token position information into query and key representations by rotating 2D slice vectors using orthogonal rotation matrices.",
+    "category": "ai-ml",
+    "group": "tech",
+    "group_name": "tech",
     "tags": [
-      "elaboration-likelihood",
-      "elm",
-      "persuasion",
-      "cognitive-processing",
-      "psychology"
+      "transformers",
+      "positional-encoding",
+      "nlp"
     ],
     "resources": [
       {
-        "label": "Richard E. Petty & John T. Cacioppo: The Elaboration Likelihood Model of Persuasion (Advances in Experimental Social Psychology 1986)",
-        "url": "https://www.sciencedirect.com/science/article/pii/S0065260108602142"
+        "label": "RoFormer: Enhanced Transformer with Rotary Position Embedding (Su et al.)",
+        "url": "https://arxiv.org/abs/2104.09864"
       },
       {
-        "label": "American Psychological Association: Cognitive Elaboration and Attitude Change",
-        "url": "https://www.apa.org/pubs/journals/psp"
+        "label": "EleutherAI: Rotary Embeddings Explanation",
+        "url": "https://blog.eleuther.ai/rotary-embeddings/"
       },
       {
-        "label": "Journal of Consumer Research: Testing the Central and Peripheral Routes to Persuasion",
-        "url": "https://academic.oup.com/jcr"
+        "label": "Hugging Face RoPE Implementation in Llama",
+        "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
     ],
     "lesson": {
-      "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
-      "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
-      "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
+      "idea": "Rotary position embeddings represent word order by rotating vectors geometrically in mathematical space. The angle difference between two words naturally captures their relative distance.",
+      "why": "Language models need to understand word order to grasp meaning correctly. This rotation technique allows models to generalize smoothly across texts longer than those seen during training.",
+      "example": "A model recognizes that 'cat chased dog' differs from 'dog chased cat' because the rotation angle between the words indicates who acted first."
     }
   },
   {
@@ -277,131 +269,139 @@ export const starterTopics = [
     }
   },
   {
-    "id": "multi-head-self-attention",
-    "title": "Scaled Dot-Product",
-    "description": "Calculates pairwise dynamic compatibility across token representations via query-key dot products to route value embeddings across multiple representation subspaces.",
-    "category": "ai-ml",
-    "group": "tech",
-    "group_name": "tech",
+    "id": "aristotelian-rhetorical-triangle-ethos-pathos-logos",
+    "title": "The Aristotelian Rhetorical Triangle",
+    "description": "Persuasion balances three core appeals: Ethos (credibility), Pathos (emotional resonance), and Logos (reasoning) to inspire lasting conviction.",
+    "category": "communication",
+    "group": "mind-growth",
+    "group_name": "mind-growth",
     "tags": [
-      "deep-learning",
-      "transformers",
-      "nlp"
+      "rhetoric",
+      "persuasion",
+      "classical-rhetoric",
+      "argumentation",
+      "philosophy"
     ],
     "resources": [
       {
-        "label": "Attention Is All You Need (Vaswani et al., 2017)",
-        "url": "https://arxiv.org/abs/1706.03762"
+        "label": "Aristotle: Rhetoric (Translated by W. Rhys Roberts, MIT Classics)",
+        "url": "http://classics.mit.edu/Aristotle/rhetoric.html"
       },
       {
-        "label": "The Illustrated Transformer (Jay Alammar)",
-        "url": "https://jalammar.github.io/illustrated-transformer/"
+        "label": "Stanford Encyclopedia of Philosophy: Aristotle's Rhetoric",
+        "url": "https://plato.stanford.edu/entries/aristotle-rhetoric/"
       },
       {
-        "label": "PyTorch MultiheadAttention Docs",
-        "url": "https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html"
+        "label": "Harvard Business Review: The Necessary Art of Persuasion (Jay A. Conger)",
+        "url": "https://hbr.org/1998/05/the-necessary-art-of-persuasion"
       }
     ],
     "lesson": {
-      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
-      "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
-      "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
+      "idea": "Aristotle showed that persuasive communication rests on three pillars: credibility, emotional connection, and logical reasoning.",
+      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing all three creates enduring persuasion.",
+      "example": "A doctor explaining a vaccine shares medical trials for logic, personal clinical experience for credibility, and a patient story for empathy."
     }
   },
   {
-    "id": "mixture-of-experts-moe",
-    "title": "Sparse Mixture of Experts (MoE)",
-    "description": "Replaces dense feed-forward networks with multiple specialized expert sub-networks dynamically selected per token by a top-k router.",
-    "category": "ai-ml",
-    "group": "tech",
-    "group_name": "tech",
+    "id": "cialdini-principles-of-persuasion",
+    "title": "Cialdini's Six Principles of Influence",
+    "description": "Six behavioral triggers—Reciprocity, Scarcity, Authority, Consistency, Liking, and Consensus—that guide human compliance and decision-making.",
+    "category": "communication",
+    "group": "mind-growth",
+    "group_name": "mind-growth",
     "tags": [
-      "transformers",
-      "sparse-computing",
-      "llm-architecture"
+      "persuasion",
+      "influence",
+      "cialdini",
+      "behavioral-psychology",
+      "social-proof"
     ],
     "resources": [
       {
-        "label": "Outrageously Large Neural Networks: The Sparsely-Gated MoE Layer",
-        "url": "https://arxiv.org/abs/1701.06538"
+        "label": "Robert B. Cialdini: Influence: The Psychology of Persuasion (Harper Business)",
+        "url": "https://www.influenceatwork.com/our-founder/robert-cialdini-phd/"
       },
       {
-        "label": "Hugging Face Mixture of Experts Explained",
-        "url": "https://huggingface.co/blog/moe"
+        "label": "Association for Psychological Science: The Science of Social Influence",
+        "url": "https://www.psychologicalscience.org/observer/the-science-of-influence"
       },
       {
-        "label": "Mixtral of Experts Paper",
-        "url": "https://arxiv.org/abs/2401.04088"
+        "label": "Harvard Business Review: Harnessing the Science of Persuasion",
+        "url": "https://hbr.org/2001/10/harnessing-the-science-of-persuasion"
       }
     ],
     "lesson": {
-      "idea": "A Mixture of Experts model splits a massive neural network into smaller specialized sub-networks called experts. A fast router selects only the best two or three experts to process each specific word.",
-      "why": "Running huge models usually requires enormous computing power for every calculation. Activating only a small fraction of the model per token keeps inference fast and cost-effective.",
-      "example": "When translating technical documents, the router sends coding terms to a programming expert and casual greetings to a conversational expert."
+      "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
+      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
+      "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
     }
   },
   {
-    "id": "mamba-state-space-models",
-    "title": "Mamba & Selective State Space Models",
-    "description": "Sub-quadratic sequence models that parameterize continuous-time state spaces with input-dependent selection mechanisms and hardware-aware scan kernels.",
-    "category": "ai-ml",
-    "group": "tech",
-    "group_name": "tech",
+    "id": "framing-effects-and-cognitive-anchoring-in-persuasion",
+    "title": "Framing Effects",
+    "description": "Identical choices produce different decisions based on framing: emphasizing loss activates far greater urgency than highlighting equivalent gain.",
+    "category": "communication",
+    "group": "mind-growth",
+    "group_name": "mind-growth",
     "tags": [
-      "sequence-models",
-      "state-space-models",
-      "deep-learning"
+      "framing",
+      "cognitive-bias",
+      "kahneman-tversky",
+      "persuasion",
+      "decision-making"
     ],
     "resources": [
       {
-        "label": "Mamba: Linear-Time Sequence Modeling with Selective State Spaces",
-        "url": "https://arxiv.org/abs/2312.00752"
+        "label": "Amos Tversky & Daniel Kahneman: The Framing of Decisions and the Psychology of Choice (Science 1981)",
+        "url": "https://www.science.org/doi/10.1126/science.7455683"
       },
       {
-        "label": "State Space Models Annotated (Albert Gu & Tri Dao)",
-        "url": "https://srush.github.io/annotated-s4/"
+        "label": "Daniel Kahneman: Thinking, Fast and Slow (Farrar, Straus and Giroux)",
+        "url": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow"
       },
       {
-        "label": "Mamba GitHub Repository",
-        "url": "https://github.com/state-spaces/mamba"
+        "label": "American Psychological Association: Decision Framing and Behavioral Economics",
+        "url": "https://www.apa.org/pubs/journals/xge"
       }
     ],
     "lesson": {
-      "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
-      "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
-      "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
+      "idea": "How information is presented strongly shapes judgment, and the initial number heard acts as an anchor that pulls subsequent estimates.",
+      "why": "Identical facts lead to opposite decisions when framed around gains versus losses. Recognizing anchors protects negotiators from accepting unfavorable terms.",
+      "example": "A snack labeled 'ninety percent fat-free' sells better than one labeled 'ten percent fat', even though both packages hold identical contents."
     }
   },
   {
-    "id": "rotary-positional-embeddings-rope",
-    "title": "Rotary Position Embeddings (RoPE)",
-    "description": "Encodes token position information into query and key representations by rotating 2D slice vectors using orthogonal rotation matrices.",
-    "category": "ai-ml",
-    "group": "tech",
-    "group_name": "tech",
+    "id": "elaboration-likelihood-model-central-vs-peripheral",
+    "title": "The Elaboration Likelihood Model (ELM)",
+    "description": "Persuasion operates via two pathways: the Central Route using deep logical scrutiny for lasting change, and the Peripheral Route relying on surface cues.",
+    "category": "communication",
+    "group": "mind-growth",
+    "group_name": "mind-growth",
     "tags": [
-      "transformers",
-      "positional-encoding",
-      "nlp"
+      "elaboration-likelihood",
+      "elm",
+      "persuasion",
+      "cognitive-processing",
+      "psychology"
     ],
     "resources": [
       {
-        "label": "RoFormer: Enhanced Transformer with Rotary Position Embedding (Su et al.)",
-        "url": "https://arxiv.org/abs/2104.09864"
+        "label": "Richard E. Petty & John T. Cacioppo: The Elaboration Likelihood Model of Persuasion (Advances in Experimental Social Psychology 1986)",
+        "url": "https://www.sciencedirect.com/science/article/pii/S0065260108602142"
       },
       {
-        "label": "EleutherAI: Rotary Embeddings Explanation",
-        "url": "https://blog.eleuther.ai/rotary-embeddings/"
+        "label": "American Psychological Association: Cognitive Elaboration and Attitude Change",
+        "url": "https://www.apa.org/pubs/journals/psp"
       },
       {
-        "label": "Hugging Face RoPE Implementation in Llama",
-        "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
+        "label": "Journal of Consumer Research: Testing the Central and Peripheral Routes to Persuasion",
+        "url": "https://academic.oup.com/jcr"
       }
     ],
     "lesson": {
-      "idea": "Rotary position embeddings represent word order by rotating vectors geometrically in mathematical space. The angle difference between two words naturally captures their relative distance.",
-      "why": "Language models need to understand word order to grasp meaning correctly. This rotation technique allows models to generalize smoothly across texts longer than those seen during training.",
-      "example": "A model recognizes that 'cat chased dog' differs from 'dog chased cat' because the rotation angle between the words indicates who acted first."
+      "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
+      "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
+      "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
     }
   },
   {

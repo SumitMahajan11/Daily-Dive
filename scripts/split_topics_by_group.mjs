@@ -66,7 +66,7 @@ const starterTopicIds = [
   'crispr-cas9-gene-editing'
 ];
 
-const starterTopicsList = [];
+const cleanedTopicMap = new Map();
 
 for (let i = 0; i < topics.length; i++) {
   const t = topics[i];
@@ -92,11 +92,16 @@ for (let i = 0; i < topics.length; i++) {
   }
 
   grouped[group].push(cleanedTopic);
-
-  if (starterTopicIds.includes(t.id)) {
-    starterTopicsList.push(cleanedTopic);
-  }
+  cleanedTopicMap.set(t.id, cleanedTopic);
 }
+
+const starterTopicsList = starterTopicIds.map(id => {
+  const topic = cleanedTopicMap.get(id);
+  if (!topic) {
+    throw new Error(`FATAL: Configured starter topic ID '${id}' not found in curated catalog`);
+  }
+  return topic;
+});
 
 // Validate group counts
 for (const [groupName, expCount] of Object.entries(expectedGroups)) {
