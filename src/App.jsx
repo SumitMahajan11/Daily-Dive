@@ -1,14 +1,15 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import { DataProvider, useData } from './context/DataContext';
 import { Navbar } from './components/Navbar/Navbar';
 import { BottomNavigation } from './components/Navbar/BottomNavigation';
 import { SpinScreen } from './components/Screens/SpinScreen';
-import { LibraryScreen } from './components/Screens/LibraryScreen';
-import { ProgressScreen } from './components/Screens/ProgressScreen';
-import { SettingsScreen } from './components/Screens/SettingsScreen';
 import { ToastContainer } from './components/UI/Toast';
 import { RotateCw, BookOpen, BarChart3 } from 'lucide-react';
+
+const LibraryScreen = lazy(() => import('./components/Screens/LibraryScreen').then(m => ({ default: m.LibraryScreen })));
+const ProgressScreen = lazy(() => import('./components/Screens/ProgressScreen').then(m => ({ default: m.ProgressScreen })));
+const SettingsScreen = lazy(() => import('./components/Screens/SettingsScreen').then(m => ({ default: m.SettingsScreen })));
 
 const SECTIONS = [
   { id: 'spin',     label: 'Spin',     icon: RotateCw,  kbd: '1' },
@@ -147,9 +148,11 @@ const MainLayout = () => {
             ref={setSectionRef('library')}
             className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
           >
-            <LibraryScreen
-              onSpinActivePool={() => scrollToSection('spin')}
-            />
+            <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+              <LibraryScreen
+                onSpinActivePool={() => scrollToSection('spin')}
+              />
+            </Suspense>
           </section>
 
           <HorizontalSeparator />
@@ -161,7 +164,9 @@ const MainLayout = () => {
             ref={setSectionRef('progress')}
             className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
           >
-            <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+            <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+              <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+            </Suspense>
           </section>
 
           <HorizontalSeparator />
@@ -173,7 +178,9 @@ const MainLayout = () => {
             ref={setSectionRef('settings')}
             className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
           >
-            <SettingsScreen />
+            <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+              <SettingsScreen />
+            </Suspense>
           </section>
 
           <div className="h-16" />

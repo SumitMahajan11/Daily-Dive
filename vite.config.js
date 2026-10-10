@@ -7,7 +7,13 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['icons/icon-192.png', 'icons/icon-512.png', 'icons/icon-192-maskable.png', 'icons/icon-512-maskable.png'],
+      includeAssets: [
+        'icons/icon-192.png',
+        'icons/icon-512.png',
+        'icons/icon-192-maskable.png',
+        'icons/icon-512-maskable.png',
+        'fonts/*.woff2'
+      ],
       manifest: {
         name: 'Daily Dive',
         short_name: 'Daily Dive',
@@ -47,36 +53,22 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
-        runtimeCaching: [
-          {
-            urlPattern: ({ url }) =>
-              url.hostname.includes('fonts.googleapis.com') ||
-              url.hostname.includes('fonts.gstatic.com'),
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'google-fonts-cache',
-              expiration: {
-                maxEntries: 30,
-                maxAgeSeconds: 60 * 60 * 24 * 365 // 1 year
-              },
-              cacheableResponse: {
-                statuses: [0, 200]
-              }
-            }
-          }
-        ]
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
       }
     })
   ],
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          'vendor-react': ['react', 'react-dom'],
-          'vendor-motion': ['framer-motion'],
-          'vendor-icons': ['lucide-react'],
-          'vendor-tesseract': ['tesseract.js']
+        manualChunks(id) {
+          if (id.includes('src/data/groups/tech')) return 'topics-tech';
+          if (id.includes('src/data/groups/money-career')) return 'topics-money-career';
+          if (id.includes('src/data/groups/mind-growth')) return 'topics-mind-growth';
+          if (id.includes('src/data/groups/world-ideas')) return 'topics-world-ideas';
+          if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor-react';
+          if (id.includes('node_modules/framer-motion')) return 'vendor-motion';
+          if (id.includes('node_modules/lucide-react')) return 'vendor-icons';
+          if (id.includes('node_modules/tesseract.js')) return 'vendor-tesseract';
         }
       }
     }

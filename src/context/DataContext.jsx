@@ -4,10 +4,11 @@ import {
   selectWeightedTopic,
   isTopicEligible,
   calculateUpdatedStreak,
-  getEffectiveStreak,
   appendHistoryEntry,
   STARTER_ENABLED_CATEGORIES
 } from '../lib/roulette';
+import { selectStreakMetrics } from '../lib/selectors';
+import { loadTopicsForEnabledCategories } from '../lib/topicLoader';
 import { AudioController } from '../lib/audio';
 import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications';
 
@@ -62,17 +63,12 @@ export const DataProvider = ({ children }) => {
   });
 
   const effectiveStreak = useMemo(() => {
-    const activeDates = new Set();
-    (history || []).forEach(h => {
-      if (h.local_date) activeDates.add(h.local_date);
+    return selectStreakMetrics({
+      userStreaks,
+      history,
+      userProgressMap,
+      nowDate: new Date()
     });
-    Object.values(userProgressMap || {}).forEach(p => {
-      if (p.last_seen) activeDates.add(p.last_seen.slice(0, 10));
-    });
-    if (userStreaks?.last_active_date) {
-      activeDates.add(userStreaks.last_active_date);
-    }
-    return getEffectiveStreak(userStreaks, new Date(), activeDates);
   }, [userStreaks, history, userProgressMap]);
   const [userSettings, setUserSettings] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -141,7 +137,7 @@ export const DataProvider = ({ children }) => {
   }, [userSettings.notifications_enabled, userSettings.reminder_time]);
 
   // Load app data from local storage
-  const loadData = useCallback(() => {
+  const loadData = useCallback(async () => {
     setLoadingData(true);
     try {
       let storedCustom = [];
@@ -149,8 +145,6 @@ export const DataProvider = ({ children }) => {
         const sc = localStorage.getItem('daily_dive_custom_topics');
         if (sc) storedCustom = JSON.parse(sc);
       } catch (e) {}
-      const mergedTopics = [...storedCustom, ...INITIAL_TOPICS];
-      setTopics(mergedTopics);
       setCustomTopics(storedCustom);
       
       let guestProgress = {};
@@ -167,13 +161,19 @@ export const DataProvider = ({ children }) => {
         const savedSettings = localStorage.getItem('daily_dive_guest_settings');
         if (savedSettings) {
           const parsed = JSON.parse(savedSettings);
-          guestCategories = parsed?.enabled_categories || {};
+          guestCategories = parsed?.enabled_categories || STARTER_ENABLED_CATEGORIES;
         }
       } catch (e) {}
 
       setUserProgressMap(guestProgress);
       setUserStreaks(guestStreaks);
       setHistory(guestHistory);
+
+      // Lazy load topics matching enabled categories
+      const builtinTopics = await loadTopicsForEnabledCategories(guestCategories);
+      const mergedTopics = [...storedCustom, ...builtinTopics];
+      setTopics(mergedTopics);
+
       const initialSelected = selectWeightedTopic(mergedTopics, guestProgress, guestCategories);
       setCurrentTopic(initialSelected || mergedTopics[0]);
     } catch (err) {
@@ -186,6 +186,24 @@ export const DataProvider = ({ children }) => {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
+  // Dynamically load additional category groups when user updates settings
+  useEffect(() => {
+    let isCancelled = false;
+    loadTopicsForEnabledCategories(userSettings.enabled_categories).then(builtinTopics => {
+      if (!isCancelled) {
+        setTopics(prev => {
+          const custom = prev.filter(t => t.is_custom);
+          const map = new Map();
+          [...custom, ...builtinTopics].forEach(t => {
+            if (t && t.id) map.set(t.id, t);
+          });
+          return Array.from(map.values());
+        });
+      }
+    });
+    return () => { isCancelled = true; };
+  }, [userSettings.enabled_categories]);
 
   // Filtered / eligible topics
   const eligibleTopics = useMemo(() => {
@@ -314,11 +332,16 @@ export const DataProvider = ({ children }) => {
         localStorage.removeItem('daily_dive_guest_progress');
         localStorage.removeItem('daily_dive_guest_streaks');
         localStorage.removeItem('daily_dive_history');
+        localStorage.removeItem('daily_dive_custom_topics');
+        localStorage.removeItem('daily_dive_expired_custom_topics');
+        localStorage.removeItem('daily_dive_gemini_key');
       } catch (e) {}
     }
 
     setUserProgressMap({});
     setUserStreaks({ current_streak: 0, longest_streak: 0, last_active_date: null });
+    setCustomTopics([]);
+    setHistory([]);
     showToast('All progress and streak records have been reset.', 'success');
   }, [showToast]);
 
