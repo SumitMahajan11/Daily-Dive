@@ -3,13 +3,15 @@ import react from '@vitejs/plugin-react';
 import { VitePWA } from 'vite-plugin-pwa';
 import { execSync } from 'node:child_process';
 
-let commitHash = 'dev';
-try {
-  commitHash = execSync('git rev-parse --short HEAD').toString().trim();
-} catch (e) {
-  commitHash = 'round-6';
+let commitHash = process.env.VITE_COMMIT_HASH || '';
+if (!commitHash) {
+  try {
+    commitHash = execSync('git rev-parse --short HEAD').toString().trim();
+  } catch (e) {
+    commitHash = 'round-7';
+  }
 }
-const buildDate = new Date().toISOString().slice(0, 10);
+const buildDate = process.env.VITE_BUILD_DATE || new Date().toISOString().slice(0, 10);
 
 export default defineConfig({
   define: {
@@ -66,7 +68,22 @@ export default defineConfig({
         ]
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2}']
+        // Precache app shell + the 4 group chunks only
+        globPatterns: ['**/*.{html,css,png,svg,woff2,ico}', '**/index*.js', '**/vendor-react*.js', '**/vendor-motion*.js', '**/vendor-icons*.js', '**/topics-*.js'],
+        globIgnores: ['**/vendor-pdf*.js', '**/vendor-jszip*.js', '**/vendor-tesseract*.js', '**/pdf.worker*.*'],
+        runtimeCaching: [
+          {
+            urlPattern: /(?:vendor-(?:pdf|jszip|tesseract)|pdf\.worker).*\.(?:js|mjs)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'heavy-parsers-runtime-cache',
+              expiration: {
+                maxEntries: 10,
+                maxAgeSeconds: 30 * 24 * 60 * 60 // 30 days
+              }
+            }
+          }
+        ]
       }
     })
   ],
@@ -81,6 +98,8 @@ export default defineConfig({
           if (id.includes('node_modules/react') || id.includes('node_modules/react-dom')) return 'vendor-react';
           if (id.includes('node_modules/framer-motion')) return 'vendor-motion';
           if (id.includes('node_modules/lucide-react')) return 'vendor-icons';
+          if (id.includes('node_modules/pdfjs-dist')) return 'vendor-pdf';
+          if (id.includes('node_modules/jszip')) return 'vendor-jszip';
           if (id.includes('node_modules/tesseract.js')) return 'vendor-tesseract';
         }
       }
