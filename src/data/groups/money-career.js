@@ -236,12 +236,7 @@ export const topics = [
         "label": "CFA Institute: Measures of Value Added (EVA and MVA)",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/economic-value-added"
       }
-    ],
-    "lesson": {
-      "idea": "Return on invested capital measures the cash profit generated from operations relative to the total capital invested in the business.",
-      "why": "A firm only creates true shareholder wealth when its return on capital exceeds the cost of obtaining that capital. If return is below cost, growth destroys value.",
-      "example": "A logistics fleet earns a fifteen percent return on its vehicles against an eight percent cost of capital, generating substantial economic value."
-    }
+    ]
   },
   {
     "id": "enterprise-value-vs-equity-value-bridge",

@@ -100,12 +100,7 @@ export const topics = [
         "label": "American Psychological Association: Decision Framing and Behavioral Economics",
         "url": "https://www.apa.org/pubs/journals/xge"
       }
-    ],
-    "lesson": {
-      "idea": "How information is presented strongly shapes judgment, and the initial number heard acts as an anchor that pulls subsequent estimates.",
-      "why": "Identical facts lead to opposite decisions when framed around gains versus losses. Recognizing anchors protects negotiators from accepting unfavorable terms.",
-      "example": "A snack labeled 'ninety percent fat-free' sells better than one labeled 'ten percent fat', even though both packages hold identical contents."
-    }
+    ]
   },
   {
     "id": "elaboration-likelihood-model-central-vs-peripheral",
@@ -294,12 +289,7 @@ export const topics = [
         "label": "MIT Sloan: Negotiation and Conflict Management Course Materials",
         "url": "https://ocw.mit.edu/courses/15-667-negotiation-and-conflict-management-spring-2001/"
       }
-    ],
-    "lesson": {
-      "idea": "Successful negotiations hinge on knowing your Best Alternative to a Negotiated Agreement, your walk-away price, and the overlapping Zone of Possible Agreement.",
-      "why": "Without a clear walk-away boundary, negotiators risk agreeing to deals that leave them worse off than simply walking away.",
-      "example": "A homebuyer with an alternative rental lined up at two thousand dollars will not agree to pay more than twenty-two hundred dollars on a mortgage."
-    }
+    ]
   },
   {
     "id": "anchoring-first-offers-and-concession-patterns",

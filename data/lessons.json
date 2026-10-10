@@ -4,20 +4,10 @@
     "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
     "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
   },
-  "mixture-of-experts-moe": {
-    "idea": "A Mixture of Experts model splits a massive neural network into smaller specialized sub-networks called experts. A fast router selects only the best two or three experts to process each specific word.",
-    "why": "Running huge models usually requires enormous computing power for every calculation. Activating only a small fraction of the model per token keeps inference fast and cost-effective.",
-    "example": "When translating technical documents, the router sends coding terms to a programming expert and casual greetings to a conversational expert."
-  },
   "mamba-state-space-models": {
     "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
     "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
     "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
-  },
-  "rotary-positional-embeddings-rope": {
-    "idea": "Rotary position embeddings represent word order by rotating vectors geometrically in mathematical space. The angle difference between two words naturally captures their relative distance.",
-    "why": "Language models need to understand word order to grasp meaning correctly. This rotation technique allows models to generalize smoothly across texts longer than those seen during training.",
-    "example": "A model recognizes that 'cat chased dog' differs from 'dog chased cat' because the rotation angle between the words indicates who acted first."
   },
   "discounted-cash-flow-dcf-valuation": {
     "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
@@ -49,11 +39,6 @@
     "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
     "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
   },
-  "framing-effects-and-cognitive-anchoring-in-persuasion": {
-    "idea": "How information is presented strongly shapes judgment, and the initial number heard acts as an anchor that pulls subsequent estimates.",
-    "why": "Identical facts lead to opposite decisions when framed around gains versus losses. Recognizing anchors protects negotiators from accepting unfavorable terms.",
-    "example": "A snack labeled 'ninety percent fat-free' sells better than one labeled 'ten percent fat', even though both packages hold identical contents."
-  },
   "elaboration-likelihood-model-central-vs-peripheral": {
     "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
     "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
@@ -63,26 +48,6 @@
     "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
     "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
     "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
-  },
-  "wave-particle-duality-double-slit": {
-    "idea": "Quantum entities like electrons and photons behave as continuous waves when travelling and as discrete particles when detected.",
-    "why": "This fundamental reality overturned classical physics, revealing that microscopic matter does not have fixed physical properties until observed.",
-    "example": "In the double-slit experiment, individual photons fired through two slits create an interference pattern on a screen as if each photon traveled through both slits at once."
-  },
-  "quantum-entanglement-bell-theorem": {
-    "idea": "Entangled quantum particles share an interconnected state where measuring one instantly reveals the condition of the other, regardless of distance.",
-    "why": "Bell proved that the universe cannot be explained by hidden local variables, confirming that physical reality has intrinsic non-local connections.",
-    "example": "Two entangled electrons with opposite spins are separated by miles; observing one spinning clockwise immediately confirms the other is spinning counterclockwise."
-  },
-  "crispr-cas9-gene-editing": {
-    "idea": "CRISPR-Cas9 is a molecular tool adapted from bacteria that cuts DNA at precise target sequences to modify living genomes.",
-    "why": "Older genetic engineering methods were slow and inaccurate. CRISPR enables fast, low-cost gene modification for curing inherited diseases and improving crop resilience.",
-    "example": "Scientists use guide molecules to find a mutated genetic sequence causing sickle cell disease and replace it with a healthy DNA segment."
-  },
-  "residual-connections-resnet": {
-    "idea": "Residual connections add an identity shortcut that passes the original input directly around a neural layer to combine with its output.",
-    "why": "Very deep neural networks suffer from vanishing signals during training, causing learning to stall. Shortcuts allow training networks with hundreds of layers effectively.",
-    "example": "An image recognition network passes input pixels directly through skip connections, allowing gradient signals to flow smoothly during backward learning."
   },
   "vision-transformers-vit": {
     "idea": "Vision Transformers process images by splitting pictures into a grid of small square patches and treating each patch like a word token in text.",
@@ -94,11 +59,6 @@
     "why": "Calculating attention across every pixel in high-resolution images is too slow. Shifted windows maintain linear computation while connecting distant image regions.",
     "example": "A camera system inspects an ultra-wide panorama by analyzing local grids first, then shifting grid borders to detect large objects crossing grid lines."
   },
-  "grouped-query-attention-gqa": {
-    "idea": "Grouped-query attention shares a single key and value head across multiple query heads in large language models.",
-    "why": "Standard attention stores separate key and value caches for every head, eating up valuable graphics memory during chat sessions. Grouping saves memory while keeping response quality high.",
-    "example": "An open-source language model running on a consumer laptop fits double the context length by grouping eight query heads per memory head."
-  },
   "dividend-policy-vs-share-buybacks": {
     "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
     "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer tax flexibility and increase remaining owners' percentage stake.",
@@ -108,11 +68,6 @@
     "idea": "The cash conversion cycle measures how many days it takes for a company to convert investments in inventory into collected cash from customers.",
     "why": "Shorter cycles free up working capital without requiring outside loans. Companies with negative cycles get paid by customers before paying suppliers.",
     "example": "An online bookstore sells books in twenty days but pays publishers in forty-five days, allowing it to fund operations with suppliers' money."
-  },
-  "roic-vs-wacc-economic-value-added": {
-    "idea": "Return on invested capital measures the cash profit generated from operations relative to the total capital invested in the business.",
-    "why": "A firm only creates true shareholder wealth when its return on capital exceeds the cost of obtaining that capital. If return is below cost, growth destroys value.",
-    "example": "A logistics fleet earns a fifteen percent return on its vehicles against an eight percent cost of capital, generating substantial economic value."
   },
   "leveraged-buyouts-lbo-mechanics": {
     "idea": "A leveraged buyout is the acquisition of a company using a large portion of borrowed money, with the acquired firm's assets serving as collateral.",
@@ -129,24 +84,9 @@
     "why": "Beliefs that are never challenged can crumble quickly under intense pressure. Preempting deceptive arguments strengthens personal conviction before opponents strike.",
     "example": "A public health campaign explains a common myth before refuting it with clear scientific evidence, preparing citizens to spot false claims later."
   },
-  "batna-reservation-value-and-zopa-math": {
-    "idea": "Successful negotiations hinge on knowing your Best Alternative to a Negotiated Agreement, your walk-away price, and the overlapping Zone of Possible Agreement.",
-    "why": "Without a clear walk-away boundary, negotiators risk agreeing to deals that leave them worse off than simply walking away.",
-    "example": "A homebuyer with an alternative rental lined up at two thousand dollars will not agree to pay more than twenty-two hundred dollars on a mortgage."
-  },
   "central-dogma-molecular-biology": {
     "idea": "The central dogma describes the primary flow of genetic information inside living cells from DNA storage to RNA messengers to functional proteins.",
     "why": "Proteins perform nearly all biological work in living bodies. Understanding this flow explains how genetic code translates into physical traits and diseases.",
     "example": "A cell reads the DNA blueprint for insulin, transcribes it into messenger RNA, and translates that RNA into active insulin proteins."
-  },
-  "neuroplasticity-synaptic-pruning": {
-    "idea": "The human brain continuously reorganizes neural pathways in response to learning, strengthening frequently used connections while pruning inactive synapses.",
-    "why": "The brain remains dynamic throughout life rather than fixed during childhood. Synaptic pruning eliminates unnecessary connections to keep thinking fast and energy-efficient.",
-    "example": "A musician practicing scales daily develops denser neural connections in finger motor regions, while unpracticed foreign vocabulary words gradually fade away."
-  },
-  "cellular-respiration-atp-synthase": {
-    "idea": "Cellular respiration breaks down dietary sugars to pump protons across membranes, powering the ATP synthase rotary motor to generate cellular fuel.",
-    "why": "ATP is the universal energy currency that powers muscle movement, nerve signaling, and chemical synthesis across all complex life.",
-    "example": "When a runner sprints, muscle cells rapidly spin thousands of microscopic ATP synthase enzymes to produce the chemical energy required for stride power."
   }
 }

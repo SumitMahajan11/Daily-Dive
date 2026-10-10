@@ -61,12 +61,7 @@ export const starterTopics = [
         "label": "Mixtral of Experts Paper",
         "url": "https://arxiv.org/abs/2401.04088"
       }
-    ],
-    "lesson": {
-      "idea": "A Mixture of Experts model splits a massive neural network into smaller specialized sub-networks called experts. A fast router selects only the best two or three experts to process each specific word.",
-      "why": "Running huge models usually requires enormous computing power for every calculation. Activating only a small fraction of the model per token keeps inference fast and cost-effective.",
-      "example": "When translating technical documents, the router sends coding terms to a programming expert and casual greetings to a conversational expert."
-    }
+    ]
   },
   {
     "id": "mamba-state-space-models",
@@ -125,12 +120,7 @@ export const starterTopics = [
         "label": "Hugging Face RoPE Implementation in Llama",
         "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
-    ],
-    "lesson": {
-      "idea": "Rotary position embeddings represent word order by rotating vectors geometrically in mathematical space. The angle difference between two words naturally captures their relative distance.",
-      "why": "Language models need to understand word order to grasp meaning correctly. This rotation technique allows models to generalize smoothly across texts longer than those seen during training.",
-      "example": "A model recognizes that 'cat chased dog' differs from 'dog chased cat' because the rotation angle between the words indicates who acted first."
-    }
+    ]
   },
   {
     "id": "discounted-cash-flow-dcf-valuation",
@@ -363,12 +353,7 @@ export const starterTopics = [
         "label": "American Psychological Association: Decision Framing and Behavioral Economics",
         "url": "https://www.apa.org/pubs/journals/xge"
       }
-    ],
-    "lesson": {
-      "idea": "How information is presented strongly shapes judgment, and the initial number heard acts as an anchor that pulls subsequent estimates.",
-      "why": "Identical facts lead to opposite decisions when framed around gains versus losses. Recognizing anchors protects negotiators from accepting unfavorable terms.",
-      "example": "A snack labeled 'ninety percent fat-free' sells better than one labeled 'ten percent fat', even though both packages hold identical contents."
-    }
+    ]
   },
   {
     "id": "elaboration-likelihood-model-central-vs-peripheral",
@@ -445,12 +430,7 @@ export const starterTopics = [
         "label": "Richard Feynman — The Character of Physical Law (MIT Press)",
         "url": "https://mitpress.mit.edu"
       }
-    ],
-    "lesson": {
-      "idea": "Quantum entities like electrons and photons behave as continuous waves when travelling and as discrete particles when detected.",
-      "why": "This fundamental reality overturned classical physics, revealing that microscopic matter does not have fixed physical properties until observed.",
-      "example": "In the double-slit experiment, individual photons fired through two slits create an interference pattern on a screen as if each photon traveled through both slits at once."
-    }
+    ]
   },
   {
     "id": "quantum-entanglement-bell-theorem",
@@ -469,12 +449,7 @@ export const starterTopics = [
         "label": "John S. Bell — Speakable and Unspeakable in Quantum Mechanics (Cambridge)",
         "url": "https://www.cambridge.org"
       }
-    ],
-    "lesson": {
-      "idea": "Entangled quantum particles share an interconnected state where measuring one instantly reveals the condition of the other, regardless of distance.",
-      "why": "Bell proved that the universe cannot be explained by hidden local variables, confirming that physical reality has intrinsic non-local connections.",
-      "example": "Two entangled electrons with opposite spins are separated by miles; observing one spinning clockwise immediately confirms the other is spinning counterclockwise."
-    }
+    ]
   },
   {
     "id": "crispr-cas9-gene-editing",
@@ -493,11 +468,6 @@ export const starterTopics = [
         "label": "Doudna & Charpentier — A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity (Science 2012)",
         "url": "https://www.science.org/doi/10.1126/science.1225829"
       }
-    ],
-    "lesson": {
-      "idea": "CRISPR-Cas9 is a molecular tool adapted from bacteria that cuts DNA at precise target sequences to modify living genomes.",
-      "why": "Older genetic engineering methods were slow and inaccurate. CRISPR enables fast, low-cost gene modification for curing inherited diseases and improving crop resilience.",
-      "example": "Scientists use guide molecules to find a mutated genetic sequence causing sickle cell disease and replace it with a healthy DNA segment."
-    }
+    ]
   }
 ];

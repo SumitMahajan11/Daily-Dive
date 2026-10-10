@@ -62,12 +62,7 @@ export const topics = [
         "label": "Mixtral of Experts Paper",
         "url": "https://arxiv.org/abs/2401.04088"
       }
-    ],
-    "lesson": {
-      "idea": "A Mixture of Experts model splits a massive neural network into smaller specialized sub-networks called experts. A fast router selects only the best two or three experts to process each specific word.",
-      "why": "Running huge models usually requires enormous computing power for every calculation. Activating only a small fraction of the model per token keeps inference fast and cost-effective.",
-      "example": "When translating technical documents, the router sends coding terms to a programming expert and casual greetings to a conversational expert."
-    }
+    ]
   },
   {
     "id": "mamba-state-space-models",
@@ -126,12 +121,7 @@ export const topics = [
         "label": "Hugging Face RoPE Implementation in Llama",
         "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
-    ],
-    "lesson": {
-      "idea": "Rotary position embeddings represent word order by rotating vectors geometrically in mathematical space. The angle difference between two words naturally captures their relative distance.",
-      "why": "Language models need to understand word order to grasp meaning correctly. This rotation technique allows models to generalize smoothly across texts longer than those seen during training.",
-      "example": "A model recognizes that 'cat chased dog' differs from 'dog chased cat' because the rotation angle between the words indicates who acted first."
-    }
+    ]
   },
   {
     "id": "residual-connections-resnet",
@@ -158,12 +148,7 @@ export const topics = [
         "label": "PyTorch ResNet Implementation",
         "url": "https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py"
       }
-    ],
-    "lesson": {
-      "idea": "Residual connections add an identity shortcut that passes the original input directly around a neural layer to combine with its output.",
-      "why": "Very deep neural networks suffer from vanishing signals during training, causing learning to stall. Shortcuts allow training networks with hundreds of layers effectively.",
-      "example": "An image recognition network passes input pixels directly through skip connections, allowing gradient signals to flow smoothly during backward learning."
-    }
+    ]
   },
   {
     "id": "vision-transformers-vit",
@@ -281,12 +266,7 @@ export const topics = [
         "label": "Llama 3 Technical Report (Meta AI)",
         "url": "https://arxiv.org/abs/2407.21783"
       }
-    ],
-    "lesson": {
-      "idea": "Grouped-query attention shares a single key and value head across multiple query heads in large language models.",
-      "why": "Standard attention stores separate key and value caches for every head, eating up valuable graphics memory during chat sessions. Grouping saves memory while keeping response quality high.",
-      "example": "An open-source language model running on a consumer laptop fits double the context length by grouping eight query heads per memory head."
-    }
+    ]
   },
   {
     "id": "lora-low-rank-adaptation",
