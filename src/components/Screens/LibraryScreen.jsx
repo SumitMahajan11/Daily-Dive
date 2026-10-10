@@ -965,11 +965,23 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                 return (
                   <div
                     key={topic.id}
+                    role="button"
+                    tabIndex={0}
+                    aria-pressed={isSelected}
                     onClick={() => {
                       const next = new Set(selectedTopicIds);
                       if (next.has(topic.id)) next.delete(topic.id);
                       else next.add(topic.id);
                       setSelectedTopicIds(next);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === ' ' || e.key === 'Enter') {
+                        e.preventDefault();
+                        const next = new Set(selectedTopicIds);
+                        if (next.has(topic.id)) next.delete(topic.id);
+                        else next.add(topic.id);
+                        setSelectedTopicIds(next);
+                      }
                     }}
                     className={`p-3 rounded-xl border cursor-pointer transition-all ${
                       isSelected
@@ -979,9 +991,12 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                   >
                     <div className="flex items-start justify-between gap-2">
                       <h4 className="text-xs font-bold text-on-surface">{topic.title}</h4>
-                      <div className={`w-4 h-4 rounded-md flex items-center justify-center text-xs font-bold ${
-                        isSelected ? 'bg-primary text-white' : 'border border-outline-variant'
-                      }`}>
+                      <div
+                        aria-hidden="true"
+                        className={`w-4 h-4 rounded-md flex items-center justify-center text-xs font-bold ${
+                          isSelected ? 'bg-primary text-white' : 'border border-outline-variant'
+                        }`}
+                      >
                         {isSelected ? '✓' : ''}
                       </div>
                     </div>
@@ -1068,6 +1083,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                 </button>
               )}
             </div>
+            <p className="text-[11px] text-on-surface-variant/80">Stored only on this device.</p>
           </div>
         </details>
 

@@ -16,6 +16,40 @@ export function formatTo24Hour(time12) {
 }
 
 /**
+ * Folds a content line to adhere to RFC 5545 75-octet line limits.
+ */
+function foldIcsLine(line, maxOctets = 75) {
+  const encoder = new TextEncoder();
+  const bytes = encoder.encode(line);
+  if (bytes.length <= maxOctets) return line;
+
+  const foldedParts = [];
+  let currentStart = 0;
+  let isFirst = true;
+
+  while (currentStart < line.length) {
+    const limit = isFirst ? maxOctets : maxOctets - 1;
+    let sliceLen = 0;
+    let byteLen = 0;
+
+    for (let i = currentStart; i < line.length; i++) {
+      const charBytes = encoder.encode(line[i]).length;
+      if (byteLen + charBytes > limit) break;
+      byteLen += charBytes;
+      sliceLen++;
+    }
+
+    if (sliceLen === 0) sliceLen = 1;
+    const part = line.slice(currentStart, currentStart + sliceLen);
+    foldedParts.push(isFirst ? part : ' ' + part);
+    currentStart += sliceLen;
+    isFirst = false;
+  }
+
+  return foldedParts.join('\r\n');
+}
+
+/**
  * Generates an RFC 5545 compliant .ics iCalendar file string for daily learning reminder.
  * 
  * @param {string} time12 - 12-hour formatted time (e.g. "09:00 AM")
@@ -28,7 +62,6 @@ export function generateDailyReminderICS(time12 = '09:00 AM', appUrl = 'https://
   const hours = parseInt(hoursStr, 10) || 9;
   const mins = parseInt(minsStr, 10) || 0;
 
-  // Use current date for DTSTART (floating local time without trailing Z)
   const now = new Date();
   const year = now.getFullYear();
   const month = String(now.getMonth() + 1).padStart(2, '0');
@@ -42,10 +75,10 @@ export function generateDailyReminderICS(time12 = '09:00 AM', appUrl = 'https://
   const endMins = endTotalMins % 60;
   const dtEnd = `${year}${month}${day}T${String(endHours).padStart(2, '0')}${String(endMins).padStart(2, '0')}00`;
 
-  const dtStamp = `${year}${month}${day}T000000Z`;
+  const dtStamp = now.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
   const uid = `daily-dive-daily-reminder-${year}${month}${day}-${hours}${mins}@daily-dive`;
 
-  const icsLines = [
+  const rawLines = [
     'BEGIN:VCALENDAR',
     'VERSION:2.0',
     'PRODID:-//Daily Dive//Daily Micro-Learning Reminder//EN',
@@ -70,7 +103,7 @@ export function generateDailyReminderICS(time12 = '09:00 AM', appUrl = 'https://
     'END:VCALENDAR'
   ];
 
-  return icsLines.join('\r\n');
+  return rawLines.map(line => foldIcsLine(line, 75)).join('\r\n');
 }
 
 /**
