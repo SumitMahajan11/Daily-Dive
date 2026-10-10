@@ -623,6 +623,134 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     assert.ok(reviewQueue[0].title, 'Queue card has title for UI rendering');
   });
 
+  test('Round 11.3 Item 3: repair against all curated topic IDs when only starter topics are loaded', () => {
+    // Four topics in curated catalog (one from each group), none in starterTopics:
+    // Tech: 'residual-connections-resnet'
+    // Money: 'dividend-policy-vs-share-buybacks'
+    // Mind: 'monroe-motivated-sequence-persuasive-speech'
+    // World: 'central-dogma-molecular-biology'
+    const curatedNonStarterTopics = [
+      { id: 'residual-connections-resnet', group: 'tech' },
+      { id: 'dividend-policy-vs-share-buybacks', group: 'money-career' },
+      { id: 'monroe-motivated-sequence-persuasive-speech', group: 'mind-growth' },
+      { id: 'central-dogma-molecular-biology', group: 'world-ideas' }
+    ];
+
+    // Ensure none of these 4 are in starter set
+    const starterIdSet = new Set(INITIAL_TOPICS.map(t => t.id));
+    for (const t of curatedNonStarterTopics) {
+      assert.strictEqual(starterIdSet.has(t.id), false, `${t.id} must not be in starterTopics`);
+    }
+
+    const initialHistory = [
+      { id: 'h-tech', topic_id: 'residual-connections-resnet', action: 'spin', timestamp: '2026-10-01T10:00:00.000Z' },
+      { id: 'h-money', topic_id: 'dividend-policy-vs-share-buybacks', action: 'spin', timestamp: '2026-10-02T10:00:00.000Z' },
+      { id: 'h-mind', topic_id: 'monroe-motivated-sequence-persuasive-speech', action: 'spin', timestamp: '2026-10-03T10:00:00.000Z' },
+      { id: 'h-world', topic_id: 'central-dogma-molecular-biology', action: 'spin', timestamp: '2026-10-04T10:00:00.000Z' },
+      { id: 'h-unknown', topic_id: 'unknown-ghost-topic-id-xyz-99999', action: 'spin', timestamp: '2026-10-05T10:00:00.000Z' }
+    ];
+
+    const initialProgress = {};
+
+    // Run repair with empty custom topics (only starter topics loaded in memory)
+    const { progressMap: repairedProgress, history: repairedHistory, repairedCount, droppedHistoryCount } = repairProgressFromHistory(
+      initialProgress,
+      initialHistory,
+      []
+    );
+
+    // All 4 curated non-starter topics must be kept in history and given a progress record
+    for (const t of curatedNonStarterTopics) {
+      assert.ok(repairedProgress[t.id], `Progress record must be created for curated non-starter topic ${t.id}`);
+      assert.strictEqual(repairedProgress[t.id].times_seen, 1, `times_seen must be 1 for ${t.id}`);
+      assert.ok(repairedHistory.some(h => h.topic_id === t.id), `History entry must be kept for ${t.id}`);
+    }
+
+    // Unknown id must be dropped
+    assert.strictEqual(repairedProgress['unknown-ghost-topic-id-xyz-99999'], undefined, 'No progress for unknown id');
+    assert.strictEqual(repairedHistory.some(h => h.topic_id === 'unknown-ghost-topic-id-xyz-99999'), false, 'Unknown id dropped from history');
+
+    assert.strictEqual(repairedCount, 4, 'Exactly 4 progress records repaired');
+    assert.strictEqual(droppedHistoryCount, 1, 'Exactly 1 unknown history entry dropped');
+    assert.strictEqual(repairedHistory.length, 4, 'History length is 4');
+    assert.strictEqual(selectExploredCount(repairedProgress), 4, 'Explored count is 4');
+  });
+
+  test('Round 11.3 Item 4: Data safety pre-repair backup saved once and unchanged on second load', () => {
+    localStorage.clear();
+
+    const unrepairedProgress = {};
+    const unrepairedHistory = [
+      { id: 'h-tech', topic_id: 'residual-connections-resnet', action: 'spin', timestamp: '2026-10-01T10:00:00.000Z' },
+      { id: 'h-ghost', topic_id: 'nonexistent-ghost-topic-id', action: 'spin', timestamp: '2026-10-02T10:00:00.000Z' }
+    ];
+
+    // Seed localStorage
+    localStorage.setItem('daily_dive_guest_progress', JSON.stringify(unrepairedProgress));
+    localStorage.setItem('daily_dive_history', JSON.stringify(unrepairedHistory));
+
+    // Simulate first load
+    let currentProgress = JSON.parse(localStorage.getItem('daily_dive_guest_progress') || '{}');
+    let currentHistory = JSON.parse(localStorage.getItem('daily_dive_history') || '[]');
+
+    const {
+      progressMap: load1Progress,
+      history: load1History,
+      repairedCount: load1Repairs,
+      droppedHistoryCount: load1Drops
+    } = repairProgressFromHistory(currentProgress, currentHistory, []);
+
+    if (load1Repairs > 0 || load1Drops > 0) {
+      const existingPreRepair = localStorage.getItem('daily_dive_pre_repair_backup');
+      if (!existingPreRepair) {
+        localStorage.setItem('daily_dive_pre_repair_backup', JSON.stringify({
+          user_progress: currentProgress,
+          history: currentHistory,
+          backed_up_at: '2026-10-10T12:00:00.000Z'
+        }));
+      }
+      localStorage.setItem('daily_dive_guest_progress', JSON.stringify(load1Progress));
+      localStorage.setItem('daily_dive_history', JSON.stringify(load1History));
+    }
+
+    // Verify key exists after repair
+    const preRepairRaw = localStorage.getItem('daily_dive_pre_repair_backup');
+    assert.ok(preRepairRaw, 'daily_dive_pre_repair_backup must exist in localStorage');
+    const preRepairObj = JSON.parse(preRepairRaw);
+    assert.deepStrictEqual(preRepairObj.user_progress, unrepairedProgress, 'Backup contains original unrepaired progress');
+    assert.deepStrictEqual(preRepairObj.history, unrepairedHistory, 'Backup contains original unrepaired history');
+
+    // Simulate second load
+    let currentProgress2 = JSON.parse(localStorage.getItem('daily_dive_guest_progress') || '{}');
+    let currentHistory2 = JSON.parse(localStorage.getItem('daily_dive_history') || '[]');
+
+    const {
+      progressMap: load2Progress,
+      history: load2History,
+      repairedCount: load2Repairs,
+      droppedHistoryCount: load2Drops
+    } = repairProgressFromHistory(currentProgress2, currentHistory2, []);
+
+    if (load2Repairs > 0 || load2Drops > 0) {
+      const existingPreRepair2 = localStorage.getItem('daily_dive_pre_repair_backup');
+      if (!existingPreRepair2) {
+        localStorage.setItem('daily_dive_pre_repair_backup', JSON.stringify({
+          user_progress: currentProgress2,
+          history: currentHistory2,
+          backed_up_at: '2026-10-10T13:00:00.000Z'
+        }));
+      }
+      localStorage.setItem('daily_dive_guest_progress', JSON.stringify(load2Progress));
+      localStorage.setItem('daily_dive_history', JSON.stringify(load2History));
+    }
+
+    // Verify key is unchanged after second load
+    const preRepairRawAfterSecondLoad = localStorage.getItem('daily_dive_pre_repair_backup');
+    assert.strictEqual(preRepairRawAfterSecondLoad, preRepairRaw, 'pre_repair_backup is strictly unchanged after second load');
+    assert.strictEqual(load2Repairs, 0, 'Zero repairs on second load');
+    assert.strictEqual(load2Drops, 0, 'Zero drops on second load');
+  });
+
   test('Real Data: Import evidence/real-backup.json and verify repair on import / load', () => {
     if (!fs.existsSync('evidence/real-backup.json')) {
       console.log('NOT RUN: no real backup');

@@ -109,8 +109,8 @@ async function testReducedMotion() {
   const latencyMs = Date.now() - startTime;
   console.log(`   Latency from keypress to result visible: ${latencyMs} ms`);
 
-  // Hard assertion: latency < 400ms under headless runner
-  assert.ok(latencyMs < 400, `Result must appear in < 400ms under reduced motion. Took: ${latencyMs}ms`);
+  // Hard assertion: latency < 300ms
+  assert.ok(latencyMs < 300, `Result must appear in < 300ms under reduced motion. Took: ${latencyMs}ms`);
 
   // Spy on audio: tick = 0, landing = 1
   const audioStats = await page.evaluate(() => ({
@@ -122,7 +122,7 @@ async function testReducedMotion() {
   assert.equal(audioStats.ticks, 0, `Tick sound must not play under reduced motion (expected 0, got ${audioStats.ticks})`);
   assert.equal(audioStats.landings, 1, `Landing sound must play exactly once on result arrival (expected 1, got ${audioStats.landings})`);
 
-  console.log('\n[PASS]: Reduced motion latency (<400ms) and audio (tick=0, landing=1) verified with hard assertions.');
+  console.log('\n[PASS]: Reduced motion latency (<300ms) and audio (tick=0, landing=1) verified with hard assertions.');
 
   await browser.close();
   server.close();

@@ -172,11 +172,32 @@ export const DataProvider = ({ children }) => {
       } catch (e) {}
 
       // One-time repair on load to ensure history topic IDs have progress records
-      const { progressMap: repairedLoadProgress, repairedCount: loadRepairs } = repairProgressFromHistory(guestProgress, guestHistory);
-      if (loadRepairs > 0) {
+      const {
+        progressMap: repairedLoadProgress,
+        history: repairedLoadHistory,
+        repairedCount: loadRepairs,
+        droppedHistoryCount: loadDrops
+      } = repairProgressFromHistory(guestProgress, guestHistory, storedCustom);
+
+      const hasChanges = loadRepairs > 0 || loadDrops > 0;
+      if (hasChanges) {
+        try {
+          const existingPreRepairBackup = localStorage.getItem('daily_dive_pre_repair_backup');
+          if (!existingPreRepairBackup) {
+            const preRepairBackup = {
+              user_progress: guestProgress,
+              history: guestHistory,
+              backed_up_at: new Date().toISOString()
+            };
+            localStorage.setItem('daily_dive_pre_repair_backup', JSON.stringify(preRepairBackup));
+          }
+        } catch (e) {}
+
         guestProgress = repairedLoadProgress;
+        guestHistory = repairedLoadHistory;
         try {
           localStorage.setItem('daily_dive_guest_progress', JSON.stringify(repairedLoadProgress));
+          localStorage.setItem('daily_dive_history', JSON.stringify(repairedLoadHistory));
         } catch (e) {}
       }
 
@@ -425,7 +446,7 @@ export const DataProvider = ({ children }) => {
       const { progressMap: normalizedProgress, history: normalizedHistory } = repairProgressFromHistory(
         rawProgress,
         rawHistory,
-        [...backupCustomTopics, ...INITIAL_TOPICS]
+        backupCustomTopics
       );
 
       setUserProgressMap(normalizedProgress);

@@ -6,6 +6,7 @@
  */
 
 import { INITIAL_TOPICS } from './roulette.js';
+import CURATED_TOPIC_IDS from '../data/topicIds.json' with { type: 'json' };
 
 export const SCHEMA_VERSION = 3;
 
@@ -139,15 +140,10 @@ export function repairProgressFromHistory(progressMap = {}, history = [], topicC
   let repairedCount = 0;
   let droppedHistoryCount = 0;
 
-  // Build lookup Set of valid topic catalog IDs
-  const validIds = new Set();
+  // Build lookup Set of valid topic catalog IDs (all curated IDs + custom topic IDs)
+  const validIds = new Set(CURATED_TOPIC_IDS);
 
-  // Always include standard initial topics
-  (INITIAL_TOPICS || []).forEach(t => {
-    if (t && t.id) validIds.add(t.id);
-  });
-
-  // Add all items from supplied topic catalog (can be array of topic objects, array of string IDs, or Set)
+  // Add all items from supplied custom topic catalog (can be array of topic objects, array of string IDs, or Set)
   if (Array.isArray(topicCatalog)) {
     topicCatalog.forEach(t => {
       if (typeof t === 'string') validIds.add(t);
@@ -158,11 +154,6 @@ export function repairProgressFromHistory(progressMap = {}, history = [], topicC
   } else if (topicCatalog && typeof topicCatalog === 'object') {
     Object.keys(topicCatalog).forEach(id => validIds.add(id));
   }
-
-  // Also include any topic ID that already has an existing valid progress record
-  Object.keys(nextProgress).forEach(id => {
-    if (id) validIds.add(id);
-  });
 
   // 1. Normalize existing progress records
   Object.keys(nextProgress).forEach(id => {
