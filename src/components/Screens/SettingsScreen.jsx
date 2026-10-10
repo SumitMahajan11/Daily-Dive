@@ -391,7 +391,7 @@ export const SettingsScreen = () => {
         <h2 className="font-display text-base font-bold text-on-surface">About Daily Dive</h2>
         <div className="text-xs text-on-surface-variant space-y-1.5 leading-relaxed">
           <p>
-            Version 2.1.0 · MIT License
+            Version 2.1.0 · <span className="font-mono text-[11px] text-primary">Build {typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'dev'} ({typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : 'today'})</span> · MIT License
           </p>
           <p className="text-on-surface font-medium">
             Your data stays on this device. Daily Dive does not use cookies, trackers, or remote accounts.

@@ -17,6 +17,45 @@ const SECTIONS = [
   { id: 'progress', label: 'Progress', icon: BarChart3, kbd: '3' },
 ];
 
+class ChunkErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.warn('Chunk load error caught in boundary:', error, errorInfo);
+  }
+
+  handleRetry = () => {
+    this.setState({ hasError: false });
+    window.location.reload();
+  };
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="p-6 rounded-2xl border border-error/30 bg-error/5 text-center space-y-3">
+          <p className="text-sm font-semibold text-on-surface">Failed to load this section.</p>
+          <p className="text-xs text-on-surface-variant">A new version may have been deployed or the network was interrupted.</p>
+          <button
+            type="button"
+            onClick={this.handleRetry}
+            className="px-4 py-2 bg-primary text-white text-xs font-semibold rounded-xl hover:bg-primary-hover transition-colors cursor-pointer"
+          >
+            Retry Loading
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const HorizontalSeparator = () => (
   <div className="max-w-4xl mx-auto px-4 sm:px-8 my-4">
     <div className="h-px bg-gradient-to-r from-transparent via-outline-variant/30 to-transparent" />
@@ -148,11 +187,13 @@ const MainLayout = () => {
             ref={setSectionRef('library')}
             className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
           >
-            <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-              <LibraryScreen
-                onSpinActivePool={() => scrollToSection('spin')}
-              />
-            </Suspense>
+            <ChunkErrorBoundary>
+              <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+                <LibraryScreen
+                  onSpinActivePool={() => scrollToSection('spin')}
+                />
+              </Suspense>
+            </ChunkErrorBoundary>
           </section>
 
           <HorizontalSeparator />
@@ -164,9 +205,11 @@ const MainLayout = () => {
             ref={setSectionRef('progress')}
             className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
           >
-            <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-              <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
-            </Suspense>
+            <ChunkErrorBoundary>
+              <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+                <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+              </Suspense>
+            </ChunkErrorBoundary>
           </section>
 
           <HorizontalSeparator />
@@ -178,9 +221,11 @@ const MainLayout = () => {
             ref={setSectionRef('settings')}
             className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
           >
-            <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-              <SettingsScreen />
-            </Suspense>
+            <ChunkErrorBoundary>
+              <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+                <SettingsScreen />
+              </Suspense>
+            </ChunkErrorBoundary>
           </section>
 
           <div className="h-16" />
