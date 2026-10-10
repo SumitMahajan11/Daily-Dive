@@ -4,10 +4,11 @@ import {
   selectWeightedTopic,
   isTopicEligible,
   calculateUpdatedStreak,
-  getEffectiveStreak,
   appendHistoryEntry,
   STARTER_ENABLED_CATEGORIES
 } from '../lib/roulette';
+import { selectStreakMetrics } from '../lib/selectors';
+import { loadTopicsForEnabledCategories, loadAllBuiltinTopics } from '../lib/topicLoader';
 import { AudioController } from '../lib/audio';
 import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications';
 
@@ -62,17 +63,12 @@ export const DataProvider = ({ children }) => {
   });
 
   const effectiveStreak = useMemo(() => {
-    const activeDates = new Set();
-    (history || []).forEach(h => {
-      if (h.local_date) activeDates.add(h.local_date);
+    return selectStreakMetrics({
+      userStreaks,
+      history,
+      userProgressMap,
+      nowDate: new Date()
     });
-    Object.values(userProgressMap || {}).forEach(p => {
-      if (p.last_seen) activeDates.add(p.last_seen.slice(0, 10));
-    });
-    if (userStreaks?.last_active_date) {
-      activeDates.add(userStreaks.last_active_date);
-    }
-    return getEffectiveStreak(userStreaks, new Date(), activeDates);
   }, [userStreaks, history, userProgressMap]);
   const [userSettings, setUserSettings] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -86,8 +82,8 @@ export const DataProvider = ({ children }) => {
       enabled_categories: STARTER_ENABLED_CATEGORIES,
       reminder_time: '09:00 AM',
       notifications_enabled: false,
-      sound_enabled: true,
-      haptics_enabled: true
+      sound_enabled: false,
+      haptics_enabled: false
     };
   });
 
@@ -141,7 +137,7 @@ export const DataProvider = ({ children }) => {
   }, [userSettings.notifications_enabled, userSettings.reminder_time]);
 
   // Load app data from local storage
-  const loadData = useCallback(() => {
+  const loadData = useCallback(async () => {
     setLoadingData(true);
     try {
       let storedCustom = [];
@@ -149,8 +145,6 @@ export const DataProvider = ({ children }) => {
         const sc = localStorage.getItem('daily_dive_custom_topics');
         if (sc) storedCustom = JSON.parse(sc);
       } catch (e) {}
-      const mergedTopics = [...storedCustom, ...INITIAL_TOPICS];
-      setTopics(mergedTopics);
       setCustomTopics(storedCustom);
       
       let guestProgress = {};
@@ -167,13 +161,19 @@ export const DataProvider = ({ children }) => {
         const savedSettings = localStorage.getItem('daily_dive_guest_settings');
         if (savedSettings) {
           const parsed = JSON.parse(savedSettings);
-          guestCategories = parsed?.enabled_categories || {};
+          guestCategories = parsed?.enabled_categories || STARTER_ENABLED_CATEGORIES;
         }
       } catch (e) {}
 
       setUserProgressMap(guestProgress);
       setUserStreaks(guestStreaks);
       setHistory(guestHistory);
+
+      // Lazy load topics matching enabled categories
+      const builtinTopics = await loadTopicsForEnabledCategories(guestCategories);
+      const mergedTopics = [...storedCustom, ...builtinTopics];
+      setTopics(mergedTopics);
+
       const initialSelected = selectWeightedTopic(mergedTopics, guestProgress, guestCategories);
       setCurrentTopic(initialSelected || mergedTopics[0]);
     } catch (err) {
@@ -185,7 +185,37 @@ export const DataProvider = ({ children }) => {
 
   useEffect(() => {
     loadData();
+    // Defer pre-caching remaining topic groups until idle to protect initial paint & LCP
+    if (typeof window !== 'undefined') {
+      if ('requestIdleCallback' in window) {
+        window.requestIdleCallback(() => {
+          loadAllBuiltinTopics().catch(() => {});
+        }, { timeout: 3000 });
+      } else {
+        setTimeout(() => {
+          loadAllBuiltinTopics().catch(() => {});
+        }, 1500);
+      }
+    }
   }, [loadData]);
+
+  // Dynamically load additional category groups when user updates settings
+  useEffect(() => {
+    let isCancelled = false;
+    loadTopicsForEnabledCategories(userSettings.enabled_categories).then(builtinTopics => {
+      if (!isCancelled) {
+        setTopics(prev => {
+          const custom = prev.filter(t => t.is_custom);
+          const map = new Map();
+          [...custom, ...builtinTopics].forEach(t => {
+            if (t && t.id) map.set(t.id, t);
+          });
+          return Array.from(map.values());
+        });
+      }
+    });
+    return () => { isCancelled = true; };
+  }, [userSettings.enabled_categories]);
 
   // Filtered / eligible topics
   const eligibleTopics = useMemo(() => {
@@ -314,32 +344,147 @@ export const DataProvider = ({ children }) => {
         localStorage.removeItem('daily_dive_guest_progress');
         localStorage.removeItem('daily_dive_guest_streaks');
         localStorage.removeItem('daily_dive_history');
+        localStorage.removeItem('daily_dive_custom_topics');
+        localStorage.removeItem('daily_dive_expired_custom_topics');
+        localStorage.removeItem('daily_dive_gemini_key');
       } catch (e) {}
     }
 
     setUserProgressMap({});
     setUserStreaks({ current_streak: 0, longest_streak: 0, last_active_date: null });
+    setCustomTopics([]);
+    setHistory([]);
     showToast('All progress and streak records have been reset.', 'success');
   }, [showToast]);
 
-  // Import JSON backup
+  // Validate and atomically import JSON backup without partial writes
   const importDataBackup = useCallback((parsedBackup) => {
-    if (parsedBackup.user_progress) {
-      setUserProgressMap(parsedBackup.user_progress);
-      try { localStorage.setItem('daily_dive_guest_progress', JSON.stringify(parsedBackup.user_progress)); } catch (e) {}
+    if (!parsedBackup || typeof parsedBackup !== 'object' || Array.isArray(parsedBackup)) {
+      throw new Error('Invalid backup file: Top-level data must be a JSON object.');
     }
-    if (parsedBackup.user_streaks) {
-      setUserStreaks(parsedBackup.user_streaks);
-      try { localStorage.setItem('daily_dive_guest_streaks', JSON.stringify(parsedBackup.user_streaks)); } catch (e) {}
+
+    // Schema version check (allow schemaVersion or legacy version string)
+    const schemaVer = parsedBackup.schemaVersion || (parsedBackup.version ? 1 : null);
+    if (!schemaVer && !parsedBackup.user_progress && !parsedBackup.user_streaks && !parsedBackup.user_settings) {
+      throw new Error('Malformed backup: Missing recognizable Daily Dive backup signature.');
     }
-    if (parsedBackup.user_settings) {
-      setUserSettings(prev => {
-        const next = { ...prev, ...parsedBackup.user_settings };
-        try { localStorage.setItem('daily_dive_guest_settings', JSON.stringify(next)); } catch (e) {}
-        return next;
-      });
+
+    // Validate sub-structures
+    if (parsedBackup.user_streaks !== undefined) {
+      if (typeof parsedBackup.user_streaks !== 'object' || parsedBackup.user_streaks === null) {
+        throw new Error('Malformed backup: user_streaks must be an object.');
+      }
+      if (typeof parsedBackup.user_streaks.current_streak !== 'undefined' && typeof parsedBackup.user_streaks.current_streak !== 'number') {
+        throw new Error('Malformed backup: user_streaks.current_streak must be a number.');
+      }
+      if (typeof parsedBackup.user_streaks.longest_streak !== 'undefined' && typeof parsedBackup.user_streaks.longest_streak !== 'number') {
+        throw new Error('Malformed backup: user_streaks.longest_streak must be a number.');
+      }
     }
-    showToast('Backup imported successfully', 'success');
+
+    if (parsedBackup.user_progress !== undefined && (typeof parsedBackup.user_progress !== 'object' || parsedBackup.user_progress === null)) {
+      throw new Error('Malformed backup: user_progress must be an object.');
+    }
+
+    if (parsedBackup.history !== undefined && !Array.isArray(parsedBackup.history)) {
+      throw new Error('Malformed backup: history must be an array.');
+    }
+
+    if (parsedBackup.custom_topics !== undefined && !Array.isArray(parsedBackup.custom_topics)) {
+      throw new Error('Malformed backup: custom_topics must be an array.');
+    }
+
+    if (parsedBackup.expired_custom_topics !== undefined && !Array.isArray(parsedBackup.expired_custom_topics)) {
+      throw new Error('Malformed backup: expired_custom_topics must be an array.');
+    }
+
+    if (parsedBackup.user_settings !== undefined && (typeof parsedBackup.user_settings !== 'object' || parsedBackup.user_settings === null)) {
+      throw new Error('Malformed backup: user_settings must be an object.');
+    }
+
+    // Validation passed! Now atomically perform all writes
+    try {
+      if (parsedBackup.user_progress) {
+        const normalizedProgress = { ...parsedBackup.user_progress };
+        // Backfill times_seen if missing on legacy records
+        Object.keys(normalizedProgress).forEach(id => {
+          const entry = normalizedProgress[id];
+          if (entry && typeof entry === 'object') {
+            if (typeof entry.times_seen === 'undefined' || entry.times_seen === null) {
+              normalizedProgress[id] = {
+                ...entry,
+                times_seen: (entry.learned || entry.last_seen) ? 1 : 0
+              };
+            }
+          }
+        });
+        // Backfill from history entries if available
+        if (Array.isArray(parsedBackup.history)) {
+          parsedBackup.history.forEach(h => {
+            if (h && h.topic_id) {
+              const current = normalizedProgress[h.topic_id] || { times_seen: 0 };
+              if (!current.times_seen || current.times_seen === 0) {
+                normalizedProgress[h.topic_id] = {
+                  ...current,
+                  times_seen: 1,
+                  last_seen: current.last_seen || h.timestamp
+                };
+              }
+            }
+          });
+        }
+        setUserProgressMap(normalizedProgress);
+        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(normalizedProgress));
+      }
+
+      if (parsedBackup.user_streaks) {
+        setUserStreaks(parsedBackup.user_streaks);
+        localStorage.setItem('daily_dive_guest_streaks', JSON.stringify(parsedBackup.user_streaks));
+      }
+
+      if (parsedBackup.user_settings) {
+        setUserSettings(prev => {
+          const next = { ...prev, ...parsedBackup.user_settings };
+          localStorage.setItem('daily_dive_guest_settings', JSON.stringify(next));
+          return next;
+        });
+      }
+
+      if (parsedBackup.history) {
+        setHistory(parsedBackup.history);
+        localStorage.setItem('daily_dive_history', JSON.stringify(parsedBackup.history));
+      }
+
+      if (parsedBackup.custom_topics) {
+        setCustomTopics(parsedBackup.custom_topics);
+        localStorage.setItem('daily_dive_custom_topics', JSON.stringify(parsedBackup.custom_topics));
+        setTopics([...parsedBackup.custom_topics, ...INITIAL_TOPICS]);
+      }
+
+      if (parsedBackup.expired_custom_topics) {
+        localStorage.setItem('daily_dive_expired_custom_topics', JSON.stringify(parsedBackup.expired_custom_topics));
+      }
+
+      if (parsedBackup.theme) {
+        localStorage.setItem('daily_dive_theme', parsedBackup.theme);
+        if (typeof document !== 'undefined') {
+          document.documentElement.classList.toggle('dark', parsedBackup.theme === 'dark');
+        }
+      }
+
+      if (typeof parsedBackup.first_run_dismissed === 'boolean') {
+        localStorage.setItem('daily_dive_first_run_dismissed', String(parsedBackup.first_run_dismissed));
+      }
+
+      if (parsedBackup.last_backup_at) {
+        localStorage.setItem('daily_dive_last_backup_at', parsedBackup.last_backup_at);
+      }
+
+      showToast('Backup imported successfully', 'success');
+      return true;
+    } catch (writeErr) {
+      throw new Error('Failed to persist imported backup: ' + writeErr.message);
+    }
   }, [showToast]);
 
   // Restore expired topics from undo window
@@ -520,7 +665,11 @@ export const DataProvider = ({ children }) => {
     const patch = { ...currentEnabled };
     patch['custom'] = true;
     patch['custom::custom-notes'] = true;
-    updateSettings({ enabled_categories: patch });
+    const settingsPatch = { enabled_categories: patch };
+    if (!userSettings?.content_source || userSettings.content_source === 'curated') {
+      settingsPatch.content_source = 'blended';
+    }
+    updateSettings(settingsPatch);
 
     // Set first newly added topic as current preview
     if (normalized[0]) {

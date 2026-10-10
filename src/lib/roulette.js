@@ -2,9 +2,9 @@
  * Pure functions for weighted random topic selection and streak calculations.
  */
 
-import { COMPILED_TOPICS } from './compiledTopics.js';
+import { starterTopics } from '../data/starterTopics.js';
 
-export const INITIAL_TOPICS = COMPILED_TOPICS;
+export const INITIAL_TOPICS = starterTopics;
 
 export const CATEGORY_TREE = [
   {
@@ -48,6 +48,15 @@ export const CATEGORY_TREE = [
     ]
   }
 ];
+
+export const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
+  groupDef.categories.map(cat => ({
+    group: groupDef.group,
+    groupLabel: groupDef.label,
+    name: cat.name,
+    label: cat.label
+  }))
+);
 
 export const STARTER_ENABLED_CATEGORIES = {
   // Core starter focus: AI & Web + Psychology & Philosophy (~241 topics)
@@ -199,6 +208,39 @@ export function getLocalYesterdayDate(date = new Date()) {
 }
 
 /**
+ * Computes the maximum contiguous calendar run of days across a set of YYYY-MM-DD date strings.
+ */
+export function computeMaxHistoricalStreak(dateSetInput) {
+  const dates = Array.from(dateSetInput instanceof Set ? dateSetInput : new Set(dateSetInput || []))
+    .filter(d => typeof d === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(d))
+    .sort();
+
+  if (dates.length === 0) return 0;
+  if (dates.length === 1) return 1;
+
+  let maxStreak = 1;
+  let currentRun = 1;
+
+  for (let i = 1; i < dates.length; i++) {
+    const prev = new Date(dates[i - 1] + 'T00:00:00');
+    const curr = new Date(dates[i] + 'T00:00:00');
+    const diffMs = curr.getTime() - prev.getTime();
+    const diffDays = Math.round(diffMs / 86400000);
+
+    if (diffDays === 1) {
+      currentRun++;
+      if (currentRun > maxStreak) {
+        maxStreak = currentRun;
+      }
+    } else if (diffDays > 1) {
+      currentRun = 1;
+    }
+  }
+
+  return maxStreak;
+}
+
+/**
  * Reconciles stored streak metadata with the user's actual activity dates
  * (from session history, topic progress, and previous streak records) so the
  * streak status card and activity matrix are mathematically guaranteed to agree.
@@ -223,6 +265,7 @@ export function reconcileStreakWithActivity(streakData = {}, activeDates = new S
 
   const hasToday = dateSet.has(todayStr);
   const hasYesterday = dateSet.has(yesterdayStr);
+  const maxHistoricalRun = computeMaxHistoricalStreak(dateSet);
 
   // Count contiguous active days backwards from today (if active today) or yesterday
   let contiguousDays = 0;
@@ -243,7 +286,7 @@ export function reconcileStreakWithActivity(streakData = {}, activeDates = new S
 
   if (hasToday) {
     const streak = Math.max(storedCurrent, contiguousDays, 1);
-    const longest = Math.max(storedLongest, streak);
+    const longest = Math.max(storedLongest, maxHistoricalRun, streak);
     return {
       current_streak: streak,
       longest_streak: longest,
@@ -255,7 +298,7 @@ export function reconcileStreakWithActivity(streakData = {}, activeDates = new S
 
   if (hasYesterday) {
     const streak = Math.max(storedCurrent, contiguousDays, 1);
-    const longest = Math.max(storedLongest, streak);
+    const longest = Math.max(storedLongest, maxHistoricalRun, streak);
     return {
       current_streak: streak,
       longest_streak: longest,
@@ -269,7 +312,7 @@ export function reconcileStreakWithActivity(streakData = {}, activeDates = new S
   const hadPastActivity = dateSet.size > 0 || Boolean(storedLast);
   return {
     current_streak: 0,
-    longest_streak: Math.max(storedLongest, storedCurrent),
+    longest_streak: Math.max(storedLongest, maxHistoricalRun, storedCurrent),
     last_active_date: storedLast,
     is_active_today: false,
     is_broken: hadPastActivity

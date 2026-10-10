@@ -232,6 +232,51 @@ const newDocAudit = displayDocumentAudit(
   true
 );
 
+// 3. Observed Markdown Roadmap Fixture (4 Observed Cases)
+const roadmapContent = fs.readFileSync('tests/fixtures/markdown_roadmap.md', 'utf8');
+const roadmapAudit = displayDocumentAudit(
+  'Observed Markdown Roadmap (4 Observed Cases)',
+  'markdown_roadmap.md',
+  roadmapContent,
+  true
+);
+
+// 4. Nested Lists Markdown Fixture
+const nestedListsContent = fs.readFileSync('tests/fixtures/nested_lists.md', 'utf8');
+const nestedListsAudit = displayDocumentAudit(
+  'Markdown Fixture: Nested Lists',
+  'nested_lists.md',
+  nestedListsContent,
+  true
+);
+
+// 5. Tables Markdown Fixture
+const tablesContent = fs.readFileSync('tests/fixtures/tables_fixture.md', 'utf8');
+const tablesAudit = displayDocumentAudit(
+  'Markdown Fixture: Tables',
+  'tables_fixture.md',
+  tablesContent,
+  true
+);
+
+// 6. Code Blocks Markdown Fixture
+const codeBlocksContent = fs.readFileSync('tests/fixtures/code_blocks_fixture.md', 'utf8');
+const codeBlocksAudit = displayDocumentAudit(
+  'Markdown Fixture: Code Blocks',
+  'code_blocks_fixture.md',
+  codeBlocksContent,
+  true
+);
+
+// 7. README-Style Markdown Fixture
+const readmeContent = fs.readFileSync('tests/fixtures/readme_style_fixture.md', 'utf8');
+const readmeAudit = displayDocumentAudit(
+  'Markdown Fixture: README Style',
+  'readme_style_fixture.md',
+  readmeContent,
+  true
+);
+
 // Assertions on Document 6
 assert(doc6Audit.autoAccepted.length > 0, 'Document 6 produces clean high-confidence topics');
 assert(
@@ -259,6 +304,66 @@ assert(
 assert(
   newDocAudit.flaggedForReview.length > 0,
   'New Markdown document correctly flags the draft section ending with trailing punctuation'
+);
+
+// Assertions on 4 Observed Cases from Markdown Roadmap
+const allRoadmapTopics = [...roadmapAudit.autoAccepted, ...roadmapAudit.flaggedForReview];
+assert(
+  allRoadmapTopics.some(t => t.title === 'Foundation'),
+  'Roadmap Case 1: Title "# Stage 1 - Foundation" stripped to "Foundation"'
+);
+assert(
+  allRoadmapTopics.some(t => t.title === 'Structural Backbone'),
+  'Roadmap Case 2: Title "# Stage 2 - Structural Backbone" stripped to "Structural Backbone"'
+);
+assert(
+  allRoadmapTopics.some(t => t.title === 'Understanding Layer'),
+  'Roadmap Case 3: Title "# Stage 3 - Understanding Layer" stripped to "Understanding Layer"'
+);
+assert(
+  !allRoadmapTopics.some(t => t.title.startsWith('#') || t.title.includes('Stage ')),
+  'No roadmap topic title contains raw markdown "#" or "Stage " prefix'
+);
+assert(
+  !allRoadmapTopics.some(t => t.description.includes('**Layer') || t.description.includes('**')),
+  'No roadmap topic description contains raw bold "**" markdown syntax'
+);
+assert(
+  !allRoadmapTopics.some(t => t.description.includes('DECISIONS_LOG.md') || t.description.includes('Note:')),
+  'No roadmap topic description contains file reference "DECISIONS_LOG.md" or "Note:" asides'
+);
+assert(
+  !allRoadmapTopics.some(t => t.tags.includes('ai-ml') || t.tags.includes('career-strategy')),
+  'Uncategorized custom roadmap uploads do not assign built-in "#ai-ml" or "#career-strategy" tags'
+);
+assert(
+  allRoadmapTopics.every(t => t.category === 'custom-notes' && t.tags.includes('custom-notes')),
+  'All roadmap upload topics receive default "custom-notes" category and tag'
+);
+
+// Assertions on 4 New Markdown Fixtures
+assert(nestedListsAudit.autoAccepted.length > 0, 'Nested lists fixture extracted valid topics');
+assert(
+  !nestedListsAudit.autoAccepted.some(t => t.description.includes('- ') || t.description.includes('* ')),
+  'Nested lists fixture stripped bullet markers from description'
+);
+
+assert(tablesAudit.autoAccepted.length > 0, 'Tables fixture extracted valid topics');
+assert(
+  !tablesAudit.autoAccepted.some(t => t.description.includes('|')),
+  'Tables fixture stripped markdown table pipes from description'
+);
+
+assert(codeBlocksAudit.autoAccepted.length > 0, 'Code blocks fixture extracted valid topics');
+assert(
+  !codeBlocksAudit.autoAccepted.some(t => t.description.includes('```')),
+  'Code blocks fixture stripped code fences from description'
+);
+
+assert(readmeAudit.autoAccepted.length > 0, 'README fixture extracted valid topics');
+assert(
+  !readmeAudit.autoAccepted.some(t => t.description.includes('[![') || t.description.includes('img.shields.io')),
+  'README fixture stripped markdown badges and image links from description'
 );
 
 console.log('================================================================');

@@ -9,8 +9,15 @@ const APP_SHELL = [
   './icons/icon-512.png',
   './icons/icon-192-maskable.png',
   './icons/icon-512-maskable.png',
-  'https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap',
-  'https://unpkg.com/lucide@latest'
+  './fonts/inter-normal-400.woff2',
+  './fonts/inter-normal-500.woff2',
+  './fonts/inter-normal-600.woff2',
+  './fonts/inter-normal-700.woff2',
+  './fonts/jetbrains-mono-normal-400.woff2',
+  './fonts/jetbrains-mono-normal-500.woff2',
+  './fonts/jetbrains-mono-normal-600.woff2',
+  './fonts/newsreader-normal-400800.woff2',
+  './fonts/newsreader-italic-400800.woff2'
 ];
 
 // Install: Cache core app shell

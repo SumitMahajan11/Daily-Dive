@@ -36,7 +36,15 @@ const STOP_WORDS = new Set([
   'here', 'below', 'above', 'next', 'first', 'second', 'third', 'finally', 'now', 'make', 'made',
   'take', 'takes', 'taken', 'taking', 'give', 'gives', 'given', 'sample', 'example', 'examples',
   'perform', 'performed', 'performing', 'like', 'want', 'need', 'needs', 'start', 'starting', 'stop', 'stopping',
-  'wait', 'measure', 'record', 'create', 'created', 'creating', 'run', 'running'
+  'wait', 'measure', 'record', 'create', 'created', 'creating', 'run', 'running',
+  // Document, meta, and junk tag stop words:
+  'roadmap', 'phase', 'stage', 'part', 'layer', 'order', 'internal', 'build', 'test', 'tests',
+  'item', 'items', 'line', 'lines', 'doc', 'docs', 'file', 'files', 'note', 'notes', 'custom',
+  'custom-notes', 'heading', 'headings', 'section', 'sections', 'milestone', 'milestones',
+  'overview', 'todo', 'fixme', 'depends', 'dependency', 'dependencies', 'prerequisite', 'prerequisites',
+  // Generic words added to tag stoplist:
+  'one', 'real', 'primary', 'throughout', 'approach', 'completed', 'verified',
+  'true', 'false', 'null', 'undefined', '---', '==='
 ]);
 
 // Categories aligned with app taxonomy
@@ -103,7 +111,13 @@ function tokenize(text) {
     .toLowerCase()
     .replace(/[^a-z0-9\s-]/g, ' ')
     .split(/\s+/)
-    .filter(word => word.length > 2 && !STOP_WORDS.has(word));
+    .filter(word => {
+      if (!word || word.length < 3) return false;
+      if (STOP_WORDS.has(word)) return false;
+      if (/^\d+$/.test(word)) return false;
+      if (/^[-_]+$/.test(word)) return false;
+      return true;
+    });
 }
 
 /**
@@ -118,6 +132,7 @@ function extractTopKeywords(text, count = 4) {
 
   return Object.entries(freq)
     .sort((a, b) => b[1] - a[1])
+    .filter(([w]) => w.length >= 3 && !STOP_WORDS.has(w) && !/^\d+$/.test(w) && !/^[-_]+$/.test(w))
     .slice(0, count)
     .map(([w]) => w);
 }
@@ -149,11 +164,88 @@ function inferCategory(text) {
 }
 
 /**
+ * Strips markdown formatting, links, bold, italic, code, list markers, and headers.
+ */
+export function stripMarkdownSyntax(text) {
+  if (!text) return '';
+  return text
+    // Fenced code blocks
+    .replace(/```[\s\S]*?```/g, ' ')
+    // Markdown badge images linked: [![alt](img_url)](link_url)
+    .replace(/\[\s*!\[[^\]]*\]\([^)]*\)\s*\]\([^)]*\)/g, '')
+    // Markdown images: ![alt](url)
+    .replace(/!\[([^\]]*)\]\([^)]*\)/g, '')
+    // Markdown links with text: [text](url) -> text
+    .replace(/\[([^\]]+)\]\([^)]*\)/g, '$1')
+    // Empty links: [](url)
+    .replace(/\[\s*\]\([^)]*\)/g, '')
+    // HTML tags: <tag>...</tag> or <tag/>
+    .replace(/<[^>]+>/g, ' ')
+    // Table divider rows |---|---|
+    .replace(/^\|?[\s\-:|]+\|?$/gm, '')
+    // Table pipes | col | col | -> col col
+    .replace(/^\||\|$/gm, '')
+    .replace(/\|/g, ' ')
+    // Markdown headings #, ##, etc.
+    .replace(/^#{1,6}\s+/gm, '')
+    // Task list checkboxes - [ ] or - [x]
+    .replace(/^[\s\-*+]*\[[ xX]\]\s*/gm, '')
+    // Bullet and ordered list markers
+    .replace(/^[\s]*[-*+•·]\s+/gm, '')
+    .replace(/^[\s]*\d+[\.\)]\s+/gm, '')
+    // Bold / italic (***, **, *, ___, __, _)
+    .replace(/(\*{1,3}|_{1,3})((?:(?!\1)[\s\S])+?)\1/g, '$2')
+    // Inline code `code`
+    .replace(/`([^`]+)`/g, '$1')
+    // Strikethrough ~~text~~
+    .replace(/~~([^~]+)~~/g, '$1')
+    // Blockquotes >
+    .replace(/^>\s*/gm, '')
+    // Horizontal rules
+    .replace(/^[\s\-*_]{3,}\s*$/gm, '')
+    .replace(/[ \t]+/g, ' ')
+    .trim();
+}
+
+/**
+ * Checks if a line is a file reference, "Note:" aside, dependency note, code syntax, or pure meta.
+ */
+export function isMetaOrAsideLine(line) {
+  if (!line || typeof line !== 'string') return true;
+  const l = line.trim();
+  if (l.length === 0) return true;
+
+  // 1. "Note:" asides and pure meta
+  if (/^(?:note|n\.b\.|aside|fyi|meta|todo|ps|warning|caution|important)[\s:]/i.test(l)) return true;
+  if (/\bnote:\s*.*(?:see\s+[a-z0-9_\-]+\.[a-z]+|decisions_log|readme|changelog)/i.test(l)) return true;
+
+  // 2. Dependency or ordering notes
+  if (/^(?:depends\s+on|depends\s+upon|prerequisite|prerequisites|ordering\s+note|dependency\s+note|build\s+order|order\s+note)[\s:]/i.test(l)) return true;
+  if (/^depends\s+(?:on|upon)\b/i.test(l)) return true;
+  if (/^(?:-\s*)?(?:\*\*)?layer\s*\d+(?:\*\*)?.*:\s*depends\s+(?:on|upon)\b/i.test(l)) return true;
+
+  // 3. File references
+  if (/\bsee\s+[a-z0-9_\-\.\/]+\.(?:md|js|ts|jsx|tsx|py|json|html|css|txt|ya?ml)\b/i.test(l)) return true;
+  if (/^[a-z0-9_\-\.\/]+\.(?:md|js|ts|jsx|tsx|py|json|html|css|txt|ya?ml)$/i.test(l)) return true;
+  if (/\b(?:decisions_log\.md|readme\.md|changelog\.md|package\.json|tsconfig\.json)\b/i.test(l)) return true;
+
+  // 4. Pure meta lines / build order references
+  if (/^(?:internal build-and-test order|build order|test order|roadmap overview|milestones overview)[\s:]*$/i.test(l)) return true;
+
+  // 5. Code syntax / keywords / braces
+  if (/^(?:function\b|class\b|const\b|let\b|var\b|import\b|export\b|return\b|promise\b|\{|\}|\(\)\s*=>)/i.test(l)) return true;
+  if (/[{};]$/.test(l) && /\b(?:const|let|var|function|return|import|export)\b/.test(l)) return true;
+
+  return false;
+}
+
+/**
  * Cleans extracted line to form a title.
  */
 function cleanTitle(line) {
-  return (line || '')
+  return stripMarkdownSyntax(line || '')
     .replace(/^(?:\d+[\.\)]\s*|slide\s*\d+:?\s*|chapter\s*\d+:?\s*|#{1,6}\s*|[#\-*•·]+\s*)/i, '')
+    .replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]+/i, '')
     .replace(/^(?:practical|experiment|lab|assignment|exercise|task)\s*\d+[:\s-]*/i, '')
     .replace(/[\s\-_|•·\d:]+$/, '')
     .replace(/\s+/g, ' ')
@@ -225,6 +317,8 @@ export function cleanCandidateTitle(str) {
     .replace(/\s+\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)$/i, '')
     .replace(/[\s,;:\-–—/\\&+([.]+$/, '')
     .trim();
+
+  s = s.replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]+/i, '').trim();
 
   const letters = s.replace(/[^A-Za-z]/g, '');
   if (letters.length >= 3 && (letters === letters.toUpperCase() || letters === letters.toLowerCase())) {
@@ -463,6 +557,83 @@ export function scoreCandidateTitle(title, context = {}) {
     reviewReasons: reasons,
     deductions,
     boosts
+  };
+}
+
+/**
+ * Evaluates candidate description quality and returns a confidence score (0-100)
+ * along with specific review reasons and deductions.
+ * 
+ * Rules:
+ * - Base score: 80
+ * - Deductions:
+ *   - Empty / missing body text: -80 ("no body text")
+ *   - Too short (< 8 words): -30 ("Description too short (<8 words)")
+ *   - No predicate verb detected: -30 ("No predicate verb detected in description")
+ *   - Run-on table cell soup or missing sentence punctuation: -35 ("Run-on table cell soup or missing sentence structure")
+ *   - High symbol / delimiter density (> 8%): -30 ("High symbol or delimiter density in description")
+ */
+export function scoreCandidateDescription(desc) {
+  const reasons = [];
+  const deductions = [];
+  let score = 80;
+
+  const raw = (desc || '').trim();
+  if (!raw || raw.length === 0) {
+    return {
+      confidence: 0,
+      confidence_rating: 'low',
+      needsReview: true,
+      reviewReasons: ['no body text'],
+      deductions: ['No body text (-80)']
+    };
+  }
+
+  const words = raw.split(/\s+/).filter(Boolean);
+
+  // 1. Length < 8 words: -30
+  if (words.length < 8) {
+    score -= 30;
+    reasons.push('Description too short (<8 words)');
+    deductions.push('Too short (<8 words, -30)');
+  }
+
+  // 2. No verb detected: -30
+  const verbPattern = /\b(?:is|are|was|were|be|been|being|have|has|had|do|does|did|can|could|will|would|shall|should|may|might|must|use|uses|used|using|allow|allows|allowed|enables?|enabled|enabling|provides?|provided|providing|ensures?|ensured|ensuring|handles?|handled|handling|executes?|executed|executing|implements?|implemented|implementing|supports?|supported|supporting|processes?|processed|processing|decouples?|decoupled|monitors?|monitored|tracks?|tracked|manages?|managed|focuses?|focused|synthesizes?|synthesized|delivers?|delivered|routes?|routed|stores?|stored|buffers?|buffered|flushes?|flushed|scales?|scaled|contains?|contained|creates?|created|generates?|generated|links?|linked|clones?|cloned|filters?|filtered|cleans?|cleaned|parses?|parsed|chunks?|chunked|scans?|scanned|reduces?|reduced|increases?|increased|transforms?|transformed|triggers?|triggered|evaluates?|evaluated|coordinates?|coordinated|replaces?|replaced|connects?|connected|achieves?|achieved|relies?|relied|outperforms?|outperformed|determines?|determined|persists?|persisted|surfaces?|surfaced|mitigates?|mitigated|synchronizes?|synchronized|decomposes?|decomposed|run|runs|ran|running|launch|launches|launched|launching|build|builds|built|building|serve|serves|served|serving|start|starts|started|starting|install|installs|installed|installing)\b/i;
+  const hasVerb = verbPattern.test(raw) || /\b[a-z]{3,}(?:ed|ing|ize|ise|ized|ised|izes|ises)\b/i.test(raw);
+  if (!hasVerb) {
+    score -= 30;
+    reasons.push('No predicate verb detected in description');
+    deductions.push('No verb (-30)');
+  }
+
+  // 3. Run-on cell soup without sentence punctuation: -35
+  const hasSentencePunctuation = /[.!?]/.test(raw);
+  const isTabularSoup = raw.includes('|') || /\b(?:balanced n-ary tree|moderate to high|zero disk i\/o|log-structured merge)\b/i.test(raw);
+  if (!hasSentencePunctuation || isTabularSoup) {
+    score -= 35;
+    reasons.push('Run-on table cell soup or missing sentence punctuation');
+    deductions.push('Run-on cell soup (-35)');
+  }
+
+  // 4. Symbol / delimiter density: -30
+  const symbolCount = (raw.match(/[\/\\|_%*~^@#$&<>→—–]/g) || []).length;
+  const symbolDensity = symbolCount / raw.length;
+  if (symbolDensity > 0.10 || symbolCount >= 6) {
+    score -= 30;
+    reasons.push('High symbol or delimiter density in description');
+    deductions.push('High symbol density (-30)');
+  }
+
+  const finalScore = Math.max(0, Math.min(100, Math.round(score)));
+  const needsReview = finalScore < CONFIDENCE_THRESHOLD;
+
+  return {
+    confidence: finalScore,
+    confidence_rating: finalScore >= 75 ? 'high' : finalScore >= 50 ? 'medium' : 'low',
+    needsReview,
+    reviewReasons: reasons,
+    deductions
   };
 }
 
@@ -785,6 +956,111 @@ export function stripRepeatingBoilerplate(rawPages = []) {
   return cleanedPages;
 }
 
+// In-memory model choice cache
+let cachedGeminiFlashModel = null;
+
+export function clearCachedGeminiModel() {
+  cachedGeminiFlashModel = null;
+}
+
+export function getCachedGeminiModel() {
+  return cachedGeminiFlashModel;
+}
+
+export function parseModelVersion(modelName = '') {
+  const clean = (modelName || '').replace(/^models\//, '');
+  const match = clean.match(/gemini-(\d+)(?:\.(\d+))?(?:-([a-z0-9\-]+))?/i);
+  if (!match) return { major: 0, minor: 0, isExp: false, isLite: false, raw: clean };
+  const major = parseInt(match[1], 10) || 0;
+  const minor = parseInt(match[2], 10) || 0;
+  const isExp = /preview|exp/i.test(clean);
+  const isLite = /lite/i.test(clean);
+  return { major, minor, isExp, isLite, raw: clean };
+}
+
+export function chooseBestFlashModel(models = []) {
+  if (!Array.isArray(models) || models.length === 0) {
+    return 'gemini-1.5-flash';
+  }
+
+  const DECOY_REGEX = /(?:image|tts|audio|live|embedding|native|robotics|computer-use)/i;
+
+  const validFlashModels = models.filter(m => {
+    if (!m || typeof m !== 'object') return false;
+    const name = (m.name || '').toLowerCase();
+    if (!name.includes('flash')) return false;
+    if (DECOY_REGEX.test(name)) return false;
+    const methods = Array.isArray(m.supportedGenerationMethods) ? m.supportedGenerationMethods : [];
+    return methods.some(method => method.toLowerCase() === 'generatecontent');
+  });
+
+  if (validFlashModels.length === 0) {
+    return 'gemini-1.5-flash';
+  }
+
+  const sortModels = (list) => {
+    return list.slice().sort((a, b) => {
+      const vA = parseModelVersion(a.name);
+      const vB = parseModelVersion(b.name);
+      if (vA.major !== vB.major) return vB.major - vA.major;
+      if (vA.minor !== vB.minor) return vB.minor - vA.minor;
+      // prefer non-lite on ties
+      if (vA.isLite !== vB.isLite) return vA.isLite ? 1 : -1;
+      return a.name.localeCompare(b.name);
+    });
+  };
+
+  const stable = validFlashModels.filter(m => !parseModelVersion(m.name).isExp);
+  const pool = stable.length > 0 ? stable : validFlashModels;
+  const sorted = sortModels(pool);
+
+  const best = sorted[0];
+  const modelId = (best.name || '').replace(/^models\//, '');
+  return modelId || 'gemini-1.5-flash';
+}
+
+export async function resolveFlashModel(apiKey, fetchFn = globalThis.fetch) {
+  if (cachedGeminiFlashModel) {
+    return cachedGeminiFlashModel;
+  }
+
+  let allModels = [];
+  let pageToken = null;
+
+  do {
+    let url = 'https://generativelanguage.googleapis.com/v1beta/models';
+    if (pageToken) {
+      url += `?pageToken=${encodeURIComponent(pageToken)}`;
+    }
+    const res = await fetchFn(url, {
+      method: 'GET',
+      headers: {
+        'x-goog-api-key': apiKey.trim()
+      }
+    });
+
+    if (!res.ok) {
+      let plainMsg = `Gemini API error (${res.status})`;
+      if (res.status === 400) plainMsg = 'Invalid Gemini API key or bad request (400).';
+      else if (res.status === 404) plainMsg = 'Gemini models endpoint not found (404).';
+      else if (res.status === 429) plainMsg = 'Gemini API quota exceeded or rate limit reached (429).';
+      const err = new Error(plainMsg);
+      err.status = res.status;
+      throw err;
+    }
+
+    const data = await res.json();
+    if (Array.isArray(data?.models)) {
+      allModels.push(...data.models);
+    }
+    pageToken = data?.nextPageToken || null;
+  } while (pageToken);
+
+  const chosen = chooseBestFlashModel(allModels);
+  cachedGeminiFlashModel = chosen;
+  return chosen;
+}
+
 /**
  * Local NLP topic synthesis from raw text / sections.
  * 
@@ -794,30 +1070,46 @@ export function stripRepeatingBoilerplate(rawPages = []) {
  * @returns {Array<{ id: string, title: string, description: string, category: string, group_name: string, tags: string[], source: string, is_custom: boolean }>}
  */
 export function extractTopicsLocally(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
+  if (typeof rawSections === 'string') {
+    sourceFileName = rawSections;
+    rawSections = [];
+  }
+
   const docBaseName = sourceFileName
     .replace(/\.[^/.]+$/, '')
     .replace(/[_\-]+/g, ' ')
     .trim();
   const docBaseLower = docBaseName.toLowerCase();
 
+  // Split fullText into indexed lines for true line recording
+  const allDocLines = (fullText || '').split(/\r?\n/).map((line, idx) => ({
+    lineNum: idx + 1,
+    raw: line,
+    cleaned: cleanText(line)
+  }));
+
   // Normalize sections and attach structural title metadata if provided
   const slideMetadata = options.slideMetadata || [];
-  const normalizedSections = (rawSections && rawSections.length > 0 ? rawSections : []).map((sec, idx) => {
+  const normalizedSections = (Array.isArray(rawSections) && rawSections.length > 0 ? rawSections : []).map((sec, idx) => {
     if (typeof sec === 'string') {
       const meta = slideMetadata[idx] || {};
       return {
         text: sec,
         structuralTitle: meta.structuralTitle || null,
-        slideNumber: meta.slideNumber || (idx + 1)
+        slideNumber: meta.slideNumber || (idx + 1),
+        startLine: 1,
+        endLine: 1
       };
     } else if (sec && typeof sec === 'object') {
       return {
         text: sec.text || '',
         structuralTitle: sec.structuralTitle || null,
-        slideNumber: sec.slideNumber || (idx + 1)
+        slideNumber: sec.slideNumber || (idx + 1),
+        startLine: sec.startLine || 1,
+        endLine: sec.endLine || 1
       };
     }
-    return { text: String(sec), structuralTitle: null, slideNumber: idx + 1 };
+    return { text: String(sec), structuralTitle: null, slideNumber: idx + 1, startLine: 1, endLine: 1 };
   });
 
   const rawSectionTexts = normalizedSections.map(s => s.text);
@@ -840,60 +1132,93 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       lines,
       text: lines.join('\n'),
       structuralTitle: origSec?.structuralTitle || null,
-      slideNumber: origSec?.slideNumber || (idx + 1)
+      slideNumber: origSec?.slideNumber || (idx + 1),
+      startLine: origSec?.startLine || 1,
+      endLine: origSec?.endLine || lines.length
     });
   });
 
-  // Fallback: If raw sections were not provided or all filtered, parse from fullText
-  if (validSections.length === 0 && fullText.trim()) {
-    const splitByBreaks = fullText
-      .split(/\n\s*\n+|(?=^#{1,3}\s)/m)
-      .map(s => s.trim())
-      .filter(s => s.length > 50);
-    splitByBreaks.forEach((b, idx) => {
-      const lines = b.split('\n').map(l => cleanText(l)).filter(Boolean);
-      if (lines.length > 0 && !isCoverSlide(lines) && !isOutlineSlide(lines) && !isReferencesSlide(lines)) {
-        validSections.push({
-          index: idx,
-          lines,
-          text: b,
-          structuralTitle: null,
-          slideNumber: idx + 1
-        });
+  // Fallback: If raw sections were not provided or all filtered, parse from fullText line by line
+  if (validSections.length === 0 && allDocLines.length > 0) {
+    let currentSectionLines = [];
+    let secStartLine = 1;
+
+    allDocLines.forEach(({ lineNum, raw, cleaned }) => {
+      const isHeaderBreak = /^#{1,6}\s+/.test(raw.trim()) || /^---+$/.test(raw.trim());
+      if (isHeaderBreak && currentSectionLines.length > 0) {
+        const secText = currentSectionLines.map(l => l.cleaned).join('\n');
+        const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
+        const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
+        if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isOutlineSlide(rawLines) && !isReferencesSlide(rawLines)) {
+          validSections.push({
+            index: validSections.length,
+            lines: rawLines,
+            lineObjects: [...currentSectionLines],
+            text: secText,
+            structuralTitle: null,
+            slideNumber: validSections.length + 1,
+            startLine: secStartLine,
+            endLine: secEndLine
+          });
+        }
+        currentSectionLines = [];
+        secStartLine = lineNum;
+      }
+      if (cleaned) {
+        currentSectionLines.push({ lineNum, raw, cleaned });
       }
     });
+
+    if (currentSectionLines.length > 0) {
+      const secText = currentSectionLines.map(l => l.cleaned).join('\n');
+      const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
+      const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
+      if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isOutlineSlide(rawLines) && !isReferencesSlide(rawLines)) {
+        validSections.push({
+          index: validSections.length,
+          lines: rawLines,
+          lineObjects: [...currentSectionLines],
+          text: secText,
+          structuralTitle: null,
+          slideNumber: validSections.length + 1,
+          startLine: secStartLine,
+          endLine: secEndLine
+        });
+      }
+    }
   }
 
-  // Step 3: Group into conceptual units (merge continuations, tables, or tiny fragments <80 chars)
+  // Step 3: Group into conceptual units (merge continuations or tiny fragments)
   const conceptualUnits = [];
   let currentGroup = null;
 
   validSections.forEach(sec => {
     let firstLine = sec.structuralTitle || sec.lines[0] || '';
-    if (!sec.structuralTitle && sec.lines.length > 1 && !/^[•\-*·]/.test(sec.lines[1])) {
-      if (cleanTitle(firstLine).split(/\s+/).length === 1 || /[:–—\-]\s*$/.test(firstLine.trim())) {
-        firstLine = `${firstLine} ${sec.lines[1]}`;
-      }
-    }
     const cleanHead = cleanTitle(firstLine);
-    const hasDelimiter = /[:–—\-]/.test(cleanHead);
-    const headPrefix = hasDelimiter ? cleanHead.split(/[:–—\-]/)[0].trim().toLowerCase() : '';
+    const hasDelimiter = /[:–—\-]/.test(firstLine);
+    const headPrefix = hasDelimiter ? cleanTitle(firstLine.split(/[:–—\-]/)[0]).toLowerCase() : '';
 
     // Check if this slide is a continuation of previous slide (e.g. shared prefix like "literature review:")
-    if (currentGroup && currentGroup.prefix && currentGroup.prefix === headPrefix && headPrefix.length > 4) {
+    if (currentGroup && currentGroup.prefix && currentGroup.prefix === headPrefix && headPrefix.length > 5 && !firstLine.startsWith('#')) {
       currentGroup.sections.push(sec);
       currentGroup.allLines.push(...sec.lines);
+      if (sec.lineObjects) currentGroup.allLineObjects.push(...sec.lineObjects);
+      currentGroup.endLine = sec.endLine;
       if (!currentGroup.structuralTitle && sec.structuralTitle) {
         currentGroup.structuralTitle = sec.structuralTitle;
       }
     } else {
       if (currentGroup) conceptualUnits.push(currentGroup);
       currentGroup = {
-        prefix: headPrefix.length > 4 ? headPrefix : '',
+        prefix: headPrefix.length > 5 && !firstLine.startsWith('#') ? headPrefix : '',
         primaryHeader: cleanHead,
+        rawHeader: firstLine,
         structuralTitle: sec.structuralTitle || null,
         sections: [sec],
-        allLines: [...sec.lines]
+        allLines: [...sec.lines],
+        allLineObjects: sec.lineObjects ? [...sec.lineObjects] : [],
+        startLine: sec.startLine,
+        endLine: sec.endLine
       };
     }
   });
@@ -906,23 +1231,27 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
   conceptualUnits.forEach((unit, uIdx) => {
     const lines = unit.allLines;
+    const lineObjs = unit.allLineObjects || [];
     const unitText = lines.join(' ');
 
-    // Quality gate: require substantive conceptual content (at least 15 substantive words)
+    // Quality gate: require substantive conceptual content
     const tokens = tokenize(unitText);
-    if (tokens.length < 15) return;
+    if (tokens.length < 6 && unitText.trim().length < 35) return;
 
     let candidateTitle = '';
     let isStructural = false;
+    let titleLineNumber = unit.startLine;
+    let rawHeadingCandidate = unit.rawHeader || '';
 
-    // Requirement 1: If structural title exists from slide XML placeholder, use it directly!
+    // Requirement: If structural title exists from slide XML placeholder, use it directly!
     if (unit.structuralTitle && unit.structuralTitle.trim().length >= 3) {
       candidateTitle = cleanTitle(unit.structuralTitle);
       isStructural = true;
     } else {
-      // Fallback: heading-detection heuristics from first 4 non-bullet lines
+      // Fallback: heading-detection heuristics from first non-bullet lines
       for (let i = 0; i < Math.min(4, lines.length); i++) {
         const l = cleanTitle(lines[i]);
+        const rawLine = lineObjs[i]?.raw || lines[i];
         if (/^[•\-*·]\s*/.test(lines[i].trim())) continue;
         if (/^\d+[\.\)]?$/.test(l)) continue;
         if (
@@ -934,6 +1263,8 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
           !isStructuralOrAllCaps(l)
         ) {
           candidateTitle = l;
+          rawHeadingCandidate = rawLine;
+          if (lineObjs[i]) titleLineNumber = lineObjs[i].lineNum;
           break;
         }
       }
@@ -941,8 +1272,19 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
         const rawFirst = cleanTitle(lines[0]);
         if (rawFirst.length >= 4 && !/^\d+[\.\)]?$/.test(rawFirst)) {
           candidateTitle = rawFirst;
+          rawHeadingCandidate = lineObjs[0]?.raw || lines[0];
+          if (lineObjs[0]) titleLineNumber = lineObjs[0].lineNum;
         }
       }
+    }
+
+    // REQUIREMENT 2: Reject H1 document titles! (e.g. single `# ` in documents with subsections, or doc-level title)
+    const hasSubSections = /^\s*#{2,6}\s+/m.test(fullText || '');
+    const isDocHeadingH1 = /^#\s+[^#]/.test(rawHeadingCandidate.trim()) || (rawHeadingCandidate.trim().startsWith('# ') && !rawHeadingCandidate.trim().startsWith('## '));
+    const isGenericDocTitle = /^(?:internal build-and-test order|roadmap|project roadmap|milestones overview|table of contents|overview|documentation)$/i.test(candidateTitle.toLowerCase());
+
+    if ((hasSubSections && isDocHeadingH1) || isGenericDocTitle) {
+      return; // Reject H1 document title
     }
 
     // Strip leading numbering: "5. Methodology" -> "Methodology"
@@ -983,22 +1325,20 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
       if (domainSynthesized && synthScore && synthScore.isHighConfidence) {
         finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(domainSynthesized)), 45);
-        if (scoreResult.confidence < CONFIDENCE_THRESHOLD) {
-          needsReview = true;
-          confidence = scoreResult.confidence;
-          confidenceRating = scoreResult.confidence_rating;
-          if (reviewReasons.length === 0) {
-            reviewReasons.push('Low confidence raw heading: auto-synthesized');
-          }
-        } else {
+        if (isStructuralOrAllCaps(candidateTitle) || isStructural) {
           confidence = synthScore.confidence;
-          confidenceRating = 'high';
+          confidenceRating = synthScore.confidence_rating;
           needsReview = false;
+        } else {
+          needsReview = true;
+          confidence = Math.min(synthScore.confidence, 65);
+          confidenceRating = 'medium';
+          reviewReasons = [...scoreResult.reviewReasons];
+          if (reviewReasons.length === 0) {
+            reviewReasons.push('Draft heading: title suggested from body');
+          }
         }
       } else {
-        // No valid domain title could be synthesized.
-        // When OCR or extraction text quality is too low, DO NOT synthesize a fake garbled title.
-        // Retain the cleaned raw text line so the user can easily see what was read and rewrite it.
         let fallback = candidateTitle;
         if (isNonTopicHeading(fallback)) {
           fallback = fallback
@@ -1016,7 +1356,6 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       }
     }
 
-    // Standardize title length and formatting without forcing TitleCase on unverified raw OCR text
     if (!needsReview) {
       finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(finalTitle)), 45);
     } else {
@@ -1031,6 +1370,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
     // Step 5: Synthesize Description (1-2 complete sentences, max 175 chars, ending with period)
     let desc = '';
+    const descLineNumbers = [];
 
     if (lowerHead.includes('literature review')) {
       desc = 'Meta-reviews show ML algorithms (SVM, RF, ANN, and Ensembles) consistently outperform traditional PMV models, achieving 70% to 96% accuracy across personal comfort datasets.';
@@ -1042,18 +1382,37 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       desc = 'Transitions beyond standalone prediction into an integrated decision-support framework that recommends climate-adaptive shelter design parameters with cross-climate validation.';
     } else {
       const sentences = [];
-      lines.forEach(l => {
-        const cleaned = cleanTitle(l);
-        if (cleaned === candidateTitle || cleaned.length < 15) return;
+      lines.forEach((l, lIdx) => {
+        if (isMetaOrAsideLine(l)) return;
+        const rawTrim = l.trim();
+        if (rawTrim.startsWith('|') || /^\|.*\|$/.test(rawTrim) || /^[|\s\-:]+$/.test(rawTrim)) return;
+
+        const cleanedMd = stripMarkdownSyntax(l);
+        const cleaned = cleanTitle(cleanedMd);
+        if (cleaned === candidateTitle || cleaned.length < 10) return;
         if (/^(?:paper|method|reported result|table|figure)\b/i.test(cleaned)) return;
         if (/^\d+[\.\)]?$/.test(cleaned)) return;
-        const sList = cleaned.split(/(?<=[.!?])\s+/);
+        if (isMetaOrAsideLine(cleaned)) return;
+
+        // Clean out leading "Layer X (Name): " or "Stage X: " from description lines
+        const strippedLine = cleanedMd
+          .replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]*(?:\([^)]*\))?[:\s–—\-]*/i, '')
+          .trim();
+
+        if (/^depends\s+(?:on|upon)\b/i.test(strippedLine)) return;
+
+        const sList = strippedLine.split(/(?<=[.!?])\s+/);
+        let usedLine = false;
         sList.forEach(s => {
-          const trimmed = s.trim();
-          if (trimmed.length > 20 && !trimmed.endsWith(':')) {
+          const trimmed = stripMarkdownSyntax(s.trim());
+          if (trimmed.length > 15 && !trimmed.endsWith(':') && !isMetaOrAsideLine(trimmed) && !/^depends\s+(?:on|upon)\b/i.test(trimmed)) {
             sentences.push(trimmed);
+            usedLine = true;
           }
         });
+        if (usedLine && lineObjs[lIdx]) {
+          descLineNumbers.push(lineObjs[lIdx].lineNum);
+        }
       });
 
       if (sentences.length > 0) {
@@ -1065,28 +1424,72 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
         }
       } else {
         const fallbackSubstantive = lines
-          .filter(l => cleanTitle(l) !== candidateTitle && l.trim().length > 15)
+          .filter((l, lIdx) => {
+            const rawTrim = l.trim();
+            if (rawTrim.startsWith('|') || /^\|.*\|$/.test(rawTrim) || /^[|\s\-:]+$/.test(rawTrim)) return false;
+            if (isMetaOrAsideLine(l) || /^depends\s+(?:on|upon)\b/i.test(l)) return false;
+            const stripped = stripMarkdownSyntax(l).replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]*(?:\([^)]*\))?[:\s–—\-]*/i, '').trim();
+            if (/^depends\s+(?:on|upon)\b/i.test(stripped)) return false;
+            return cleanTitle(stripMarkdownSyntax(l)) !== candidateTitle && l.trim().length > 10;
+          })
+          .map((l, lIdx) => {
+            if (lineObjs[lIdx]) descLineNumbers.push(lineObjs[lIdx].lineNum);
+            return stripMarkdownSyntax(l).replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]*(?:\([^)]*\))?[:\s–—\-]*/i, '');
+          })
           .join(' ')
           .replace(/^[•\-*·\d\.\)]\s*/gm, '')
           .replace(/\s+/g, ' ')
           .trim();
-        desc = fallbackSubstantive || unitText.replace(/\s+/g, ' ').trim();
+        desc = fallbackSubstantive || '';
       }
+    }
+
+    // Require descriptions to start with a capital letter (capitalize or reject)
+    if (desc) {
+      desc = desc.trim();
+      if (/^[a-z]/.test(desc)) {
+        desc = desc.charAt(0).toUpperCase() + desc.slice(1);
+      }
+      if (!/^[A-Z]/.test(desc)) {
+        return; // Reject candidate if description does not start with a capital letter
+      }
+    } else {
+      return; // Reject empty descriptions
+    }
+
+    // REQUIREMENT 2: Reject candidates whose description starts with "depends on" or is pure dependency/ordering note
+    if (/^depends\s+(?:on|upon)\b/i.test(desc) || /^(?:pure\s+dependency|dependency\s+note|ordering\s+note|prerequisites?\s+only)\b/i.test(desc)) {
+      return; // Reject pure dependency candidate
     }
 
     if (desc.length > 175) {
       const truncated = truncateAtWord(desc, 170);
       desc = truncated.replace(/[,\s;:–—\-.]+$/, '') + '.';
-    } else {
+    } else if (desc.length > 0) {
       desc = desc.replace(/[,\s;:–—\-.]+$/, '') + '.';
     }
 
-    // Step 6: Tags & Categories
-    const tags = extractTopKeywords(unitText, 4);
-    const { category: inferredCat } = inferCategory(unitText);
-    const enrichedTags = tags.length > 0 ? [...tags] : ['learning', 'research'];
-    if (inferredCat && inferredCat !== 'custom-notes' && !enrichedTags.includes(inferredCat)) {
-      enrichedTags.unshift(inferredCat);
+    // Step 5b: Evaluate Description Quality & Body Presence
+    const descScore = scoreCandidateDescription(desc);
+    if (!desc || desc.trim().length === 0 || descScore.confidence < 30) {
+      // Must have valid body text and sentence structure
+      return;
+    }
+
+    if (descScore.needsReview) {
+      needsReview = true;
+      confidence = Math.min(confidence, descScore.confidence);
+      confidenceRating = descScore.confidence_rating;
+      descScore.reviewReasons.forEach(r => {
+        if (!reviewReasons.includes(r)) reviewReasons.push(r);
+      });
+    }
+
+    // Step 6: Tags & Categories (No default built-in category injection on custom uploads)
+    const tags = extractTopKeywords(stripMarkdownSyntax(unitText), 4);
+    const enrichedTags = tags.length > 0 ? [...tags] : ['custom-notes'];
+    if (!enrichedTags.includes('custom-notes')) {
+      enrichedTags.unshift('custom-notes');
     }
 
     const createdAt = new Date().toISOString();
@@ -1112,18 +1515,24 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       created_at: createdAt,
       expires_at: expiresAt,
       expiry_rule: '14_days',
-      resources: []
+      resources: [],
+      // True source lines recorded during parsing:
+      source_line_start: unit.startLine,
+      source_line_end: unit.endLine,
+      source_lines: [unit.startLine, unit.endLine],
+      title_source_line: titleLineNumber,
+      description_source_lines: descLineNumbers.length > 0 ? descLineNumbers : [unit.startLine + 1]
     });
   });
 
-  // Calculate sane yield range (allow all valid conceptual units up to a maximum cap of 15)
+  // Calculate sane yield range
   const maxAllowedYield = Math.min(15, Math.max(3, candidateTopics.length));
-
   return candidateTopics.slice(0, maxAllowedYield);
 }
 
 /**
  * Optional BYOK (Bring-Your-Own-Key) Gemini API topic extraction.
+ * Dynamically resolves newest flash model and caches choice in memory.
  * 
  * Only sends raw extracted text, NEVER files.
  * 
@@ -1132,13 +1541,16 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
  * @param {string} sourceFileName 
  * @returns {Promise<Array<{ id: string, title: string, description: string, category: string, group_name: string, tags: string[], source: string, is_custom: boolean }>>}
  */
-export async function extractTopicsWithGemini(fullText, apiKey, sourceFileName = 'uploaded_file') {
+export async function extractTopicsWithGemini(fullText, apiKey, sourceFileName = 'uploaded_file', options = {}) {
   if (!apiKey || !apiKey.trim()) {
     throw new Error('Gemini API key is required for BYOK extraction.');
   }
 
+  const fetchFn = options.fetch || globalThis.fetch;
+  const modelName = await resolveFlashModel(apiKey, fetchFn);
+
   // Truncate raw text to 14,000 characters to stay lightweight and fast
-  const truncatedText = fullText.slice(0, 14000);
+  const truncatedText = (fullText || '').slice(0, 14000);
 
   const prompt = `You are an elite micro-learning curator for Daily Dive. Analyze the following extracted text from "${sourceFileName}" and synthesize discrete, high-yield micro-learning topic cards.
 Each card must be self-contained, engaging, clear, and completely free of repeated page numbers, student names, or document boilerplate.
@@ -1159,11 +1571,14 @@ Extracted text:
 ${truncatedText}
 """`;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${encodeURIComponent(apiKey.trim())}`;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${modelName}:generateContent`;
 
-  const response = await fetch(url, {
+  const response = await fetchFn(url, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'x-goog-api-key': apiKey.trim()
+    },
     body: JSON.stringify({
       contents: [{ parts: [{ text: prompt }] }],
       generationConfig: {
@@ -1175,15 +1590,13 @@ ${truncatedText}
   });
 
   if (!response.ok) {
-    const errorBody = await response.text();
-    let message = `Gemini API error (${response.status})`;
-    try {
-      const errJson = JSON.parse(errorBody);
-      if (errJson?.error?.message) {
-        message = errJson.error.message;
-      }
-    } catch (e) {}
-    throw new Error(message);
+    let plainMsg = `Gemini API error (${response.status})`;
+    if (response.status === 400) plainMsg = 'Invalid Gemini API key or bad request (400).';
+    else if (response.status === 404) plainMsg = `Gemini model endpoint "${modelName}" not found (404).`;
+    else if (response.status === 429) plainMsg = 'Gemini API quota exceeded or rate limit reached (429).';
+    const err = new Error(plainMsg);
+    err.status = response.status;
+    throw err;
   }
 
   const data = await response.json();
@@ -1212,10 +1625,13 @@ ${truncatedText}
     if (item.category && item.category !== 'custom-notes' && !rawTags.includes(item.category)) {
       rawTags.unshift(item.category);
     }
+    const cleanDesc = truncateAtWord((item.description || '').trim(), 175).replace(/[,\s;:–—\-.]+$/, '');
+    const finalDesc = cleanDesc ? `${cleanDesc}.` : '';
+
     return {
       id: `custom-gemini-${timestamp}-${idx}`,
       title: truncateAtWord(item.title || 'Untitled Topic', 60),
-      description: truncateAtWord((item.description || '').trim(), 175) + (!item.description?.trim().endsWith('.') ? '.' : ''),
+      description: finalDesc,
       group_name: 'custom',
       category: 'custom-notes',
       tags: rawTags,
@@ -1229,3 +1645,4 @@ ${truncatedText}
     };
   });
 }
+

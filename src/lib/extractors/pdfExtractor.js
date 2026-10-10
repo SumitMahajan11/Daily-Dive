@@ -1,26 +1,26 @@
-import * as pdfjsLib from 'pdfjs-dist';
-import pdfjsWorker from 'pdfjs-dist/build/pdf.worker.min.mjs?url';
-import { createWorker } from 'tesseract.js';
-
-// Configure pdfjs worker URL
-try {
-  if (pdfjsLib.GlobalWorkerOptions) {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
-  }
-} catch (e) {
-  console.warn('PDF.js worker initialization warning:', e);
-}
-
 /**
  * Extracts text from a PDF file using pdf.js text layer.
  * Falls back to canvas rendering + Tesseract OCR for scanned/image-only PDFs.
+ * Dynamically loads pdfjs-dist and tesseract.js on demand.
  * 
  * @param {File|Blob} file 
  * @param {Function} onProgress ({ stage, percent, detail })
  * @returns {Promise<{ text: string, rawPages: string[], pageCount: number, sourceFormat: 'pdf', ocrFallbackUsed: boolean }>}
  */
 export async function extractFromPdf(file, onProgress = () => {}) {
-  onProgress({ stage: 'Loading PDF', percent: 5, detail: 'Reading file buffer...' });
+  onProgress({ stage: 'Loading PDF', percent: 5, detail: 'Initializing PDF engine...' });
+
+  // Dynamic import of PDF.js
+  const pdfjsLib = await import('pdfjs-dist');
+  const pdfjsWorker = (await import('pdfjs-dist/build/pdf.worker.min.mjs?url')).default;
+
+  try {
+    if (pdfjsLib.GlobalWorkerOptions && !pdfjsLib.GlobalWorkerOptions.workerSrc) {
+      pdfjsLib.GlobalWorkerOptions.workerSrc = pdfjsWorker;
+    }
+  } catch (e) {
+    console.warn('PDF.js worker initialization warning:', e);
+  }
 
   let arrayBuffer;
   try {
@@ -72,48 +72,41 @@ export async function extractFromPdf(file, onProgress = () => {}) {
 
     try {
       const page = await pdfDocument.getPage(i);
-      const textContent = await page.getTextContent();
-      
-      let lines = [];
-      let currentLine = '';
-      let lastY = null;
+      const textContent = await page.getTextContent({
+        normalizeWhitespace: true,
+        disableCombineTextItems: false
+      });
 
-      for (const item of textContent.items) {
-        if (!item.str && !item.hasEOL) continue;
-        const currentY = item.transform ? Math.round(item.transform[5]) : null;
-        const isNewLine = item.hasEOL || (lastY !== null && currentY !== null && Math.abs(currentY - lastY) > 4);
+      const pageText = textContent.items
+        .map(item => item.str)
+        .join(' ')
+        .replace(/\s+/g, ' ')
+        .trim();
 
-        if (isNewLine) {
-          if (currentLine.trim()) lines.push(currentLine.trim());
-          currentLine = item.str || '';
-        } else {
-          currentLine += (currentLine ? ' ' : '') + (item.str || '');
-        }
-        lastY = currentY;
+      if (pageText) {
+        rawPages.push(pageText);
+        totalExtractedLength += pageText.length;
       }
-      if (currentLine.trim()) lines.push(currentLine.trim());
-
-      const pageText = lines.join('\n');
-      rawPages.push(pageText);
-      totalExtractedLength += pageText.length;
     } catch (pageErr) {
-      console.warn(`Error reading text on page ${i}:`, pageErr);
-      rawPages.push('');
+      console.warn(`Could not extract text layer from page ${i}:`, pageErr);
     }
   }
 
-  // Check if PDF is scanned or image-only (less than 50 chars of text across all pages)
   let ocrFallbackUsed = false;
-  if (totalExtractedLength < 50) {
+
+  // OCR Fallback: If text layer is extremely sparse (< 50 chars across all sampled pages),
+  // this is likely a scanned PDF or slide deck where text was rasterized into images.
+  if (totalExtractedLength < 50 && numPages > 0) {
     onProgress({
-      stage: 'OCR fallback triggered',
+      stage: 'Scanned PDF detected',
       percent: 70,
-      detail: 'No text layer detected. Running optical character recognition on scanned pages...'
+      detail: 'Switching to OCR image character recognition...'
     });
 
     const ocrPages = [];
     let worker;
     try {
+      const { createWorker } = await import('tesseract.js');
       worker = await createWorker('eng', 1, {
         logger: m => {
           if (m.status === 'recognizing text') {
@@ -159,12 +152,19 @@ export async function extractFromPdf(file, onProgress = () => {}) {
     }
   }
 
-  const combinedText = rawPages.filter(Boolean).join('\n\n');
-  if (!combinedText.trim()) {
-    throw new Error('No readable text or characters could be extracted from this PDF.');
+  const combinedText = rawPages.join('\n\n').trim();
+
+  if (!combinedText || combinedText.length < 20) {
+    throw new Error(
+      'Could not extract meaningful readable text from this PDF. Please verify that the PDF contains study text or lecture notes.'
+    );
   }
 
-  onProgress({ stage: 'Extraction complete', percent: 100, detail: `Extracted ${rawPages.length} pages` });
+  onProgress({
+    stage: 'Extraction complete',
+    percent: 100,
+    detail: `Extracted ${rawPages.length} pages (${Math.round(combinedText.length / 5)} words)`
+  });
 
   return {
     text: combinedText,

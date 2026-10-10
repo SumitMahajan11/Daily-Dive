@@ -1,19 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { RotateCw, UploadCloud, SlidersHorizontal, BarChart3, Settings } from 'lucide-react';
+import { RotateCw, BookOpen, BarChart3 } from 'lucide-react';
 
 export const BottomNavigation = ({ activeTab, onSelectTab }) => {
   const tabs = [
     { id: 'spin', label: 'Spin', icon: RotateCw },
-    { id: 'extract', label: 'Extract', icon: UploadCloud },
-    { id: 'filter', label: 'Filter', icon: SlidersHorizontal },
+    { id: 'library', label: 'Library', icon: BookOpen },
     { id: 'progress', label: 'Progress', icon: BarChart3 },
-    { id: 'settings', label: 'Settings', icon: Settings },
   ];
 
   return (
     <nav className="md:hidden fixed bottom-0 w-full z-40 pb-safe bg-surface/90 backdrop-blur-xl border-t border-outline-variant/30 shadow-2xl">
-      <div className="h-16 px-3 flex items-center justify-around">
+      <div className="h-16 px-4 flex items-center justify-around">
         {tabs.map(tab => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -22,11 +20,12 @@ export const BottomNavigation = ({ activeTab, onSelectTab }) => {
               key={tab.id}
               type="button"
               data-nav-id={tab.id}
+              aria-current={isActive ? 'page' : undefined}
               onClick={() => onSelectTab(tab.id)}
-              className={`relative min-w-[64px] min-h-[48px] px-2.5 py-1 rounded-xl flex flex-col items-center justify-center gap-0.5 transition-colors z-10 cursor-pointer ${
+              className={`relative min-w-[72px] min-h-[48px] px-3 py-1.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors z-10 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary ${
                 isActive
-                  ? 'text-primary font-semibold'
-                  : 'text-on-surface-variant hover:text-on-surface'
+                  ? 'text-on-surface font-bold'
+                  : 'text-on-surface-variant hover:text-on-surface font-medium'
               }`}
             >
               {isActive && (
@@ -37,7 +36,7 @@ export const BottomNavigation = ({ activeTab, onSelectTab }) => {
                 />
               )}
               <Icon size={20} className="relative z-10" />
-              <span className="relative z-10 text-[11px] font-medium tracking-wide">{tab.label}</span>
+              <span className="relative z-10 text-xs font-medium tracking-wide">{tab.label}</span>
             </button>
           );
         })}
@@ -45,3 +44,4 @@ export const BottomNavigation = ({ activeTab, onSelectTab }) => {
     </nav>
   );
 };
+

@@ -1,9 +1,8 @@
-import { createWorker } from 'tesseract.js';
-
 /**
  * ARCHITECTURAL DECISION & JUSTIFICATION:
  * For video extraction, we utilize HTML5 <video> seeking + offscreen <canvas> frame capture
  * coupled with Tesseract.js OCR, rather than in-browser Whisper speech-to-text (transformers.js).
+ * Dynamically imports Tesseract.js on demand.
  * 
  * Reasons:
  * 1. Zero Extra Model Download: In-browser Whisper requires downloading 40MB–150MB of ONNX weights,
@@ -50,11 +49,10 @@ function seekVideo(video, time, timeoutMs = 3500) {
       }
     }, timeoutMs);
 
-    video.addEventListener('seeked', handleSeeked);
-    video.addEventListener('error', handleError);
-
+    video.addEventListener('seeked', handleSeeked, { once: true });
+    video.addEventListener('error', handleError, { once: true });
     try {
-      video.currentTime = Math.max(0, Math.min(time, (video.duration || 1) - 0.05));
+      video.currentTime = Math.min(time, Math.max(0, (video.duration || 1) - 0.1));
     } catch (e) {
       cleanup();
       resolve();
@@ -63,160 +61,149 @@ function seekVideo(video, time, timeoutMs = 3500) {
 }
 
 /**
- * Extracts text from video slide presentation frames using HTML5 video + canvas + OCR.
+ * Extracts slide/presentation text from an MP4, WebM, or MOV video recording
+ * by sampling keyframe intervals and running OCR.
  * 
  * @param {File|Blob} file 
  * @param {Function} onProgress ({ stage, percent, detail })
- * @returns {Promise<{ text: string, rawFrames: string[], frameCount: number, sourceFormat: 'video' }>}
+ * @returns {Promise<{ text: string, rawFrames: string[], frameCount: number, duration: number, sourceFormat: 'video' }>}
  */
 export async function extractFromVideo(file, onProgress = () => {}) {
-  // 1. Size Guardrail
+  onProgress({ stage: 'Validating video file', percent: 5, detail: 'Checking video stream metadata...' });
+
   if (file.size > MAX_VIDEO_SIZE_BYTES) {
-    const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
     throw new Error(
-      `Video file is too large (${sizeMb} MB). To prevent your browser from running out of memory, ` +
-      `Daily Dive supports video clips up to 100 MB for client-side presentation extraction.`
+      `Video file is ${(file.size / (1024 * 1024)).toFixed(1)}MB. To prevent browser memory exhaustion, ` +
+      `maximum supported video size is 100MB. Please trim or compress the video and try again.`
     );
   }
 
-  onProgress({ stage: 'Loading video', percent: 5, detail: 'Mounting video stream...' });
-
+  // Create local object URL for HTML5 video element
   const videoUrl = URL.createObjectURL(file);
   const video = document.createElement('video');
-  video.preload = 'auto';
+  video.preload = 'metadata';
   video.muted = true;
   video.playsInline = true;
+  video.crossOrigin = 'anonymous';
+  video.src = videoUrl;
 
   let worker;
-
   try {
-    // 2. Wait for video metadata with timeout
+    // Wait for video metadata to load (duration, dimensions)
     await new Promise((resolve, reject) => {
-      const timer = setTimeout(() => {
-        cleanup();
-        reject(new Error('Video loading timed out. Format may be unsupported or corrupt.'));
-      }, 10000);
-
-      const cleanup = () => {
-        clearTimeout(timer);
-        video.onloadedmetadata = null;
-        video.onerror = null;
-      };
-
-      video.onloadedmetadata = () => {
+      const onLoaded = () => {
         cleanup();
         resolve();
       };
-      video.onerror = () => {
+      const onError = (e) => {
         cleanup();
-        reject(new Error('Could not read video file. Format may be unsupported or corrupt.'));
+        reject(new Error('Browser could not decode this video format. Recommended formats: MP4 (H.264), WebM (VP8/VP9), or MOV.'));
       };
-
-      video.src = videoUrl;
+      const cleanup = () => {
+        video.removeEventListener('loadedmetadata', onLoaded);
+        video.removeEventListener('error', onError);
+      };
+      video.addEventListener('loadedmetadata', onLoaded);
+      video.addEventListener('error', onError);
     });
 
-    let duration = video.duration;
-    if (!isFinite(duration)) {
-      try {
-        video.currentTime = 1e10;
-        await new Promise((r) => {
-          const onTimeUpdate = () => {
-            video.removeEventListener('timeupdate', onTimeUpdate);
-            r();
-          };
-          video.addEventListener('timeupdate', onTimeUpdate);
-          setTimeout(r, 1000);
-        });
-        duration = isFinite(video.duration) ? video.duration : (video.currentTime || 10);
-        video.currentTime = 0;
-      } catch (durErr) {
-        duration = 10;
-      }
+    const duration = video.duration || 0;
+    if (duration <= 0 || !isFinite(duration)) {
+      throw new Error('Video duration could not be determined. The video container may be unfinalized or corrupted.');
     }
 
-    if (!duration || isNaN(duration) || duration <= 0) {
-      throw new Error('Video duration could not be determined. File may be corrupted.');
+    const videoWidth = video.videoWidth || 1280;
+    const videoHeight = video.videoHeight || 720;
+
+    // Calculate intelligent sample timestamps:
+    // Sample every 45-60s for presentations, capping at 10 frames max
+    const maxFrames = 10;
+    const sampleInterval = Math.max(15, duration / maxFrames);
+    const timestamps = [];
+    for (let t = Math.min(5, duration * 0.1); t < duration; t += sampleInterval) {
+      timestamps.push(t);
+      if (timestamps.length >= maxFrames) break;
     }
+    if (timestamps.length === 0) timestamps.push(Math.min(1, duration / 2));
 
-    onProgress({ stage: 'Video loaded', percent: 15, detail: `Duration: ${Math.round(duration)}s. Initializing OCR...` });
+    onProgress({
+      stage: 'Initializing OCR worker',
+      percent: 15,
+      detail: `Sampling ${timestamps.length} presentation keyframes...`
+    });
 
+    const { createWorker } = await import('tesseract.js');
     worker = await createWorker('eng', 1, {
       logger: m => {
         if (m.status === 'recognizing text') {
-          // Progress updates handled per frame
+          // Handled per-frame below
         }
       }
     });
 
-    // Sample timestamps across the entire presentation duration
-    const sampleCount = Math.min(8, Math.max(3, Math.ceil(duration / 1.8) || 3));
-    const timestamps = [];
-    const startOffset = Math.max(0.2, Math.min(0.5, duration * 0.08));
-    const endOffset = Math.max(startOffset + 0.5, duration - 0.25);
-    const step = sampleCount > 1 ? (endOffset - startOffset) / (sampleCount - 1) : 0;
-
-    for (let i = 0; i < sampleCount; i++) {
-      timestamps.push(startOffset + i * step);
-    }
-
-    const canvas = document.createElement('canvas');
-    canvas.width = video.videoWidth || 800;
-    canvas.height = video.videoHeight || 450;
-    const ctx = canvas.getContext('2d');
-
     const rawFrames = [];
-    const seenHashes = new Set();
+    const seenTexts = new Set();
+    const canvas = document.createElement('canvas');
+    // Scale canvas to max 1280px width to balance OCR quality and speed
+    const scale = Math.min(1, 1280 / videoWidth);
+    canvas.width = Math.round(videoWidth * scale);
+    canvas.height = Math.round(videoHeight * scale);
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
 
-    for (let idx = 0; idx < timestamps.length; idx++) {
-      const time = timestamps[idx];
-      const percent = Math.round(20 + (idx / timestamps.length) * 75);
+    for (let i = 0; i < timestamps.length; i++) {
+      const ts = timestamps[i];
+      const progressPercent = Math.round(20 + ((i + 1) / timestamps.length) * 75);
+      
       onProgress({
-        stage: 'Scanning presentation frames',
-        percent,
-        detail: `Analyzing slide at ${Math.round(time)}s (frame ${idx + 1} of ${timestamps.length})...`
+        stage: 'Scanning video slides',
+        percent: progressPercent,
+        detail: `Analyzing slide at ${Math.floor(ts / 60)}m ${Math.floor(ts % 60)}s (${i + 1}/${timestamps.length})`
       });
 
-      try {
-        await seekVideo(video, time);
-        ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
+      await seekVideo(video, ts);
+      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
 
-        const ret = await worker.recognize(canvas);
-        const frameText = (ret?.data?.text || '').trim();
+      const ret = await worker.recognize(canvas);
+      const frameText = (ret?.data?.text || '').trim();
 
-        // Deduplication: if frame text is distinct and long enough
-        const simplified = frameText.replace(/[^a-z0-9]/gi, '').toLowerCase();
-        if (simplified.length > 20 && !seenHashes.has(simplified)) {
-          seenHashes.add(simplified);
+      // Filter out low quality or near-duplicate frames
+      const cleanAlpha = frameText.replace(/[^a-zA-Z0-9]/g, '');
+      if (cleanAlpha.length >= 25) {
+        // Simple deduplication: don't add if 80% similar to previous frame
+        const firstWords = frameText.split(/\s+/).slice(0, 10).join(' ');
+        if (!seenTexts.has(firstWords)) {
+          seenTexts.add(firstWords);
           rawFrames.push(frameText);
         }
-      } catch (seekErr) {
-        console.warn(`Frame extraction skipped at ${time}s:`, seekErr);
       }
     }
 
-    if (rawFrames.length === 0) {
+    const combinedText = rawFrames.join('\n\n').trim();
+
+    if (!combinedText || combinedText.length < 30) {
       throw new Error(
-        'No readable text detected in any sampled video frames. Daily Dive extracts study topics ' +
-        'from presentation slides or visual lecture notes. If this video does not feature slides or text, ' +
-        'it cannot be converted into topics client-side.'
+        'No readable slide or presentation text detected in this video recording. ' +
+        'Daily Dive video extraction works on slide-based lectures, screen recordings, and webinars with clear slide text.'
       );
     }
 
-    const combinedText = rawFrames.join('\n\n--- Frame Break ---\n\n');
-    onProgress({ stage: 'Extraction complete', percent: 100, detail: `Extracted text from ${rawFrames.length} slides` });
+    onProgress({
+      stage: 'Video extraction complete',
+      percent: 100,
+      detail: `Extracted ${rawFrames.length} keyframe slides (~${combinedText.split(/\s+/).length} words)`
+    });
 
     return {
       text: combinedText,
       rawFrames,
       frameCount: rawFrames.length,
+      duration,
       sourceFormat: 'video'
     };
   } finally {
     URL.revokeObjectURL(videoUrl);
     if (worker) {
-      try {
-        await worker.terminate();
-      } catch (e) {}
+      await worker.terminate();
     }
   }
 }

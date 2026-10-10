@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { AudioController } from '../../lib/audio';
@@ -6,10 +6,7 @@ import { CATEGORY_TREE } from '../../lib/roulette';
 import {
   RotateCw,
   BookOpen,
-  FileText,
-  Layers,
   ExternalLink,
-  FilterX,
   Bot,
   Cloud,
   Binary,
@@ -23,146 +20,45 @@ import {
   Sparkles,
   Share2,
   Clock,
-  ShieldCheck,
-  Target,
   Briefcase,
   Atom,
   Landmark,
-  X,
-  Sliders
+  Flame
 } from 'lucide-react';
 import confetti from 'canvas-confetti';
 import { Button } from '../UI/Button';
 import { Skeleton } from '../UI/Skeleton';
+import { requestStoragePersistence } from '../../lib/storage';
 
-// Visual metadata for categories: icons, short display labels, tonal variations, and accent styles
+// Visual metadata for categories
 const CATEGORY_META = {
-  // ── Tech Family ──
-  'ai-ml': {
-    icon: Bot,
-    shortLabel: 'AI & Machine Learning',
-    groupColor: 'text-primary font-semibold',
-    bgBadge: 'bg-primary/15 text-primary border-primary/30',
-    borderActive: 'border-primary',
-    glow: 'shadow-primary/40',
-    accentColor: '#e06841'
-  },
-  'cloud-infra': {
-    icon: Cloud,
-    shortLabel: 'Cloud & Infrastructure',
-    groupColor: 'text-primary/90',
-    bgBadge: 'bg-primary/10 text-primary/90 border-primary/25',
-    borderActive: 'border-primary/90',
-    glow: 'shadow-primary/30',
-    accentColor: '#d95a32'
-  },
-  'data-structures-algorithms': {
-    icon: Binary,
-    shortLabel: 'Algorithms & Data',
-    groupColor: 'text-inverse-primary',
-    bgBadge: 'bg-primary-fixed-dim/25 text-inverse-primary border-inverse-primary/30',
-    borderActive: 'border-inverse-primary',
-    glow: 'shadow-primary/45',
-    accentColor: '#e87a52'
-  },
-  'systems-distributed-computing': {
-    icon: Cpu,
-    shortLabel: 'Distributed Systems',
-    groupColor: 'text-primary/80',
-    bgBadge: 'bg-primary/10 text-primary/80 border-primary/20',
-    borderActive: 'border-primary/80',
-    glow: 'shadow-primary/25',
-    accentColor: '#c5532b'
-  },
-  'web-dev': {
-    icon: Globe,
-    shortLabel: 'Modern Web Architecture',
-    groupColor: 'text-primary-fixed-dim font-medium',
-    bgBadge: 'bg-primary-fixed/30 text-primary-fixed-dim border-primary-fixed-dim/40',
-    borderActive: 'border-primary-fixed-dim',
-    glow: 'shadow-primary/35',
-    accentColor: '#e87a52'
-  },
-
-  // ── Money & Career Family ──
-  'finance': {
-    icon: Wallet,
-    shortLabel: 'Finance & Capital',
-    groupColor: 'text-tertiary',
-    bgBadge: 'bg-tertiary/15 text-tertiary border-tertiary/30',
-    borderActive: 'border-tertiary',
-    glow: 'shadow-tertiary/40',
-    accentColor: '#f59e0b'
-  },
-
-  // ── Mind & Growth Family ──
-  'communication': {
-    icon: MessageSquare,
-    shortLabel: 'High-Stakes Communication',
-    groupColor: 'text-secondary font-semibold',
-    bgBadge: 'bg-secondary/15 text-secondary border-secondary/30',
-    borderActive: 'border-secondary',
-    glow: 'shadow-secondary/40',
-    accentColor: '#94a88f'
-  },
-  'philosophy-critical-thinking': {
-    icon: Compass,
-    shortLabel: 'Mental Models & Logic',
-    groupColor: 'text-secondary-fixed-dim',
-    bgBadge: 'bg-secondary-fixed-dim/25 text-secondary-fixed-dim border-secondary-fixed-dim/30',
-    borderActive: 'border-secondary-fixed-dim',
-    glow: 'shadow-secondary/35',
-    accentColor: '#a3b89e'
-  },
-  'psychology': {
-    icon: Brain,
-    shortLabel: 'Cognitive Psychology',
-    groupColor: 'text-secondary/85',
-    bgBadge: 'bg-secondary/10 text-secondary/85 border-secondary/20',
-    borderActive: 'border-secondary/85',
-    glow: 'shadow-secondary/25',
-    accentColor: '#84977f'
-  },
-
-  // ── Extended & World Ideas ──
-  'career-strategy': {
-    icon: Briefcase,
-    shortLabel: 'Career & Leadership',
-    groupColor: 'text-tertiary-fixed-dim font-medium',
-    bgBadge: 'bg-tertiary/10 text-tertiary border-tertiary/25',
-    borderActive: 'border-tertiary',
-    glow: 'shadow-tertiary/30',
-    accentColor: '#eab308'
-  },
-  'science-nature': {
-    icon: Atom,
-    shortLabel: 'Science & Cosmos',
-    groupColor: 'text-cyan-400 font-semibold',
-    bgBadge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/25',
-    borderActive: 'border-cyan-400',
-    glow: 'shadow-cyan-500/30',
-    accentColor: '#06b6d4'
-  },
-  'history-innovation': {
-    icon: Landmark,
-    shortLabel: 'History & Civilization',
-    groupColor: 'text-amber-400 font-semibold',
-    bgBadge: 'bg-amber-500/10 text-amber-400 border-amber-500/25',
-    borderActive: 'border-amber-400',
-    glow: 'shadow-amber-500/30',
-    accentColor: '#f59e0b'
-  }
+  'ai-ml': { icon: Bot, shortLabel: 'AI & Machine Learning', bgBadge: 'bg-primary/20 text-on-surface border-primary/40', accentColor: '#e06841' },
+  'cloud-infra': { icon: Cloud, shortLabel: 'Cloud & Infrastructure', bgBadge: 'bg-primary/20 text-on-surface border-primary/40', accentColor: '#d95a32' },
+  'data-structures-algorithms': { icon: Binary, shortLabel: 'Algorithms & Data', bgBadge: 'bg-primary/20 text-on-surface border-primary/40', accentColor: '#e87a52' },
+  'systems-distributed-computing': { icon: Cpu, shortLabel: 'Distributed Systems', bgBadge: 'bg-primary/20 text-on-surface border-primary/40', accentColor: '#c5532b' },
+  'web-dev': { icon: Globe, shortLabel: 'Web Architecture', bgBadge: 'bg-primary/20 text-on-surface border-primary/40', accentColor: '#e87a52' },
+  'finance': { icon: Wallet, shortLabel: 'Finance & Capital', bgBadge: 'bg-tertiary/20 text-on-surface border-tertiary/40', accentColor: '#f59e0b' },
+  'communication': { icon: MessageSquare, shortLabel: 'Communication', bgBadge: 'bg-secondary/20 text-on-surface border-secondary/40', accentColor: '#94a88f' },
+  'philosophy-critical-thinking': { icon: Compass, shortLabel: 'Mental Models', bgBadge: 'bg-secondary/20 text-on-surface border-secondary/40', accentColor: '#a3b89e' },
+  'psychology': { icon: Brain, shortLabel: 'Cognitive Psychology', bgBadge: 'bg-secondary/20 text-on-surface border-secondary/40', accentColor: '#84977f' },
+  'career-strategy': { icon: Briefcase, shortLabel: 'Career Strategy', bgBadge: 'bg-tertiary/20 text-on-surface border-tertiary/40', accentColor: '#eab308' },
+  'science-nature': { icon: Atom, shortLabel: 'Science & Cosmos', bgBadge: 'bg-cyan-500/20 text-on-surface border-cyan-500/40', accentColor: '#06b6d4' },
+  'history-innovation': { icon: Landmark, shortLabel: 'History of Ideas', bgBadge: 'bg-amber-500/20 text-on-surface border-amber-500/40', accentColor: '#f59e0b' }
 };
 
-const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
+const GROUP_SHORT_LABELS = {
+  'tech': 'Tech',
+  'money-career': 'Money',
+  'mind-growth': 'Mind',
+  'world-ideas': 'World'
+};
+
+export const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
   groupDef.categories.map(cat => {
     const meta = CATEGORY_META[cat.name] || {
       icon: Cpu,
       shortLabel: cat.label,
-      groupColor: 'text-primary',
       bgBadge: 'bg-primary/10 text-primary border-primary/20',
-      borderActive: 'border-primary',
-      glow: 'shadow-primary/30',
       accentColor: '#e06841'
     };
     return {
@@ -175,125 +71,66 @@ const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
   })
 );
 
-const REEL_CATEGORIES = [
-  ...BASE_REEL_CATEGORIES,
-  {
-    group: 'custom',
-    groupLabel: 'Custom',
-    name: 'custom-notes',
-    label: 'Custom Uploads',
-    icon: Sparkles,
-    shortLabel: 'Custom Uploads',
-    groupColor: 'text-primary font-semibold',
-    bgBadge: 'bg-primary/15 text-primary border-primary/30',
-    borderActive: 'border-primary',
-    glow: 'shadow-primary/40',
-    accentColor: '#e06841'
-  }
-];
-
-// Strip geometry constants
 const REPEAT_COUNT = 14;
-const REEL_STRIP = Array.from({ length: REPEAT_COUNT }, (_, r) =>
-  REEL_CATEGORIES.map(cat => ({ ...cat, repeatIdx: r }))
-).flat();
-
-const ITEM_WIDTH = 152;
-const ITEM_GAP = 14;
-const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 166px
-
-// Physics Easing & Timing Specification:
-// High-inertia burst with magnetic snap deceleration: cubic-bezier(0.12, 0.98, 0.24, 1.0)
+const ITEM_WIDTH = 104;
+const ITEM_GAP = 10;
+const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 114px
 const SPIN_DURATION_MS = 2800;
 const SPIN_EASING = [0.12, 0.98, 0.24, 1.0];
 
-// Precision Dial Card with 3D Depth Curve
 const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarget }) => {
   const Icon = item.icon;
   const cardCenter = idx * ITEM_STEP + ITEM_WIDTH / 2;
 
-  // Real-time distance to center reticle
   const scale = useTransform(motionX, (curX) => {
     const dist = Math.abs(curX + cardCenter - containerWidth / 2);
-    // At center: 1.0; tapering to 0.84 at 2.2 cards away
     const t = Math.min(1, dist / (2.2 * ITEM_STEP));
-    return 1.0 - (t * 0.16);
-  });
-
-  const opacity = useTransform(motionX, (curX) => {
-    const dist = Math.abs(curX + cardCenter - containerWidth / 2);
-    // At center: 1.0; tapering to 0.32 at edges
-    const t = Math.min(1, dist / (2.4 * ITEM_STEP));
-    return 1.0 - (t * 0.68);
-  });
-
-  const yOffset = useTransform(motionX, (curX) => {
-    const dist = Math.abs(curX + cardCenter - containerWidth / 2);
-    const t = Math.min(1, dist / (2 * ITEM_STEP));
-    return t * 4; // subtle arch effect
+    return 1.0 - (t * 0.12);
   });
 
   return (
     <motion.div
-      style={{
-        width: `${ITEM_WIDTH}px`,
-        scale,
-        opacity,
-        y: yOffset
-      }}
+      style={{ width: `${ITEM_WIDTH}px`, scale }}
       className="shrink-0 flex items-center justify-center select-none"
     >
-      <motion.div
-        animate={
+      <div
+        className={`w-full h-20 rounded-2xl p-2 flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${
           isSelectedTarget
-            ? {
-                scale: [1, 1.06, 0.99, 1],
-                transition: { duration: 0.45, ease: [0.34, 1.56, 0.64, 1] }
-              }
-            : { scale: 1 }
-        }
-        className={`w-full h-24 rounded-2xl p-3 flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${
-          isSelectedTarget
-            ? 'bg-surface-container-high border-2 border-primary ring-4 ring-primary/20 shadow-xl'
-            : 'bg-surface-container-low/90 dark:bg-surface-container-lowest/80 border border-outline-variant/30 hover:border-outline-variant/60 shadow-sm'
+            ? 'bg-surface-container-high border-2 border-primary ring-2 ring-primary/20 shadow-md'
+            : 'bg-surface-container-high border border-outline-variant/40 shadow-xs'
         }`}
       >
-        {/* Subtle radial sheen on active card */}
-        {isSelectedTarget && (
-          <div className="absolute inset-0 bg-gradient-to-tr from-primary/10 via-transparent to-primary/5 pointer-events-none" />
-        )}
-
-        {/* Top Meta: Group badge + Category Icon */}
         <div className="flex items-center justify-between relative z-10">
           <span className={`text-[9px] font-mono uppercase tracking-wider font-bold px-1.5 py-0.5 rounded-full border ${item.bgBadge}`}>
-            {item.groupLabel}
+            {GROUP_SHORT_LABELS[item.group] || item.groupLabel}
           </span>
-          <div className={`w-6 h-6 rounded-lg flex items-center justify-center bg-surface-container ${isSelectedTarget ? 'text-primary ring-1 ring-primary/40' : 'text-on-surface-variant'}`}>
-            <Icon size={14} />
+          <div className={`w-4 h-4 rounded-md flex items-center justify-center bg-surface-container ${isSelectedTarget ? 'text-primary' : 'text-on-surface'}`}>
+            <Icon size={11} />
           </div>
         </div>
 
-        {/* Bottom Details */}
         <div className="relative z-10">
-          <div className="text-xs font-semibold text-on-surface truncate leading-tight tracking-tight">
+          <div className="text-[11px] font-semibold text-on-surface truncate leading-tight">
             {item.shortLabel}
           </div>
-          <div className="text-[10px] text-on-surface-variant font-mono truncate mt-0.5">
-            {item.label}
-          </div>
         </div>
-      </motion.div>
+      </div>
     </motion.div>
   );
 };
 
-export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
+export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtract }) => {
+  const navigateToLibrary = onNavigateLibrary || onNavigateFilter || onNavigateExtract;
   const {
     topics,
     eligibleTopics,
     currentTopic,
+    setCurrentTopic,
     userProgressMap,
     userSettings,
+    userStreaks,
+    effectiveStreak,
+    history = [],
     updateSettings,
     spinNextTopic,
     markCurrentTopicLearned,
@@ -302,58 +139,110 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     loadingData
   } = useData();
 
-  const [showFirstRunPicker, setShowFirstRunPicker] = useState(() => {
-    if (typeof window === 'undefined') return false;
-    return !localStorage.getItem('daily_dive_first_run_dismissed');
-  });
-
-  const selectedSource = userSettings?.content_source || 'curated';
-
-  const handleSelectContentSource = (source) => {
-    let currentCategories = { ...(userSettings?.enabled_categories || {}) };
-    if (source === 'custom') {
-      currentCategories['custom'] = true;
-      currentCategories['custom::custom-notes'] = true;
-    } else if (source === 'curated') {
-      currentCategories['custom'] = false;
-      currentCategories['custom::custom-notes'] = false;
-    } else if (source === 'blended') {
-      currentCategories['custom'] = true;
-      currentCategories['custom::custom-notes'] = true;
+  // Determine if user has spun before (returning user vs first-run)
+  const hasSpunBefore = useMemo(() => {
+    const hasHistory = (history || []).some(h => h.action === 'spin' || h.action === 'learned');
+    const hasProgress = Object.values(userProgressMap || {}).some(p => (p.times_seen || 0) > 0);
+    if (typeof window !== 'undefined') {
+      const storedFlag = localStorage.getItem('daily_dive_has_spun') === 'true';
+      return hasHistory || hasProgress || storedFlag;
     }
-    updateSettings({
-      content_source: source,
-      enabled_categories: currentCategories
-    });
-  };
+    return hasHistory || hasProgress;
+  }, [history, userProgressMap]);
+
+  // Group toggles state on Spin Screen (all 4 ON by default on first run)
+  const [spinGroupState, setSpinGroupState] = useState(() => {
+    if (typeof window !== 'undefined') {
+      try {
+        const saved = localStorage.getItem('daily_dive_spin_groups');
+        if (saved) return JSON.parse(saved);
+      } catch (e) {}
+    }
+    return {
+      'tech': true,
+      'money-career': true,
+      'mind-growth': true,
+      'world-ideas': true
+    };
+  });
 
   const toggleBroadGroup = (groupKey) => {
     const groupDef = CATEGORY_TREE.find(g => g.group === groupKey);
     if (!groupDef) return;
+
+    const nextState = { ...spinGroupState };
+    const isCurrentlyOn = nextState[groupKey] !== false;
+    const activeCount = CATEGORY_TREE.filter(g => nextState[g.group] !== false).length;
+
+    if (isCurrentlyOn && activeCount <= 1) {
+      if (showToast) showToast('At least one topic group must remain active.', 'warning');
+      return;
+    }
+
+    const nextVal = !isCurrentlyOn;
+    nextState[groupKey] = nextVal;
+    setSpinGroupState(nextState);
+
+    try {
+      localStorage.setItem('daily_dive_spin_groups', JSON.stringify(nextState));
+    } catch (e) {}
+
     const currentCategories = { ...(userSettings?.enabled_categories || {}) };
-    
-    // Check if group is currently active
-    const isCurrentlyOn = currentCategories[groupKey] !== false;
-    const nextState = !isCurrentlyOn;
-    
-    currentCategories[groupKey] = nextState;
+    currentCategories[groupKey] = nextVal;
     groupDef.categories.forEach(cat => {
-      currentCategories[`${groupKey}::${cat.name}`] = nextState;
-      currentCategories[cat.name] = nextState;
+      currentCategories[`${groupKey}::${cat.name}`] = nextVal;
+      currentCategories[cat.name] = nextVal;
+    });
+
+    // Ensure any other group active in spinGroupState is also active in enabled_categories
+    CATEGORY_TREE.forEach(g => {
+      if (g.group !== groupKey && nextState[g.group] !== false && currentCategories[g.group] === false) {
+        currentCategories[g.group] = true;
+        g.categories.forEach(c => {
+          currentCategories[`${g.group}::${c.name}`] = true;
+          currentCategories[c.name] = true;
+        });
+      }
     });
 
     updateSettings({ enabled_categories: currentCategories });
   };
 
-  const handleDismissFirstRun = () => {
-    setShowFirstRunPicker(false);
-    try {
-      localStorage.setItem('daily_dive_first_run_dismissed', 'true');
-    } catch (e) {}
-  };
+  // Derive active reel categories strictly from enabled categories & custom pool
+  const activeReelCategories = useMemo(() => {
+    const enabledMap = userSettings?.enabled_categories || {};
+    const filtered = BASE_REEL_CATEGORIES.filter(cat => {
+      if (spinGroupState[cat.group] === false) return false;
+      if (enabledMap[cat.group] === false) return false;
+      if (enabledMap[`${cat.group}::${cat.name}`] === false) return false;
+      return true;
+    });
+
+    const hasCustom = (topics || []).some(t => t.is_custom);
+    if (hasCustom && enabledMap['custom'] !== false) {
+      filtered.push({
+        group: 'custom',
+        groupLabel: 'Custom',
+        name: 'custom-notes',
+        label: 'Custom Notes',
+        icon: Sparkles,
+        shortLabel: 'Custom Notes',
+        bgBadge: 'bg-primary/15 text-primary border-primary/30',
+        accentColor: '#e06841'
+      });
+    }
+
+    return filtered.length > 0 ? filtered : BASE_REEL_CATEGORIES;
+  }, [userSettings?.enabled_categories, spinGroupState, topics]);
+
+  const reelStrip = useMemo(() => {
+    return Array.from({ length: REPEAT_COUNT }, (_, r) =>
+      activeReelCategories.map(cat => ({ ...cat, repeatIdx: r }))
+    ).flat();
+  }, [activeReelCategories]);
 
   const containerRef = useRef(null);
-  const [containerWidth, setContainerWidth] = useState(580);
+  const [containerWidth, setContainerWidth] = useState(358);
   const [isSpinning, setIsSpinning] = useState(false);
   const [showResult, setShowResult] = useState(false);
   const [isLanded, setIsLanded] = useState(false);
@@ -362,39 +251,23 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
 
   const [reelIndex, setReelIndex] = useState(() => {
     const initCat = currentTopic?.category || currentTopic?.sub;
-    const foundIdx = REEL_CATEGORIES.findIndex(c => c.name === initCat);
-    return (3 * REEL_CATEGORIES.length) + (foundIdx >= 0 ? foundIdx : 0);
+    const foundIdx = activeReelCategories.findIndex(c => c.name === initCat);
+    return (3 * activeReelCategories.length) + (foundIdx >= 0 ? foundIdx : 0);
   });
 
-  const [tickerText, setTickerText] = useState('DAILY DIVE · READY TO SPIN');
-  const [tickerActive, setTickerActive] = useState(false);
-
-  // Exact center coordinate formula
   const translateX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
   const motionX = useMotionValue(translateX);
 
-  // Synchronize motion value when resized or idle
   useEffect(() => {
     if (!isSpinning) {
       motionX.set(translateX);
     }
   }, [translateX, isSpinning, motionX]);
 
-  // Audio-sync tracking refs
   const lastFiredIndexRef = useRef(-1);
   const spinStartTimeRef = useRef(0);
   const isSpinningRef = useRef(false);
 
-  // Sync ticker with pool updates
-  useEffect(() => {
-    if (loadingData) {
-      setTickerText('SYNCHRONIZING TOPIC ARCHIVE...');
-    } else if (!isSpinning && !isLanded) {
-      setTickerText('DAILY DIVE · READY TO SPIN');
-    }
-  }, [isSpinning, isLanded, loadingData]);
-
-  // Measure container width for center alignment
   useEffect(() => {
     const updateWidth = () => {
       if (containerRef.current) {
@@ -407,6 +280,29 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     return () => ro.disconnect();
   }, []);
 
+  // Check URL deeplink ?t=<slug> on mount
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const slugParam = params.get('t');
+      if (!slugParam) return;
+      const cleanSlug = slugParam.trim().toLowerCase();
+      const matched = topics?.find(t => {
+        const idMatch = t.id && t.id.toLowerCase() === cleanSlug;
+        const slugMatch = t.slug && t.slug.toLowerCase() === cleanSlug;
+        const titleSlug = t.title ? t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+        return idMatch || slugMatch || titleSlug === cleanSlug;
+      });
+
+      if (matched) {
+        setCurrentTopic(matched);
+        setShowResult(true);
+        setIsLanded(true);
+      }
+    } catch (e) {}
+  }, [topics, setCurrentTopic]);
+
   // Keyboard shortcut: Space triggers spin
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -417,16 +313,50 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [isSpinning, eligibleTopics, showToast, onNavigateFilter]);
+  }, [isSpinning, eligibleTopics, showToast, navigateToLibrary]);
+
+  const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   const handleSpin = () => {
     if (isSpinning) return;
 
     if (eligibleTopics.length === 0) {
       if (showToast) {
-        showToast("All topics are currently filtered out. Enable categories in the Filter tab to spin.", "warning");
+        showToast('All topics are currently filtered out. Choose interests in Library to spin.', 'warning');
       }
-      if (onNavigateFilter) onNavigateFilter();
+      if (navigateToLibrary) navigateToLibrary();
+      return;
+    }
+
+    const isReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    try {
+      localStorage.setItem('daily_dive_has_spun', 'true');
+    } catch (e) {}
+
+    AudioController.init();
+    const selected = spinNextTopic();
+    requestStoragePersistence().catch(() => {});
+
+    const targetCat = selected?.category || selected?.sub;
+    let foundIdx = activeReelCategories.findIndex(c => c.name === targetCat);
+    if (foundIdx < 0 && selected?.is_custom) {
+      foundIdx = activeReelCategories.findIndex(c => c.name === 'custom-notes');
+    }
+    const baseIndex = foundIdx >= 0 ? foundIdx : 0;
+
+    const landedCatDef = activeReelCategories[baseIndex];
+
+    if (isReduced) {
+      isSpinningRef.current = false;
+      setIsSpinning(false);
+      setShowResult(true);
+      setIsLanded(true);
+      AudioController.playLanding();
+      setActiveAccentColor(landedCatDef?.accentColor || '#e06841');
+      setShowLandingHalo(true);
+      setTimeout(() => setShowLandingHalo(false), 400);
+      setReelIndex(baseIndex + (3 * activeReelCategories.length));
       return;
     }
 
@@ -438,28 +368,13 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
     setShowResult(false);
     setIsLanded(false);
     setShowLandingHalo(false);
-    setTickerActive(true);
-    setTickerText("ENGAGING ROTATIONAL INERTIA · DECELERATING...");
 
-    AudioController.init();
     AudioController.playWhoosh(SPIN_DURATION_MS);
 
-    // Call underlying roulette selection logic (unchanged)
-    const selected = spinNextTopic();
-
-    // Map selected topic to its category card in REEL_CATEGORIES
-    const targetCat = selected?.category || selected?.sub;
-    let foundIdx = REEL_CATEGORIES.findIndex(c => c.name === targetCat);
-    if (foundIdx < 0 && selected?.is_custom) {
-      foundIdx = REEL_CATEGORIES.findIndex(c => c.name === 'custom-notes');
-    }
-    const baseIndex = foundIdx >= 0 ? foundIdx : 0;
-
-    // Advance forward 4 full cycles + offset for satisfying suspense
-    const currentBase = reelIndex % REEL_CATEGORIES.length;
+    const currentBase = reelIndex % activeReelCategories.length;
     let forwardOffset = baseIndex - currentBase;
-    if (forwardOffset <= 0) forwardOffset += REEL_CATEGORIES.length;
-    const travelCards = (4 * REEL_CATEGORIES.length) + forwardOffset;
+    if (forwardOffset <= 0) forwardOffset += activeReelCategories.length;
+    const travelCards = (4 * activeReelCategories.length) + forwardOffset;
     const targetIndex = reelIndex + travelCards;
     setReelIndex(targetIndex);
 
@@ -468,650 +383,458 @@ export const SpinScreen = ({ onNavigateFilter, onNavigateExtract }) => {
       setIsSpinning(false);
       setShowResult(true);
       setIsLanded(true);
-      setTickerActive(false);
-
-      const groupName = (selected?.group_name || selected?.group || 'TOPIC').toUpperCase();
-      const landedCatDef = REEL_CATEGORIES[baseIndex];
-      const catLabel = (landedCatDef?.label || selected?.category || '').toUpperCase();
-      setTickerText(`RETICLE LOCKED · ${groupName} / ${catLabel}`);
 
       AudioController.playLanding();
-
       setActiveAccentColor(landedCatDef?.accentColor || '#e06841');
       setShowLandingHalo(true);
       setTimeout(() => setShowLandingHalo(false), 800);
 
-      // Subtle celebration particles
       try {
         confetti({
-          particleCount: 50,
-          spread: 70,
-          origin: { y: 0.62 },
+          particleCount: 40,
+          spread: 60,
+          origin: { y: 0.6 },
           colors: ['#e06841', '#f59e0b', '#94a88f', '#ff8c69']
         });
       } catch (e) {}
 
-      // Mobile haptics
       if (userSettings?.haptics_enabled && navigator.vibrate) {
         try { navigator.vibrate([30, 50, 90]); } catch (e) {}
       }
 
-      // Silently normalize reel index back to repetition 3 so the strip never runs out
       setTimeout(() => {
-        setReelIndex(prev => (prev % REEL_CATEGORIES.length) + (3 * REEL_CATEGORIES.length));
+        setReelIndex(prev => (prev % activeReelCategories.length) + (3 * activeReelCategories.length));
       }, 500);
     }, SPIN_DURATION_MS);
   };
 
   const handleMarkLearned = async () => {
     await markCurrentTopicLearned();
-    try {
-      confetti({
-        particleCount: 45,
-        spread: 60,
-        origin: { y: 0.8 },
-        colors: ['#e06841', '#f59e0b', '#94a88f']
-      });
-    } catch (e) {}
+    const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (!prefersReducedMotion) {
+      try {
+        confetti({
+          particleCount: 35,
+          spread: 50,
+          origin: { y: 0.7 },
+          colors: ['#e06841', '#f59e0b', '#94a88f']
+        });
+      } catch (e) {}
+    }
     if (showToast) {
-      showToast("Topic recorded in your learning journal!", "success");
+      showToast('Topic recorded in your journal!', 'success');
     }
   };
 
-  const handleCopySummary = () => {
+  const handleShareTopic = async () => {
     if (!currentTopic) return;
-    const textToCopy = `Daily Dive: ${currentTopic.title}\n\n${currentTopic.description || currentTopic.desc}\n\nLearn more: https://daily-dive.vercel.app`;
+    const slug = currentTopic.slug || currentTopic.id || (currentTopic.title ? currentTopic.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : 'topic');
+    const origin = typeof window !== 'undefined' ? window.location.origin : 'https://daily-dive.vercel.app';
+    const shareUrl = `${origin}/?t=${encodeURIComponent(slug)}`;
+    const shareData = {
+      title: `Daily Dive: ${currentTopic.title}`,
+      text: `Explore today's concept on Daily Dive: ${currentTopic.title}`,
+      url: shareUrl
+    };
+
+    if (typeof navigator !== 'undefined' && navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+      try {
+        await navigator.share(shareData);
+        return;
+      } catch (err) {
+        if (err.name === 'AbortError') return;
+      }
+    }
+
     try {
-      navigator.clipboard.writeText(textToCopy);
+      await navigator.clipboard.writeText(shareUrl);
       if (showToast) {
-        showToast("Topic insight copied to clipboard!", "info");
+        showToast('Link copied to clipboard!', 'info');
       }
     } catch (e) {
-      if (showToast) showToast("Could not copy text", "error");
+      if (showToast) showToast('Could not copy link', 'error');
     }
   };
+
+  const streak = (effectiveStreak || userStreaks)?.current_streak || 0;
+  
+  // Calculate review queue count
+  const toReviewCount = useMemo(() => {
+    return Object.values(userProgressMap || {}).filter(p => (p.times_seen || 0) > 0).length;
+  }, [userProgressMap]);
 
   const topicProgress = currentTopic ? userProgressMap[currentTopic.id] : null;
   const isLearned = topicProgress && topicProgress.times_seen > 0;
-  const timesSeen = topicProgress?.times_seen || 0;
-  const group = currentTopic?.group_name || currentTopic?.group || 'General';
-  const category = currentTopic?.category || currentTopic?.sub || '';
-  const rawTags = currentTopic?.tags || [];
-  const tags = Array.isArray(rawTags)
-    ? rawTags.flatMap(t => typeof t === 'string' ? t.split(/[;,]/) : []).map(t => t.trim()).filter(Boolean)
-    : [];
   const resources = currentTopic?.resources || currentTopic?.links || [];
 
   return (
-    <div className="flex flex-col w-full max-w-2xl mx-auto pb-6">
+    <div className="flex flex-col w-full max-w-xl mx-auto pb-4">
       
-      {/* ── UNIFIED FIRST-RUN WELCOME: CONTENT SOURCE & STARTER CATEGORY ONBOARDING ── */}
-      <AnimatePresence>
-        {showFirstRunPicker && (
-          <motion.div
-            data-testid="first-run-picker"
-            initial={{ opacity: 0, y: -8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.3, ease: 'easeOut' }}
-            className="w-full mb-4"
-          >
-            <div className="journal-card rounded-2xl p-4 sm:p-5 border border-primary/30 bg-surface-container-low shadow-lg relative">
-              <button
-                type="button"
-                onClick={handleDismissFirstRun}
-                className="absolute top-3.5 right-3.5 p-1 rounded-lg text-outline hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
-                title="Dismiss welcome guide"
-                aria-label="Dismiss welcome guide"
-              >
-                <X size={16} />
-              </button>
-
-              <div className="flex items-center gap-2 mb-1.5">
-                <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-mono font-semibold tracking-wider uppercase bg-primary/10 text-primary border border-primary/25">
-                  <Sparkles size={11} /> First-Run Onboarding
-                </span>
-                <span className="text-[11px] font-mono text-outline">
-                  {eligibleTopics.length} topics ready in pool
-                </span>
-              </div>
-
-              <h2 className="font-display text-base sm:text-lg font-bold text-on-surface">
-                Welcome to Daily Dive
-              </h2>
-              <p className="text-xs sm:text-sm text-on-surface-variant mt-1 leading-relaxed max-w-xl">
-                Configure your learning intake in one place. Choose your primary content stream and customize your starter focus areas:
-              </p>
-
-              {/* ── STEP 1: CONTENT SOURCE SELECTION ── */}
-              <div className="mt-4 pt-3 border-t border-outline-variant/15">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-outline flex items-center gap-1.5">
-                    <Layers size={13} className="text-primary" /> 1. Content Source Stream
-                  </span>
-                  <span className="text-[10px] font-mono font-semibold px-2 py-0.5 rounded-md bg-primary/10 text-primary">
-                    {selectedSource === 'curated' && 'Curated Syllabus'}
-                    {selectedSource === 'custom' && 'Custom Intake'}
-                    {selectedSource === 'blended' && 'Blended Mode'}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-3 gap-2">
-                  {/* Curated Syllabus */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectContentSource('curated')}
-                    className={`flex flex-col p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
-                      selectedSource === 'curated'
-                        ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
-                        : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full mb-1">
-                      <div className="flex items-center gap-1.5">
-                        <BookOpen size={13} className={selectedSource === 'curated' ? 'text-primary' : 'text-outline'} />
-                        <span className={`text-[11px] font-bold ${selectedSource === 'curated' ? 'text-primary' : 'text-on-surface'}`}>
-                          Curated Syllabus
-                        </span>
-                      </div>
-                      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${selectedSource === 'curated' ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
-                        {selectedSource === 'curated' ? '✓' : ''}
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-outline leading-tight mt-0.5">
-                      692 vetted topics across Tech, Money, Mind &amp; Ideas.
-                    </span>
-                  </button>
-
-                  {/* Custom Document Intake */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectContentSource('custom')}
-                    className={`flex flex-col p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
-                      selectedSource === 'custom'
-                        ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
-                        : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full mb-1">
-                      <div className="flex items-center gap-1.5">
-                        <FileText size={13} className={selectedSource === 'custom' ? 'text-primary' : 'text-outline'} />
-                        <span className={`text-[11px] font-bold ${selectedSource === 'custom' ? 'text-primary' : 'text-on-surface'}`}>
-                          Custom Intake
-                        </span>
-                      </div>
-                      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${selectedSource === 'custom' ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
-                        {selectedSource === 'custom' ? '✓' : ''}
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-outline leading-tight mt-0.5">
-                      Focus on uploaded PDFs, slides &amp; research notes.
-                    </span>
-                  </button>
-
-                  {/* Blended Mode */}
-                  <button
-                    type="button"
-                    onClick={() => handleSelectContentSource('blended')}
-                    className={`flex flex-col p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
-                      selectedSource === 'blended'
-                        ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
-                        : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
-                    }`}
-                  >
-                    <div className="flex items-center justify-between w-full mb-1">
-                      <div className="flex items-center gap-1.5">
-                        <Sparkles size={13} className={selectedSource === 'blended' ? 'text-primary' : 'text-outline'} />
-                        <span className={`text-[11px] font-bold ${selectedSource === 'blended' ? 'text-primary' : 'text-on-surface'}`}>
-                          Blended Mode
-                        </span>
-                      </div>
-                      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${selectedSource === 'blended' ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
-                        {selectedSource === 'blended' ? '✓' : ''}
-                      </div>
-                    </div>
-                    <span className="text-[10px] text-outline leading-tight mt-0.5">
-                      Harmonious mix of curated syllabus + your uploads.
-                    </span>
-                  </button>
-                </div>
-              </div>
-
-              {/* ── STEP 2: STARTER FOCUS AREAS (REAL 4 CATEGORY GROUPS) ── */}
-              <div className="mt-3.5 pt-3 border-t border-outline-variant/15">
-                <div className="flex items-center justify-between mb-2">
-                  <span className="text-[11px] font-mono font-bold uppercase tracking-wider text-outline flex items-center gap-1.5">
-                    <Sliders size={13} className="text-primary" /> 2. Category Focus Areas
-                  </span>
-                  <span className="text-[10px] font-mono text-outline">
-                    {CATEGORY_TREE.filter(g => userSettings?.enabled_categories?.[g.group] !== false).length} of 4 groups active
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
-                  {CATEGORY_TREE.map(groupDef => {
-                    const isGroupActive = userSettings?.enabled_categories?.[groupDef.group] !== false;
-                    return (
-                      <button
-                        key={groupDef.group}
-                        type="button"
-                        onClick={() => toggleBroadGroup(groupDef.group)}
-                        className={`flex flex-col items-start p-2.5 rounded-xl border text-left transition-all cursor-pointer select-none ${
-                          isGroupActive
-                            ? 'bg-primary-container/20 border-primary/40 text-on-surface shadow-xs'
-                            : 'bg-surface-container-lowest/60 border-outline-variant/30 text-outline hover:border-outline-variant/60'
-                        }`}
-                      >
-                        <div className="flex items-center justify-between w-full mb-1">
-                          <span className={`text-[10px] font-mono uppercase font-bold tracking-wider ${isGroupActive ? 'text-primary' : 'text-outline'}`}>
-                            {groupDef.label}
-                          </span>
-                          <div className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${isGroupActive ? 'bg-primary text-white' : 'bg-surface-container text-outline'}`}>
-                            {isGroupActive ? '✓' : ''}
-                          </div>
-                        </div>
-                        <span className="text-[11px] leading-tight font-medium line-clamp-1">
-                          {groupDef.group === 'tech' && 'AI & Web Architecture'}
-                          {groupDef.group === 'money-career' && 'Finance & Strategy'}
-                          {groupDef.group === 'mind-growth' && 'Psychology & Logic'}
-                          {groupDef.group === 'world-ideas' && 'Science & History'}
-                        </span>
-                      </button>
-                    );
-                  })}
-                </div>
-              </div>
-
-              {/* ── ACTIONS ── */}
-              <div className="flex items-center justify-between flex-wrap gap-2.5 mt-4 pt-3 border-t border-outline-variant/20">
-                <Button
-                  variant="primary"
-                  onClick={handleDismissFirstRun}
-                  className="h-9 px-4 text-xs font-semibold cursor-pointer"
-                >
-                  Start Exploring ({eligibleTopics.length} Topics Ready)
-                </Button>
-
-                <button
-                  type="button"
-                  onClick={onNavigateFilter}
-                  className="flex items-center gap-1.5 text-xs font-mono text-on-surface-variant hover:text-primary transition-colors cursor-pointer ml-auto"
-                >
-                  <Sliders size={13} />
-                  <span>Fine-tune in Category Filter</span>
-                </button>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ── PRECISION INSTRUMENT DIAL CHASSIS ── */}
-      <div className="w-full py-2 relative flex flex-col items-center">
-        
-        {/* Outer Dial Frame with Tactile Bevel */}
-        <div
-          ref={containerRef}
-          className="relative w-full h-32 sm:h-36 overflow-hidden rounded-3xl dial-chassis flex items-center select-none shadow-2xl"
-        >
-          {/* Radial Chromatic Landing Flare */}
-          <AnimatePresence>
-            {showLandingHalo && (
-              <motion.div
-                key="landing-halo"
-                initial={{ opacity: 0.8, scale: 0.4 }}
-                animate={{ opacity: 0, scale: 2.8 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.75, ease: 'easeOut' }}
-                style={{ backgroundColor: activeAccentColor }}
-                className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-3xl pointer-events-none z-10"
-              />
-            )}
-          </AnimatePresence>
-
-          {/* Idle Ambient Light Sweep */}
-          {!isSpinning && !isLanded && (
-            <motion.div
-              initial={{ x: '-150%' }}
-              animate={{ x: '350%' }}
-              transition={{
-                repeat: Infinity,
-                duration: 3.5,
-                ease: 'easeInOut',
-                repeatDelay: 1.0
-              }}
-              className="absolute inset-y-0 w-1/3 bg-gradient-to-r from-transparent via-white/10 dark:via-white/5 to-transparent pointer-events-none z-20 skew-x-[-20deg]"
-            />
-          )}
-
-          {/* Center Precision Loupe & Reticle Sights */}
-          <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-between pointer-events-none w-10">
-            {/* Top Loupe Pointer */}
-            <div className="flex flex-col items-center -mt-0.5 filter drop-shadow">
-              <div className="w-3.5 h-3.5 bg-primary rotate-45 border-2 border-surface shadow-[0_0_12px_rgba(var(--color-primary),0.8)]" />
-              <div className="w-[1.5px] h-3 bg-primary" />
-            </div>
-
-            {/* Central Precision Target Aperture */}
-            <div className="relative flex items-center justify-center">
-              <div className={`w-4 h-4 rounded-full border border-primary/60 flex items-center justify-center transition-all duration-300 ${isSpinning ? 'scale-125 border-primary shadow-[0_0_10px_rgba(var(--color-primary),0.8)]' : isLanded ? 'scale-110 border-primary ring-2 ring-primary/40' : 'scale-90'}`}>
-                <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-              </div>
-            </div>
-
-            {/* Glowing Laser Vertical Guideline */}
-            <div className={`absolute inset-y-3 w-[1.5px] bg-gradient-to-b from-primary via-primary/50 to-primary transition-opacity duration-300 ${isSpinning ? 'opacity-100 shadow-[0_0_8px_rgba(var(--color-primary),0.8)]' : 'opacity-70'}`} />
-
-            {/* Bottom Loupe Pointer */}
-            <div className="flex flex-col items-center -mb-0.5 filter drop-shadow">
-              <div className="w-[1.5px] h-3 bg-primary" />
-              <div className="w-3.5 h-3.5 bg-primary rotate-45 border-2 border-surface shadow-[0_0_12px_rgba(var(--color-primary),0.8)]" />
-            </div>
-          </div>
-
-          {/* Optical Vignette Masks (Deep Edge Shadows) */}
-          <div className="absolute inset-y-0 left-0 w-20 sm:w-32 bg-gradient-to-r from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
-          <div className="absolute inset-y-0 right-0 w-20 sm:w-32 bg-gradient-to-l from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
-
-          {/* Animated Kinetic Card Strip */}
-          <motion.div
-            className="flex items-center absolute left-0"
-            style={{ gap: `${ITEM_GAP}px` }}
-            animate={{ x: translateX }}
-            transition={
-              isSpinning
-                ? { duration: SPIN_DURATION_MS / 1000, ease: SPIN_EASING }
-                : { duration: 0 }
-            }
-            onUpdate={(latest) => {
-              const curX = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x);
-              if (isNaN(curX)) return;
-              motionX.set(curX);
-
-              if (isSpinningRef.current) {
-                const nearestIdx = Math.round(((containerWidth - ITEM_WIDTH) / 2 - curX) / ITEM_STEP);
-                if (nearestIdx !== lastFiredIndexRef.current) {
-                  lastFiredIndexRef.current = nearestIdx;
-                  const elapsed = Date.now() - spinStartTimeRef.current;
-                  const progress = Math.min(1, Math.max(0, elapsed / SPIN_DURATION_MS));
-                  AudioController.playTick(progress);
-                }
-              }
-            }}
-          >
-            {REEL_STRIP.map((item, idx) => (
-              <PrecisionReelCard
-                key={`${item.name}-${idx}`}
-                item={item}
-                idx={idx}
-                motionX={motionX}
-                containerWidth={containerWidth}
-                isSelectedTarget={isLanded && (idx === reelIndex)}
-              />
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Telemetry Status Readout Bar */}
-        <div className="mt-3.5 flex items-center justify-between w-full px-2">
-          <div className="flex items-center gap-2 font-mono text-[11px] text-on-surface-variant">
-            <span
-              className={`w-2 h-2 rounded-full transition-colors duration-300 ${
-                tickerActive
-                  ? 'bg-tertiary animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.8)]'
-                  : loadingData
-                  ? 'bg-primary/50 animate-pulse'
-                  : 'bg-emerald-500 shadow-[0_0_6px_rgba(16,185,129,0.6)]'
-              }`}
-            />
-            {loadingData ? (
-              <Skeleton className="h-4 w-44 rounded" />
-            ) : (
-              <span className={`tracking-wide font-medium ${tickerActive ? 'text-primary' : ''}`}>
-                {tickerText}
-              </span>
-            )}
-          </div>
-
-          <div className="hidden sm:flex items-center gap-1.5 font-mono text-[11px] text-outline">
-            <Target size={13} className="text-primary/70" />
-            <span>Magnetic Detent Easing</span>
-          </div>
-        </div>
-      </div>
-
-      {/* ── PRIMARY SPIN TRIGGER ACTION ── */}
-      <div className="flex flex-col items-center gap-2.5 my-4">
-        <Button
-          variant="primary"
-          onClick={handleSpin}
-          disabled={isSpinning || loadingData}
-          className="w-full max-w-sm h-12 text-sm font-semibold tracking-wide shadow-xl shadow-primary/20 hover:shadow-primary/30 transition-all cursor-pointer relative overflow-hidden"
-        >
-          {/* Subtle button sheen */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/10 via-transparent to-white/15 pointer-events-none" />
-
-          <RotateCw
-            size={18}
-            className={`transition-transform ${isSpinning ? 'animate-spin' : 'group-hover:rotate-45'}`}
-          />
-          <span>{isSpinning ? 'Spinning Dial...' : 'Spin Roulette'}</span>
-
-          {/* Desktop Keyboard Shortcut Badge — hidden on mobile */}
-          <kbd className="hidden sm:inline-flex items-center ml-2 px-1.5 py-0.5 text-[10px] font-mono bg-black/20 text-white/90 rounded border border-white/20">
-            Space
-          </kbd>
-        </Button>
-
-        {loadingData ? (
-          <Skeleton className="h-3.5 w-60 rounded" />
-        ) : (
-          <p className="font-mono text-[11px] text-on-surface-variant text-center">
-            Curated roulette pool ready (<span className="font-semibold text-primary">{eligibleTopics.length} active topics</span>) · Distraction-free
+      {/* ── FIRST-RUN HEADLINE & SUB-LINE (ONLY WHEN USER HAS NOT SPUN BEFORE) ── */}
+      {!hasSpunBefore && !showResult && (
+        <header className="w-full text-center sm:text-left mb-3">
+          <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-on-surface tracking-tight leading-tight">
+            One idea. Sixty seconds. Every day.
+          </h1>
+          <p className="text-xs sm:text-sm text-on-surface-variant mt-1 leading-relaxed">
+            Tech, money, mind and world ideas. Works offline.
           </p>
-        )}
-      </div>
-
-      {/* ── TOPIC CARD / EDITORIAL RESULT VIEW ── */}
-      {loadingData ? (
-        <div className="mt-4 w-full journal-card rounded-2xl p-6 sm:p-8 space-y-4">
-          <div className="flex items-center justify-between pb-3 border-b border-outline-variant/20">
-            <Skeleton className="h-4 w-36 rounded" />
-            <Skeleton className="h-4 w-20 rounded-full" />
-          </div>
-          <Skeleton className="h-10 w-3/4 rounded-lg" />
-          <div className="space-y-2.5 pt-2">
-            <Skeleton className="h-4 w-full rounded" />
-            <Skeleton className="h-4 w-5/6 rounded" />
-            <Skeleton className="h-4 w-2/3 rounded" />
-          </div>
-          <div className="pt-6 border-t border-outline-variant/20 flex gap-3">
-            <Skeleton className="h-11 flex-1 rounded-xl" />
-            <Skeleton className="h-11 w-28 rounded-xl" />
-          </div>
-        </div>
-      ) : eligibleTopics.length === 0 ? (
-        <div className="mt-4 w-full journal-card rounded-2xl p-8 text-center flex flex-col items-center justify-center">
-          <div className="w-14 h-14 rounded-2xl bg-surface-container flex items-center justify-center mb-3 text-outline">
-            <FilterX size={32} strokeWidth={1.5} />
-          </div>
-          <h3 className="font-display text-xl font-bold text-on-surface">No Topics in Spin Pool</h3>
-          <p className="text-xs sm:text-sm text-on-surface-variant max-w-sm mt-1.5 leading-relaxed">
-            All categories are currently disabled. Open the Category Filter tab to re-enable topics for the roulette.
-          </p>
-          <Button
-            variant="primary"
-            onClick={onNavigateFilter}
-            className="mt-4 h-10 px-5 text-xs font-semibold"
-          >
-            Adjust Filter Settings
-          </Button>
-        </div>
-      ) : (
-        <AnimatePresence mode="wait">
-          {showResult && currentTopic && (
-            <motion.article
-              key={currentTopic.id}
-              initial={{ opacity: 0, y: 22, scale: 0.98 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: -12 }}
-              transition={{ duration: 0.42, ease: [0.16, 1, 0.3, 1] }}
-              className="mt-4 w-full journal-card rounded-2xl p-5 sm:p-8 relative transition-all duration-300"
-            >
-              {/* Category Breadcrumb & Read Time Badge */}
-              <div className="flex items-center justify-between pb-3.5 mb-4 border-b border-outline-variant/25 flex-wrap gap-2">
-                <div className="flex items-center gap-2 text-xs font-mono font-medium">
-                  <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-bold uppercase tracking-wider text-[10px]">
-                    {group}
-                  </span>
-                  <span className="text-outline">/</span>
-                  <span className="text-on-surface font-semibold">{category}</span>
-                </div>
-
-                <div className="flex items-center gap-2 flex-wrap">
-                  {currentTopic?.is_custom && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-primary/10 border border-primary/25 text-primary font-mono text-[10px] font-bold">
-                      <Sparkles size={11} />
-                      <span>Custom Upload{currentTopic.source ? ` (${currentTopic.source})` : ''}</span>
-                    </span>
-                  )}
-
-                  {/* Reading Time Pill */}
-                  <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant font-mono text-[10px]">
-                    <Clock size={11} className="text-outline" />
-                    <span>~2 min dive</span>
-                  </div>
-
-                  {/* Times seen badge */}
-                  {timesSeen > 0 && (
-                    <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 font-mono text-[10px] font-semibold">
-                      <Check size={11} />
-                      <span>Reviewed {timesSeen}x</span>
-                    </span>
-                  )}
-                </div>
-              </div>
-
-              {/* Topic Headline (Editorial Serif Typography) */}
-              <h2 className="editorial-title text-2xl sm:text-3xl lg:text-[2.15rem] font-bold text-on-surface tracking-tight leading-snug sm:leading-[1.25]">
-                {currentTopic.title}
-              </h2>
-
-              {/* Tags Row */}
-              {tags.length > 0 && (
-                <div className="flex items-center gap-1.5 flex-wrap mt-3">
-                  {tags.map(tag => (
-                    <span
-                      key={tag}
-                      className="px-2 py-0.5 rounded-md bg-surface-container text-on-surface-variant font-mono text-[10px] tracking-wide uppercase border border-outline-variant/20"
-                    >
-                      #{tag}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* Topic Description & Deep-Dive Concept Body */}
-              <div className="mt-4 pt-3 text-sm sm:text-base text-on-surface/90 leading-relaxed font-normal space-y-3">
-                <p className="leading-relaxed">
-                  {currentTopic.description || currentTopic.desc}
-                </p>
-              </div>
-
-              {/* Curated External Resources & References */}
-              {resources.length > 0 && (
-                <div className="mt-6 pt-5 border-t border-outline-variant/25">
-                  <div className="flex items-center justify-between mb-3">
-                    <span className="font-mono text-xs text-outline uppercase tracking-wider font-bold flex items-center gap-2">
-                      <BookOpen size={14} className="text-primary" />
-                      <span>Curated Deep Dives &amp; Sources</span>
-                    </span>
-                    <span className="text-[10px] font-mono text-outline">External links</span>
-                  </div>
-
-                  {/* Clean Links Stack */}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
-                    {resources.map((res, i) => (
-                      <a
-                        key={i}
-                        href={res.url || '#'}
-                        rel="noopener noreferrer"
-                        target="_blank"
-                        className="group flex flex-col justify-between p-3 rounded-xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/20 hover:border-primary/40 transition-all hover:-translate-y-0.5 shadow-sm"
-                      >
-                        <div className="flex items-start justify-between gap-2">
-                          <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary font-mono text-[9px] uppercase font-bold tracking-wider">
-                            {res.type || 'SOURCE'}
-                          </span>
-                          <ExternalLink size={14} className="text-outline group-hover:text-primary transition-all group-hover:translate-x-0.5 group-hover:-translate-y-0.5 shrink-0" />
-                        </div>
-                        <div className="mt-2">
-                          <span className="text-xs sm:text-sm text-on-surface font-semibold group-hover:text-primary transition-colors line-clamp-1">
-                            {res.label || res.title || 'Explore Reference'}
-                          </span>
-                          {res.desc && (
-                            <p className="text-[11px] text-outline line-clamp-2 mt-1 leading-snug">
-                              {res.desc}
-                            </p>
-                          )}
-                        </div>
-                      </a>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Action Toolbar */}
-              <div className="mt-7 pt-5 border-t border-outline-variant/25 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-                {/* Mark as learned toggle button */}
-                <Button
-                  variant={isLearned ? 'outline' : 'primary'}
-                  onClick={handleMarkLearned}
-                  disabled={isMarkingLearned}
-                  className={`h-11 px-5 text-sm font-semibold flex-1 shadow-sm ${
-                    isLearned ? 'border-emerald-500/40 text-emerald-400 bg-emerald-500/10 hover:bg-emerald-500/15' : ''
-                  }`}
-                >
-                  {isMarkingLearned ? (
-                    <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
-                  ) : (
-                    <Check size={17} className={isLearned ? 'text-emerald-400' : ''} />
-                  )}
-                  <span>{isLearned ? `Learned (${timesSeen}x)` : 'Mark as Learned'}</span>
-                </Button>
-
-                {/* Spin next topic button */}
-                <Button
-                  variant="ghost"
-                  onClick={handleSpin}
-                  disabled={isSpinning}
-                  className="h-11 px-4 text-sm font-medium border border-outline-variant/30 hover:border-outline-variant/60"
-                >
-                  <RotateCw size={15} />
-                  <span>Spin Again</span>
-                </Button>
-
-                {/* Quick Share / Copy Insight */}
-                <button
-                  type="button"
-                  onClick={handleCopySummary}
-                  aria-label="Copy topic insight"
-                  title="Copy topic insight to clipboard"
-                  className="h-11 w-11 rounded-lg border border-outline-variant/30 hover:border-outline-variant/60 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer shrink-0"
-                >
-                  <Share2 size={16} />
-                </button>
-              </div>
-
-            </motion.article>
-          )}
-        </AnimatePresence>
+        </header>
       )}
 
-      {/* Privacy Guarantee Footer Note */}
-      <div className="mt-5 flex items-center justify-center gap-2 text-xs font-mono text-outline">
-        <ShieldCheck size={14} className="text-emerald-500" />
-        <span>Privacy-First · Zero analytics tracking · 100% Client-Side storage</span>
+      {/* ── RETURNING USER SLIM STATUS LINE (ONLY WHEN RETURNING AND HAS STREAK OR REVIEWS) ── */}
+      {(hasSpunBefore || showResult) && (streak >= 1 || toReviewCount > 0) && (
+        <div
+          data-testid="spin-status-line"
+          className="flex items-center justify-center gap-2 mb-2.5 text-xs font-medium text-on-surface-variant"
+        >
+          {streak >= 1 && (
+            <span className="inline-flex items-center gap-1 font-semibold text-primary">
+              <Flame size={13} className="text-amber-500 fill-amber-500" />
+              <span className="font-mono">{streak}</span>-day streak
+            </span>
+          )}
+          {streak >= 1 && toReviewCount > 0 && <span>·</span>}
+          {toReviewCount > 0 && (
+            <span>
+              <span className="font-mono font-bold">{toReviewCount}</span> to review today
+            </span>
+          )}
+        </div>
+      )}
+
+      {/* ── REEL SLOT / POST-SPIN TOPIC CARD SLOT (TOPIC CARD REPLACES REEL IN SAME PLACE) ── */}
+      <div className="w-full">
+        {loadingData ? (
+          <div data-testid="reel-skeleton" className="w-full h-24 rounded-2xl bg-surface-container-low border border-outline-variant/30 animate-pulse flex items-center justify-center gap-3 px-4">
+            <div className="w-24 h-16 rounded-xl bg-surface-container-high/60" />
+            <div className="w-28 h-16 rounded-xl bg-surface-container-high/80" />
+            <div className="w-24 h-16 rounded-xl bg-surface-container-high/60" />
+          </div>
+        ) : showResult && currentTopic && !isSpinning ? (
+          /* POST-SPIN TOPIC CARD */
+          <motion.article
+            key={currentTopic.id}
+            data-testid="post-spin-topic-card"
+            initial={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.98 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={prefersReducedMotion ? { opacity: 1 } : { opacity: 0, scale: 0.98 }}
+            transition={prefersReducedMotion ? { duration: 0 } : { duration: 0.25, ease: 'easeOut' }}
+            className="w-full journal-card rounded-2xl p-4 sm:p-6 border border-outline-variant/30 relative shadow-sm"
+          >
+            {/* Category Breadcrumb & Dive Time */}
+            <div className="flex items-center justify-between pb-2.5 mb-3 border-b border-outline-variant/20 flex-wrap gap-2">
+              <div className="flex items-center gap-1.5 text-xs font-medium">
+                <span className="px-2 py-0.5 rounded-full bg-primary/10 text-primary font-mono font-bold uppercase tracking-wider text-[10px]">
+                  {CATEGORY_TREE.find(g => g.group === currentTopic.group)?.label || currentTopic.group || 'Topic'}
+                </span>
+                <span className="text-outline">/</span>
+                <span className="text-on-surface font-semibold">
+                  {CATEGORY_META[currentTopic.category]?.shortLabel || currentTopic.category}
+                </span>
+              </div>
+
+              <div className="flex items-center gap-2">
+                {currentTopic?.is_custom && (
+                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-primary/10 border border-primary/25 text-primary text-xs font-semibold">
+                    <Sparkles size={11} />
+                    <span>Custom</span>
+                  </span>
+                )}
+                <div className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-surface-container text-on-surface-variant text-xs">
+                  <Clock size={11} className="text-outline" />
+                  <span>~2 min dive</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Topic Headline */}
+            <h2 className="editorial-title text-xl sm:text-2xl lg:text-3xl font-bold text-on-surface tracking-tight leading-snug">
+              {currentTopic.title}
+            </h2>
+
+            {/* Topic Description */}
+            <div className="mt-2.5 text-sm sm:text-base text-on-surface/90 leading-relaxed font-normal space-y-2">
+              <p className="leading-relaxed">
+                {currentTopic.description || currentTopic.desc}
+              </p>
+            </div>
+
+            {/* References & Deep Dives */}
+            {resources.length > 0 && (() => {
+              const firstSource = resources[0];
+              const moreSources = resources.slice(1);
+
+              return (
+                <div className="mt-4 pt-3 border-t border-outline-variant/20 space-y-2">
+                  <div className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5 mb-1.5">
+                    <BookOpen size={12} className="text-primary" />
+                    <span>Go deeper</span>
+                  </div>
+
+                  {/* First source: full-width link, full title wrapped, no ellipsis */}
+                  <a
+                    href={firstSource.url || '#'}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="group flex flex-col p-3 rounded-xl bg-surface-container/70 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 transition-all shadow-xs w-full"
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary text-[10px] font-mono uppercase font-bold tracking-wider">
+                        {firstSource.type || 'SOURCE'}
+                      </span>
+                      <ExternalLink size={13} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
+                    </div>
+                    <span className="text-xs sm:text-sm text-on-surface font-semibold group-hover:text-primary transition-colors break-words leading-snug">
+                      {firstSource.label || firstSource.title || 'Explore Reference'}
+                    </span>
+                    {firstSource.desc && (
+                      <p className="text-xs text-on-surface-variant mt-1 break-words leading-relaxed">
+                        {firstSource.desc}
+                      </p>
+                    )}
+                  </a>
+
+                  {/* Other sources under "More sources" toggle */}
+                  {moreSources.length > 0 && (
+                    <details className="text-xs text-on-surface-variant group pt-1">
+                      <summary className="cursor-pointer font-medium hover:text-primary transition-colors select-none flex items-center gap-1">
+                        <span>More sources ({moreSources.length})</span>
+                      </summary>
+                      <div className="mt-2 space-y-2">
+                        {moreSources.map((res, i) => (
+                          <a
+                            key={i}
+                            href={res.url || '#'}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                            className="group flex flex-col p-2.5 rounded-xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 transition-all shadow-xs w-full"
+                          >
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary text-[10px] font-mono uppercase font-bold tracking-wider">
+                                {res.type || 'SOURCE'}
+                              </span>
+                              <ExternalLink size={13} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
+                            </div>
+                            <span className="text-xs sm:text-sm text-on-surface font-semibold group-hover:text-primary transition-colors break-words leading-snug">
+                              {res.label || res.title || 'Explore Reference'}
+                            </span>
+                            {res.desc && (
+                              <p className="text-xs text-on-surface-variant mt-0.5 break-words leading-snug">
+                                {res.desc}
+                              </p>
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    </details>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Action Toolbar: Learned, Spin again, Share in ONE row */}
+            <div className="mt-4 pt-3 border-t border-outline-variant/20 flex flex-row items-center justify-between gap-2 w-full">
+              <Button
+                variant={isLearned ? 'outline' : 'primary'}
+                onClick={handleMarkLearned}
+                disabled={isMarkingLearned}
+                className={`h-10 px-3 text-xs sm:text-sm font-semibold flex-1 shadow-xs cursor-pointer whitespace-nowrap min-w-0 ${
+                  isLearned ? 'border-emerald-500/40 text-emerald-500 bg-emerald-500/10' : ''
+                }`}
+              >
+                {isMarkingLearned ? (
+                  <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
+                ) : (
+                  <Check size={14} className={isLearned ? 'text-emerald-500' : ''} />
+                )}
+                <span className="truncate">{isLearned ? 'Learned' : 'Learned'}</span>
+              </Button>
+
+              <Button
+                variant="ghost"
+                onClick={handleSpin}
+                disabled={isSpinning}
+                aria-label="Spin topic dial again"
+                className="h-10 px-3 text-xs sm:text-sm font-medium border border-outline-variant/30 hover:border-outline-variant/60 focus-visible:ring-2 focus-visible:ring-primary cursor-pointer whitespace-nowrap flex-1 min-w-0"
+              >
+                <RotateCw size={14} />
+                <span className="truncate">Spin again</span>
+              </Button>
+
+              <button
+                type="button"
+                onClick={handleShareTopic}
+                aria-label="Share topic"
+                title="Share topic link"
+                className="h-10 w-10 min-w-[40px] rounded-xl border border-outline-variant/30 hover:border-outline-variant/60 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors focus-visible:ring-2 focus-visible:ring-primary cursor-pointer shrink-0"
+              >
+                <Share2 size={15} />
+              </button>
+            </div>
+          </motion.article>
+        ) : (
+          /* THE REEL (3 CARDS VISIBLE) */
+          <div
+            ref={containerRef}
+            className="relative w-full h-24 sm:h-28 overflow-hidden rounded-2xl dial-chassis flex items-center select-none shadow-md"
+          >
+            <AnimatePresence>
+              {showLandingHalo && (
+                <motion.div
+                  key="landing-halo"
+                  initial={{ opacity: 0.8, scale: 0.4 }}
+                  animate={{ opacity: 0, scale: 2.8 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.75, ease: 'easeOut' }}
+                  style={{ backgroundColor: activeAccentColor }}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-3xl pointer-events-none z-10"
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Center Precision Target Aperture */}
+            <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-between pointer-events-none w-8">
+              <div className="flex flex-col items-center -mt-0.5 filter drop-shadow">
+                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
+                <div className="w-[1.5px] h-2 bg-primary" />
+              </div>
+
+              <div className="relative flex items-center justify-center">
+                <div className={`w-3 h-3 rounded-full border border-primary/60 flex items-center justify-center transition-all duration-300 ${isSpinning ? 'scale-125 border-primary shadow-[0_0_8px_rgba(var(--color-primary),0.8)]' : isLanded ? 'scale-110 border-primary ring-2 ring-primary/40' : 'scale-90'}`}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center -mb-0.5 filter drop-shadow">
+                <div className="w-[1.5px] h-2 bg-primary" />
+                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
+              </div>
+            </div>
+
+            {/* Vignette Edge Gradient Masks */}
+            <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
+
+            {/* Animated Reel Strip */}
+            <motion.div
+              className="flex items-center absolute left-0"
+              style={{ gap: `${ITEM_GAP}px` }}
+              animate={{ x: translateX }}
+              transition={
+                isSpinning
+                  ? (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                      ? { duration: 0.04 }
+                      : { duration: SPIN_DURATION_MS / 1000, ease: SPIN_EASING })
+                  : { duration: 0 }
+              }
+              onUpdate={(latest) => {
+                const curX = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x);
+                if (isNaN(curX)) return;
+                motionX.set(curX);
+
+                const isReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (isSpinningRef.current && !isReduced) {
+                  const nearestIdx = Math.round(((containerWidth - ITEM_WIDTH) / 2 - curX) / ITEM_STEP);
+                  if (nearestIdx !== lastFiredIndexRef.current) {
+                    lastFiredIndexRef.current = nearestIdx;
+                    const elapsed = Date.now() - spinStartTimeRef.current;
+                    const progress = Math.min(1, Math.max(0, elapsed / SPIN_DURATION_MS));
+                    AudioController.playTick(progress);
+                  }
+                }
+              }}
+            >
+              {reelStrip.map((item, idx) => (
+                <PrecisionReelCard
+                  key={`${item.name}-${idx}`}
+                  item={item}
+                  idx={idx}
+                  motionX={motionX}
+                  containerWidth={containerWidth}
+                  isSelectedTarget={isLanded && (idx === reelIndex)}
+                />
+              ))}
+            </motion.div>
+          </div>
+        )}
+      </div>
+
+      {/* ── ONE FULL-WIDTH BUTTON LABELLED "SPIN", 56PX TALL ── */}
+      <div className="w-full mt-3">
+        {loadingData ? (
+          <button
+            type="button"
+            data-testid="primary-spin-button"
+            disabled={true}
+            className="w-full h-14 min-h-[56px] rounded-2xl bg-primary text-white font-bold text-base tracking-wide flex items-center justify-center gap-2 opacity-75 cursor-not-allowed"
+          >
+            <RotateCw size={18} className="animate-spin" />
+            <span>Loading...</span>
+          </button>
+        ) : eligibleTopics.length === 0 ? (
+          <button
+            type="button"
+            data-testid="primary-spin-button"
+            onClick={navigateToLibrary}
+            className="w-full h-14 min-h-[56px] rounded-2xl bg-surface-container-high border border-outline-variant text-on-surface font-semibold text-sm flex items-center justify-center gap-2 hover:border-primary/50 transition-all cursor-pointer"
+          >
+            <span>No active topics — Choose interests</span>
+          </button>
+        ) : (
+          <button
+            type="button"
+            data-testid="primary-spin-button"
+            onClick={handleSpin}
+            disabled={isSpinning}
+            className="w-full h-14 min-h-[56px] rounded-2xl bg-primary text-white font-bold text-base tracking-wide flex items-center justify-center gap-2 shadow-md hover:bg-primary/95 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+          >
+            <RotateCw
+              size={18}
+              className={`transition-transform ${isSpinning ? 'animate-spin' : ''}`}
+            />
+            <span>{isSpinning ? 'Spinning...' : 'Spin'}</span>
+            <span className="hidden [@media(pointer:fine)]:inline text-xs font-mono font-normal opacity-85 ml-1">
+              (Space)
+            </span>
+          </button>
+        )}
+      </div>
+
+      {/* ── ONE ROW OF 4 SMALL GROUP TOGGLES (TECH, MONEY, MIND, WORLD) — ALL ON BY DEFAULT ── */}
+      <div className="w-full mt-2.5">
+        <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full">
+          {CATEGORY_TREE.map(groupDef => {
+            const isGroupActive = spinGroupState[groupDef.group] !== false;
+            const shortLabel = GROUP_SHORT_LABELS[groupDef.group] || groupDef.label;
+            return (
+              <button
+                key={groupDef.group}
+                type="button"
+                aria-pressed={isGroupActive}
+                aria-label={`Toggle ${shortLabel}`}
+                onClick={() => toggleBroadGroup(groupDef.group)}
+                className={`h-9 sm:h-10 rounded-xl px-2 flex items-center justify-center gap-1.5 text-xs transition-all cursor-pointer select-none border focus-visible:ring-2 focus-visible:ring-primary ${
+                  isGroupActive
+                    ? 'bg-primary/15 text-on-surface border-2 border-primary/60 font-bold shadow-xs'
+                    : 'bg-surface-container-low text-on-surface-variant border border-outline-variant/40 hover:border-outline-variant/80 font-medium'
+                }`}
+              >
+                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isGroupActive ? 'bg-primary' : 'bg-outline-variant'}`} />
+                <span className="truncate">{shortLabel}</span>
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* ── ARIA LIVE REGION FOR SCREEN READERS ── */}
+      <div aria-live="polite" aria-atomic="true" className="sr-only">
+        {showResult && currentTopic
+          ? `Selected concept: ${currentTopic.title} in ${CATEGORY_TREE.find(g => g.group === currentTopic.group)?.label || currentTopic.group || 'Topic Collection'}.`
+          : isSpinning
+          ? 'Spinning topic reel...'
+          : ''}
       </div>
 
     </div>

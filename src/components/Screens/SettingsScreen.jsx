@@ -2,43 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import {
-  Shield,
   Clock,
-  Cloud,
+  Calendar,
   Smartphone,
-  CheckCircle,
-  Globe,
   Download,
   Upload,
   AlertTriangle,
-  Disc
+  Volume2,
+  Vibrate,
+  ShieldCheck,
+  Info,
+  MessageSquare
 } from 'lucide-react';
 import { ResetConfirmationModal } from '../Modals/ResetConfirmationModal';
 import { Toggle } from '../UI/Toggle';
 import { Button } from '../UI/Button';
+import { downloadCalendarReminder } from '../../lib/calendar';
 
-// Motion variants for staggered settings entrance
-const settingsContainerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.08,
-      delayChildren: 0.04
-    }
-  }
-};
-
-const settingsSectionVariants = {
-  hidden: { opacity: 0, y: 14 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: { duration: 0.35, ease: 'easeOut' }
-  }
-};
-
-// Convert 12-hour string (e.g. "09:00 AM", "02:37 PM") to 24-hour "HH:MM"
 const formatTo24Hour = (time12) => {
   if (!time12 || typeof time12 !== 'string') return '09:00';
   const match = time12.trim().match(/^(\d{1,2}):(\d{2})\s*(AM|PM)$/i);
@@ -53,7 +33,6 @@ const formatTo24Hour = (time12) => {
   return `${String(hours).padStart(2, '0')}:${minutes}`;
 };
 
-// Convert 24-hour "HH:MM" (e.g. "14:37", "09:00") to 12-hour "HH:MM AM/PM"
 const formatTo12Hour = (time24) => {
   if (!time24 || typeof time24 !== 'string') return '09:00 AM';
   const parts = time24.split(':');
@@ -74,10 +53,11 @@ export const SettingsScreen = () => {
     userSettings,
     userProgressMap,
     userStreaks,
+    history = [],
+    customTopics = [],
     updateSettings,
     resetAllData,
     importDataBackup,
-    isOnline,
     showToast
   } = useData();
 
@@ -86,7 +66,6 @@ export const SettingsScreen = () => {
   const [isStandalone, setIsStandalone] = useState(false);
   const [isResetModalOpen, setIsResetModalOpen] = useState(false);
 
-  // Check OS notification permissions & standalone mode
   useEffect(() => {
     if (typeof window !== 'undefined') {
       if ('Notification' in window) {
@@ -106,7 +85,7 @@ export const SettingsScreen = () => {
     const handleAppInstalled = () => {
       setDeferredPrompt(null);
       setIsStandalone(true);
-      showToast('Daily Dive installed!', 'success');
+      if (showToast) showToast('Daily Dive installed!', 'success');
     };
 
     window.addEventListener('beforeinstallprompt', handleBeforeInstall);
@@ -127,27 +106,27 @@ export const SettingsScreen = () => {
           const res = await Notification.requestPermission();
           setOsPermission(res);
           if (res !== 'granted') {
-            showToast('Notification permission was not granted.', 'info');
+            if (showToast) showToast('Notification permission was not granted.', 'info');
             return;
           }
         } else if (Notification.permission === 'denied') {
-          showToast('Notifications are blocked in your browser settings.', 'error');
+          if (showToast) showToast('Notifications are blocked in your browser settings.', 'error');
           return;
         }
       } else {
-        showToast('Notifications are not supported in this browser.', 'info');
+        if (showToast) showToast('Notifications are not supported in this browser.', 'info');
       }
     }
 
     await updateSettings({ notifications_enabled: nextState });
-    if (nextState) {
+    if (nextState && showToast) {
       showToast(`Daily reminder scheduled for ${userSettings.reminder_time}`, 'success');
     }
   };
 
   const handleTimePreset = async (time) => {
     await updateSettings({ reminder_time: time });
-    if (userSettings.notifications_enabled) {
+    if (userSettings.notifications_enabled && showToast) {
       showToast(`Reminder time updated to ${time}`, 'success');
     }
   };
@@ -157,7 +136,7 @@ export const SettingsScreen = () => {
     if (!val24) return;
     const time12 = formatTo12Hour(val24);
     await updateSettings({ reminder_time: time12 });
-    if (userSettings.notifications_enabled) {
+    if (userSettings.notifications_enabled && showToast) {
       showToast(`Reminder time updated to ${time12}`, 'success');
     }
   };
@@ -172,375 +151,278 @@ export const SettingsScreen = () => {
     }
   };
 
-  // Export JSON backup
   const handleExportBackup = () => {
+    const nowIso = new Date().toISOString();
+    try {
+      localStorage.setItem('daily_dive_last_backup_at', nowIso);
+    } catch (e) {}
+
+    let expiredTopics = [];
+    try {
+      const et = localStorage.getItem('daily_dive_expired_custom_topics');
+      if (et) expiredTopics = JSON.parse(et);
+    } catch (e) {}
+
     const backupData = {
+      schemaVersion: 2,
       version: '2.1.0',
-      exported_at: new Date().toISOString(),
+      exported_at: nowIso,
+      last_backup_at: nowIso,
       user_progress: userProgressMap,
       user_streaks: userStreaks,
-      user_settings: userSettings
+      user_settings: userSettings,
+      history: history || [],
+      custom_topics: customTopics || [],
+      expired_custom_topics: expiredTopics,
+      theme: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_theme') || 'dark' : 'dark',
+      first_run_dismissed: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_first_run_dismissed') === 'true' : false
     };
 
     const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `life-learning-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = `daily-dive-backup-${nowIso.slice(0, 10)}.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
-    showToast('Backup exported successfully', 'success');
+    if (showToast) showToast('Backup exported successfully', 'success');
   };
 
-  // Import JSON backup
   const handleImportBackup = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
 
     try {
       const text = await file.text();
-      const parsed = JSON.parse(text);
-      await importDataBackup(parsed);
+      const data = JSON.parse(text);
+      if (typeof data !== 'object' || data === null) {
+        throw new Error('Invalid JSON structure');
+      }
+      importDataBackup(data);
     } catch (err) {
-      console.error('Import error:', err);
-      showToast('Failed to import backup file: invalid JSON format.', 'error');
-    } finally {
-      e.target.value = '';
+      if (showToast) showToast('Could not import backup file: ' + err.message, 'error');
     }
+    e.target.value = '';
   };
 
   return (
-    <motion.div
-      variants={settingsContainerVariants}
-      initial="hidden"
-      animate="visible"
-      className="flex flex-col w-full max-w-2xl mx-auto pb-8 space-y-6"
-    >
+    <div className="flex flex-col w-full max-w-3xl mx-auto pb-8 space-y-6">
       
-      {/* 1. NOTIFICATIONS & REMINDERS */}
-      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
-        <div className="flex items-center justify-between px-1">
-          <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold">
-            Notifications &amp; Reminders
-          </h2>
-          <span className={`inline-flex items-center gap-1 text-[11px] font-mono px-2 py-0.5 rounded border ${
-            userSettings.notifications_enabled
-              ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-              : 'text-on-surface-variant bg-surface-container-high border-outline-variant/30'
-          }`}>
-            <span className={`w-1.5 h-1.5 rounded-full ${userSettings.notifications_enabled ? 'bg-emerald-400' : 'bg-slate-400'}`}></span>
-            <span>{userSettings.notifications_enabled ? 'App: Active' : 'App: Disabled'}</span>
-          </span>
+      {/* ── SCREEN H1 HEADER ── */}
+      <div>
+        <h1 className="font-display text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
+          Settings
+        </h1>
+      </div>
+
+      {/* ── OPTIONAL INSTALL PWA BANNER ── */}
+      {deferredPrompt && !isStandalone && (
+        <div className="journal-card p-4 rounded-2xl border border-primary/30 bg-primary-container/10 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-2.5">
+            <Smartphone size={18} className="text-primary shrink-0" />
+            <div>
+              <p className="text-sm font-semibold text-on-surface">Install Daily Dive</p>
+              <p className="text-xs text-on-surface-variant">Add to your home screen for quick offline access.</p>
+            </div>
+          </div>
+          <Button variant="primary" onClick={handleInstallPwa} className="h-9 px-4 text-xs font-semibold shrink-0 cursor-pointer">
+            Install
+          </Button>
+        </div>
+      )}
+
+      {/* ── SECTION 1: REMINDERS ── */}
+      <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2.5">
+            <Clock size={18} className="text-primary" />
+            <div>
+              <h2 className="font-display text-base font-bold text-on-surface">Daily In-App Reminder</h2>
+              <p className="text-xs text-on-surface-variant">In-app reminder when Daily Dive is open in your browser.</p>
+            </div>
+          </div>
+          <Toggle
+            checked={Boolean(userSettings.notifications_enabled)}
+            onChange={handleToggleReminder}
+            ariaLabel="Toggle daily in-app reminders"
+          />
         </div>
 
-        <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
-          
-          {/* OS Level Permission Status Row */}
-          <div className="flex items-center justify-between bg-surface-container-low border border-outline-variant/20 px-3.5 py-2.5 rounded-lg">
-            <div className="flex items-center gap-2.5">
-              <Shield size={18} className="text-primary" />
-              <div>
-                <div className="text-xs font-semibold text-on-surface">Browser &amp; OS Permission</div>
-                <div className="text-[11px] text-on-surface-variant">
-                  {osPermission === 'granted'
-                    ? 'System permission active · Notifications will appear'
-                    : osPermission === 'denied'
-                    ? 'Blocked by browser permissions'
-                    : 'Will request on reminder activation'}
-                </div>
-              </div>
-            </div>
-            <span className={`inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded border ${
-              osPermission === 'granted'
-                ? 'bg-emerald-500/10 border-emerald-500/20 text-emerald-400'
-                : osPermission === 'denied'
-                ? 'bg-error-container/20 border-error/30 text-error'
-                : 'bg-surface-container-high border-outline-variant/30 text-on-surface-variant'
-            }`}>
-              <span className={`w-1.5 h-1.5 rounded-full ${
-                osPermission === 'granted' ? 'bg-emerald-400' : osPermission === 'denied' ? 'bg-error' : 'bg-slate-400'
-              }`}></span>
-              <span>{osPermission === 'granted' ? 'Granted' : osPermission === 'denied' ? 'Blocked' : 'Default'}</span>
-            </span>
-          </div>
+        {userSettings.notifications_enabled && (
+          <div className="pt-3 border-t border-outline-variant/20 space-y-3">
+            <label className="block text-xs font-semibold text-on-surface">Reminder Time</label>
+            <div className="flex items-center gap-2 flex-wrap">
+              {['08:00 AM', '09:00 AM', '12:00 PM', '08:00 PM'].map(preset => (
+                <button
+                  key={preset}
+                  type="button"
+                  onClick={() => handleTimePreset(preset)}
+                  className={`px-3 py-1.5 rounded-lg text-xs font-semibold border cursor-pointer transition-colors focus-visible:ring-2 focus-visible:ring-primary ${
+                    userSettings.reminder_time === preset
+                      ? 'bg-primary text-white border-primary'
+                      : 'bg-surface-container border-outline-variant/30 text-on-surface-variant hover:text-on-surface'
+                  }`}
+                >
+                  {preset}
+                </button>
+              ))}
 
-          {/* App-Level Daily Learning Reminder Switch */}
-          <div className="flex items-start justify-between gap-4 pt-1">
-            <div className="space-y-1">
-              <div className="font-medium text-sm sm:text-base text-on-surface">Daily learning reminder (App schedule)</div>
-              <p className="text-xs text-on-surface-variant">
-                In-app prompt when active around your preferred time to spin a new topic and maintain your streak.
-              </p>
-            </div>
-            <Toggle
-              checked={userSettings.notifications_enabled}
-              onChange={handleToggleReminder}
-              size="lg"
-              aria-label="Daily learning reminder"
-            />
-          </div>
-
-          <div className="h-[1px] w-full bg-surface-container-highest"></div>
-
-          {/* Scheduled Time Selector */}
-          <div className="space-y-2">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2 text-on-surface text-sm">
-                <Clock size={16} className="text-on-surface-variant" />
-                <span>Scheduled time</span>
-              </div>
-              <span className="font-mono text-xs text-primary font-semibold">{userSettings.reminder_time}</span>
-            </div>
-
-            <div className="flex items-center gap-2 pt-1 flex-wrap">
-              {['09:00 AM', '01:00 PM', '08:00 PM'].map(time => {
-                const label = time === '09:00 AM' ? 'Morning 09:00 AM' : time === '01:00 PM' ? 'Noon 01:00 PM' : 'Evening 08:00 PM';
-                const isSelected = userSettings.reminder_time === time;
-                return (
-                  <motion.button
-                    key={time}
-                    type="button"
-                    whileTap={{ scale: 0.95 }}
-                    transition={{ duration: 0.12 }}
-                    onClick={() => handleTimePreset(time)}
-                    className={`px-3 py-1 rounded-lg font-mono text-xs transition-colors cursor-pointer border ${
-                      isSelected
-                        ? 'bg-primary-container/20 border-primary-container/50 text-primary'
-                        : 'bg-surface-container-high border-outline-variant/40 text-on-surface-variant hover:text-on-surface'
-                    }`}
-                  >
-                    {label}
-                  </motion.button>
-                );
-              })}
-            </div>
-
-            {/* Custom Time Picker */}
-            <div className="pt-2 flex items-center gap-2.5">
-              <span className="text-xs text-on-surface-variant font-medium">Custom time:</span>
               <input
                 type="time"
                 value={formatTo24Hour(userSettings.reminder_time)}
                 onChange={handleCustomTimeChange}
                 aria-label="Custom reminder time"
-                className="px-2.5 py-1 rounded-lg font-mono text-xs bg-surface-container-high border border-outline-variant/40 text-on-surface focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-colors cursor-pointer"
+                className="px-2.5 py-1.5 rounded-lg bg-surface border border-outline-variant/40 text-xs font-mono text-on-surface focus-visible:ring-2 focus-visible:ring-primary"
               />
             </div>
           </div>
-        </div>
-      </motion.section>
-
-      {/* 2. OFFLINE & STORAGE */}
-      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
-        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
-          Offline &amp; Storage
-        </h2>
-        <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-3.5 shadow-sm">
-          <div className="flex items-start gap-3.5">
-            <div className="w-9 h-9 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-center text-emerald-400 shrink-0 mt-0.5">
-              <Cloud size={20} />
-            </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-medium text-sm sm:text-base text-on-surface">Ready for offline use</span>
-                <span className={`inline-flex items-center gap-1 text-[10px] font-mono px-2 py-0.5 rounded border ${
-                  isOnline
-                    ? 'text-emerald-400 bg-emerald-500/10 border-emerald-500/20'
-                    : 'text-tertiary bg-tertiary-container/10 border-tertiary/30'
-                }`}>
-                  <span className={`w-1.5 h-1.5 rounded-full ${isOnline ? 'bg-emerald-400 animate-pulse' : 'bg-tertiary'}`}></span>
-                  <span>{isOnline ? 'Online' : 'Offline'}</span>
-                </span>
-              </div>
-              <p className="text-xs text-on-surface-variant mt-1">
-                Topic catalogue and summaries are cached locally via Service Worker. Reads work completely offline.
-              </p>
-            </div>
-          </div>
-
-          <div className="h-[1px] w-full bg-surface-container-highest"></div>
-
-          {/* Dynamic PWA Installation Tile */}
-          <div className="flex items-center justify-between bg-surface-container-low border border-outline-variant/30 px-3.5 py-2.5 rounded-lg">
-            <div className="flex items-center gap-2.5">
-              <Smartphone size={18} className="text-primary" />
-              <div>
-                <div className="text-xs font-semibold text-on-surface">Web App Status</div>
-                <div className="font-mono text-[10px] text-on-surface-variant">
-                  {isStandalone
-                    ? 'Running in standalone window'
-                    : deferredPrompt
-                    ? 'Add to Home Screen for fast offline access'
-                    : 'Use browser menu to Add to Home Screen'}
-                </div>
-              </div>
-            </div>
-            <div>
-              {isStandalone ? (
-                <span className="inline-flex items-center gap-1 text-emerald-400 font-mono text-[11px] bg-emerald-500/10 px-2.5 py-1 rounded border border-emerald-500/20">
-                  <CheckCircle size={14} />
-                  <span>Installed</span>
-                </span>
-              ) : deferredPrompt ? (
-                <Button
-                  variant="primary"
-                  onClick={handleInstallPwa}
-                  className="px-3 py-1.5 text-xs font-medium"
-                >
-                  <Download size={15} />
-                  <span>Install App</span>
-                </Button>
-              ) : (
-                <span className="inline-flex items-center gap-1 text-on-surface-variant font-mono text-[11px] bg-surface-container-high px-2 py-1 rounded border border-outline-variant/30">
-                  <Globe size={14} />
-                  <span>Browser</span>
-                </span>
-              )}
-            </div>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* 3. SOUND & HAPTICS */}
-      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
-        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
-          Sound &amp; Haptics
-        </h2>
-        <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="font-medium text-sm sm:text-base text-on-surface">Sound effects</div>
-              <p className="text-xs text-on-surface-variant">Interactive wheel clicks and tactile ticking audio synthesis</p>
-            </div>
-            <Toggle
-              checked={userSettings.sound_enabled}
-              onChange={() => updateSettings({ sound_enabled: !userSettings.sound_enabled })}
-              size="lg"
-              aria-label="Sound effects"
-            />
-          </div>
-
-          <div className="h-[1px] w-full bg-surface-container-highest"></div>
-
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="font-medium text-sm sm:text-base text-on-surface">Haptic feedback</div>
-              <p className="text-xs text-on-surface-variant">Gentle device vibration when wheel settles on a selected topic</p>
-            </div>
-            <Toggle
-              checked={userSettings.haptics_enabled}
-              onChange={() => updateSettings({ haptics_enabled: !userSettings.haptics_enabled })}
-              size="lg"
-              aria-label="Haptic feedback"
-            />
-          </div>
-        </div>
-      </motion.section>
-
-      {/* 4. DATA & BACKUP */}
-      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
-        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
-          Data &amp; Backup
-        </h2>
-        <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-4 shadow-sm">
-          
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="font-medium text-sm sm:text-base text-on-surface">Export backup</div>
-              <p className="text-xs text-on-surface-variant">Download all streaks, history, and custom weights as a single JSON file.</p>
-            </div>
-            <Button
-              variant="secondary"
-              onClick={handleExportBackup}
-              className="px-3.5 py-2 text-xs font-semibold shrink-0"
-            >
-              <Download size={15} />
-              <span>Export JSON</span>
-            </Button>
-          </div>
-
-          <div className="h-[1px] w-full bg-surface-container-highest"></div>
-
-          <div className="flex items-start justify-between gap-4">
-            <div>
-              <div className="font-medium text-sm sm:text-base text-on-surface">Import backup</div>
-              <p className="text-xs text-on-surface-variant">Restore previous progress from a JSON file.</p>
-            </div>
-            <Button
-              as="label"
-              variant="outline"
-              className="px-3.5 py-2 text-xs font-semibold shrink-0"
-            >
-              <Upload size={15} />
-              <span>Import JSON</span>
-              <input type="file" accept=".json" onChange={handleImportBackup} className="hidden" />
-            </Button>
-          </div>
-
-          <div className="h-[1px] w-full bg-surface-container-highest"></div>
-
-          {/* Reset Data Alert Box */}
-          <div className="rounded-lg border border-error/30 bg-error-container/10 p-3.5 flex items-start justify-between gap-3">
-            <div>
-              <div className="font-semibold text-sm text-error flex items-center gap-1.5">
-                <AlertTriangle size={16} />
-                <span>Reset All Data</span>
-              </div>
-              <p className="text-xs text-on-surface-variant mt-0.5">Clear all streaks, learning history, and progress records.</p>
-            </div>
-            <Button
-              variant="danger"
-              onClick={() => setIsResetModalOpen(true)}
-              className="px-3 py-1.5 text-xs font-semibold shrink-0"
-            >
-              Reset Data...
-            </Button>
-          </div>
-
-        </div>
-      </motion.section>
-
-      {/* 5. ABOUT & VERSION */}
-      <motion.section variants={settingsSectionVariants} className="flex flex-col space-y-2">
-        <h2 className="font-display text-xs text-on-surface-variant uppercase tracking-wider font-bold px-1">
-          About
-        </h2>
-        <div className="rounded-xl bg-surface-container border border-outline-variant/30 p-4 sm:p-5 space-y-3.5 shadow-sm">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-9 h-9 rounded-lg bg-primary-container/20 border border-primary-container/30 flex items-center justify-center text-primary shrink-0">
-                <Disc size={20} />
-              </div>
-              <div>
-                <div className="font-semibold text-sm sm:text-base text-on-surface">Daily Dive</div>
-                <div className="text-xs text-on-surface-variant">Distraction-free lifelong learning for modern polymaths</div>
-              </div>
-            </div>
-            <span className="font-mono text-xs text-on-surface-variant bg-surface-container-high border border-outline-variant/30 px-2.5 py-1 rounded-lg">
-              v2.1.0
-            </span>
-          </div>
-          <div className="h-[1px] w-full bg-surface-container-highest"></div>
-          <div className="flex items-center justify-between text-xs font-mono text-on-surface-variant">
-            <span>Privacy: Zero tracking · 100% on-device</span>
-            <span className="text-primary hover:underline cursor-pointer">MIT License</span>
-          </div>
-        </div>
-      </motion.section>
-
-      {/* Reset Modal */}
-      <AnimatePresence>
-        {isResetModalOpen && (
-          <ResetConfirmationModal
-            isOpen={isResetModalOpen}
-            onClose={() => setIsResetModalOpen(false)}
-            onConfirm={resetAllData}
-          />
         )}
-      </AnimatePresence>
 
-    </motion.div>
+        {/* Client-side recurring .ics calendar reminder */}
+        <div className="pt-3 border-t border-outline-variant/20 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+          <div>
+            <span className="text-xs font-semibold text-on-surface block">Calendar Reminder</span>
+            <span className="text-[11px] text-on-surface-variant">Export a recurring daily event (.ics) to Apple Calendar, Google Calendar, or Outlook.</span>
+          </div>
+          <Button
+            variant="outline"
+            onClick={() => downloadCalendarReminder(userSettings.reminder_time)}
+            className="h-9 px-3 text-xs font-semibold shrink-0 cursor-pointer flex items-center gap-1.5 border-outline-variant/40 hover:border-primary/50 focus-visible:ring-2 focus-visible:ring-primary"
+          >
+            <Calendar size={14} className="text-primary" />
+            <span>Add to calendar</span>
+          </Button>
+        </div>
+      </section>
+
+      {/* ── SECTION 2: SOUND AND HAPTICS ── */}
+      <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-4">
+        <h2 className="font-display text-base font-bold text-on-surface">Sound and Haptics</h2>
+        
+        <div className="space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <Volume2 size={18} className="text-on-surface-variant" />
+              <div>
+                <span className="text-sm font-semibold text-on-surface block">Sound Effects</span>
+                <span className="text-xs text-on-surface-variant">Audio feedback during roulette spin and landing.</span>
+              </div>
+            </div>
+            <Toggle
+              checked={Boolean(userSettings.sound_enabled)}
+              onChange={(chk) => updateSettings({ sound_enabled: chk })}
+              ariaLabel="Toggle sound effects"
+            />
+          </div>
+
+          <div className="pt-2 border-t border-outline-variant/15 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <Vibrate size={18} className="text-on-surface-variant" />
+              <div>
+                <span className="text-sm font-semibold text-on-surface block">Haptic Feedback</span>
+                <span className="text-xs text-on-surface-variant">Tactile vibration on mobile devices during spin.</span>
+              </div>
+            </div>
+            <Toggle
+              checked={Boolean(userSettings.haptics_enabled)}
+              onChange={(chk) => updateSettings({ haptics_enabled: chk })}
+              ariaLabel="Toggle haptic feedback"
+            />
+          </div>
+        </div>
+      </section>
+
+      {/* ── SECTION 3: DATA ── */}
+      <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-4">
+        <div>
+          <h2 className="font-display text-base font-bold text-on-surface">Data Management</h2>
+          <p className="text-xs text-on-surface-variant mt-0.5">Export, import, or reset your local learning profile.</p>
+        </div>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+          <button
+            type="button"
+            onClick={handleExportBackup}
+            className="p-3 rounded-xl border border-outline-variant/30 bg-surface-container flex items-center gap-2.5 text-left hover:bg-surface-container-high transition-colors cursor-pointer"
+          >
+            <Download size={16} className="text-primary shrink-0" />
+            <div>
+              <span className="text-xs font-semibold text-on-surface block">Export Backup</span>
+              <span className="text-[11px] text-on-surface-variant">Download JSON data file</span>
+            </div>
+          </button>
+
+          <label className="p-3 rounded-xl border border-outline-variant/30 bg-surface-container flex items-center gap-2.5 text-left hover:bg-surface-container-high transition-colors cursor-pointer">
+            <Upload size={16} className="text-primary shrink-0" />
+            <div>
+              <span className="text-xs font-semibold text-on-surface block">Import Backup</span>
+              <span className="text-[11px] text-on-surface-variant">Restore profile from JSON</span>
+            </div>
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportBackup}
+              className="hidden"
+            />
+          </label>
+        </div>
+
+        <div className="pt-2">
+          <button
+            type="button"
+            id="reset-all-data-btn"
+            onClick={() => setIsResetModalOpen(true)}
+            className="w-full p-3 rounded-xl border border-error/30 bg-error/5 hover:bg-error/10 text-error flex items-center justify-center gap-2 text-xs font-semibold transition-colors cursor-pointer"
+          >
+            <AlertTriangle size={15} />
+            <span>Reset All Data &amp; History</span>
+          </button>
+        </div>
+
+        {/* Retention & Privacy Policy */}
+        <div className="pt-2 border-t border-outline-variant/20 space-y-1">
+          <p className="text-xs text-on-surface font-medium">
+            Your data stays on this device. Daily Dive does not use cookies, trackers, or remote accounts.
+          </p>
+          <p className="text-[11px] font-mono text-on-surface-variant">
+            History is capped at 150 entries and pruned after 90 days.
+          </p>
+        </div>
+      </section>
+
+      {/* ── SECTION 4: ABOUT ── */}
+      <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-3">
+        <h2 className="font-display text-base font-bold text-on-surface">About Daily Dive</h2>
+        <div className="text-xs text-on-surface-variant space-y-1.5 leading-relaxed">
+          <p>
+            Version 2.1.0 · <span className="font-mono text-[11px] text-primary">Build {typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'dev'} ({typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : 'today'})</span> · MIT License
+          </p>
+          <div className="pt-2 border-t border-outline-variant/20">
+            <a
+              href="https://github.com/SumitMahajan11/Daily-Dive/issues/new"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline focus-visible:ring-2 focus-visible:ring-primary rounded"
+            >
+              <MessageSquare size={13} />
+              <span>Send feedback / Report an issue</span>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      {/* Reset Confirmation Modal */}
+      <ResetConfirmationModal
+        isOpen={isResetModalOpen}
+        onClose={() => setIsResetModalOpen(false)}
+        onConfirm={() => {
+          resetAllData();
+          setIsResetModalOpen(false);
+        }}
+      />
+
+    </div>
   );
 };
