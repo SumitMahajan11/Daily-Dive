@@ -17,7 +17,11 @@ import {
   SCHEMA_VERSION,
   removeCustomTopicRecords,
   restoreCustomTopicRecords,
-  repairProgressFromHistory
+  repairProgressFromHistory,
+  savePreRepairBackup,
+  clearAllLocalData,
+  STORAGE_KEYS_TO_CLEAR,
+  PRE_REPAIR_BACKUP_KEY
 } from '../src/lib/customTopics.js';
 
 // Setup browser localStorage mock in node environment
@@ -701,24 +705,19 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     } = repairProgressFromHistory(currentProgress, currentHistory, []);
 
     if (load1Repairs > 0 || load1Drops > 0) {
-      const existingPreRepair = localStorage.getItem('daily_dive_pre_repair_backup');
-      if (!existingPreRepair) {
-        localStorage.setItem('daily_dive_pre_repair_backup', JSON.stringify({
-          user_progress: currentProgress,
-          history: currentHistory,
-          backed_up_at: '2026-10-10T12:00:00.000Z'
-        }));
-      }
+      const backupSaved = savePreRepairBackup(localStorage, currentProgress, currentHistory, '2026-10-10T12:00:00.000Z');
+      assert.strictEqual(backupSaved, true, 'Backup must be successfully saved on first repair');
       localStorage.setItem('daily_dive_guest_progress', JSON.stringify(load1Progress));
       localStorage.setItem('daily_dive_history', JSON.stringify(load1History));
     }
 
     // Verify key exists after repair
-    const preRepairRaw = localStorage.getItem('daily_dive_pre_repair_backup');
-    assert.ok(preRepairRaw, 'daily_dive_pre_repair_backup must exist in localStorage');
+    const preRepairRaw = localStorage.getItem(PRE_REPAIR_BACKUP_KEY);
+    assert.ok(preRepairRaw, `${PRE_REPAIR_BACKUP_KEY} must exist in localStorage`);
     const preRepairObj = JSON.parse(preRepairRaw);
     assert.deepStrictEqual(preRepairObj.user_progress, unrepairedProgress, 'Backup contains original unrepaired progress');
     assert.deepStrictEqual(preRepairObj.history, unrepairedHistory, 'Backup contains original unrepaired history');
+    assert.strictEqual(preRepairObj.backed_up_at, '2026-10-10T12:00:00.000Z');
 
     // Simulate second load
     let currentProgress2 = JSON.parse(localStorage.getItem('daily_dive_guest_progress') || '{}');
@@ -732,23 +731,40 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     } = repairProgressFromHistory(currentProgress2, currentHistory2, []);
 
     if (load2Repairs > 0 || load2Drops > 0) {
-      const existingPreRepair2 = localStorage.getItem('daily_dive_pre_repair_backup');
-      if (!existingPreRepair2) {
-        localStorage.setItem('daily_dive_pre_repair_backup', JSON.stringify({
-          user_progress: currentProgress2,
-          history: currentHistory2,
-          backed_up_at: '2026-10-10T13:00:00.000Z'
-        }));
-      }
+      const backupSaved2 = savePreRepairBackup(localStorage, currentProgress2, currentHistory2, '2026-10-10T13:00:00.000Z');
+      assert.strictEqual(backupSaved2, false, 'Backup must NOT be overwritten on second repair');
       localStorage.setItem('daily_dive_guest_progress', JSON.stringify(load2Progress));
       localStorage.setItem('daily_dive_history', JSON.stringify(load2History));
     }
 
     // Verify key is unchanged after second load
-    const preRepairRawAfterSecondLoad = localStorage.getItem('daily_dive_pre_repair_backup');
+    const preRepairRawAfterSecondLoad = localStorage.getItem(PRE_REPAIR_BACKUP_KEY);
     assert.strictEqual(preRepairRawAfterSecondLoad, preRepairRaw, 'pre_repair_backup is strictly unchanged after second load');
     assert.strictEqual(load2Repairs, 0, 'Zero repairs on second load');
     assert.strictEqual(load2Drops, 0, 'Zero drops on second load');
+  });
+
+  test('Round 11.3 Item 4b: clearAllLocalData removes daily_dive_pre_repair_backup and all app keys', () => {
+    localStorage.clear();
+
+    // Populate all known storage keys
+    STORAGE_KEYS_TO_CLEAR.forEach((key, idx) => {
+      localStorage.setItem(key, JSON.stringify({ index: idx, key }));
+    });
+
+    // Verify all keys exist
+    STORAGE_KEYS_TO_CLEAR.forEach((key) => {
+      assert.ok(localStorage.getItem(key), `${key} must exist before clear`);
+    });
+
+    // Execute clear
+    clearAllLocalData(localStorage);
+
+    // Verify all keys are completely removed, including PRE_REPAIR_BACKUP_KEY
+    STORAGE_KEYS_TO_CLEAR.forEach((key) => {
+      assert.strictEqual(localStorage.getItem(key), null, `${key} must be removed after clear`);
+    });
+    assert.strictEqual(localStorage.getItem(PRE_REPAIR_BACKUP_KEY), null, 'Pre-repair backup must be deleted');
   });
 
   test('Real Data: Import evidence/real-backup.json and verify repair on import / load', () => {

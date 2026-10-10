@@ -205,3 +205,66 @@ export function repairProgressFromHistory(progressMap = {}, history = [], topicC
     droppedHistoryCount
   };
 }
+
+export const PRE_REPAIR_BACKUP_KEY = 'daily_dive_pre_repair_backup';
+
+/**
+ * Saves a one-time safety backup of un-repaired progress and history before schema/catalog repair modifications.
+ * @param {Storage|Object} storage - localStorage or custom storage adapter
+ * @param {Object} progress - user progress map before repair
+ * @param {Array} history - user history array before repair
+ * @param {string} [timestamp] - optional ISO timestamp for backup creation time
+ * @returns {boolean} true if backup was written, false if backup already existed or storage failed
+ */
+export function savePreRepairBackup(storage, progress, history, timestamp = new Date().toISOString()) {
+  if (!storage) return false;
+  try {
+    const existing = typeof storage.getItem === 'function' 
+      ? storage.getItem(PRE_REPAIR_BACKUP_KEY)
+      : storage[PRE_REPAIR_BACKUP_KEY];
+    
+    if (!existing) {
+      const backupData = JSON.stringify({
+        user_progress: progress || {},
+        history: history || [],
+        backed_up_at: timestamp
+      });
+      if (typeof storage.setItem === 'function') {
+        storage.setItem(PRE_REPAIR_BACKUP_KEY, backupData);
+      } else {
+        storage[PRE_REPAIR_BACKUP_KEY] = backupData;
+      }
+      return true;
+    }
+  } catch (e) {}
+  return false;
+}
+
+export const STORAGE_KEYS_TO_CLEAR = [
+  'daily_dive_guest_settings',
+  'daily_dive_guest_progress',
+  'daily_dive_guest_streaks',
+  'daily_dive_history',
+  'daily_dive_custom_topics',
+  'daily_dive_expired_custom_topics',
+  'daily_dive_gemini_key',
+  PRE_REPAIR_BACKUP_KEY
+];
+
+/**
+ * Clears all local application data and pre-repair backup snapshots.
+ * @param {Storage|Object} storage - localStorage or custom storage adapter
+ */
+export function clearAllLocalData(storage) {
+  if (!storage) return;
+  STORAGE_KEYS_TO_CLEAR.forEach(k => {
+    try {
+      if (typeof storage.removeItem === 'function') {
+        storage.removeItem(k);
+      } else {
+        delete storage[k];
+      }
+    } catch (e) {}
+  });
+}
+

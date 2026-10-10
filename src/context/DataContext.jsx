@@ -12,7 +12,10 @@ import {
   SCHEMA_VERSION,
   removeCustomTopicRecords,
   restoreCustomTopicRecords,
-  repairProgressFromHistory
+  repairProgressFromHistory,
+  savePreRepairBackup,
+  clearAllLocalData,
+  PRE_REPAIR_BACKUP_KEY
 } from '../lib/customTopics';
 import { loadTopicsForEnabledCategories, loadAllBuiltinTopics } from '../lib/topicLoader';
 import { AudioController } from '../lib/audio';
@@ -181,17 +184,7 @@ export const DataProvider = ({ children }) => {
 
       const hasChanges = loadRepairs > 0 || loadDrops > 0;
       if (hasChanges) {
-        try {
-          const existingPreRepairBackup = localStorage.getItem('daily_dive_pre_repair_backup');
-          if (!existingPreRepairBackup) {
-            const preRepairBackup = {
-              user_progress: guestProgress,
-              history: guestHistory,
-              backed_up_at: new Date().toISOString()
-            };
-            localStorage.setItem('daily_dive_pre_repair_backup', JSON.stringify(preRepairBackup));
-          }
-        } catch (e) {}
+        savePreRepairBackup(localStorage, guestProgress, guestHistory);
 
         guestProgress = repairedLoadProgress;
         guestHistory = repairedLoadHistory;
@@ -376,13 +369,7 @@ export const DataProvider = ({ children }) => {
   const resetAllData = useCallback(() => {
     if (typeof window !== 'undefined') {
       try {
-        localStorage.removeItem('daily_dive_guest_settings');
-        localStorage.removeItem('daily_dive_guest_progress');
-        localStorage.removeItem('daily_dive_guest_streaks');
-        localStorage.removeItem('daily_dive_history');
-        localStorage.removeItem('daily_dive_custom_topics');
-        localStorage.removeItem('daily_dive_expired_custom_topics');
-        localStorage.removeItem('daily_dive_gemini_key');
+        clearAllLocalData(localStorage);
       } catch (e) {}
     }
 
