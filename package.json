@@ -5,8 +5,11 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build:data": "python scripts/split_topics_by_group.py",
+    "prebuild": "npm run build:data",
     "build": "vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test": "node --test tests/data_quality.test.mjs tests/regression_extractor.test.mjs tests/test_backup_exclusion.test.mjs tests/test_prune_and_selectors.test.mjs scripts/test_part_a_invariants.mjs scripts/test_part_c_durability.mjs scripts/test_part_c_share_and_calendar.mjs scripts/test_part_d_backup.mjs scripts/reproduce_round2_leads.mjs"
   },
   "dependencies": {
     "canvas-confetti": "^1.9.4",
@@ -19,8 +22,12 @@
     "tesseract.js": "^7.0.0"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@vitejs/plugin-react": "^4.3.4",
     "autoprefixer": "^10.4.20",
+    "axe-core": "^4.14.0",
+    "lighthouse": "^13.5.0",
+    "playwright": "^1.64.0",
     "postcss": "^8.5.2",
     "tailwindcss": "^3.4.17",
     "vite": "^5.4.14",

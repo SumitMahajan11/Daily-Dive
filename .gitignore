@@ -29,10 +29,13 @@ __pycache__/
 *.pyc
 *.pyo
 
-# Testing & screenshots
+# Testing, evidence & reports
 screenshots/
 screenshots_*/
+screenshots_library_review.png
+evidence/
+lighthouse-report.json
+scripts/inspect_*.py
 artifacts/
-
 
 .vercel

@@ -8,7 +8,7 @@ A distraction-free, privacy-first progressive web application (PWA) designed for
 
 Most online learning platforms trap you in endless feeds or require heavy multi-week course commitments. **Daily Dive** takes the opposite approach: **one high-signal micro-dive a day, zero clutter, zero accounts, and 100% local privacy**.
 
-- **Open & Spin**: Receive a curated concept with a 2-minute overview, core mental model, real-world application, and verified authoritative sources.
+- **Open & Spin**: Receive a curated concept with a 2-minute overview, core mental model, real-world application, and curated reference links.
 - **Learn & Retain**: Add topics to your spaced repetition queue to reinforce knowledge over 1, 3, 7, and 14-day intervals.
 - **Convert Your Content**: Upload PDFs, presentations, documents, videos, or audio files to turn personal materials into bite-sized dive cards locally in your browser.
 - **Own Your Data**: Everything stays in your browser's local storage. No tracking, no cloud sync lock-in, and offline-capable from day one.
@@ -44,23 +44,25 @@ Most online learning platforms trap you in endless feeds or require heavy multi-
 
 ## Topic Dataset Breakdown
 
+<!-- STATS:START -->
 Daily Dive compiles **692 curated micro-topics** spanning **12 categories** and 4 primary knowledge pillars:
 
 | Pillar | Category | Topic Count | Focus Areas |
 | :--- | :--- | :---: | :--- |
 | **Tech & Systems** | Data Structures & Algorithms | 73 | Trees, graphs, dynamic programming, sorting |
-| | Cloud & Infrastructure | 64 | Kubernetes, networking, serverless, edge computing |
-| | AI & Machine Learning | 63 | LLMs, embeddings, transformer architectures, MLOps |
-| | Systems & Distributed Computing | 57 | Raft, Paxos, replication, CAP theorem, caching |
-| | Web Development & Architecture | 56 | DOM performance, rendering pipelines, security |
+|  | Cloud & Infrastructure | 64 | Kubernetes, networking, serverless, edge computing |
+|  | AI & Machine Learning | 63 | LLMs, embeddings, transformer architectures, MLOps |
+|  | Systems & Distributed Computing | 57 | Raft, Paxos, replication, CAP theorem, caching |
+|  | Web Development & Architecture | 56 | DOM performance, rendering pipelines, security |
 | **Mind & Growth** | Psychology & Decision Making | 80 | Cognitive biases, mental models, behavioral science |
-| | Communication & Negotiation | 54 | Framing, persuasion, executive presence, feedback |
-| | Philosophy & Critical Thinking | 42 | Epistemology, ethics, logic, first principles |
+|  | Communication & Negotiation | 54 | Framing, persuasion, executive presence, feedback |
+|  | Philosophy & Critical Thinking | 42 | Epistemology, ethics, logic, first principles |
 | **Money & Career** | Personal Finance & Economics | 68 | Compound interest, macroeconomics, capital markets |
-| | Career Strategy & Leadership | 45 | Leverage, org design, talent density, negotiations |
+|  | Career Strategy & Leadership | 45 | Leverage, org design, talent density, negotiations |
 | **World & Ideas** | Science & Nature | 45 | Quantum mechanics, thermodynamics, biology |
-| | History of Innovation | 45 | Breakthrough inventions, industrial revolutions, tech shifts |
+|  | History of Innovation | 45 | Breakthrough inventions, industrial revolutions, tech shifts |
 | **Total** | | **692 Topics** | |
+<!-- STATS:END -->
 
 ---
 
