@@ -2,11 +2,12 @@ import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
-export const ResetConfirmationModal = ({ isOpen = true, onClose, onConfirm }) => {
+export const ResetConfirmationModal = ({ isOpen = false, onClose, onConfirm }) => {
   const [deleting, setDeleting] = useState(false);
 
   // Escape key handler to close modal smoothly
   useEffect(() => {
+    if (!isOpen) return;
     const handleKeyDown = (e) => {
       if (e.key === 'Escape' && !deleting) {
         onClose();
@@ -14,7 +15,9 @@ export const ResetConfirmationModal = ({ isOpen = true, onClose, onConfirm }) =>
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [onClose, deleting]);
+  }, [isOpen, onClose, deleting]);
+
+  if (!isOpen) return null;
 
   const handleConfirm = async () => {
     setDeleting(true);
