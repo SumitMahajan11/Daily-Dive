@@ -20,9 +20,14 @@ export async function loadGroupTopics(groupName) {
     return cachedGroups.get(groupName);
   }
   if (groupLoaders[groupName]) {
-    const topics = await groupLoaders[groupName]();
-    cachedGroups.set(groupName, topics);
-    return topics;
+    try {
+      const topics = await groupLoaders[groupName]();
+      cachedGroups.set(groupName, topics);
+      return topics;
+    } catch (err) {
+      console.warn('Could not load group chunk:', groupName, err);
+      return [];
+    }
   }
   return [];
 }

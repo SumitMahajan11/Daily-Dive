@@ -68,8 +68,8 @@ export default defineConfig({
         ]
       },
       workbox: {
-        // Precache app shell + the 4 group chunks only
-        globPatterns: ['**/*.{html,css,png,svg,woff2,ico}', '**/index*.js', '**/vendor-react*.js', '**/vendor-motion*.js', '**/vendor-icons*.js', '**/topics-*.js'],
+        // Precache app shell, all screens, and the 4 group chunks
+        globPatterns: ['**/*.{html,css,png,svg,woff2,ico,js,webmanifest}'],
         globIgnores: ['**/vendor-pdf*.js', '**/vendor-jszip*.js', '**/vendor-tesseract*.js', '**/pdf.worker*.*'],
         runtimeCaching: [
           {

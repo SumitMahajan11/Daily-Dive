@@ -130,26 +130,25 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
   };
 
   const handleGroupToggle = (group, isChecked) => {
-    let patch = { ...enabled };
-    if (!hasAnyExplicitSetting) {
-      CATEGORY_TREE.forEach(g => {
-        patch[g.group] = true;
-        g.categories.forEach(cat => { patch[`${g.group}::${cat.name}`] = true; });
-      });
-    }
+    const checkedVal = typeof isChecked === 'boolean' ? isChecked : Boolean(isChecked?.target?.checked);
+    let patch = { ...STARTER_ENABLED_CATEGORIES, ...enabled };
 
-    patch[group] = isChecked;
+    patch[group] = checkedVal;
     if (group === 'custom') {
-      patch['custom'] = isChecked;
-      patch['custom::custom-notes'] = isChecked;
+      patch['custom'] = checkedVal;
+      patch['custom::custom-notes'] = checkedVal;
       (customTopics || []).forEach(ct => {
-        if (ct.category) patch[`custom::${ct.category}`] = isChecked;
+        if (ct.category) {
+          patch[`custom::${ct.category}`] = checkedVal;
+          patch[ct.category] = checkedVal;
+        }
       });
     } else {
       const groupDef = CATEGORY_TREE.find(g => g.group === group);
       if (groupDef) {
         groupDef.categories.forEach(cat => {
-          patch[`${group}::${cat.name}`] = isChecked;
+          patch[`${group}::${cat.name}`] = checkedVal;
+          patch[cat.name] = checkedVal;
         });
       }
     }
@@ -157,16 +156,12 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
   };
 
   const handleCategoryToggle = (group, categoryName, isChecked) => {
-    let patch = { ...enabled };
-    if (!hasAnyExplicitSetting) {
-      CATEGORY_TREE.forEach(g => {
-        patch[g.group] = true;
-        g.categories.forEach(cat => { patch[`${g.group}::${cat.name}`] = true; });
-      });
-    }
+    const checkedVal = typeof isChecked === 'boolean' ? isChecked : Boolean(isChecked?.target?.checked);
+    let patch = { ...STARTER_ENABLED_CATEGORIES, ...enabled };
 
     const key = `${group}::${categoryName}`;
-    patch[key] = isChecked;
+    patch[key] = checkedVal;
+    patch[categoryName] = checkedVal;
 
     const groupDef = CATEGORY_TREE.find(g => g.group === group);
     if (groupDef) {

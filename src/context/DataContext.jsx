@@ -8,7 +8,7 @@ import {
   STARTER_ENABLED_CATEGORIES
 } from '../lib/roulette';
 import { selectStreakMetrics } from '../lib/selectors';
-import { loadTopicsForEnabledCategories } from '../lib/topicLoader';
+import { loadTopicsForEnabledCategories, loadAllBuiltinTopics } from '../lib/topicLoader';
 import { AudioController } from '../lib/audio';
 import { scheduleDailyReminder, cancelDailyReminder } from '../lib/notifications';
 
@@ -185,6 +185,7 @@ export const DataProvider = ({ children }) => {
 
   useEffect(() => {
     loadData();
+    loadAllBuiltinTopics().catch(() => {});
   }, [loadData]);
 
   // Dynamically load additional category groups when user updates settings

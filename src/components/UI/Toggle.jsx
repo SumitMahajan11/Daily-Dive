@@ -34,7 +34,7 @@ export const Toggle = ({
   const handleChange = (e) => {
     if (disabled) return;
     if (onChange) {
-      onChange(e);
+      onChange(e.target.checked, e);
     }
   };
 
