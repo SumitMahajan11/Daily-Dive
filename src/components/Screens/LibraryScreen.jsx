@@ -392,6 +392,10 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           candidates = await extractTopicsWithGemini(rawText, geminiApiKey.trim(), file.name);
         } catch (geminiErr) {
           console.warn('Gemini extraction failed, falling back to local extractor:', geminiErr);
+          const msg = geminiErr.message || 'Gemini extraction unavailable.';
+          if (typeof showToast === 'function') {
+            showToast(`${msg} Falling back to local offline extraction.`, 'info');
+          }
           candidates = await extractTopicsLocally(rawText, [], file.name);
         }
       } else {
