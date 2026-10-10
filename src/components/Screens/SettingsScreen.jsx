@@ -381,10 +381,15 @@ export const SettingsScreen = () => {
           </button>
         </div>
 
-        {/* Moved Retention Policy Footnote */}
-        <p className="text-[11px] font-mono text-on-surface-variant pt-2 border-t border-outline-variant/20">
-          History is capped at 150 entries and pruned after 90 days.
-        </p>
+        {/* Retention & Privacy Policy */}
+        <div className="pt-2 border-t border-outline-variant/20 space-y-1">
+          <p className="text-xs text-on-surface font-medium">
+            Your data stays on this device. Daily Dive does not use cookies, trackers, or remote accounts.
+          </p>
+          <p className="text-[11px] font-mono text-on-surface-variant">
+            History is capped at 150 entries and pruned after 90 days.
+          </p>
+        </div>
       </section>
 
       {/* ── SECTION 4: ABOUT ── */}
@@ -393,9 +398,6 @@ export const SettingsScreen = () => {
         <div className="text-xs text-on-surface-variant space-y-1.5 leading-relaxed">
           <p>
             Version 2.1.0 · <span className="font-mono text-[11px] text-primary">Build {typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'dev'} ({typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : 'today'})</span> · MIT License
-          </p>
-          <p className="text-on-surface font-medium">
-            Your data stays on this device. Daily Dive does not use cookies, trackers, or remote accounts.
           </p>
           <div className="pt-2 border-t border-outline-variant/20">
             <a

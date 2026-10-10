@@ -55,7 +55,7 @@ async function testUploadRealRoadmap() {
   await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
   await page.waitForTimeout(600);
 
-  const chooseFileBtn = page.locator('#library button:has-text("Choose a file")').first();
+  const chooseFileBtn = page.locator('#library button:has-text("Upload notes"), #library button:has-text("Choose a file")').first();
   await chooseFileBtn.waitFor({ state: 'visible', timeout: 5000 });
 
   console.log('2. Triggering file chooser via real upload UI button...');

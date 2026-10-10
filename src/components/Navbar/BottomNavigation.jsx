@@ -20,6 +20,7 @@ export const BottomNavigation = ({ activeTab, onSelectTab }) => {
               key={tab.id}
               type="button"
               data-nav-id={tab.id}
+              aria-current={isActive ? 'page' : undefined}
               onClick={() => onSelectTab(tab.id)}
               className={`relative min-w-[72px] min-h-[48px] px-3 py-1.5 rounded-xl flex flex-col items-center justify-center gap-1 transition-colors z-10 cursor-pointer focus-visible:ring-2 focus-visible:ring-primary ${
                 isActive

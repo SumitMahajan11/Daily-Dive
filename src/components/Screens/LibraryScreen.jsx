@@ -173,6 +173,27 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
     updateSettings({ enabled_categories: patch });
   };
 
+  const handleSelectAll = () => {
+    let patch = { ...STARTER_ENABLED_CATEGORIES, ...enabled };
+    CATEGORY_TREE.forEach(groupDef => {
+      patch[groupDef.group] = true;
+      groupDef.categories.forEach(cat => {
+        patch[`${groupDef.group}::${cat.name}`] = true;
+        patch[cat.name] = true;
+      });
+    });
+    patch['custom'] = true;
+    patch['custom::custom-notes'] = true;
+    (customTopics || []).forEach(ct => {
+      if (ct.category) {
+        patch[`custom::${ct.category}`] = true;
+        patch[ct.category] = true;
+      }
+    });
+    updateSettings({ enabled_categories: patch });
+    if (showToast) showToast('Enabled all topic categories', 'info');
+  };
+
   const handleResetDefaults = () => {
     updateSettings({ enabled_categories: STARTER_ENABLED_CATEGORIES });
     if (showToast) showToast('Reset categories to default', 'info');
@@ -476,17 +497,26 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
 
       {/* ── SECTION 1: YOUR INTERESTS ── */}
       <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-4">
-        <div className="flex items-center justify-between">
+        <div className="flex items-center justify-between gap-2 flex-wrap">
           <h2 className="font-display text-base sm:text-lg font-bold text-on-surface">
             Your interests
           </h2>
-          <button
-            type="button"
-            onClick={handleResetDefaults}
-            className="text-xs text-on-surface-variant hover:text-primary transition-colors cursor-pointer"
-          >
-            Reset to default
-          </button>
+          <div className="flex items-center gap-2">
+            <button
+              type="button"
+              onClick={handleSelectAll}
+              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-container hover:bg-surface-container-high text-on-surface transition-colors cursor-pointer border border-outline-variant/30"
+            >
+              All
+            </button>
+            <button
+              type="button"
+              onClick={handleResetDefaults}
+              className="px-2.5 py-1 rounded-lg text-xs font-semibold bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer border border-outline-variant/30"
+            >
+              Reset
+            </button>
+          </div>
         </div>
 
         {/* 4 Group Cards */}
@@ -495,6 +525,8 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
             const GroupIcon = GROUP_ICONS[groupDef.group] || Sparkles;
             const isGroupOn = enabled[groupDef.group] !== false;
             const isExpanded = expandedGroups[groupDef.group];
+            const totalGroupTopics = groupDef.categories.reduce((sum, c) => sum + (c.topicsCount || 0), 0);
+            const activeCatsCount = groupDef.categories.filter(c => enabled[`${groupDef.group}::${c.name}`] !== false && enabled[c.name] !== false).length;
 
             return (
               <div
@@ -502,14 +534,19 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                 className="rounded-xl border border-outline-variant/30 bg-surface-container-low overflow-hidden"
               >
                 {/* Group Card Header */}
-                <div className="p-3.5 flex items-center justify-between gap-2">
-                  <div className="flex items-center gap-2.5 min-w-0">
+                <div className="p-3.5 flex items-center justify-between gap-3">
+                  <div className="flex items-center gap-2.5 min-w-0 flex-1">
                     <div className="w-8 h-8 rounded-lg flex items-center justify-center bg-surface-container text-primary shrink-0">
                       <GroupIcon size={16} />
                     </div>
-                    <span className="font-semibold text-sm text-on-surface truncate">
-                      {groupDef.label}
-                    </span>
+                    <div className="flex flex-col min-w-0 flex-1">
+                      <span className="font-semibold text-sm text-on-surface leading-tight break-words">
+                        {groupDef.label}
+                      </span>
+                      <span className="text-[11px] text-on-surface-variant font-mono mt-0.5 leading-tight">
+                        {totalGroupTopics} topics · {activeCatsCount} of {groupDef.categories.length} on
+                      </span>
+                    </div>
                   </div>
 
                   <div className="flex items-center gap-2 shrink-0">
@@ -709,21 +746,18 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         <div className="flex items-center justify-between flex-wrap gap-2">
           <div>
             <h2 className="font-display text-base sm:text-lg font-bold text-on-surface">
-              Add notes
+              Add your own notes
             </h2>
-            <p className="text-xs text-on-surface-variant mt-0.5">
-              Turn your notes into topics
-            </p>
           </div>
 
           <div className="flex items-center gap-2">
             <button
               type="button"
               onClick={() => setShowManualForm(!showManualForm)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-outline-variant/30 bg-surface-container text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
+              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg border border-outline-variant/30 bg-surface-container text-xs font-semibold text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer whitespace-nowrap"
             >
-              <Plus size={14} />
-              <span>Add manually</span>
+              <Plus size={14} className="shrink-0" />
+              <span>Add Manually</span>
             </button>
           </div>
         </div>
@@ -873,10 +907,10 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
             </div>
 
             <p className="text-sm font-semibold text-on-surface">
-              {isFinePointer ? 'Drop notes or slides here, or choose a file' : 'Choose a file to extract topics'}
+              Drop notes or slides here<span className="hidden [@media(pointer:fine)]:inline">, or position documents directly onto the collection tray</span>
             </p>
-            <p className="text-xs text-on-surface-variant mt-1">
-              Supports PDF, PPTX, image notes, short video, or markdown.
+            <p className="text-xs text-on-surface-variant mt-1 whitespace-nowrap">
+              PDF, slides, images, video
             </p>
 
             <Button
@@ -884,7 +918,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
               onClick={() => fileInputRef.current?.click()}
               className="mt-4 h-10 px-5 text-xs font-semibold cursor-pointer"
             >
-              Choose a file
+              Upload notes
             </Button>
           </div>
         )}
@@ -1038,14 +1072,9 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           </div>
         )}
 
-        {/* Engine Notice & Conditional Privacy */}
-        <div className="pt-2 border-t border-outline-variant/20 text-xs text-on-surface-variant space-y-1">
-          <p>Topics are generated on your device. Works best on clean notes and slides.</p>
-          <p className="text-[11px] text-outline">
-            {useByok && geminiApiKey.trim()
-              ? 'Extracted text (not the file) is sent to Google Gemini using your key.'
-              : 'Your files never leave this device.'}
-          </p>
+        {/* Engine Notice & Privacy */}
+        <div className="pt-2 border-t border-outline-variant/20 text-xs text-on-surface-variant">
+          <p>Files are read on your device. If you add a Gemini key, extracted text is sent to Google.</p>
         </div>
 
         {/* Improve Results (Optional) Disclosure */}

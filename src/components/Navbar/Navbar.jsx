@@ -11,15 +11,15 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
   const isActiveToday = effectiveStreak?.is_active_today;
 
   return (
-    <header className="fixed top-0 w-full z-40 pt-safe bg-surface/85 backdrop-blur-xl border-b border-outline-variant/30">
-      <div className="max-w-6xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-between">
+    <header className="fixed top-0 w-full z-40 pt-safe bg-surface/85 backdrop-blur-xl border-b border-outline-variant/30 h-14 max-h-16">
+      <div className="max-w-6xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
         
         {/* Brand Wordmark Only */}
         <div className="flex items-center gap-2.5">
           <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-container/20 border border-primary-container/30 text-primary">
             <Disc size={18} />
           </div>
-          <span className="font-display font-bold text-base sm:text-lg text-on-surface tracking-tight">
+          <span className="font-display font-bold text-base sm:text-lg text-on-surface tracking-tight whitespace-nowrap">
             Daily Dive
           </span>
         </div>
@@ -30,7 +30,8 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
           {streak >= 1 && (
             <div
               data-testid="header-streak-pill"
-              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-xs shadow-inner select-none"
+              className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-surface-container-high border border-outline-variant/30 text-xs shadow-inner select-none whitespace-nowrap"
+              style={{ whiteSpace: 'nowrap' }}
             >
               <Flame size={14} className={isActiveToday ? 'text-amber-500 fill-amber-500' : 'text-tertiary'} />
               <span className="font-mono font-bold text-on-surface">{streak}</span>
@@ -60,9 +61,14 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
             onClick={() => onNavigateTab('settings')}
             aria-label="Settings"
             title="Settings"
+            aria-current={activeTab === 'settings' ? 'page' : undefined}
             className="w-11 h-11 flex items-center justify-center text-on-surface-variant hover:text-on-surface transition-colors cursor-pointer"
           >
-            <div className="w-8 h-8 rounded-full flex items-center justify-center bg-surface-container-high border border-outline-variant/30 hover:bg-surface-container-highest transition-all active:scale-95 shadow-inner">
+            <div className={`w-8 h-8 rounded-full flex items-center justify-center border transition-all active:scale-95 shadow-inner ${
+              activeTab === 'settings'
+                ? 'bg-primary-container/20 border-primary-container/40 text-primary'
+                : 'bg-surface-container-high border-outline-variant/30 hover:bg-surface-container-highest text-on-surface-variant'
+            }`}>
               <Settings size={15} />
             </div>
           </button>

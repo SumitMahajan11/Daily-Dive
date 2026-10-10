@@ -283,22 +283,20 @@ export const ProgressScreen = ({ onReviewTopic }) => {
                 : 0;
 
               const ageText = daysAgo === 0 
-                ? 'Explored today' 
-                : daysAgo === 1 
-                ? 'Explored 1 day ago' 
-                : `Explored ${daysAgo} days ago`;
+                ? 'Today' 
+                : `${daysAgo}d ago`;
 
               return (
                 <div
                   key={topic.id}
                   className="p-3.5 rounded-xl bg-surface-container-low border border-outline-variant/20 flex items-center justify-between gap-3"
                 >
-                  <div className="flex flex-col space-y-1 min-w-0 flex-1">
+                  <div className="flex flex-col space-y-0.5 min-w-0 flex-1">
                     <span className="text-sm font-semibold text-on-surface break-words leading-snug">
                       {topic.title}
                     </span>
-                    <span className="text-xs text-on-surface-variant break-words">
-                      {topic.group_name || topic.group} / {topic.category || topic.sub} · {ageText}
+                    <span data-testid="review-queue-age" className="text-xs text-on-surface-variant break-words leading-tight">
+                      {ageText}
                     </span>
                   </div>
 

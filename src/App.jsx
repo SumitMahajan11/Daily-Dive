@@ -85,19 +85,13 @@ const MainLayout = () => {
     const observer = new IntersectionObserver(
       (entries) => {
         if (isScrollingProgrammatically.current) return;
-        let best = null;
-        let bestRatio = 0;
         entries.forEach((entry) => {
-          if (entry.intersectionRatio > bestRatio) {
-            bestRatio = entry.intersectionRatio;
-            best = entry;
+          if (entry.isIntersecting && entry.target.dataset.section) {
+            setActiveSection(entry.target.dataset.section);
           }
         });
-        if (best && best.isIntersecting && best.target.dataset.section) {
-          setActiveSection(best.target.dataset.section);
-        }
       },
-      { threshold: [0.15, 0.5, 0.85], rootMargin: '-10% 0px -15% 0px' }
+      { rootMargin: '-35% 0px -60% 0px', threshold: 0 }
     );
 
     ['spin', 'library', 'progress', 'settings'].forEach((id) => {
@@ -138,6 +132,7 @@ const MainLayout = () => {
                   key={item.id}
                   type="button"
                   data-nav-id={item.id}
+                  aria-current={isActive ? 'page' : undefined}
                   onClick={() => scrollToSection(item.id)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive
@@ -219,7 +214,7 @@ const MainLayout = () => {
             id="settings"
             data-section="settings"
             ref={setSectionRef('settings')}
-            className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
+            className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16 min-h-[70vh]"
           >
             <ChunkErrorBoundary>
               <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
@@ -228,7 +223,7 @@ const MainLayout = () => {
             </ChunkErrorBoundary>
           </section>
 
-          <div className="h-16" />
+          <div className="h-28" />
         </main>
       </div>
 

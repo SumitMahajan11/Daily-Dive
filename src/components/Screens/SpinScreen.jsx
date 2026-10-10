@@ -477,7 +477,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             One idea. Sixty seconds. Every day.
           </h1>
           <p className="text-xs sm:text-sm text-on-surface-variant mt-1 leading-relaxed">
-            Tech, money, mind and world ideas. No account. Works offline.
+            Tech, money, mind and world ideas. Works offline.
           </p>
         </header>
       )}
@@ -561,59 +561,94 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             </div>
 
             {/* References & Deep Dives */}
-            {resources.length > 0 && (
-              <div className="mt-4 pt-3 border-t border-outline-variant/20">
-                <div className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5 mb-2">
-                  <BookOpen size={12} className="text-primary" />
-                  <span>Go deeper</span>
-                </div>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-                  {resources.map((res, i) => (
-                    <a
-                      key={i}
-                      href={res.url || '#'}
-                      rel="noopener noreferrer"
-                      target="_blank"
-                      className="group flex flex-col justify-between p-2.5 rounded-xl bg-surface-container/70 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 transition-all shadow-xs"
-                    >
-                      <div className="flex items-start justify-between gap-2">
-                        <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary text-[10px] font-mono uppercase font-bold tracking-wider">
-                          {res.type || 'SOURCE'}
-                        </span>
-                        <ExternalLink size={13} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
-                      </div>
-                      <div className="mt-1">
-                        <span className="text-xs sm:text-sm text-on-surface font-semibold group-hover:text-primary transition-colors line-clamp-1">
-                          {res.label || res.title || 'Explore Reference'}
-                        </span>
-                        {res.desc && (
-                          <p className="text-xs text-on-surface-variant line-clamp-2 mt-0.5 leading-snug">
-                            {res.desc}
-                          </p>
-                        )}
-                      </div>
-                    </a>
-                  ))}
-                </div>
-              </div>
-            )}
+            {resources.length > 0 && (() => {
+              const firstSource = resources[0];
+              const moreSources = resources.slice(1);
 
-            {/* Action Toolbar */}
-            <div className="mt-4 pt-3 border-t border-outline-variant/20 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-2">
+              return (
+                <div className="mt-4 pt-3 border-t border-outline-variant/20 space-y-2">
+                  <div className="text-xs font-bold uppercase tracking-wider text-on-surface-variant flex items-center gap-1.5 mb-1.5">
+                    <BookOpen size={12} className="text-primary" />
+                    <span>Go deeper</span>
+                  </div>
+
+                  {/* First source: full-width link, full title wrapped, no ellipsis */}
+                  <a
+                    href={firstSource.url || '#'}
+                    rel="noopener noreferrer"
+                    target="_blank"
+                    className="group flex flex-col p-3 rounded-xl bg-surface-container/70 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 transition-all shadow-xs w-full"
+                  >
+                    <div className="flex items-center justify-between gap-2 mb-1">
+                      <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary text-[10px] font-mono uppercase font-bold tracking-wider">
+                        {firstSource.type || 'SOURCE'}
+                      </span>
+                      <ExternalLink size={13} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
+                    </div>
+                    <span className="text-xs sm:text-sm text-on-surface font-semibold group-hover:text-primary transition-colors break-words leading-snug">
+                      {firstSource.label || firstSource.title || 'Explore Reference'}
+                    </span>
+                    {firstSource.desc && (
+                      <p className="text-xs text-on-surface-variant mt-1 break-words leading-relaxed">
+                        {firstSource.desc}
+                      </p>
+                    )}
+                  </a>
+
+                  {/* Other sources under "More sources" toggle */}
+                  {moreSources.length > 0 && (
+                    <details className="text-xs text-on-surface-variant group pt-1">
+                      <summary className="cursor-pointer font-medium hover:text-primary transition-colors select-none flex items-center gap-1">
+                        <span>More sources ({moreSources.length})</span>
+                      </summary>
+                      <div className="mt-2 space-y-2">
+                        {moreSources.map((res, i) => (
+                          <a
+                            key={i}
+                            href={res.url || '#'}
+                            rel="noopener noreferrer"
+                            target="_blank"
+                            className="group flex flex-col p-2.5 rounded-xl bg-surface-container/60 hover:bg-surface-container border border-outline-variant/30 hover:border-primary/50 transition-all shadow-xs w-full"
+                          >
+                            <div className="flex items-center justify-between gap-2 mb-1">
+                              <span className="px-1.5 py-0.5 rounded bg-surface-container-high text-primary text-[10px] font-mono uppercase font-bold tracking-wider">
+                                {res.type || 'SOURCE'}
+                              </span>
+                              <ExternalLink size={13} className="text-on-surface-variant group-hover:text-primary transition-colors shrink-0" />
+                            </div>
+                            <span className="text-xs sm:text-sm text-on-surface font-semibold group-hover:text-primary transition-colors break-words leading-snug">
+                              {res.label || res.title || 'Explore Reference'}
+                            </span>
+                            {res.desc && (
+                              <p className="text-xs text-on-surface-variant mt-0.5 break-words leading-snug">
+                                {res.desc}
+                              </p>
+                            )}
+                          </a>
+                        ))}
+                      </div>
+                    </details>
+                  )}
+                </div>
+              );
+            })()}
+
+            {/* Action Toolbar: Learned, Spin again, Share in ONE row */}
+            <div className="mt-4 pt-3 border-t border-outline-variant/20 flex flex-row items-center justify-between gap-2 w-full">
               <Button
                 variant={isLearned ? 'outline' : 'primary'}
                 onClick={handleMarkLearned}
                 disabled={isMarkingLearned}
-                className={`h-10 px-4 text-sm font-semibold flex-1 shadow-xs cursor-pointer ${
+                className={`h-10 px-3 text-xs sm:text-sm font-semibold flex-1 shadow-xs cursor-pointer whitespace-nowrap min-w-0 ${
                   isLearned ? 'border-emerald-500/40 text-emerald-500 bg-emerald-500/10' : ''
                 }`}
               >
                 {isMarkingLearned ? (
                   <div className="w-4 h-4 rounded-full border-2 border-white/30 border-t-white animate-spin" />
                 ) : (
-                  <Check size={15} className={isLearned ? 'text-emerald-500' : ''} />
+                  <Check size={14} className={isLearned ? 'text-emerald-500' : ''} />
                 )}
-                <span>{isLearned ? 'Learned' : 'Mark as learned'}</span>
+                <span className="truncate">{isLearned ? 'Learned' : 'Learned'}</span>
               </Button>
 
               <Button
@@ -621,10 +656,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                 onClick={handleSpin}
                 disabled={isSpinning}
                 aria-label="Spin topic dial again"
-                className="h-10 px-4 text-sm font-medium border border-outline-variant/30 hover:border-outline-variant/60 focus-visible:ring-2 focus-visible:ring-primary cursor-pointer"
+                className="h-10 px-3 text-xs sm:text-sm font-medium border border-outline-variant/30 hover:border-outline-variant/60 focus-visible:ring-2 focus-visible:ring-primary cursor-pointer whitespace-nowrap flex-1 min-w-0"
               >
                 <RotateCw size={14} />
-                <span>Spin again</span>
+                <span className="truncate">Spin again</span>
               </Button>
 
               <button
@@ -632,7 +667,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                 onClick={handleShareTopic}
                 aria-label="Share topic"
                 title="Share topic link"
-                className="h-10 w-10 rounded-xl border border-outline-variant/30 hover:border-outline-variant/60 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors focus-visible:ring-2 focus-visible:ring-primary cursor-pointer shrink-0"
+                className="h-10 w-10 min-w-[40px] rounded-xl border border-outline-variant/30 hover:border-outline-variant/60 flex items-center justify-center text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors focus-visible:ring-2 focus-visible:ring-primary cursor-pointer shrink-0"
               >
                 <Share2 size={15} />
               </button>
