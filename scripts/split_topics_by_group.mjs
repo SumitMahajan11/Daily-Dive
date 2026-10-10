@@ -10,7 +10,6 @@ const canonicalFile = path.join(rootDir, 'data', 'topics.curated.json');
 const lessonsFile = path.join(rootDir, 'data', 'lessons.json');
 const groupsDir = path.join(rootDir, 'src', 'data', 'groups');
 const starterTopicsFile = path.join(rootDir, 'src', 'data', 'starterTopics.js');
-const topicIdsFile = path.join(rootDir, 'src', 'data', 'topicIds.json');
 
 if (!fs.existsSync(groupsDir)) {
   fs.mkdirSync(groupsDir, { recursive: true });
