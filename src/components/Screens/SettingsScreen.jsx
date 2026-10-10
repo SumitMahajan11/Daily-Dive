@@ -372,6 +372,7 @@ export const SettingsScreen = () => {
         <div className="pt-2">
           <button
             type="button"
+            id="reset-all-data-btn"
             onClick={() => setIsResetModalOpen(true)}
             className="w-full p-3 rounded-xl border border-error/30 bg-error/5 hover:bg-error/10 text-error flex items-center justify-center gap-2 text-xs font-semibold transition-colors cursor-pointer"
           >

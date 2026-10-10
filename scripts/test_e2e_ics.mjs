@@ -74,26 +74,42 @@ async function testICS() {
   await page.reload();
   await page.waitForSelector('#spin');
 
-  await page.evaluate(() => document.getElementById('settings')?.scrollIntoView());
+  // 4. Scroll to Settings section and click Calendar Reminder button
+  console.log('4. Scrolling to Settings and clicking Calendar Reminder button...');
+  await page.evaluate(() => {
+    const el = document.getElementById('settings');
+    if (el) el.scrollIntoView();
+  });
   await page.waitForTimeout(600);
 
-  // Look for Add to Calendar / Export Reminder button in Settings
-  const calBtn = page.locator('button:has-text("Add to Calendar"), button:has-text("Calendar Reminder"), button:has-text("Download .ics")').first();
-  if (await calBtn.isVisible()) {
-    console.log('4. Clicking Calendar Reminder export button...');
-    const [download] = await Promise.all([
-      page.waitForEvent('download', { timeout: 5000 }).catch(() => null),
-      calBtn.click()
-    ]);
+  const calBtn = page.locator('#settings button:has-text("Add to calendar"), button:has-text("Add to calendar")').first();
+  await calBtn.waitFor({ state: 'visible', timeout: 5000 });
 
-    if (download) {
-      const suggestedFilename = download.suggestedFilename();
-      console.log(`   Download captured: ${suggestedFilename}`);
-      assert.ok(suggestedFilename.endsWith('.ics'), 'Downloaded file must have .ics extension');
-    }
+  // Require download event, parse ICS, assert RRULE and DTSTART
+  const [download] = await Promise.all([
+    page.waitForEvent('download', { timeout: 10000 }),
+    calBtn.click()
+  ]);
+
+  assert.ok(download, 'Download event must be triggered when clicking Add to calendar');
+  const filename = download.suggestedFilename();
+  console.log(`   Download captured: ${filename}`);
+  assert.ok(filename.endsWith('.ics'), 'Downloaded file must have .ics extension');
+
+  const readStream = await download.createReadStream();
+  const chunks = [];
+  for await (const chunk of readStream) {
+    chunks.push(chunk);
   }
+  const downloadedIcs = Buffer.concat(chunks).toString('utf-8');
+  console.log(`   Downloaded ICS length: ${downloadedIcs.length} bytes`);
 
-  console.log('\n[PASS]: ICS Calendar generation and export verified.');
+  assert.match(downloadedIcs, /RRULE:FREQ=DAILY/, 'Downloaded ICS must contain RRULE:FREQ=DAILY');
+  assert.match(downloadedIcs, /DTSTART:/, 'Downloaded ICS must contain DTSTART:');
+  assert.match(downloadedIcs, /BEGIN:VEVENT/, 'Downloaded ICS must contain BEGIN:VEVENT');
+  assert.match(downloadedIcs, /SUMMARY:/, 'Downloaded ICS must contain SUMMARY:');
+
+  console.log('\n[PASS]: ICS Calendar generation and browser download verified.');
 
   await browser.close();
   server.close();

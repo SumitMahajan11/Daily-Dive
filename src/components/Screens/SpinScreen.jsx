@@ -36,17 +36,17 @@ import { requestStoragePersistence, isIOSSafariNonStandalone } from '../../lib/s
 // Visual metadata for categories
 const CATEGORY_META = {
   'ai-ml': { icon: Bot, shortLabel: 'AI & Machine Learning', bgBadge: 'bg-primary/15 text-primary border-primary/30', accentColor: '#e06841' },
-  'cloud-infra': { icon: Cloud, shortLabel: 'Cloud & Infrastructure', bgBadge: 'bg-primary/10 text-primary border-primary/25', accentColor: '#d95a32' },
-  'data-structures-algorithms': { icon: Binary, shortLabel: 'Algorithms & Data', bgBadge: 'bg-primary-fixed-dim/25 text-inverse-primary border-inverse-primary/30', accentColor: '#e87a52' },
-  'systems-distributed-computing': { icon: Cpu, shortLabel: 'Distributed Systems', bgBadge: 'bg-primary/10 text-primary border-primary/20', accentColor: '#c5532b' },
-  'web-dev': { icon: Globe, shortLabel: 'Web Architecture', bgBadge: 'bg-primary-fixed/30 text-primary-fixed-dim border-primary-fixed-dim/40', accentColor: '#e87a52' },
-  'finance': { icon: Wallet, shortLabel: 'Finance & Capital', bgBadge: 'bg-tertiary/15 text-tertiary border-tertiary/30', accentColor: '#f59e0b' },
-  'communication': { icon: MessageSquare, shortLabel: 'Communication', bgBadge: 'bg-secondary/15 text-secondary border-secondary/30', accentColor: '#94a88f' },
-  'philosophy-critical-thinking': { icon: Compass, shortLabel: 'Mental Models', bgBadge: 'bg-secondary-fixed-dim/25 text-secondary-fixed-dim border-secondary-fixed-dim/30', accentColor: '#a3b89e' },
-  'psychology': { icon: Brain, shortLabel: 'Cognitive Psychology', bgBadge: 'bg-secondary/10 text-secondary border-secondary/20', accentColor: '#84977f' },
-  'career-strategy': { icon: Briefcase, shortLabel: 'Career Strategy', bgBadge: 'bg-tertiary/10 text-tertiary border-tertiary/25', accentColor: '#eab308' },
-  'science-nature': { icon: Atom, shortLabel: 'Science & Cosmos', bgBadge: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/25', accentColor: '#06b6d4' },
-  'history-innovation': { icon: Landmark, shortLabel: 'History of Ideas', bgBadge: 'bg-amber-500/10 text-amber-400 border-amber-500/25', accentColor: '#f59e0b' }
+  'cloud-infra': { icon: Cloud, shortLabel: 'Cloud & Infrastructure', bgBadge: 'bg-primary/15 text-primary border-primary/30', accentColor: '#d95a32' },
+  'data-structures-algorithms': { icon: Binary, shortLabel: 'Algorithms & Data', bgBadge: 'bg-primary/20 text-on-surface border-primary/40', accentColor: '#e87a52' },
+  'systems-distributed-computing': { icon: Cpu, shortLabel: 'Distributed Systems', bgBadge: 'bg-primary/15 text-primary border-primary/30', accentColor: '#c5532b' },
+  'web-dev': { icon: Globe, shortLabel: 'Web Architecture', bgBadge: 'bg-primary/20 text-on-surface border-primary/40', accentColor: '#e87a52' },
+  'finance': { icon: Wallet, shortLabel: 'Finance & Capital', bgBadge: 'bg-tertiary/20 text-on-surface border-tertiary/40', accentColor: '#f59e0b' },
+  'communication': { icon: MessageSquare, shortLabel: 'Communication', bgBadge: 'bg-secondary/20 text-on-surface border-secondary/40', accentColor: '#94a88f' },
+  'philosophy-critical-thinking': { icon: Compass, shortLabel: 'Mental Models', bgBadge: 'bg-secondary/20 text-on-surface border-secondary/40', accentColor: '#a3b89e' },
+  'psychology': { icon: Brain, shortLabel: 'Cognitive Psychology', bgBadge: 'bg-secondary/20 text-on-surface border-secondary/40', accentColor: '#84977f' },
+  'career-strategy': { icon: Briefcase, shortLabel: 'Career Strategy', bgBadge: 'bg-tertiary/20 text-on-surface border-tertiary/40', accentColor: '#eab308' },
+  'science-nature': { icon: Atom, shortLabel: 'Science & Cosmos', bgBadge: 'bg-cyan-500/20 text-on-surface border-cyan-500/40', accentColor: '#06b6d4' },
+  'history-innovation': { icon: Landmark, shortLabel: 'History of Ideas', bgBadge: 'bg-amber-500/20 text-on-surface border-amber-500/40', accentColor: '#f59e0b' }
 };
 
 export const BASE_REEL_CATEGORIES = CATEGORY_TREE.flatMap(groupDef =>
@@ -306,7 +306,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     }
 
     const prefersReducedMotion = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const duration = prefersReducedMotion ? 150 : SPIN_DURATION_MS;
+    const duration = prefersReducedMotion ? 40 : SPIN_DURATION_MS;
 
     isSpinningRef.current = true;
     spinStartTimeRef.current = Date.now();
@@ -491,7 +491,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                         }`}
                       >
                         <div className="flex items-center justify-between w-full mb-0.5">
-                          <span className={`text-xs font-bold ${isGroupActive ? 'text-primary dark:text-orange-400' : 'text-on-surface'}`}>
+                          <span className="text-xs font-bold text-on-surface">
                             {groupDef.label}
                           </span>
                           <div
@@ -624,7 +624,9 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               animate={{ x: translateX }}
               transition={
                 isSpinning
-                  ? { duration: SPIN_DURATION_MS / 1000, ease: SPIN_EASING }
+                  ? (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
+                      ? { duration: 0.04 }
+                      : { duration: SPIN_DURATION_MS / 1000, ease: SPIN_EASING })
                   : { duration: 0 }
               }
               onUpdate={(latest) => {
@@ -632,7 +634,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                 if (isNaN(curX)) return;
                 motionX.set(curX);
 
-                if (isSpinningRef.current) {
+                const isReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (isSpinningRef.current && !isReduced) {
                   const nearestIdx = Math.round(((containerWidth - ITEM_WIDTH) / 2 - curX) / ITEM_STEP);
                   if (nearestIdx !== lastFiredIndexRef.current) {
                     lastFiredIndexRef.current = nearestIdx;

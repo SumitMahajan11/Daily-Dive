@@ -3,6 +3,7 @@ import AxeBuilder from '@axe-core/playwright';
 import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
+import assert from 'node:assert/strict';
 
 function serveStatic(distDir, port = 4186) {
   const mimeTypes = {
@@ -36,6 +37,22 @@ function serveStatic(distDir, port = 4186) {
   });
 }
 
+function assertNoSeriousOrCritical(screenName, results) {
+  const seriousOrCritical = results.violations.filter(v => ['serious', 'critical'].includes(v.impact));
+  console.log(`[AXE] ${screenName}: ${results.violations.length} total violations, ${seriousOrCritical.length} serious/critical`);
+  if (seriousOrCritical.length > 0) {
+    seriousOrCritical.forEach(v => {
+      console.error(`  - [${v.impact.toUpperCase()}] ${v.help} (${v.id})`);
+      v.nodes.forEach(n => console.error(`      Target: ${n.target.join(' ')} | HTML: ${n.html}`));
+    });
+  }
+  assert.strictEqual(
+    seriousOrCritical.length,
+    0,
+    `Accessibility check failed: ${screenName} screen contains ${seriousOrCritical.length} serious/critical violations!`
+  );
+}
+
 async function runAudit() {
   const distDir = path.resolve('dist');
   const server = await serveStatic(distDir, 4186);
@@ -44,7 +61,7 @@ async function runAudit() {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
 
-  console.log('=== AXE ACCESSIBILITY & KEYBOARD VALIDATION (ROUND 6) ===');
+  console.log('=== AXE ACCESSIBILITY & KEYBOARD VALIDATION ===');
   await page.goto('http://localhost:4186');
   await page.evaluate(() => {
     localStorage.setItem('daily_dive_onboarding_seen', 'true');
@@ -55,12 +72,9 @@ async function runAudit() {
   // 1. Run Axe Core on initial Spin screen
   console.log('\n1. Auditing Spin Screen with Axe...');
   const spinResults = await new AxeBuilder({ page })
-    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'best-practice'])
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
-  console.log(`Spin Screen Violations: ${spinResults.violations.length}`);
-  if (spinResults.violations.length > 0) {
-    spinResults.violations.forEach(v => console.log(`  - [${v.impact}] ${v.help} (${v.id})`));
-  }
+  assertNoSeriousOrCritical('Spin', spinResults);
 
   // 2. Audit Library Screen
   console.log('\n2. Auditing Library Screen with Axe...');
@@ -69,7 +83,7 @@ async function runAudit() {
   const libraryResults = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
-  console.log(`Library Screen Violations: ${libraryResults.violations.length}`);
+  assertNoSeriousOrCritical('Library', libraryResults);
 
   // 3. Audit Progress Screen
   console.log('\n3. Auditing Progress Screen with Axe...');
@@ -78,7 +92,16 @@ async function runAudit() {
   const progressResults = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
-  console.log(`Progress Screen Violations: ${progressResults.violations.length}`);
+  assertNoSeriousOrCritical('Progress', progressResults);
+
+  // 4. Audit Settings Screen
+  console.log('\n4. Auditing Settings Screen with Axe...');
+  await page.evaluate(() => document.getElementById('settings')?.scrollIntoView());
+  await page.waitForTimeout(500);
+  const settingsResults = await new AxeBuilder({ page })
+    .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
+    .analyze();
+  assertNoSeriousOrCritical('Settings', settingsResults);
 
   // 4. Test Keyboard Navigation & Tab Switching via Enter
   console.log('\n4. Testing Keyboard Navigation & Tab Activation via Enter...');

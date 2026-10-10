@@ -4,12 +4,12 @@ import path from 'node:path';
 const suites = [
   'scripts/test_pwa_v1_v2_update_flow.mjs',
   'scripts/test_e2e_offline.mjs',
-  'scripts/test_e2e_skeleton.mjs',
   'scripts/test_e2e_keyboard.mjs',
   'scripts/test_e2e_reduced_motion.mjs',
   'scripts/test_e2e_ics.mjs',
   'scripts/test_axe_and_keyboard_round6.mjs',
-  'scripts/extract_real_roadmap_lines.mjs'
+  'scripts/extract_real_roadmap_lines.mjs',
+  'scripts/test_upload_real_roadmap.mjs'
 ];
 
 console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');

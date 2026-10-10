@@ -152,3 +152,6 @@ class AudioSynthesizer {
 }
 
 export const AudioController = new AudioSynthesizer();
+if (typeof window !== 'undefined') {
+  window.__daily_dive_audio = AudioController;
+}

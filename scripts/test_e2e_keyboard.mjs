@@ -88,21 +88,21 @@ async function testKeyboard() {
   await page.evaluate(() => document.getElementById('settings')?.scrollIntoView());
   await page.waitForTimeout(500);
   
-  const resetBtn = page.locator('button:has-text("Reset All Progress"), button:has-text("Reset")').first();
-  if (await resetBtn.isVisible()) {
-    await resetBtn.click();
-    await page.waitForTimeout(300);
-    // Check if modal is open
-    const modalBeforeEscape = await page.locator('[role="dialog"], [role="alertdialog"], .modal-container').isVisible().catch(() => false);
-    if (modalBeforeEscape) {
-      console.log('   Confirmation modal opened, pressing Escape...');
-      await page.keyboard.press('Escape');
-      await page.waitForTimeout(300);
-      const modalAfterEscape = await page.locator('[role="dialog"], [role="alertdialog"]').isVisible().catch(() => false);
-      assert.ok(!modalAfterEscape, 'Escape key must dismiss open modal dialog');
-      console.log('   Modal dismissed cleanly by Escape key.');
-    }
-  }
+  const resetBtn = page.locator('#reset-all-data-btn');
+  await resetBtn.waitFor({ state: 'visible', timeout: 5000 });
+  await resetBtn.click();
+  await page.waitForTimeout(300);
+
+  // Check that confirmation modal is open
+  const modal = page.locator('[role="dialog"], [role="alertdialog"], .modal-container').first();
+  await modal.waitFor({ state: 'visible', timeout: 3000 });
+  console.log('   Confirmation modal opened, pressing Escape...');
+  await page.keyboard.press('Escape');
+  await page.waitForTimeout(300);
+
+  const modalAfterEscape = await modal.isVisible().catch(() => false);
+  assert.ok(!modalAfterEscape, 'Escape key must dismiss open modal dialog');
+  console.log('   Modal dismissed cleanly by Escape key.');
 
   console.log('\n[PASS]: Keyboard navigation verified successfully.');
 

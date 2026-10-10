@@ -224,3 +224,69 @@ test('Gemini Model Chooser: extractTopicsWithGemini constructs dynamic model URL
   assert.equal(topics[0].title, 'Dynamic Gemini Topic');
   assert.equal(topics[0].description, 'A dynamically synthesized topic card from mock response.');
 });
+
+test('Gemini Model Chooser: follows nextPageToken across 2 pages and filters decoys, preferring stable non-lite', async () => {
+  clearCachedGeminiModel();
+
+  const requestedUrls = [];
+  const mockFetch = async (url, options) => {
+    requestedUrls.push(url);
+    if (url === 'https://generativelanguage.googleapis.com/v1beta/models') {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          nextPageToken: 'token-page-2',
+          models: [
+            // Decoys to exclude:
+            { name: 'models/gemini-2.5-flash-image', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash-tts', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash-audio', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash-live', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/text-embedding-004', supportedGenerationMethods: ['embedContent'] },
+            { name: 'models/gemini-2.0-flash-native', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash-robotics', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash-computer-use', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash-no-gen', supportedGenerationMethods: ['embedContent'] },
+            // Preview / exp on page 1:
+            { name: 'models/gemini-2.0-flash-exp', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash-preview', supportedGenerationMethods: ['generateContent'] }
+          ]
+        })
+      };
+    }
+
+    if (url === 'https://generativelanguage.googleapis.com/v1beta/models?pageToken=token-page-2') {
+      return {
+        ok: true,
+        status: 200,
+        json: async () => ({
+          nextPageToken: null,
+          models: [
+            // Stable models: non-lite and lite tie
+            { name: 'models/gemini-2.0-flash-lite', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-2.0-flash', supportedGenerationMethods: ['generateContent'] },
+            { name: 'models/gemini-1.5-flash', supportedGenerationMethods: ['generateContent'] }
+          ]
+        })
+      };
+    }
+
+    throw new Error(`Unexpected URL called: ${url}`);
+  };
+
+  const chosen = await resolveFlashModel('valid-key', mockFetch);
+  assert.equal(requestedUrls.length, 2, 'Must request both page 1 and page 2 via nextPageToken');
+  assert.equal(chosen, 'gemini-2.0-flash', 'Must exclude decoys, prefer stable over exp, and prefer non-lite over lite on ties');
+});
+
+test('Gemini Model Chooser: picks preview/exp only if no stable flash model exists', () => {
+  const onlyExpModels = [
+    { name: 'models/gemini-2.0-flash-image', supportedGenerationMethods: ['generateContent'] },
+    { name: 'models/gemini-2.0-flash-exp', supportedGenerationMethods: ['generateContent'] },
+    { name: 'models/gemini-1.5-flash-preview', supportedGenerationMethods: ['generateContent'] }
+  ];
+
+  const chosen = chooseBestFlashModel(onlyExpModels);
+  assert.equal(chosen, 'gemini-2.0-flash-exp', 'Should fall back to newest exp/preview when no stable flash exists');
+});

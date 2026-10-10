@@ -42,6 +42,8 @@ const STOP_WORDS = new Set([
   'item', 'items', 'line', 'lines', 'doc', 'docs', 'file', 'files', 'note', 'notes', 'custom',
   'custom-notes', 'heading', 'headings', 'section', 'sections', 'milestone', 'milestones',
   'overview', 'todo', 'fixme', 'depends', 'dependency', 'dependencies', 'prerequisite', 'prerequisites',
+  // Generic words added to tag stoplist:
+  'one', 'real', 'primary', 'throughout', 'approach', 'completed', 'verified',
   'true', 'false', 'null', 'undefined', '---', '==='
 ]);
 
@@ -967,13 +969,13 @@ export function getCachedGeminiModel() {
 
 export function parseModelVersion(modelName = '') {
   const clean = (modelName || '').replace(/^models\//, '');
-  const match = clean.match(/gemini-(\d+)(?:\.(\d+))?(?:-flash)?(?:-([a-z0-9]+))?/i);
-  if (!match) return { major: 0, minor: 0, isExp: false, raw: clean };
+  const match = clean.match(/gemini-(\d+)(?:\.(\d+))?(?:-([a-z0-9\-]+))?/i);
+  if (!match) return { major: 0, minor: 0, isExp: false, isLite: false, raw: clean };
   const major = parseInt(match[1], 10) || 0;
   const minor = parseInt(match[2], 10) || 0;
-  const suffix = (match[3] || '').toLowerCase();
-  const isExp = suffix.includes('exp') || suffix.includes('preview');
-  return { major, minor, suffix, isExp, raw: clean };
+  const isExp = /preview|exp/i.test(clean);
+  const isLite = /lite/i.test(clean);
+  return { major, minor, isExp, isLite, raw: clean };
 }
 
 export function chooseBestFlashModel(models = []) {
@@ -981,28 +983,38 @@ export function chooseBestFlashModel(models = []) {
     return 'gemini-1.5-flash';
   }
 
-  const flashModels = models.filter(m => {
+  const DECOY_REGEX = /(?:image|tts|audio|live|embedding|native|robotics|computer-use)/i;
+
+  const validFlashModels = models.filter(m => {
     if (!m || typeof m !== 'object') return false;
     const name = (m.name || '').toLowerCase();
     if (!name.includes('flash')) return false;
+    if (DECOY_REGEX.test(name)) return false;
     const methods = Array.isArray(m.supportedGenerationMethods) ? m.supportedGenerationMethods : [];
     return methods.some(method => method.toLowerCase() === 'generatecontent');
   });
 
-  if (flashModels.length === 0) {
+  if (validFlashModels.length === 0) {
     return 'gemini-1.5-flash';
   }
 
-  flashModels.sort((a, b) => {
-    const vA = parseModelVersion(a.name);
-    const vB = parseModelVersion(b.name);
-    if (vA.major !== vB.major) return vB.major - vA.major;
-    if (vA.minor !== vB.minor) return vB.minor - vA.minor;
-    if (vA.isExp !== vB.isExp) return vA.isExp ? 1 : -1;
-    return a.name.localeCompare(b.name);
-  });
+  const sortModels = (list) => {
+    return list.slice().sort((a, b) => {
+      const vA = parseModelVersion(a.name);
+      const vB = parseModelVersion(b.name);
+      if (vA.major !== vB.major) return vB.major - vA.major;
+      if (vA.minor !== vB.minor) return vB.minor - vA.minor;
+      // prefer non-lite on ties
+      if (vA.isLite !== vB.isLite) return vA.isLite ? 1 : -1;
+      return a.name.localeCompare(b.name);
+    });
+  };
 
-  const best = flashModels[0];
+  const stable = validFlashModels.filter(m => !parseModelVersion(m.name).isExp);
+  const pool = stable.length > 0 ? stable : validFlashModels;
+  const sorted = sortModels(pool);
+
+  const best = sorted[0];
   const modelId = (best.name || '').replace(/^models\//, '');
   return modelId || 'gemini-1.5-flash';
 }
@@ -1012,26 +1024,39 @@ export async function resolveFlashModel(apiKey, fetchFn = globalThis.fetch) {
     return cachedGeminiFlashModel;
   }
 
-  const url = 'https://generativelanguage.googleapis.com/v1beta/models';
-  const res = await fetchFn(url, {
-    method: 'GET',
-    headers: {
-      'x-goog-api-key': apiKey.trim()
+  let allModels = [];
+  let pageToken = null;
+
+  do {
+    let url = 'https://generativelanguage.googleapis.com/v1beta/models';
+    if (pageToken) {
+      url += `?pageToken=${encodeURIComponent(pageToken)}`;
     }
-  });
+    const res = await fetchFn(url, {
+      method: 'GET',
+      headers: {
+        'x-goog-api-key': apiKey.trim()
+      }
+    });
 
-  if (!res.ok) {
-    let plainMsg = `Gemini API error (${res.status})`;
-    if (res.status === 400) plainMsg = 'Invalid Gemini API key or bad request (400).';
-    else if (res.status === 404) plainMsg = 'Gemini models endpoint not found (404).';
-    else if (res.status === 429) plainMsg = 'Gemini API quota exceeded or rate limit reached (429).';
-    const err = new Error(plainMsg);
-    err.status = res.status;
-    throw err;
-  }
+    if (!res.ok) {
+      let plainMsg = `Gemini API error (${res.status})`;
+      if (res.status === 400) plainMsg = 'Invalid Gemini API key or bad request (400).';
+      else if (res.status === 404) plainMsg = 'Gemini models endpoint not found (404).';
+      else if (res.status === 429) plainMsg = 'Gemini API quota exceeded or rate limit reached (429).';
+      const err = new Error(plainMsg);
+      err.status = res.status;
+      throw err;
+    }
 
-  const data = await res.json();
-  const chosen = chooseBestFlashModel(data?.models || []);
+    const data = await res.json();
+    if (Array.isArray(data?.models)) {
+      allModels.push(...data.models);
+    }
+    pageToken = data?.nextPageToken || null;
+  } while (pageToken);
+
+  const chosen = chooseBestFlashModel(allModels);
   cachedGeminiFlashModel = chosen;
   return chosen;
 }
@@ -1419,12 +1444,17 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
       }
     }
 
-    // REQUIREMENT 2: Require descriptions to start with a capital letter and be sentences
+    // Require descriptions to start with a capital letter (capitalize or reject)
     if (desc) {
       desc = desc.trim();
       if (/^[a-z]/.test(desc)) {
         desc = desc.charAt(0).toUpperCase() + desc.slice(1);
       }
+      if (!/^[A-Z]/.test(desc)) {
+        return; // Reject candidate if description does not start with a capital letter
+      }
+    } else {
+      return; // Reject empty descriptions
     }
 
     // REQUIREMENT 2: Reject candidates whose description starts with "depends on" or is pure dependency/ordering note

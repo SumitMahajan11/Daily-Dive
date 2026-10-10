@@ -2,9 +2,9 @@
  * Pure functions for weighted random topic selection and streak calculations.
  */
 
-import techTopics from '../data/groups/tech.js';
+import { starterTopics } from '../data/starterTopics.js';
 
-export const INITIAL_TOPICS = techTopics;
+export const INITIAL_TOPICS = starterTopics;
 
 export const CATEGORY_TREE = [
   {

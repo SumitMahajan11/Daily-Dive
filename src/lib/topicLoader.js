@@ -3,18 +3,14 @@
  * Code-splits topic data by group and lazy-loads enabled categories on demand.
  */
 
-import techTopics from '../data/groups/tech.js';
-
 const groupLoaders = {
-  'tech': () => Promise.resolve(techTopics),
+  'tech': () => import('../data/groups/tech.js').then(m => m.default || m.topics),
   'money-career': () => import('../data/groups/money-career.js').then(m => m.default || m.topics),
   'mind-growth': () => import('../data/groups/mind-growth.js').then(m => m.default || m.topics),
   'world-ideas': () => import('../data/groups/world-ideas.js').then(m => m.default || m.topics)
 };
 
-const cachedGroups = new Map([
-  ['tech', techTopics]
-]);
+const cachedGroups = new Map();
 
 /**
  * Loads topics for a specific group asynchronously and caches result.
@@ -55,4 +51,4 @@ export async function loadAllBuiltinTopics() {
   return results.flat();
 }
 
-export { techTopics };
+export { groupLoaders };
