@@ -230,7 +230,7 @@
     "example": "Pre-training budgets allocate resources equally between scaling model parameter counts and expanding dataset token volume."
   },
   "emergent-abilities-and-grokking": {
-    "idea": "Grokking and phase transitions in generalization describe sudden transitions where overparameterized neural networks achieve generalization long after memorizing training data.",
+    "idea": "Delayed transitions in generalization describe sudden transitions where overparameterized neural networks achieve generalization long after memorizing training data.",
     "why": "Standard training assumptions view generalization as occurring concurrently with loss minimization. Prolonged training can induce structural circuit formation well after loss reaches zero.",
     "example": "Neural networks trained on modular arithmetic maintain memorized weights before undergoing sharp phase transitions toward generalization."
   },
