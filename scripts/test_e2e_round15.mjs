@@ -97,6 +97,8 @@ async function runRound15E2ETests() {
     console.log(`  Tech (OFF) computed background: ${techBg}`);
     console.log(`  Money (ON) computed background: ${moneyBg}`);
     assert.notStrictEqual(techBg, moneyBg, 'Computed background-color of OFF pill must differ from ON pill');
+    assert.notStrictEqual(moneyBg, 'rgba(0, 0, 0, 0)', 'ON pill background-color must not be rgba(0, 0, 0, 0)');
+    assert.notStrictEqual(moneyBg, 'transparent', 'ON pill background-color must not be transparent');
     console.log('  [PASS] Spin group pill OFF aria-pressed is false and computed background-color differs from ON pill.');
 
     // ── 2. LIBRARY SCREEN: UPLOAD COPY & GEMINI PRIVACY NOTICE ───────────
