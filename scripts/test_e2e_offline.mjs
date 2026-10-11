@@ -75,8 +75,8 @@ async function testOffline() {
   await page.reload();
   await page.waitForSelector('#spin');
 
-  // Scroll to Library to ensure Library chunk is loaded and cached
-  await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
+  // Navigate to Library to ensure Library chunk is loaded and cached
+  await page.locator('[data-nav-id="library"]').first().click();
   await page.waitForSelector('#library input[aria-label="Toggle Money & Career"]', { state: 'attached', timeout: 10000 });
 
   await page.evaluate(async () => {
@@ -85,6 +85,10 @@ async function testOffline() {
     }
   });
   console.log('   All screens and group chunks cached.');
+
+  // Return to Spin before going offline
+  await page.locator('[data-nav-id="spin"]').first().click();
+  await page.waitForSelector('#spin');
 
   // 2. Go offline
   console.log('3. Simulating network disconnect (context.setOffline(true))...');
@@ -97,8 +101,7 @@ async function testOffline() {
   console.log('   App loaded cleanly from Service Worker cache while offline.');
 
   // 4. Navigate to Library to inspect and configure category toggles
-  console.log('5. Navigating to Library to inspect category toggles...');
-  await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
+  await page.locator('[data-nav-id="library"]').first().click();
   await page.waitForSelector('#library input[aria-label="Toggle Money & Career"]', { state: 'attached', timeout: 10000 });
 
   const moneyCareerToggle = page.locator('#library input[aria-label="Toggle Money & Career"]');
@@ -145,8 +148,7 @@ async function testOffline() {
   assert.equal(moneyCareerAfter, true, 'Money & Career toggle must be ON after click');
 
   // d. Spin. Read the landed topic title.
-  console.log('8. Scrolling to Spin screen and pressing Spin button while offline...');
-  await page.evaluate(() => document.getElementById('spin')?.scrollIntoView());
+  await page.locator('[data-nav-id="spin"]').first().click();
   await page.waitForTimeout(300);
 
   const spinBtn = page.locator('#spin button[data-testid="primary-spin-button"], #spin button').filter({ hasText: /spin|dive/i }).first();

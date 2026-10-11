@@ -62,101 +62,75 @@ const HorizontalSeparator = () => (
   </div>
 );
 
+const getScreenFromUrl = () => {
+  if (typeof window === 'undefined') return 'spin';
+  const hash = window.location.hash.replace(/^#\/?/, '').trim().toLowerCase();
+  if (hash === 'library') return 'library';
+  if (hash === 'progress') return 'progress';
+  if (hash === 'settings') return 'settings';
+  if (hash === 'spin') return 'spin';
+
+  const path = window.location.pathname.trim().toLowerCase();
+  if (path === '/library') return 'library';
+  if (path === '/progress') return 'progress';
+  if (path === '/settings') return 'settings';
+
+  return 'spin';
+};
+
 const MainLayout = () => {
-  const [activeSection, setActiveSection] = useState('spin');
+  const [activeSection, setActiveSection] = useState(getScreenFromUrl);
   const [previousTab, setPreviousTab] = useState('spin');
 
-  const sectionRefs = useRef({});
-  const isScrollingProgrammatically = useRef(false);
-
-  const setSectionRef = useCallback((id) => (el) => {
-    sectionRefs.current[id] = el;
-  }, []);
-
-  const scrollToSection = useCallback((id) => {
-    if (id === 'settings') {
-      if (activeSection !== 'settings') {
-        setPreviousTab(activeSection);
-        try {
-          window.history.pushState({ modal: 'settings' }, '');
-        } catch (e) {
-          // ignore
-        }
-      }
-      setActiveSection('settings');
-      return;
+  const navigateToSection = useCallback((id) => {
+    setPreviousTab(activeSection);
+    const targetHash = id === 'spin' ? '#/spin' : `#/${id}`;
+    if (window.location.hash !== targetHash) {
+      window.location.hash = targetHash;
     }
-
-    setPreviousTab(id);
     setActiveSection(id);
-
-    const el = sectionRefs.current[id];
-    if (el) {
-      isScrollingProgrammatically.current = true;
-      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      setTimeout(() => { isScrollingProgrammatically.current = false; }, 900);
-    }
+    window.scrollTo({ top: 0, behavior: 'instant' });
   }, [activeSection]);
 
   const handleBackFromSettings = useCallback(() => {
     const target = previousTab && previousTab !== 'settings' ? previousTab : 'spin';
-    if (window.history.state?.modal === 'settings') {
+    if (window.history.length > 1) {
       window.history.back();
+    } else {
+      navigateToSection(target);
     }
-    scrollToSection(target);
-  }, [previousTab, scrollToSection]);
+  }, [previousTab, navigateToSection]);
 
-  // Hardware / browser Back button support for Settings modal
+  // Hardware / browser Back and Forward button support
   useEffect(() => {
-    const handlePopState = () => {
-      if (activeSection === 'settings') {
-        const target = previousTab && previousTab !== 'settings' ? previousTab : 'spin';
-        setActiveSection(target);
-      }
+    const handleUrlChange = () => {
+      const screen = getScreenFromUrl();
+      setActiveSection(screen);
+      window.scrollTo({ top: 0, behavior: 'instant' });
     };
-    window.addEventListener('popstate', handlePopState);
-    return () => window.removeEventListener('popstate', handlePopState);
-  }, [activeSection, previousTab]);
-
-  useEffect(() => {
-    if (activeSection === 'settings') return;
-
-    const observer = new IntersectionObserver(
-      (entries) => {
-        if (isScrollingProgrammatically.current) return;
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.target.dataset.section) {
-            setActiveSection(entry.target.dataset.section);
-            setPreviousTab(entry.target.dataset.section);
-          }
-        });
-      },
-      { rootMargin: '-35% 0px -60% 0px', threshold: 0 }
-    );
-
-    ['spin', 'library', 'progress'].forEach((id) => {
-      const el = sectionRefs.current[id];
-      if (el) observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, [activeSection]);
+    window.addEventListener('popstate', handleUrlChange);
+    window.addEventListener('hashchange', handleUrlChange);
+    return () => {
+      window.removeEventListener('popstate', handleUrlChange);
+      window.removeEventListener('hashchange', handleUrlChange);
+    };
+  }, []);
 
   // Keyboard shortcuts: 1-3 switch tabs
   useEffect(() => {
     const handleKeyDown = (e) => {
       if (['INPUT', 'TEXTAREA'].includes(e.target.tagName)) return;
       const map = { '1': 'spin', '2': 'library', '3': 'progress' };
-      if (map[e.key]) scrollToSection(map[e.key]);
+      if (map[e.key]) navigateToSection(map[e.key]);
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [scrollToSection]);
+  }, [navigateToSection]);
 
   return (
     <div className="bg-surface font-sans text-on-surface antialiased min-h-screen flex flex-col selection:bg-primary-container selection:text-white">
       {/* Top Navbar */}
-      <Navbar activeTab={activeSection} onNavigateTab={scrollToSection} />
+      <Navbar activeTab={activeSection} onNavigateTab={navigateToSection} />
 
       {/* Main Wrapper */}
       <div className="flex-1 w-full max-w-6xl mx-auto flex pt-14 pb-20 md:pb-8">
@@ -173,7 +147,7 @@ const MainLayout = () => {
                   type="button"
                   data-nav-id={item.id}
                   aria-current={isActive ? 'page' : undefined}
-                  onClick={() => scrollToSection(item.id)}
+                  onClick={() => navigateToSection(item.id)}
                   className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm transition-all cursor-pointer focus-visible:ring-2 focus-visible:ring-primary ${
                     isActive
                       ? 'text-on-surface bg-primary-container/20 border border-primary-container/30 font-bold'
@@ -198,8 +172,8 @@ const MainLayout = () => {
           </div>
         </aside>
 
-        {/* Scrollable Content or Full-Screen Settings View */}
-        {activeSection === 'settings' ? (
+        {/* Dedicated Screen View: Only active screen is displayed */}
+        {activeSection === 'settings' && (
           <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
             <ChunkErrorBoundary>
               <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
@@ -208,62 +182,62 @@ const MainLayout = () => {
             </ChunkErrorBoundary>
             <div className="h-28" />
           </main>
-        ) : (
-          <main className="flex-1 w-full overflow-x-hidden">
+        )}
 
-            {/* ── SPIN ── */}
+        {activeSection === 'spin' && (
+          <main className="flex-1 w-full overflow-x-hidden">
             <section
               id="spin"
               data-section="spin"
-              ref={setSectionRef('spin')}
               className="px-4 sm:px-8 pt-4 pb-6 max-w-4xl mx-auto scroll-mt-16"
             >
               <SpinScreen
-                onNavigateLibrary={() => scrollToSection('library')}
+                onNavigateLibrary={() => navigateToSection('library')}
               />
             </section>
+            <div className="h-28" />
+          </main>
+        )}
 
-            <HorizontalSeparator />
-
-            {/* ── LIBRARY (MERGED FILTER & EXTRACT) ── */}
+        {activeSection === 'library' && (
+          <main className="flex-1 w-full overflow-x-hidden">
             <section
               id="library"
               data-section="library"
-              ref={setSectionRef('library')}
               className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
             >
               <ChunkErrorBoundary>
                 <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
                   <LibraryScreen
-                    onSpinActivePool={() => scrollToSection('spin')}
+                    onSpinActivePool={() => navigateToSection('spin')}
                   />
                 </Suspense>
               </ChunkErrorBoundary>
             </section>
+            <div className="h-28" />
+          </main>
+        )}
 
-            <HorizontalSeparator />
-
-            {/* ── PROGRESS ── */}
+        {activeSection === 'progress' && (
+          <main className="flex-1 w-full overflow-x-hidden">
             <section
               id="progress"
               data-section="progress"
-              ref={setSectionRef('progress')}
               className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
             >
               <ChunkErrorBoundary>
                 <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-                  <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+                  <ProgressScreen onReviewTopic={() => navigateToSection('spin')} />
                 </Suspense>
               </ChunkErrorBoundary>
             </section>
-
             <div className="h-28" />
           </main>
         )}
       </div>
 
       {/* Mobile Bottom Navigation */}
-      <BottomNavigation activeTab={activeSection} onSelectTab={scrollToSection} />
+      <BottomNavigation activeTab={activeSection} onSelectTab={navigateToSection} />
 
       <ToastContainer />
     </div>

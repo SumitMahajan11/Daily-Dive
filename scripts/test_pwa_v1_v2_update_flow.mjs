@@ -175,7 +175,7 @@ async function runUpdateTest() {
 
   await page.waitForNavigation({ waitUntil: 'load' }).catch(() => {});
   await page.waitForTimeout(1000);
-  await page.waitForSelector('#spin');
+  await page.waitForSelector('#library, #spin');
 
   // Step 9: Assert V2 is now active and build stamp changed
   const settingsGearBtnAfterReload = page.locator('header button[aria-label="Settings"]');

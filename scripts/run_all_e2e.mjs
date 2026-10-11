@@ -20,7 +20,8 @@ const suites = [
   'scripts/test_audio_volume.mjs',
   'scripts/test_library_row_wrapping.mjs',
   'scripts/test_round17_real_state.mjs',
-  'scripts/test_round18_look_and_hero.mjs'
+  'scripts/test_round18_look_and_hero.mjs',
+  'scripts/test_e2e_real_tabs.mjs'
 ];
 
 console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');
