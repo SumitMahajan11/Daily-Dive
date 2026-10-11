@@ -160,18 +160,8 @@ export default async function handleShareRequest(req, res) {
     const proto = (req.headers && (req.headers['x-forwarded-proto'])) || (host.includes('localhost') || host.includes('127.0.0.1') ? 'http' : 'https');
     const origin = `${proto}://${host}`;
 
-    // Extract topicId from query or URL
-    let topicId = null;
-    if (req.query && (req.query.topicId || req.query.id)) {
-      topicId = req.query.topicId || req.query.id;
-    } else if (req.url) {
-      const parsedUrl = new URL(req.url, origin);
-      topicId = parsedUrl.searchParams.get('topicId') || parsedUrl.searchParams.get('id');
-      if (!topicId) {
-        const match = parsedUrl.pathname.match(/\/t\/([^/?#]+)/);
-        if (match) topicId = match[1];
-      }
-    }
+    // Break-it: ignore topicId
+    const topicId = null;
 
     const { topic, lesson } = lookupTopicAndLesson(topicId);
     const html = generateShareHtml({ topic, lesson, origin });
