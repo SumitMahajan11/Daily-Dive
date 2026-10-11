@@ -857,7 +857,11 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                 aria-label={`Toggle ${shortLabel}`}
                 data-testid={`spin-group-pill-${groupDef.group}`}
                 onClick={() => toggleBroadGroup(groupDef.group)}
-                className="h-9 sm:h-10 rounded-xl px-2 flex items-center justify-center gap-1.5 text-xs transition-all cursor-pointer select-none border focus-visible:ring-2 focus-visible:ring-primary bg-primary text-white border-primary font-semibold shadow-xs"
+                className={`h-9 sm:h-10 rounded-xl px-2 flex items-center justify-center gap-1.5 text-xs transition-all cursor-pointer select-none border focus-visible:ring-2 focus-visible:ring-primary ${
+                  isGroupActive
+                    ? 'bg-primary text-white border-primary font-semibold shadow-xs'
+                    : 'bg-transparent text-on-surface-variant/80 border border-outline-variant/50 hover:border-outline-variant hover:text-on-surface font-medium'
+                }`}
               >
                 <span
                   className={`w-1.5 h-1.5 rounded-full shrink-0 ${
