@@ -35,7 +35,7 @@ export const topics = [
     ],
     "lesson": {
       "idea": "Aristotle showed that persuasive communication rests on three pillars: credibility, emotional connection, and logical reasoning.",
-      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing all three creates enduring persuasion.",
+      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing this rhetorical triangle creates enduring persuasion.",
       "example": "A doctor explaining a vaccine shares medical trials for logic, personal clinical experience for credibility, and a patient story for empathy."
     }
   },
@@ -69,7 +69,7 @@ export const topics = [
     ],
     "lesson": {
       "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
-      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
+      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these principles of influence helps teams design honest and compelling messages.",
       "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
     }
   },
@@ -131,7 +131,7 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
+      "idea": "The elaboration likelihood model explains that people process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
       "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
       "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
     }

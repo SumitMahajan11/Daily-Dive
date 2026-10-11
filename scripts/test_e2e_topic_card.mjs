@@ -161,8 +161,8 @@ async function runTopicCardE2ETests() {
       console.log(`  [PASS] Test (d): Toast "Link copied" shown and clipboard text verified (${clipboardText}).`);
 
       // ── TEST (B): Topic without lesson ─────────────────────────────────────
-      console.log('Test (b): Loading topic without lesson (?topic=sliding-window-and-longformer-attention)...');
-      await page.goto(`http://localhost:${port}/?topic=sliding-window-and-longformer-attention`, { waitUntil: 'networkidle' });
+      console.log('Test (b): Loading topic without lesson (?topic=framing-effects-and-cognitive-anchoring-in-persuasion)...');
+      await page.goto(`http://localhost:${port}/?topic=framing-effects-and-cognitive-anchoring-in-persuasion`, { waitUntil: 'networkidle' });
       await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
 
       // Assert lesson blocks do NOT exist

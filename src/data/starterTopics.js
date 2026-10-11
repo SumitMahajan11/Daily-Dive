@@ -31,7 +31,7 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
+      "idea": "Scaled dot-product attention allows a model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
       "why": "Before this method, models read text a word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
       "example": "In the sentence 'The bank approved the loan because it had funds', an attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
     }
@@ -61,7 +61,12 @@ export const starterTopics = [
         "label": "Mixtral of Experts Paper",
         "url": "https://arxiv.org/abs/2401.04088"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Sparse Mixture of Experts (MoE) architectures replace dense feed-forward layers with multiple expert sub-networks, routing each token through a top-k gating mechanism.",
+      "why": "Dense layers waste parameter capacity on tokens that require specialized computation. Sparse routing scales capacity while keeping per-token computation bounded.",
+      "example": "Routing algorithms send coding tokens to math experts and punctuation to syntax experts during language generation."
+    }
   },
   {
     "id": "mamba-state-space-models",
@@ -120,7 +125,12 @@ export const starterTopics = [
         "label": "Hugging Face RoPE Implementation in Llama",
         "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Rotary Position Embeddings (RoPE) encode token locations by rotating query and key representations using orthogonal rotation matrices in paired dimensions.",
+      "why": "Absolute position vectors degrade when sequence context expands past pre-training boundaries. Relative vector rotations enable attention layers to extrapolate across extended contexts smoothly.",
+      "example": "Attention queries rotate across vector coordinates to determine relative distance between input words during transformer inference."
+    }
   },
   {
     "id": "discounted-cash-flow-dcf-valuation",
@@ -209,7 +219,7 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "This financial theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
+      "idea": "Capital structure theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
       "why": "Understanding this baseline helps financial managers focus on real-world market imperfections like tax benefits from debt interest and the risks of insolvency.",
       "example": "A software business evaluates whether taking a bank loan or issuing new stock slices the corporate pie differently without changing its underlying operating power."
     }
@@ -244,7 +254,7 @@ export const starterTopics = [
     ],
     "lesson": {
       "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
-      "why": "Shareholders track earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
+      "why": "Shareholders track deal mechanics and earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
       "example": "A profitable retailer buys a growing supplier with cash; because the supplier's profits exceed the lost bank interest, earnings per share rise, making the deal accretive."
     }
   },
@@ -278,7 +288,7 @@ export const starterTopics = [
     ],
     "lesson": {
       "idea": "Aristotle showed that persuasive communication rests on three pillars: credibility, emotional connection, and logical reasoning.",
-      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing all three creates enduring persuasion.",
+      "why": "An argument relying solely on dry data often fails to move people, while pure emotion without logic quickly loses trust. Balancing this rhetorical triangle creates enduring persuasion.",
       "example": "A doctor explaining a vaccine shares medical trials for logic, personal clinical experience for credibility, and a patient story for empathy."
     }
   },
@@ -312,7 +322,7 @@ export const starterTopics = [
     ],
     "lesson": {
       "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
-      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
+      "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these principles of influence helps teams design honest and compelling messages.",
       "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
     }
   },
@@ -374,7 +384,7 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
+      "idea": "The elaboration likelihood model explains that people process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
       "why": "Audience attention dictates message design. Motivated audiences demand rigorous evidence, while distracted audiences respond primarily to design quality and speaker charm.",
       "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
     }

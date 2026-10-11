@@ -32,7 +32,7 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
+      "idea": "Scaled dot-product attention allows a model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
       "why": "Before this method, models read text a word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
       "example": "In the sentence 'The bank approved the loan because it had funds', an attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
     }
@@ -62,7 +62,12 @@ export const topics = [
         "label": "Mixtral of Experts Paper",
         "url": "https://arxiv.org/abs/2401.04088"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Sparse Mixture of Experts (MoE) architectures replace dense feed-forward layers with multiple expert sub-networks, routing each token through a top-k gating mechanism.",
+      "why": "Dense layers waste parameter capacity on tokens that require specialized computation. Sparse routing scales capacity while keeping per-token computation bounded.",
+      "example": "Routing algorithms send coding tokens to math experts and punctuation to syntax experts during language generation."
+    }
   },
   {
     "id": "mamba-state-space-models",
@@ -121,7 +126,12 @@ export const topics = [
         "label": "Hugging Face RoPE Implementation in Llama",
         "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Rotary Position Embeddings (RoPE) encode token locations by rotating query and key representations using orthogonal rotation matrices in paired dimensions.",
+      "why": "Absolute position vectors degrade when sequence context expands past pre-training boundaries. Relative vector rotations enable attention layers to extrapolate across extended contexts smoothly.",
+      "example": "Attention queries rotate across vector coordinates to determine relative distance between input words during transformer inference."
+    }
   },
   {
     "id": "residual-connections-resnet",
@@ -148,7 +158,12 @@ export const topics = [
         "label": "PyTorch ResNet Implementation",
         "url": "https://github.com/pytorch/vision/blob/main/torchvision/models/resnet.py"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Residual connections introduce identity skip paths that let neural layers learn residual functions relative to incoming layer inputs.",
+      "why": "Deep networks encounter vanishing gradient signals during backward passes. Adding identity shortcuts preserves gradient flow directly through deep stacks.",
+      "example": "ResNet backbones propagate unmodified activations across convolutional stages so deeper image recognition layers learn incremental feature refinements."
+    }
   },
   {
     "id": "vision-transformers-vit",
@@ -239,7 +254,12 @@ export const topics = [
         "label": "Generating Long Sequences with Sparse Transformers (Child et al., OpenAI)",
         "url": "https://arxiv.org/abs/1904.10509"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Sliding window attention structures replace dense quadratic matrices with localized attention bands and global anchor tokens across input documents.",
+      "why": "Full self-attention across lengthy sequences incurs quadratic computational overhead. Local window patterns preserve essential neighbor context at linear computational cost.",
+      "example": "Longformer processors calculate attention within adjacent token bands while routing global summary tokens across entire documents."
+    }
   },
   {
     "id": "grouped-query-attention-gqa",
@@ -266,7 +286,12 @@ export const topics = [
         "label": "Llama 3 Technical Report (Meta AI)",
         "url": "https://arxiv.org/abs/2407.21783"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Grouped-Query Attention (GQA) groups multiple query heads to share a smaller pool of key-value heads during transformer decoding.",
+      "why": "Standard multi-head attention demands extensive memory bandwidth to transfer cached key-value tensors. Sharing heads relieves memory bandwidth pressure without degrading quality.",
+      "example": "Llama checkpoints load consolidated key-value tensors across query head groups to accelerate auto-regressive text decoding."
+    }
   },
   {
     "id": "lora-low-rank-adaptation",
@@ -293,7 +318,12 @@ export const topics = [
         "label": "Microsoft LoRA GitHub Repo",
         "url": "https://github.com/microsoft/LoRA"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Low-Rank Adaptation (LoRA) freezes pre-trained foundation weights and injects trainable rank-decomposition matrix pairs into attention and MLP projection layers.",
+      "why": "Modifying all weights across large parameter foundations requires vast memory overhead. Decomposing updates into compact low-rank matrices enables efficient fine-tuning.",
+      "example": "Parameter-efficient adapters train low-rank matrices on downstream domain instructions while base transformer layers remain frozen."
+    }
   },
   {
     "id": "qlora-quantized-fine-tuning",
@@ -320,7 +350,12 @@ export const topics = [
         "label": "Hugging Face Blog: Making LLMs even more accessible with bitsandbytes",
         "url": "https://huggingface.co/blog/4bit-transformers-bitsandbytes"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "QLoRA combines 4-bit NormalFloat quantization with low-rank adaptation adapters to enable fine-tuning on constrained GPU memory hardware.",
+      "why": "Loading large uncompressed parameters consumes available device memory before fine-tuning begins. Quantizing base layers preserves precision while liberating memory for trainable adapter weights.",
+      "example": "Quantized base models retain 4-bit NormalFloat weights in GPU memory while backpropagation updates low-rank adapters."
+    }
   },
   {
     "id": "direct-preference-optimization-dpo",
@@ -347,7 +382,12 @@ export const topics = [
         "label": "Stanford CS330: Alignment and Preference Learning",
         "url": "https://cs330.stanford.edu/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Direct Preference Optimization (DPO) optimizes language models directly on paired preferences using an implicit reward formulation without reinforcement learning.",
+      "why": "Multi-stage reinforcement pipelines require separate reward estimators and unstable policy updates. A closed-form loss optimizes preference likelihood directly through standard cross-entropy.",
+      "example": "Language model trainers minimize DPO loss over winning and losing response pairs to align conversational outputs."
+    }
   },
   {
     "id": "rlhf-proximal-policy-optimization",
@@ -374,7 +414,12 @@ export const topics = [
         "label": "Hugging Face: Illustrating Reinforcement Learning from Human Feedback",
         "url": "https://huggingface.co/blog/rlhf"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "RLHF aligns language models with human intentions using policy optimization guided by a reward model trained on comparison feedback.",
+      "why": "Supervised training mirrors prompt distributions without distinguishing between subtle response qualities. Scalar reinforcement feedback steers model policies toward human preferences.",
+      "example": "InstructGPT pipelines update language policies via reinforcement algorithms against reward scores assigned to generated completions."
+    }
   },
   {
     "id": "constitutional-ai-and-rlaif",
@@ -401,7 +446,12 @@ export const topics = [
         "label": "Anthropic Research: Core Principles of Constitutional AI",
         "url": "https://www.anthropic.com/news/claudes-constitution"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Constitutional AI scales alignment by evaluating model outputs against explicit natural language principles to guide synthetic critique and revision loops.",
+      "why": "Gathering continuous human evaluation data introduces severe operational bottlenecks. Principle-driven feedback generates consistent critique data autonomously.",
+      "example": "Automated critique loops revise responses according to harmlessness rules before models train on the resulting pairs."
+    }
   },
   {
     "id": "kahneman-tversky-optimization-kto",
@@ -428,7 +478,12 @@ export const topics = [
         "label": "TRL KTO Trainer Docs",
         "url": "https://huggingface.co/docs/trl/main/en/kto_trainer"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Kahneman-Tversky Optimization (KTO) aligns language models using prospect theory utility functions directly on unpaired binary desirable or undesirable signals.",
+      "why": "Curating pairwise preference rankings requires complex data collection. Evaluating individual outputs against reference baselines aligns models using independent feedback signals.",
+      "example": "Alignment pipelines assign binary desirable flags to helpful responses to update generation policy parameters directly."
+    }
   },
   {
     "id": "prompt-tuning-and-prefix-tuning",
@@ -455,7 +510,12 @@ export const topics = [
         "label": "Hugging Face PEFT Prompt Tuning Guide",
         "url": "https://huggingface.co/docs/peft/package_reference/prompt_tuning"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Prefix-Tuning and prompt tuning freeze base model parameters while prepending continuous virtual token vectors to inputs or key-value layers.",
+      "why": "Generating distinct model checkpoints for diverse tasks demands excessive storage. Modifying small sets of prefix parameters adapts models without parameter duplication.",
+      "example": "Virtual token prompts prepend continuous prefix representations to transformer activation sequences for task adaptation."
+    }
   },
   {
     "id": "flashattention-tiling-kernel",
@@ -482,7 +542,12 @@ export const topics = [
         "label": "FlashAttention Official GitHub Repository",
         "url": "https://github.com/Dao-AILab/flash-attention"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "FlashAttention restructures attention computation using IO-Aware GPU tiling and online softmax scaling to minimize data movement across memory tiers.",
+      "why": "Standard attention mechanisms bottleneck on continuous reads and writes between high-bandwidth memory and fast SRAM caches. Tiling preserves intermediate blocks on-chip.",
+      "example": "GPU kernels tile key and query blocks in SRAM to compute attention without writing intermediate matrices."
+    }
   },
   {
     "id": "kv-caching-autoregressive-decoding",
@@ -509,7 +574,12 @@ export const topics = [
         "label": "vLLM: Efficient Memory Management for Large Language Models",
         "url": "https://vllm.ai/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "KV-Caching in autoregressive generation retains computed key and value activations in memory across successive token generation steps.",
+      "why": "Recomputing attention across historical context tokens at every step imposes quadratic computational penalties. Storing key-value tensors restricts computation to incoming tokens.",
+      "example": "Generation loops retrieve previous key and value activations from memory to calculate attention for incoming tokens."
+    }
   },
   {
     "id": "pagedattention-virtual-memory",
@@ -536,7 +606,12 @@ export const topics = [
         "label": "Ray & vLLM High-Throughput Deployment Patterns",
         "url": "https://docs.ray.io/en/latest/ray-air/examples/vllm.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "PagedAttention applies virtual memory paging principles to manage key-value caches across non-contiguous physical memory blocks in vLLM serving frameworks.",
+      "why": "Continuous memory allocations produce fragmented memory waste when sequence lengths fluctuate during serving. Dynamic paging accommodates fluctuating sequence lengths without allocation waste.",
+      "example": "Inference servers allocate non-contiguous memory blocks dynamically to store key-value cache tokens during request processing."
+    }
   },
   {
     "id": "speculative-decoding-draft-models",
@@ -563,7 +638,12 @@ export const topics = [
         "label": "Hugging Face Speculative Decoding Guide",
         "url": "https://huggingface.co/blog/assisted-generation"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Speculative decoding utilizes a compact draft model to generate candidate tokens that a larger target model verifies simultaneously.",
+      "why": "Autoregressive decoding bottlenecks on memory bandwidth during serial token passes. Validating multiple speculative candidates in parallel forward passes amortizes memory latency.",
+      "example": "Target transformers evaluate candidate token sequences generated by lightweight draft models in single verification passes."
+    }
   },
   {
     "id": "awq-activation-aware-quantization",
@@ -590,7 +670,12 @@ export const topics = [
         "label": "MIT HAN Lab Model Compression Suite",
         "url": "https://hanlab.mit.edu/projects/awq"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Activation-Aware Weight Quantization (AWQ) protects salient weight channels corresponding to prominent activation magnitudes prior to low-bit weight quantization.",
+      "why": "Indiscriminate weight quantization degrades model output by truncating critical outlier channels. Shielding sensitive weight coordinates preserves general task accuracy without retraining.",
+      "example": "Compression algorithms identify high-magnitude activation channels to scale and protect essential weights during integer quantization."
+    }
   },
   {
     "id": "gptq-post-training-quantization",
@@ -617,7 +702,12 @@ export const topics = [
         "label": "Hugging Face: Overview of Post-Training Quantization Methods",
         "url": "https://huggingface.co/docs/transformers/main_classes/quantization"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "GPTQ executes accurate post-training quantization by leveraging second-order Hessian error compensation to adjust remaining unquantized weights iteratively.",
+      "why": "Sequential parameter rounding without error compensation compounds output deviation across deep layers. Compensating remaining weights preserves layer output fidelity during compression.",
+      "example": "AutoGPTQ routines quantize weight matrices column by column while adjusting subsequent parameters to compensate rounding errors."
+    }
   },
   {
     "id": "continuous-batching-orca",
@@ -644,7 +734,12 @@ export const topics = [
         "label": "TensorRT-LLM Architecture Overview",
         "url": "https://github.com/NVIDIA/TensorRT-LLM"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Iteration-level continuous batching schedules transformer workloads at discrete token steps, inserting and retiring sequences dynamically within active batches.",
+      "why": "Static request batching leaves processing hardware underutilized when co-scheduled sequences finish at varying times. Continuous iteration scheduling maximizes hardware occupancy.",
+      "example": "Serving engines evict finished sequences and inject incoming generation requests into running batches at iteration boundaries."
+    }
   },
   {
     "id": "beam-search-and-top-p-sampling",
@@ -671,7 +766,12 @@ export const topics = [
         "label": "Stanford CS224N: Text Generation Strategies",
         "url": "https://web.stanford.edu/class/cs224n/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Nucleus (Top-p) sampling dynamically samples candidate tokens from the smallest set exceeding probability threshold p, while temperature adjusts output probability distributions.",
+      "why": "Fixed top-k decoding risks admitting implausible tokens during flat distributions or restricting valid choices during sharp distributions. Adaptive thresholds adjust candidate pools dynamically.",
+      "example": "Decoding routines scale output logits with temperature and filter probability tails exceeding threshold p before sampling."
+    }
   },
   {
     "id": "dense-retrieval-bi-encoders",
@@ -698,7 +798,12 @@ export const topics = [
         "label": "MTEB: Massive Text Embedding Benchmark Leaderboard",
         "url": "https://huggingface.co/spaces/mteb/leaderboard"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Dense retrieval with bi-encoder architectures maps queries and passage texts into a continuous embedding space using twin neural encoders.",
+      "why": "Lexical indexing misses relevant passages when query vocabulary diverges from source documents. Continuous vector spaces capture semantic correspondence beyond literal surface words.",
+      "example": "Information retrieval pipelines compare query vector embeddings against passage representations using inner product nearest neighbor search."
+    }
   },
   {
     "id": "cross-encoder-reranking",
@@ -725,7 +830,12 @@ export const topics = [
         "label": "Information Retrieval: From Bi-Encoders to Cross-Encoders (Thakur et al.)",
         "url": "https://arxiv.org/abs/2104.08663"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Cross-encoder reranking feeds query-document pairs jointly through full self-attention layers during multi-stage retrieval to capture token-level interactions.",
+      "why": "Bi-encoders encode queries and passages separately, precluding granular cross-token attention. Joint encoding yields accurate relevance scoring for candidate re-ranking stages.",
+      "example": "Second-stage retrieval ranks candidate passages by processing query and text tokens together through cross-encoder attention layers."
+    }
   },
   {
     "id": "hierarchical-navigable-small-world-hnsw",
@@ -752,7 +862,12 @@ export const topics = [
         "label": "Faiss Library: High-Performance Vector Indexing (Meta)",
         "url": "https://github.com/facebookresearch/faiss"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Hierarchical Navigable Small World (HNSW) graphs organize vectors into hierarchical graph layers to execute approximate nearest neighbor search in logarithmic time.",
+      "why": "Exhaustive vector distance scans become computationally prohibitive across massive embedding indexes. Multi-layer graphs allow greedy routing across skip layers toward proximate neighbors.",
+      "example": "Vector databases traverse upper graph links to reach relevant clusters before exploring bottom layers for nearest neighbors."
+    }
   },
   {
     "id": "graphrag-knowledge-graph-retrieval",
@@ -779,7 +894,12 @@ export const topics = [
         "label": "Neo4j GenAI Integration Guides",
         "url": "https://neo4j.com/developer/genai/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "GraphRAG extracts entity-relationship knowledge graphs and community summaries from source text to guide structured context retrieval during query generation.",
+      "why": "Standard passage search fails to synthesize dispersed concepts that span separate documents. Structured graph edges connect related entities across heterogeneous text corpora.",
+      "example": "Retrieval pipelines query entity relationship graphs and community summaries to answer broad questions across complex corpora."
+    }
   },
   {
     "id": "hypothetical-document-embeddings-hyde",
@@ -806,7 +926,12 @@ export const topics = [
         "label": "LlamaIndex Advanced Query Transformations",
         "url": "https://docs.llamaindex.ai/en/stable/examples/query_transformations/HyDEQueryTransformDemo/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Hypothetical Document Embeddings (HyDE) prompts a language model to generate hypothetical documents whose embeddings guide zero-shot dense passage retrieval.",
+      "why": "Short or ambiguous search queries lack sufficient lexical context for effective dense vector matching. Synthetic documents mirror the embedding patterns of target source texts.",
+      "example": "Search applications embed generated hypothetical answers to locate relevant real documents within dense index collections."
+    }
   },
   {
     "id": "denoising-diffusion-probabilistic-models-ddpm",
@@ -833,7 +958,12 @@ export const topics = [
         "label": "Hugging Face Diffusers Library Documentation",
         "url": "https://huggingface.co/docs/diffusers/index"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Denoising Diffusion Probabilistic Models (DDPM) generate data samples by learning to reverse a parameterized Markov chain that injects noise into images.",
+      "why": "Direct likelihood modeling often encounters unstable adversarial dynamics during generation. Parameterized reverse denoising steps reconstruct sharp sample distributions stably.",
+      "example": "Image synthesis models predict and remove injected Gaussian noise across iterative steps to generate realistic pixel outputs."
+    }
   },
   {
     "id": "classifier-free-guidance-cfg",
@@ -860,7 +990,12 @@ export const topics = [
         "label": "Stable Diffusion Sampling and Guidance Docs",
         "url": "https://huggingface.co/docs/diffusers/using-diffusers/conditional_image_generation"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Classifier-Free Guidance (CFG) steers diffusion generation toward prompt alignment by combining conditional and unconditional sampling predictions without external classifier networks.",
+      "why": "Training external classifiers on noisy intermediate representations introduces architectural complexity. Jointly training with null condition dropouts enables direct guidance scaling.",
+      "example": "Generative diffusion pipelines extrapolate between conditional text predictions and unconditional outputs to sharpen prompt alignment."
+    }
   },
   {
     "id": "latent-diffusion-models-stable-diffusion",
@@ -887,7 +1022,12 @@ export const topics = [
         "label": "Stability AI SDXL Paper",
         "url": "https://arxiv.org/abs/2307.01952"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Latent Diffusion Models (LDMs) execute iterative diffusion and denoising operations within the compressed latent space of a pre-trained autoencoder.",
+      "why": "Computing multi-step diffusion in raw high-resolution pixel space consumes excessive processing time and memory. Compact latent manifolds preserve perceptual detail while accelerating generation.",
+      "example": "Stable Diffusion pipelines denoise compressed latent representations across diffusion steps before decoding latents into final images."
+    }
   },
   {
     "id": "variational-autoencoders-vae",
@@ -914,7 +1054,12 @@ export const topics = [
         "label": "PyTorch VAE Implementation Guide",
         "url": "https://github.com/AntixK/PyTorch-VAE"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Variational Autoencoders map input data into smooth continuous latent distributions via the reparameterization trick to support probabilistic reconstruction and sampling.",
+      "why": "Standard autoencoder representations develop irregular latent gaps that disrupt generative decoding. Imposing prior distribution penalties enforces continuous, interpolatable latent spaces.",
+      "example": "Deep autoencoders sample latent vectors from smooth continuous distributions to reconstruct images with trained decoders."
+    }
   },
   {
     "id": "vector-quantized-vae-vqvae",
@@ -941,7 +1086,12 @@ export const topics = [
         "label": "PyTorch VQ-VAE Tutorial",
         "url": "https://github.com/MishaLaskin/vqvae"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Vector Quantized VAE (VQ-VAE) architectures map continuous encoder representations to nearest entries in a learned discrete codebook.",
+      "why": "Continuous latent variables frequently experience posterior collapse when paired with expressive decoders. Discrete codebook quantization maintains distinct symbolic bottlenecks without collapse.",
+      "example": "Neural audio encoders quantize continuous acoustic features into discrete codebook sequences for autoregressive sequence modeling."
+    }
   },
   {
     "id": "adamw-decoupled-weight-decay",
@@ -968,7 +1118,12 @@ export const topics = [
         "label": "Fast.ai: Why AdamW Matters",
         "url": "https://www.fast.ai/posts/2018-07-02-adamw-and-super-convergence.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "AdamW decouples weight decay from adaptive gradient momentum updates, ensuring uniform regularization across parameters regardless of historical gradient scale.",
+      "why": "Coupling L2 penalties with adaptive moving averages diminishes regularization on weights with infrequent large gradients. Direct parameter decay maintains consistent regularization strength.",
+      "example": "Optimization routines apply decoupled weight decay directly to model parameters after computing adaptive Adam step directions."
+    }
   },
   {
     "id": "rms-normalization-and-layer-norm",
@@ -995,7 +1150,12 @@ export const topics = [
         "label": "Flash-Linear-Attention RMSNorm Kernel",
         "url": "https://github.com/sustcsonglin/flash-linear-attention"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Root Mean Square Normalization (RMSNorm) scales layer input activations by their root mean square alone, omitting the mean centering operation in LayerNorm.",
+      "why": "Calculating mean statistics requires additional reduction passes across tensor dimensions without yielding noticeable stability improvements. Normalizing by root mean square preserves scaling stability.",
+      "example": "Transformer layers divide incoming token activation vectors by root mean square values to stabilize layer inputs."
+    }
   },
   {
     "id": "cosine-annealing-warmup-schedules",
@@ -1022,7 +1182,12 @@ export const topics = [
         "label": "Scaling Laws for Neural Language Models (Kaplan et al.)",
         "url": "https://arxiv.org/abs/2001.08361"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Cosine annealing with warmup schedules linearly ramps learning rates during initial iterations before gradually decaying them following a cosine curve.",
+      "why": "Elevated learning rates during early optimization can destabilize randomly initialized parameters. Gradual warming followed by smooth cosine decay supports stable training convergence.",
+      "example": "Training loops scale optimizer learning rates upward over initial steps before decreasing values along cosine curves."
+    }
   },
   {
     "id": "gradient-accumulation-and-mixed-precision",
@@ -1049,7 +1214,12 @@ export const topics = [
         "label": "NVIDIA Apex Documentation",
         "url": "https://nvidia.github.io/apex/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "FP16 and BF16 mixed precision training accelerates neural computation and halves GPU memory by running tensor contractions in half precision while preserving master weights.",
+      "why": "Full precision storage underutilizes modern tensor acceleration cores and limits batch sizes. Half-precision computation conserves bandwidth while master copies prevent precision loss.",
+      "example": "Automatic mixed precision contexts cast forward activations into Bfloat16 while storing master parameter copies in full precision."
+    }
   },
   {
     "id": "proximal-policy-optimization-ppo",
@@ -1076,7 +1246,12 @@ export const topics = [
         "label": "CleanRL: High-Quality Single-File Implementation of PPO",
         "url": "https://github.com/vwxyzjn/cleanrl"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Proximal Policy Optimization (PPO) maximizes a clipped surrogate objective function to prevent policy parameter updates from straying excessively from previous iterations.",
+      "why": "Unconstrained policy gradient steps can cause policy collapse when updates move into detrimental performance regions. Clipping probability ratios enforces bounded, stable updates.",
+      "example": "Reinforcement learning agents clip surrogate policy objective ratios to stabilize actor updates during environmental interaction."
+    }
   },
   {
     "id": "monte-carlo-tree-search-alphazero",
@@ -1103,7 +1278,12 @@ export const topics = [
         "label": "DeepMind AlphaGo Research Archive",
         "url": "https://deepmind.google/technologies/alphago/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Monte Carlo Tree Search (MCTS) combines neural policy and value evaluations with heuristic search trees to navigate complex decision spaces.",
+      "why": "Exhaustive evaluation of combinatorial game branches exceeds computational budgets. Heuristic selection using confidence bounds focuses exploration along promising trajectory branches.",
+      "example": "AlphaZero systems evaluate board positions by running simulated rollouts and selecting moves using tree search bounds."
+    }
   },
   {
     "id": "deep-q-networks-dqn-experience-replay",
@@ -1130,7 +1310,12 @@ export const topics = [
         "label": "PyTorch Reinforcement Learning Tutorial (DQN)",
         "url": "https://pytorch.org/tutorials/intermediate/reinforcement_q_learning.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Deep Q-Networks (DQN) combine deep neural networks with experience replay buffers to approximate action-value functions during reinforcement learning.",
+      "why": "Sequential state transitions introduce temporal correlation and non-stationary training distributions. Sampling transition batches randomly from replay buffers stabilizes optimization.",
+      "example": "DQN controllers sample batches of past environmental transitions from replay buffers to calculate temporal difference errors."
+    }
   },
   {
     "id": "clip-contrastive-language-image-pretraining",
@@ -1157,7 +1342,12 @@ export const topics = [
         "label": "OpenAI CLIP GitHub Repository",
         "url": "https://github.com/openai/CLIP"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "CLIP pre-trains image and text encoders simultaneously on matched pairs using contrastive language-image pretraining to build a shared multimodal embedding space.",
+      "why": "Standard vision classifiers depend on fixed categorical labels that do not transfer across novel domains. Multimodal contrastive objectives align visual concepts with natural language.",
+      "example": "Contrastive vision models measure cosine similarity between visual embeddings and text labels to classify images without fine-tuning."
+    }
   },
   {
     "id": "llava-visual-instruction-tuning",
@@ -1184,7 +1374,12 @@ export const topics = [
         "label": "LLaVA Official GitHub Implementation",
         "url": "https://github.com/haotian-liu/LLaVA"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "LLaVA connects a visual feature encoder with a language model decoder via a projection layer, enabling conversational visual instruction following.",
+      "why": "Standalone text decoders cannot process raw image inputs directly. Aligning visual features into language embedding spaces enables models to reason over images.",
+      "example": "Multimodal dialogue models project visual feature tokens into language decoders to answer questions regarding uploaded images."
+    }
   },
   {
     "id": "neural-radiance-fields-nerf",
@@ -1211,7 +1406,12 @@ export const topics = [
         "label": "Nerfstudio Documentation",
         "url": "https://docs.nerf.studio/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Neural Radiance Fields (NeRF) represent continuous volumetric scenes as coordinate functions parameterized by neural networks to render novel 3D views.",
+      "why": "Traditional polygonal meshes struggle to capture complex geometries and specular lighting effects accurately. Continuous radiance functions optimize volumetric densities and colors directly.",
+      "example": "Volumetric rendering functions query spatial coordinates along camera rays to synthesize novel camera views from photographs."
+    }
   },
   {
     "id": "3d-gaussian-splatting",
@@ -1238,7 +1438,12 @@ export const topics = [
         "label": "Nerfstudio 3DGS Documentation",
         "url": "https://docs.nerf.studio/nerfology/methods/gaussian_splatting.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "3D Gaussian Splatting for real-time radiance field rendering represents scenes using anisotropic 3D Gaussians optimized via differentiable tile rasterization.",
+      "why": "Continuous volumetric ray marching requires dense sampling passes that inhibit real-time frame rates. Differentiable splatting rasterizes explicit primitives with hardware efficiency.",
+      "example": "Real-time graphics renderers project anisotropic Gaussian primitives onto screen tiles to display complex reconstructed environments."
+    }
   },
   {
     "id": "knowledge-distillation-teacher-student",
@@ -1265,7 +1470,12 @@ export const topics = [
         "label": "PyTorch Knowledge Distillation Tutorial",
         "url": "https://pytorch.org/tutorials/beginner/knowledge_distillation_tutorial.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Knowledge distillation compresses large teacher models into compact student models by training student architectures on softened logit distributions.",
+      "why": "Raw target labels omit information regarding relative class similarities captured by large architectures. Soft probability distributions convey nuanced relationships that guide compact models.",
+      "example": "Compact student transformers train on softened logit distributions produced by larger teacher models to retain task performance."
+    }
   },
   {
     "id": "word2vec-skipgram-negative-sampling",
@@ -1292,7 +1502,12 @@ export const topics = [
         "label": "The Illustrated Word2Vec (Jay Alammar)",
         "url": "https://jalammar.github.io/illustrated-word2vec/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Word2Vec skip-gram with negative sampling (SGNS) trains shallow networks to maximize context word probabilities while discriminating against negative noise samples.",
+      "why": "Full vocabulary softmax calculations become computationally prohibitive over massive corpora. Negative sampling replaces expensive normalizations with binary classification tasks.",
+      "example": "Embedding models update target word vectors to predict nearby context tokens while distinguishing randomly sampled noise words."
+    }
   },
   {
     "id": "contrastive-representation-learning-simclr",
@@ -1319,7 +1534,12 @@ export const topics = [
         "label": "PyTorch Lightning SimCLR Tutorial",
         "url": "https://lightning.ai/docs/pytorch/stable/notebooks/course_UvA-DL/13-contrastive-learning.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "SimCLR learns visual representations by maximizing agreement between differently augmented views of images using contrastive loss objectives without human labels.",
+      "why": "Supervised feature training requires extensive manual annotation across domain tasks. Self-supervised contrastive learning extracts generalizable visual representations from raw image datasets.",
+      "example": "Self-supervised vision pipelines apply data augmentations to input images and pull matching representation views together in feature space."
+    }
   },
   {
     "id": "masked-autoencoders-mae",
@@ -1346,7 +1566,12 @@ export const topics = [
         "label": "Hugging Face ViT-MAE Docs",
         "url": "https://huggingface.co/docs/transformers/model_doc/vit_mae"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Masked Autoencoders (MAE) are scalable vision learners that mask high proportions of image patches and reconstruct missing pixels using asymmetric autoencoders.",
+      "why": "Processing entire visual frames creates redundant spatial computation during pre-training. Masking high patch fractions accelerates encoder training and discourages shallow texture memorization.",
+      "example": "Vision transformer encoders process visible image patches while lightweight decoders reconstruct masked pixel regions during pre-training."
+    }
   },
   {
     "id": "chinchilla-compute-optimal-scaling-laws",
@@ -1373,7 +1598,12 @@ export const topics = [
         "label": "LessWrong Analysis of Chinchilla Scaling",
         "url": "https://www.lesswrong.com/posts/6Fpvch8RR2qiKotC4/chinchilla-s-wild-implications"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Chinchilla scaling laws for compute-optimal pre-training show that model parameters and training dataset tokens should scale proportionally given fixed budgets.",
+      "why": "Allocating available compute primarily to model size produces under-trained parameter representations. Balancing parameter counts with token volume optimizes performance per unit computation.",
+      "example": "Pre-training budgets allocate resources equally between scaling model parameter counts and expanding dataset token volume."
+    }
   },
   {
     "id": "emergent-abilities-and-grokking",
@@ -1400,7 +1630,12 @@ export const topics = [
         "label": "Are Emergent Abilities of LLMs a Mirage? (Schaeffer et al., NeurIPS)",
         "url": "https://arxiv.org/abs/2304.15004"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Grokking and phase transitions in generalization describe sudden transitions where overparameterized neural networks achieve generalization long after memorizing training data.",
+      "why": "Standard training assumptions view generalization as occurring concurrently with loss minimization. Prolonged training can induce structural circuit formation well after loss reaches zero.",
+      "example": "Neural networks trained on modular arithmetic maintain memorized weights before undergoing sharp phase transitions toward generalization."
+    }
   },
   {
     "id": "mechanistic-interpretability-induction-heads",
@@ -1427,7 +1662,12 @@ export const topics = [
         "label": "A Mathematical Framework for Transformer Circuits (Elhage et al.)",
         "url": "https://transformer-circuits.pub/2021/framework/index.html"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Mechanistic interpretability reverse-engineers trained neural networks into discrete computational circuits such as induction heads that perform in-context sequence copying.",
+      "why": "Treating neural models as inscrutable black boxes restricts system debugging and safety verification. Isolating discrete internal circuits reveals concrete computational mechanisms.",
+      "example": "Interpretability tools trace attention head activations across transformer layers to identify circuits responsible for in-context pattern copying."
+    }
   },
   {
     "id": "react-reasoning-and-acting",
@@ -1454,7 +1694,12 @@ export const topics = [
         "label": "LlamaIndex ReAct Agent Implementation",
         "url": "https://docs.llamaindex.ai/en/stable/examples/agent/react_agent/"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "ReAct synergizes reasoning and acting in language models by interleaving verbal chain-of-thought traces with tool actions to solve interactive tasks.",
+      "why": "Internal reasoning without external actions risks factual hallucination, whereas invoking external tools without planning causes erratic behavior. Alternating traces enables grounded problem solving.",
+      "example": "Autonomous agent loops produce explicit reasoning thoughts before calling search APIs and observing return values to update plans."
+    }
   },
   {
     "id": "tree-of-thoughts-prompting",
@@ -1481,7 +1726,12 @@ export const topics = [
         "label": "Prompt Engineering Guide: Tree of Thoughts",
         "url": "https://www.promptingguide.ai/techniques/tot"
       }
-    ]
+    ],
+    "lesson": {
+      "idea": "Tree of Thoughts (ToT) problem solving expands reasoning into branching trees of intermediate thoughts, enabling systematic evaluation and backtracking across paths.",
+      "why": "Linear generation commits to preliminary choices without opportunity to rectify flawed deductions. Tree exploration allows models to assess alternatives and abandon unpromising paths.",
+      "example": "Problem solving prompts generate candidate thought branches and prune unfeasible options using tree search algorithms."
+    }
   },
   {
     "id": "function-calling-json-mode-constrained-decoding",

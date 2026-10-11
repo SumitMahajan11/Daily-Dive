@@ -92,7 +92,7 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "This financial theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
+      "idea": "Capital structure theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
       "why": "Understanding this baseline helps financial managers focus on real-world market imperfections like tax benefits from debt interest and the risks of insolvency.",
       "example": "A software business evaluates whether taking a bank loan or issuing new stock slices the corporate pie differently without changing its underlying operating power."
     }
@@ -127,7 +127,7 @@ export const topics = [
     ],
     "lesson": {
       "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
-      "why": "Shareholders track earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
+      "why": "Shareholders track deal mechanics and earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
       "example": "A profitable retailer buys a growing supplier with cash; because the supplier's profits exceed the lost bank interest, earnings per share rise, making the deal accretive."
     }
   },
@@ -160,7 +160,7 @@ export const topics = [
     ],
     "lesson": {
       "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
-      "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer tax flexibility and increase remaining owners' percentage stake.",
+      "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer capital allocation flexibility and increase remaining owners' percentage stake.",
       "example": "A mature tech company repurchases outstanding shares, reducing total share count and raising future earnings per share for all remaining shareholders."
     }
   },
