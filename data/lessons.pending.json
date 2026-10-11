@@ -7,7 +7,7 @@
   "rotary-positional-embeddings-rope": {
     "idea": "Rotary Position Embeddings (RoPE) encode token locations by rotating query and key representations using orthogonal rotation matrices in paired dimensions.",
     "why": "Absolute position vectors degrade when sequence context expands past pre-training boundaries. Relative vector rotations enable attention layers to extrapolate across extended contexts smoothly.",
-    "example": "Attention queries rotate across vector coordinates to determine relative distance between input words during transformer inference."
+    "example": "Routing algorithms send query vectors across orthogonal rotation matrices during transformer inference."
   },
   "residual-connections-resnet": {
     "idea": "Residual connections introduce identity skip paths that let neural layers learn residual functions relative to incoming layer inputs.",
