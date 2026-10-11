@@ -32,8 +32,8 @@ export const starterTopics = [
     ],
     "lesson": {
       "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
-      "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
-      "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
+      "why": "Before this method, models read text a word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
+      "example": "In the sentence 'The bank approved the loan because it had funds', an attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
     }
   },
   {
@@ -92,7 +92,7 @@ export const starterTopics = [
     "lesson": {
       "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
       "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
-      "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
+      "example": "A smart assistant can read an entire lengthy financial report in a single pass without slowing down on the final pages."
     }
   },
   {
@@ -149,12 +149,7 @@ export const starterTopics = [
         "label": "Corporate Finance Institute: DCF Model Training & Formula Guide",
         "url": "https://corporatefinanceinstitute.com/resources/valuation/dcf-formula-discounted-cash-flow/"
       }
-    ],
-    "lesson": {
-      "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
-      "why": "Relying purely on past earnings can mislead investors about future performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
-      "example": "A buyer projects a local bakery will make fifty thousand dollars next year and discounts that cash to forty-five thousand dollars in today's terms."
-    }
+    ]
   },
   {
     "id": "weighted-average-cost-of-capital-wacc",
@@ -183,12 +178,7 @@ export const starterTopics = [
         "label": "Harvard Business Review: A Refresher on Cost of Capital",
         "url": "https://hbr.org/2015/04/a-refresher-on-cost-of-capital"
       }
-    ],
-    "lesson": {
-      "idea": "This metric calculates the average interest rate a company pays to finance its business through both borrowed debt and shareholder equity.",
-      "why": "A company must earn a return higher than this financing rate to create real economic value. It acts as the minimum hurdle rate for approving new corporate projects.",
-      "example": "If a manufacturing firm borrows at five percent and shareholders expect nine percent, its overall cost might be seven percent, meaning new factories must beat seven percent."
-    }
+    ]
   },
   {
     "id": "capital-structure-and-modigliani-miller-theorem",
@@ -408,9 +398,9 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
-      "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
-      "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
+      "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system consistently increases over time.",
+      "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in a forward direction.",
+      "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, without spontaneously reheating."
     }
   },
   {

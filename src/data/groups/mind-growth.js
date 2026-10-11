@@ -200,7 +200,7 @@ export const topics = [
     ],
     "lesson": {
       "idea": "Inoculation theory suggests that exposing people to a weakened counter-argument alongside strong rebuttals builds mental immunity against future persuasion attempts.",
-      "why": "Beliefs that are never challenged can crumble quickly under intense pressure. Preempting deceptive arguments strengthens personal conviction before opponents strike.",
+      "why": "Beliefs that are rarely challenged can crumble quickly under intense pressure. Preempting deceptive arguments strengthens personal conviction before opponents strike.",
       "example": "A public health campaign explains a common myth before refuting it with clear scientific evidence, preparing citizens to spot false claims later."
     }
   },
