@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const ThemeContext = createContext({
-  theme: 'dark',
+  theme: 'light',
   toggleTheme: () => {},
 });
 
@@ -10,18 +10,18 @@ export const ThemeProvider = ({ children }) => {
     if (typeof window !== 'undefined') {
       try {
         const saved = localStorage.getItem('daily-dive-theme');
-        if (saved === 'light' || saved === 'dark') {
-          return saved;
-        }
-        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        if (saved === 'dark') {
           return 'dark';
+        }
+        if (saved === 'light') {
+          return 'light';
         }
         return 'light';
       } catch (e) {
-        return 'dark';
+        return 'light';
       }
     }
-    return 'dark';
+    return 'light';
   });
 
   useEffect(() => {

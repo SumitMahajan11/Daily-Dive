@@ -36,13 +36,13 @@
 
     --color-on-surface: 43 38 32;
     --color-on-background: 43 38 32;
-    --color-on-surface-variant: 84 76 66;
-    --color-outline: 94 86 75;
-    --color-outline-variant: 200 190 178;
+    --color-on-surface-variant: 108 100 90;
+    --color-outline: 160 150 138;
+    --color-outline-variant: 218 210 198;
 
-    /* Terracotta accent (#9e3d1c for > 5.5:1 contrast in light mode) */
-    --color-primary: 158 61 28;
-    --color-primary-container: 158 61 28;
+    /* Terracotta accent (#b5502e) */
+    --color-primary: 181 80 46;
+    --color-primary-container: 181 80 46;
     --color-on-primary: 255 255 255;
     --color-on-primary-container: 255 255 255;
     --color-inverse-primary: 232 122 82;
@@ -52,7 +52,7 @@
     --color-on-primary-fixed-variant: 140 54 24;
 
     /* Secondary: Warm Sage / Olive Taupe */
-    --color-secondary: 78 86 68;
+    --color-secondary: 92 99 82;
     --color-secondary-container: 216 224 210;
     --color-on-secondary: 255 255 255;
     --color-on-secondary-container: 26 36 22;
@@ -62,7 +62,7 @@
     --color-on-secondary-fixed-variant: 65 74 58;
 
     /* Tertiary: Warm Amber / Caramel */
-    --color-tertiary: 161 74 8;
+    --color-tertiary: 180 83 9;
     --color-tertiary-container: 254 243 199;
     --color-on-tertiary: 255 255 255;
     --color-on-tertiary-container: 69 34 0;
@@ -98,8 +98,8 @@
 
     --color-on-surface: 237 232 224;
     --color-on-background: 237 232 224;
-    --color-on-surface-variant: 188 180 170;
-    --color-outline: 175 167 156;
+    --color-on-surface-variant: 179 171 161;
+    --color-outline: 140 132 122;
     --color-outline-variant: 72 67 60;
 
     /* Terracotta accent (vibrant terracotta text/icons, deep terracotta container) */

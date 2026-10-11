@@ -467,16 +467,16 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   return (
     <div className="flex flex-col w-full max-w-xl mx-auto pb-4">
       
-      {/* ── FIRST-RUN HEADLINE & SUB-LINE (ONLY WHEN USER HAS NOT SPUN BEFORE) ── */}
-      {!hasSpunBefore && !showResult && (
-        <header className="w-full text-center sm:text-left mb-3">
+      {/* ── HERO HEADLINE & SUB-LINE (SHOWN WHENEVER NO TOPIC CARD IS ON SCREEN) ── */}
+      {!showResult && (
+        <div data-testid="spin-hero" className="w-full text-center sm:text-left mb-3">
           <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-on-surface tracking-tight leading-tight">
-            One idea. Sixty seconds. Every day.
+            Learn something new, <span className="text-primary italic">one spin at a time.</span>
           </h1>
           <p className="text-xs sm:text-sm text-on-surface-variant mt-1 leading-relaxed">
             Tech, money, mind and world ideas. Works offline.
           </p>
-        </header>
+        </div>
       )}
 
       {/* ── RETURNING USER SLIM STATUS LINE (ONLY WHEN RETURNING AND HAS STREAK OR REVIEWS) ── */}
@@ -812,7 +812,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               className={`transition-transform ${isSpinning ? 'animate-spin' : ''}`}
             />
             <span>{isSpinning ? 'Spinning...' : 'Spin'}</span>
-            <span className="hidden [@media(pointer:fine)]:inline text-xs font-mono font-normal opacity-85 ml-1">
+            <span className="hidden [@media(pointer:fine)]:inline text-xs font-mono font-normal text-white ml-1">
               (Space)
             </span>
           </button>
@@ -836,7 +836,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                 className={`h-9 sm:h-10 rounded-xl px-2 flex items-center justify-center gap-1.5 text-xs transition-all cursor-pointer select-none border focus-visible:ring-2 focus-visible:ring-primary ${
                   groupActive
                     ? 'bg-primary text-white border-primary font-semibold shadow-xs'
-                    : 'bg-transparent text-on-surface-variant/80 border border-outline-variant/50 hover:border-outline-variant hover:text-on-surface font-medium'
+                    : 'bg-transparent text-on-surface-variant border border-outline-variant/50 hover:border-outline-variant hover:text-on-surface font-medium'
                 }`}
               >
                 <span
