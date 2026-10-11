@@ -2,7 +2,7 @@
   "mixture-of-experts-moe": {
     "idea": "Sparse Mixture of Experts (MoE) architectures replace dense feed-forward layers with multiple expert sub-networks, routing each token through a top-k gating mechanism.",
     "why": "Dense layers waste parameter capacity on tokens that require specialized computation. Sparse routing scales capacity while keeping per-token computation bounded.",
-    "example": "Routing algorithms send coding tokens to math experts and punctuation to syntax experts during language generation."
+    "example": "Routing algorithms imagine coding tokens to math experts and punctuation to syntax experts during language generation."
   },
   "rotary-positional-embeddings-rope": {
     "idea": "Rotary Position Embeddings (RoPE) encode token locations by rotating query and key representations using orthogonal rotation matrices in paired dimensions.",
