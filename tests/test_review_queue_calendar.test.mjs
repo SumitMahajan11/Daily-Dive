@@ -49,4 +49,18 @@ describe('Review Queue Calendar Day Filter', () => {
     const queueLater = selectReviewQueue(topics, progress, 4, fixedLater);
     assert.strictEqual(queueLater.length, 2, 'Both are included 2 days later');
   });
+
+  test('selectReviewQueueAge computes calendar-day difference and never returns Today', async () => {
+    const { selectReviewQueueAge } = await import('../src/lib/selectors.js');
+    const now = new Date('2026-10-11T14:00:00'); // 2 PM today
+    const yesterdayEvening = new Date('2026-10-10T20:00:00'); // 8 PM yesterday (18h elapsed)
+    const twoDaysAgo = new Date('2026-10-09T10:00:00');
+
+    assert.strictEqual(selectReviewQueueAge(yesterdayEvening, now), '1d ago', '18h ago across midnight is 1d ago');
+    assert.strictEqual(selectReviewQueueAge(twoDaysAgo, now), '2d ago');
+    // Boundary check: same day or null defaults to at least 1d ago, never Today
+    assert.strictEqual(selectReviewQueueAge(now, now), '1d ago', 'Never returns Today');
+    assert.strictEqual(selectReviewQueueAge(null, now), '1d ago');
+  });
 });
+

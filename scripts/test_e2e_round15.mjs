@@ -219,25 +219,29 @@ async function runRound15E2ETests() {
     const streakLineText = (await streakContainer.textContent()).trim();
     assert.ok(streakLineText.includes('2-day streak'), `Status line must read "2-day streak", found: "${streakLineText}"`);
 
-    const gapResult = await page.evaluate(() => {
-      const numSpan = document.querySelector('#spin .font-mono');
+    const gap = await page.evaluate(() => {
+      const statusLine = document.querySelector('[data-testid="spin-status-line"]');
+      const numSpan = statusLine?.querySelector('.font-mono');
       if (!numSpan) return null;
-      const parent = numSpan.parentElement;
       const numRect = numSpan.getBoundingClientRect();
-      const parentRect = parent.getBoundingClientRect();
-      const textNodeOffset = numRect.right - parentRect.left;
-      return {
-        gap: Math.max(0, parentRect.right - numRect.right - (parent.scrollWidth - numRect.width)),
-        numText: numSpan.textContent.trim(),
-        fullText: parent.textContent.trim()
-      };
+      const parent = numSpan.parentElement;
+      let textNode = null;
+      for (const node of parent.childNodes) {
+        if (node.nodeType === Node.TEXT_NODE && node.textContent.includes('-day')) {
+          textNode = node;
+          break;
+        }
+      }
+      if (!textNode) return null;
+      const range = document.createRange();
+      range.selectNodeContents(textNode);
+      const textRect = range.getBoundingClientRect();
+      return textRect.left - numRect.right;
     });
 
-    const numBox = await streakNumberEl.boundingBox();
-    const textParentBox = await streakNumberEl.locator('xpath=..').boundingBox();
-    const pixelGap = textParentBox ? Math.abs((textParentBox.x + textParentBox.width) - (numBox.x + numBox.width) - (textParentBox.width - numBox.width)) : 0;
-    console.log(`  Pixel gap between number and "-day": ${pixelGap.toFixed(2)}px`);
-    assert.ok(pixelGap < 2, `Gap between "2" and "-day" must be < 2px, got ${pixelGap}px`);
+    console.log(`  Pixel gap between number and "-day": ${gap?.toFixed(2)}px`);
+    assert.ok(gap !== null, 'Pixel gap could not be measured');
+    assert.ok(gap < 2, `Pixel gap between "2" and "-day" must be < 2px, but measured: ${gap}px`);
     console.log('  [PASS] Status line reads "2-day streak" with gap < 2px.');
 
     // ── 5. SETTINGS SCREEN: FULL-SCREEN VIEW, THEME ROW REMOVED, SUN BUTTON STAYS ─

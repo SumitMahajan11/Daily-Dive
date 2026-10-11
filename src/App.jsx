@@ -77,6 +77,11 @@ const MainLayout = () => {
     if (id === 'settings') {
       if (activeSection !== 'settings') {
         setPreviousTab(activeSection);
+        try {
+          window.history.pushState({ modal: 'settings' }, '');
+        } catch (e) {
+          // ignore
+        }
       }
       setActiveSection('settings');
       return;
@@ -95,8 +100,23 @@ const MainLayout = () => {
 
   const handleBackFromSettings = useCallback(() => {
     const target = previousTab && previousTab !== 'settings' ? previousTab : 'spin';
+    if (window.history.state?.modal === 'settings') {
+      window.history.back();
+    }
     scrollToSection(target);
   }, [previousTab, scrollToSection]);
+
+  // Hardware / browser Back button support for Settings modal
+  useEffect(() => {
+    const handlePopState = () => {
+      if (activeSection === 'settings') {
+        const target = previousTab && previousTab !== 'settings' ? previousTab : 'spin';
+        setActiveSection(target);
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, [activeSection, previousTab]);
 
   useEffect(() => {
     if (activeSection === 'settings') return;
