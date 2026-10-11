@@ -64,6 +64,7 @@ const HorizontalSeparator = () => (
 
 const MainLayout = () => {
   const [activeSection, setActiveSection] = useState('spin');
+  const [previousTab, setPreviousTab] = useState('spin');
 
   const sectionRefs = useRef({});
   const isScrollingProgrammatically = useRef(false);
@@ -73,34 +74,53 @@ const MainLayout = () => {
   }, []);
 
   const scrollToSection = useCallback((id) => {
-    const el = sectionRefs.current[id];
-    if (!el) return;
-    isScrollingProgrammatically.current = true;
+    if (id === 'settings') {
+      if (activeSection !== 'settings') {
+        setPreviousTab(activeSection);
+      }
+      setActiveSection('settings');
+      return;
+    }
+
+    setPreviousTab(id);
     setActiveSection(id);
-    el.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(() => { isScrollingProgrammatically.current = false; }, 900);
-  }, []);
+
+    const el = sectionRefs.current[id];
+    if (el) {
+      isScrollingProgrammatically.current = true;
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      setTimeout(() => { isScrollingProgrammatically.current = false; }, 900);
+    }
+  }, [activeSection]);
+
+  const handleBackFromSettings = useCallback(() => {
+    const target = previousTab && previousTab !== 'settings' ? previousTab : 'spin';
+    scrollToSection(target);
+  }, [previousTab, scrollToSection]);
 
   useEffect(() => {
+    if (activeSection === 'settings') return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         if (isScrollingProgrammatically.current) return;
         entries.forEach((entry) => {
           if (entry.isIntersecting && entry.target.dataset.section) {
             setActiveSection(entry.target.dataset.section);
+            setPreviousTab(entry.target.dataset.section);
           }
         });
       },
       { rootMargin: '-35% 0px -60% 0px', threshold: 0 }
     );
 
-    ['spin', 'library', 'progress', 'settings'].forEach((id) => {
+    ['spin', 'library', 'progress'].forEach((id) => {
       const el = sectionRefs.current[id];
       if (el) observer.observe(el);
     });
 
     return () => observer.disconnect();
-  }, []);
+  }, [activeSection]);
 
   // Keyboard shortcuts: 1-3 switch tabs
   useEffect(() => {
@@ -158,73 +178,68 @@ const MainLayout = () => {
           </div>
         </aside>
 
-        {/* Scrollable Content */}
-        <main className="flex-1 w-full overflow-x-hidden">
-
-          {/* ── SPIN ── */}
-          <section
-            id="spin"
-            data-section="spin"
-            ref={setSectionRef('spin')}
-            className="px-4 sm:px-8 pt-4 pb-6 max-w-4xl mx-auto scroll-mt-16"
-          >
-            <SpinScreen
-              onNavigateLibrary={() => scrollToSection('library')}
-            />
-          </section>
-
-          <HorizontalSeparator />
-
-          {/* ── LIBRARY (MERGED FILTER & EXTRACT) ── */}
-          <section
-            id="library"
-            data-section="library"
-            ref={setSectionRef('library')}
-            className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
-          >
+        {/* Scrollable Content or Full-Screen Settings View */}
+        {activeSection === 'settings' ? (
+          <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
             <ChunkErrorBoundary>
               <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-                <LibraryScreen
-                  onSpinActivePool={() => scrollToSection('spin')}
-                />
+                <SettingsScreen onBack={handleBackFromSettings} />
               </Suspense>
             </ChunkErrorBoundary>
-          </section>
+            <div className="h-28" />
+          </main>
+        ) : (
+          <main className="flex-1 w-full overflow-x-hidden">
 
-          <HorizontalSeparator />
+            {/* ── SPIN ── */}
+            <section
+              id="spin"
+              data-section="spin"
+              ref={setSectionRef('spin')}
+              className="px-4 sm:px-8 pt-4 pb-6 max-w-4xl mx-auto scroll-mt-16"
+            >
+              <SpinScreen
+                onNavigateLibrary={() => scrollToSection('library')}
+              />
+            </section>
 
-          {/* ── PROGRESS ── */}
-          <section
-            id="progress"
-            data-section="progress"
-            ref={setSectionRef('progress')}
-            className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
-          >
-            <ChunkErrorBoundary>
-              <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-                <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
-              </Suspense>
-            </ChunkErrorBoundary>
-          </section>
+            <HorizontalSeparator />
 
-          <HorizontalSeparator />
+            {/* ── LIBRARY (MERGED FILTER & EXTRACT) ── */}
+            <section
+              id="library"
+              data-section="library"
+              ref={setSectionRef('library')}
+              className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
+            >
+              <ChunkErrorBoundary>
+                <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+                  <LibraryScreen
+                    onSpinActivePool={() => scrollToSection('spin')}
+                  />
+                </Suspense>
+              </ChunkErrorBoundary>
+            </section>
 
-          {/* ── SETTINGS ── */}
-          <section
-            id="settings"
-            data-section="settings"
-            ref={setSectionRef('settings')}
-            className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16 min-h-[70vh]"
-          >
-            <ChunkErrorBoundary>
-              <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-                <SettingsScreen />
-              </Suspense>
-            </ChunkErrorBoundary>
-          </section>
+            <HorizontalSeparator />
 
-          <div className="h-28" />
-        </main>
+            {/* ── PROGRESS ── */}
+            <section
+              id="progress"
+              data-section="progress"
+              ref={setSectionRef('progress')}
+              className="px-4 sm:px-8 py-6 max-w-4xl mx-auto scroll-mt-16"
+            >
+              <ChunkErrorBoundary>
+                <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+                  <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+                </Suspense>
+              </ChunkErrorBoundary>
+            </section>
+
+            <div className="h-28" />
+          </main>
+        )}
       </div>
 
       {/* Mobile Bottom Navigation */}

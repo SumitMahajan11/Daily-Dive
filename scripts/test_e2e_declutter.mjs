@@ -88,12 +88,17 @@ async function runDeclutterE2ETests() {
 
       // Scroll through page to ensure all lazy loaded screens mount
       await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
-      await page.waitForSelector('a[href*="github.com/SumitMahajan11/Daily-Dive/issues"]', { timeout: 10000 });
       await page.waitForSelector('#library', { timeout: 10000 });
       await page.waitForSelector('#progress', { timeout: 10000 });
-      await page.waitForSelector('#settings', { timeout: 10000 });
+      const mainText = await page.evaluate(() => document.body.innerText);
 
-      const pageText = await page.evaluate(() => document.body.innerText);
+      // Open Settings full-screen view via gear button
+      await page.locator('header button[aria-label="Settings"]').click();
+      await page.waitForSelector('#settings', { timeout: 10000 });
+      await page.waitForSelector('a[href*="github.com/SumitMahajan11/Daily-Dive/issues"]', { timeout: 10000 });
+      const settingsText = await page.evaluate(() => document.body.innerText);
+
+      const pageText = mainText + '\n' + settingsText;
 
       // Hard asserts: forbidden strings must NOT be present
       for (const str of FORBIDDEN_STRINGS) {

@@ -93,7 +93,7 @@ class AudioSynthesizer {
       osc.type = 'triangle';
       osc.frequency.setValueAtTime(freq, now);
 
-      const tickVolume = 0.07 + clampedProgress * 0.03;
+      const tickVolume = Math.min(1.0, 0.105 + clampedProgress * 0.045);
       gain.gain.setValueAtTime(tickVolume, now);
       gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.035);
 
@@ -121,7 +121,7 @@ class AudioSynthesizer {
       thudOsc.type = 'sine';
       thudOsc.frequency.setValueAtTime(110, now);
       thudOsc.frequency.exponentialRampToValueAtTime(32, now + 0.18);
-      thudGain.gain.setValueAtTime(0.24, now);
+      thudGain.gain.setValueAtTime(0.36, now);
       thudGain.gain.exponentialRampToValueAtTime(0.0001, now + 0.22);
       thudOsc.connect(thudGain);
       thudGain.connect(this.ctx.destination);
@@ -136,7 +136,7 @@ class AudioSynthesizer {
         const chimeGain = this.ctx.createGain();
         chimeOsc.type = 'sine';
         chimeOsc.frequency.setValueAtTime(freq, noteStart);
-        chimeGain.gain.setValueAtTime(0.12, noteStart);
+        chimeGain.gain.setValueAtTime(0.18, noteStart);
         chimeGain.gain.exponentialRampToValueAtTime(0.0001, noteStart + 0.38);
         chimeOsc.connect(chimeGain);
         chimeGain.connect(this.ctx.destination);
