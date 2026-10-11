@@ -216,7 +216,7 @@ async function runRound15E2ETests() {
     await streakNumberEl.waitFor({ state: 'visible', timeout: 5000 });
 
     const statusLineText = (await page.locator('[data-testid="spin-status-line"]').first().innerText()).trim();
-    assert.ok(statusLineText.includes('2-day streak'), `Status line must read "2-day streak", found: "${statusLineText}"`);
+    assert.ok(statusLineText.replace(/\s+/g, ' ').includes('2-day streak'), `Status line must read "2-day streak", found: "${statusLineText}"`);
 
     const gap = await page.evaluate(() => {
       const statusLine = document.querySelector('[data-testid="spin-status-line"]');
