@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react'
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { AudioController } from '../../lib/audio';
+import { createSpinTimeline, SPIN_TOTAL_DURATION_MS } from '../../lib/spinTimeline';
 import { CATEGORY_TREE } from '../../lib/roulette';
 import {
   RotateCw,
@@ -77,7 +78,7 @@ const REPEAT_COUNT = 14;
 const ITEM_WIDTH = 104;
 const ITEM_GAP = 10;
 const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 114px
-const SPIN_DURATION_MS = 2800;
+const SPIN_DURATION_MS = SPIN_TOTAL_DURATION_MS; // 4500ms
 const SPIN_EASING = [0.12, 0.98, 0.24, 1.0];
 
 const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarget }) => {
@@ -244,6 +245,16 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   const lastFiredIndexRef = useRef(-1);
   const spinStartTimeRef = useRef(0);
   const isSpinningRef = useRef(false);
+  const animFrameRef = useRef(null);
+
+  useEffect(() => {
+    return () => {
+      if (animFrameRef.current) {
+        cancelAnimationFrame(animFrameRef.current);
+      }
+      AudioController.cancelSpinAudio();
+    };
+  }, []);
 
   useEffect(() => {
     const updateWidth = () => {
@@ -363,50 +374,72 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
 
     isSpinningRef.current = true;
     spinStartTimeRef.current = Date.now();
-    lastFiredIndexRef.current = Math.round(((containerWidth - ITEM_WIDTH) / 2 - translateX) / ITEM_STEP);
 
     setIsSpinning(true);
     setShowResult(false);
     setIsLanded(false);
     setShowLandingHalo(false);
 
-    AudioController.playWhoosh(SPIN_DURATION_MS);
-
     const currentBase = reelIndex % activeReelCategories.length;
     let forwardOffset = baseIndex - currentBase;
     if (forwardOffset <= 0) forwardOffset += activeReelCategories.length;
-    const travelCards = (4 * activeReelCategories.length) + forwardOffset;
+    const desiredCards = 32;
+    const minLoops = Math.max(2, Math.round((desiredCards - forwardOffset) / activeReelCategories.length));
+    const travelCards = (minLoops * activeReelCategories.length) + forwardOffset;
     const targetIndex = reelIndex + travelCards;
-    setReelIndex(targetIndex);
 
-    setTimeout(() => {
-      isSpinningRef.current = false;
-      setIsSpinning(false);
-      setShowResult(true);
-      setIsLanded(true);
+    const timeline = createSpinTimeline(travelCards);
 
-      AudioController.playLanding();
-      setActiveAccentColor(landedCatDef?.accentColor || '#e06841');
-      setShowLandingHalo(true);
-      setTimeout(() => setShowLandingHalo(false), 800);
+    AudioController.playWhoosh(SPIN_DURATION_MS);
+    AudioController.scheduleSpinTicks(timeline.tickTimes);
 
-      try {
-        confetti({
-          particleCount: 40,
-          spread: 60,
-          origin: { y: 0.6 },
-          colors: ['#e06841', '#f59e0b', '#94a88f', '#ff8c69']
-        });
-      } catch (e) {}
+    const startX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
+    const targetX = (containerWidth - ITEM_WIDTH) / 2 - (targetIndex * ITEM_STEP);
+    const startTime = performance.now();
 
-      if (userSettings?.haptics_enabled && navigator.vibrate) {
-        try { navigator.vibrate([30, 50, 90]); } catch (e) {}
+    if (animFrameRef.current) {
+      cancelAnimationFrame(animFrameRef.current);
+    }
+
+    const step = (now) => {
+      const elapsed = now - startTime;
+      if (elapsed >= SPIN_DURATION_MS) {
+        motionX.set(targetX);
+        setReelIndex(targetIndex);
+        isSpinningRef.current = false;
+        setIsSpinning(false);
+        setShowResult(true);
+        setIsLanded(true);
+
+        AudioController.playLanding();
+        setActiveAccentColor(landedCatDef?.accentColor || '#e06841');
+        setShowLandingHalo(true);
+        setTimeout(() => setShowLandingHalo(false), 800);
+
+        try {
+          confetti({
+            particleCount: 40,
+            spread: 60,
+            origin: { y: 0.6 },
+            colors: ['#e06841', '#f59e0b', '#94a88f', '#ff8c69']
+          });
+        } catch (e) {}
+
+        if (userSettings?.haptics_enabled && navigator.vibrate) {
+          try { navigator.vibrate([30, 50, 90]); } catch (e) {}
+        }
+
+        setTimeout(() => {
+          setReelIndex(prev => (prev % activeReelCategories.length) + (3 * activeReelCategories.length));
+        }, 500);
+      } else {
+        const progress = timeline.getProgress(elapsed);
+        motionX.set(startX + (targetX - startX) * progress);
+        animFrameRef.current = requestAnimationFrame(step);
       }
+    };
 
-      setTimeout(() => {
-        setReelIndex(prev => (prev % activeReelCategories.length) + (3 * activeReelCategories.length));
-      }, 500);
-    }, SPIN_DURATION_MS);
+    animFrameRef.current = requestAnimationFrame(step);
   };
 
   const handleMarkLearned = async () => {
@@ -739,31 +772,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             {/* Animated Reel Strip */}
             <motion.div
               className="flex items-center absolute left-0"
-              style={{ gap: `${ITEM_GAP}px` }}
-              animate={{ x: translateX }}
-              transition={
-                isSpinning
-                  ? (typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches
-                      ? { duration: 0.04 }
-                      : { duration: SPIN_DURATION_MS / 1000, ease: SPIN_EASING })
-                  : { duration: 0 }
-              }
-              onUpdate={(latest) => {
-                const curX = typeof latest.x === 'number' ? latest.x : parseFloat(latest.x);
-                if (isNaN(curX)) return;
-                motionX.set(curX);
-
-                const isReduced = typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-                if (isSpinningRef.current && !isReduced) {
-                  const nearestIdx = Math.round(((containerWidth - ITEM_WIDTH) / 2 - curX) / ITEM_STEP);
-                  if (nearestIdx !== lastFiredIndexRef.current) {
-                    lastFiredIndexRef.current = nearestIdx;
-                    const elapsed = Date.now() - spinStartTimeRef.current;
-                    const progress = Math.min(1, Math.max(0, elapsed / SPIN_DURATION_MS));
-                    AudioController.playTick(progress);
-                  }
-                }
-              }}
+              style={{ gap: `${ITEM_GAP}px`, x: motionX }}
             >
               {reelStrip.map((item, idx) => (
                 <PrecisionReelCard
