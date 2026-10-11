@@ -823,7 +823,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       <div className="w-full mt-2.5">
         <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full">
           {CATEGORY_TREE.map(groupDef => {
-            const groupActive = isGroupActive(groupDef);
+            const groupActive = true; // BREAK-IT 1a
             const shortLabel = GROUP_SHORT_LABELS[groupDef.group] || groupDef.label;
             return (
               <button
