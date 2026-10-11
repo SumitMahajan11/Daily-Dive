@@ -89,7 +89,7 @@ async function runMobileE2ETests() {
         'mixture-of-experts-moe': {
           topic_id: 'mixture-of-experts-moe',
           times_seen: 1,
-          last_seen: new Date().toISOString(),
+          last_seen: new Date(Date.now() - 10 * 86400000).toISOString(),
           interval_days: 1,
           ease_factor: 2.5,
           learned: false
@@ -302,10 +302,10 @@ async function runMobileE2ETests() {
         `Review queue age element [${i}] truncated: scrollWidth (${metrics.scrollWidth}) > clientWidth (${metrics.clientWidth}) for text "${metrics.text}"`
       );
 
-      // Verify format is "Today" or "Xd ago"
+      // Verify format is "Xd ago" (not "Today")
       assert.ok(
-        metrics.text === 'Today' || /^\d+d ago$/.test(metrics.text),
-        `Age text must be "Today" or "Xd ago", found: "${metrics.text}"`
+        /^\d+d ago$/.test(metrics.text) && metrics.text !== 'Today',
+        `Age text must be "Xd ago" (not "Today"), found: "${metrics.text}"`
       );
       console.log(`   ✓ Review queue age item [${i}]: "${metrics.text}" (scrollWidth: ${metrics.scrollWidth}px <= clientWidth: ${metrics.clientWidth}px)`);
     }

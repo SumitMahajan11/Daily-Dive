@@ -49,17 +49,29 @@ export function selectLearnedCount(userProgressMap = {}) {
  * Derived strictly from persistent per-topic userProgressMap so topics remain
  * reviewable even if their history entries have been pruned (>60 days or >150 entries).
  */
-export function selectReviewQueue(topics = [], userProgressMap = {}, limit = 4) {
+export function selectReviewQueue(topics = [], userProgressMap = {}, limit = 4, nowDate = new Date()) {
   if (!Array.isArray(topics) || !userProgressMap || typeof userProgressMap !== 'object') {
     return [];
   }
 
+  const todayStr = getLocalCalendarDate(nowDate);
+
   const seenTopicIds = new Set(
     Object.keys(userProgressMap).filter(id => {
       const p = userProgressMap[id];
-      return p && ((Number(p.times_seen) > 0) || Boolean(p.last_seen) || Boolean(p.learned));
+      if (!p) return false;
+      const hasSeen = (Number(p.times_seen) > 0) || Boolean(p.last_seen) || Boolean(p.learned);
+      if (!hasSeen || !p.last_seen) return false;
+      try {
+        const lastSeenDateStr = getLocalCalendarDate(new Date(p.last_seen));
+        return lastSeenDateStr < todayStr;
+      } catch (e) {
+        return false;
+      }
     })
   );
+
+  const effectiveLimit = (limit === null || limit === undefined) ? 4 : limit;
 
   return topics
     .filter(t => t && seenTopicIds.has(t.id))
@@ -68,7 +80,14 @@ export function selectReviewQueue(topics = [], userProgressMap = {}, limit = 4) 
       const bTime = new Date(userProgressMap[b.id]?.last_seen || 0).getTime();
       return aTime - bTime;
     })
-    .slice(0, limit);
+    .slice(0, effectiveLimit);
+}
+
+/**
+ * Returns total count of review queue topics eligible to review today.
+ */
+export function selectReviewQueueCount(topics = [], userProgressMap = {}, nowDate = new Date()) {
+  return selectReviewQueue(topics, userProgressMap, Infinity, nowDate).length;
 }
 
 /**
