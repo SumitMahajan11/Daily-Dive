@@ -52,7 +52,7 @@ async function testUploadRealRoadmap() {
   await page.reload();
   await page.waitForSelector('#spin');
 
-  await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
+  await page.locator('[data-nav-id="library"]').first().click();
   await page.waitForTimeout(600);
 
   const chooseFileBtn = page.locator('#library button:has-text("Upload notes"), #library button:has-text("Choose a file")').first();

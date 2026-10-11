@@ -86,11 +86,19 @@ async function runDeclutterE2ETests() {
 
       await page.goto(`http://localhost:${port}/`, { waitUntil: 'networkidle' });
 
-      // Scroll through page to ensure all lazy loaded screens mount
-      await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
+      // Visit Spin, Library, and Progress screens to collect page text
+      await page.waitForSelector('#spin', { timeout: 10000 });
+      const spinText = await page.evaluate(() => document.body.innerText);
+
+      await page.locator('button[data-nav-id="library"]:visible').first().click();
       await page.waitForSelector('#library', { timeout: 10000 });
+      const libraryText = await page.evaluate(() => document.body.innerText);
+
+      await page.locator('button[data-nav-id="progress"]:visible').first().click();
       await page.waitForSelector('#progress', { timeout: 10000 });
-      const mainText = await page.evaluate(() => document.body.innerText);
+      const progressText = await page.evaluate(() => document.body.innerText);
+
+      const mainText = `${spinText}\n${libraryText}\n${progressText}`;
 
       // Open Settings full-screen view via gear button
       await page.locator('header button[aria-label="Settings"]').click();

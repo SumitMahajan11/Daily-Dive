@@ -138,7 +138,7 @@ async function runRound15E2ETests() {
 
     // ── 2. LIBRARY SCREEN: UPLOAD COPY & GEMINI PRIVACY NOTICE ───────────
     console.log('\nTesting Library Screen upload copy & Gemini disclosure notice...');
-    await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
+    await page.locator('button[data-nav-id="library"]:visible').first().click();
     await page.waitForTimeout(300);
 
     const libraryBodyText = await page.innerText('#library');
@@ -169,7 +169,7 @@ async function runRound15E2ETests() {
 
     // ── 3. PROGRESS SCREEN: REAL SPIN FLOW & REVIEW QUEUE EXCLUSION ───────
     console.log('\nTesting real spin flow in UI, reload, and review queue exclusion...');
-    await page.evaluate(() => document.getElementById('spin')?.scrollIntoView());
+    await page.locator('button[data-nav-id="spin"]:visible').first().click();
     await page.waitForTimeout(300);
 
     const spinBtn = page.locator('#spin button[data-testid="primary-spin-button"]');
@@ -186,7 +186,7 @@ async function runRound15E2ETests() {
     await page.reload({ waitUntil: 'networkidle' });
 
     // Open Progress screen
-    await page.evaluate(() => document.getElementById('progress')?.scrollIntoView());
+    await page.locator('button[data-nav-id="progress"]:visible').first().click();
     await page.waitForTimeout(500);
 
     const progressText = await page.innerText('#progress');
@@ -209,7 +209,7 @@ async function runRound15E2ETests() {
       }));
     });
     await page.reload({ waitUntil: 'networkidle' });
-    await page.evaluate(() => document.getElementById('spin')?.scrollIntoView());
+    await page.locator('button[data-nav-id="spin"]:visible').first().click();
     await page.waitForTimeout(500);
 
     const streakNumberEl = page.locator('#spin .font-mono').first();

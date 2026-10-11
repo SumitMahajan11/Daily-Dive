@@ -100,7 +100,7 @@ async function test1b() {
     assert.ok(!spinText.includes('to review today'), 'Spun topic must NOT be counted in "to review today"');
 
     // Assert topic is NOT in Review queue in Progress
-    await page.evaluate(() => document.getElementById('progress')?.scrollIntoView());
+    await page.locator('button[data-nav-id="progress"]:visible').first().click();
     await page.waitForTimeout(500);
     const progressText = await page.innerText('#progress');
     assert.ok(!progressText.includes(spunTopicTitle), `Spun topic "${spunTopicTitle}" must NOT be in the Review queue`);
