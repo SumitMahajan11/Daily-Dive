@@ -501,7 +501,6 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           <h2 className="font-display text-base sm:text-lg font-bold text-on-surface">
             Your interests
           </h2>
-          <span>Master Topic Switch</span>
           <div className="flex items-center gap-2">
             <button
               type="button"
