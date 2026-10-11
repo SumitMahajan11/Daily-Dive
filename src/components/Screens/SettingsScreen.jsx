@@ -11,7 +11,7 @@ import {
   AlertTriangle,
   Volume2,
   Vibrate,
-  Sun,
+  ArrowLeft,
   ShieldCheck,
   Info,
   MessageSquare
@@ -51,7 +51,7 @@ const formatTo12Hour = (time24) => {
   return `${String(hours).padStart(2, '0')}:${minutes} ${period}`;
 };
 
-export const SettingsScreen = () => {
+export const SettingsScreen = ({ onBack }) => {
   const {
     userSettings,
     userProgressMap,
@@ -213,10 +213,21 @@ export const SettingsScreen = () => {
   };
 
   return (
-    <div className="flex flex-col w-full max-w-3xl mx-auto pb-8 space-y-6">
+    <div id="settings" data-section="settings" className="flex flex-col w-full max-w-3xl mx-auto pb-8 space-y-6">
       
-      {/* ── SCREEN H1 HEADER ── */}
-      <div>
+      {/* ── SCREEN H1 HEADER WITH BACK CONTROL ── */}
+      <div className="flex items-center gap-3">
+        {onBack && (
+          <button
+            type="button"
+            onClick={onBack}
+            data-testid="settings-back-button"
+            aria-label="Back"
+            className="w-9 h-9 rounded-xl flex items-center justify-center bg-surface-container border border-outline-variant/30 text-on-surface hover:bg-surface-container-high transition-colors cursor-pointer"
+          >
+            <ArrowLeft size={18} />
+          </button>
+        )}
         <h1 className="font-display text-2xl sm:text-3xl font-bold text-on-surface tracking-tight">
           Settings
         </h1>
@@ -302,7 +313,7 @@ export const SettingsScreen = () => {
         </div>
       </section>
 
-      {/* ── SECTION 2: SOUND, HAPTICS AND THEME ── */}
+      {/* ── SECTION 2: SOUND AND HAPTICS ── */}
       <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-4">
         <h2 className="font-display text-base font-bold text-on-surface">Sound and Haptics</h2>
         
@@ -334,21 +345,6 @@ export const SettingsScreen = () => {
               checked={Boolean(userSettings.haptics_enabled)}
               onChange={(chk) => updateSettings({ haptics_enabled: chk })}
               ariaLabel="Toggle haptic feedback"
-            />
-          </div>
-
-          <div className="pt-2 border-t border-outline-variant/15 flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <Sun size={18} className="text-on-surface-variant" />
-              <div>
-                <span className="text-sm font-semibold text-on-surface block">Theme</span>
-                <span className="text-xs text-on-surface-variant">Switch between light and dark modes.</span>
-              </div>
-            </div>
-            <Toggle
-              checked={theme === 'dark'}
-              onChange={toggleTheme}
-              ariaLabel="Toggle dark theme"
             />
           </div>
         </div>

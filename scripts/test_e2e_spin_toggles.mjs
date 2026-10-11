@@ -77,7 +77,7 @@ async function testSpinToggles() {
     await page.waitForTimeout(300);
 
     // 4. Verify initial state of the 4 group buttons (all ON by default)
-    console.log('4. Verifying 4 Spin-screen toggles are ON initially...');
+    console.log('4. Verifying initial group states (Tech & Mind ON, Money & World OFF in starter categories)...');
     const techBtn = page.locator('#spin button[aria-label="Toggle Tech"]');
     const moneyBtn = page.locator('#spin button[aria-label="Toggle Money"]');
     const mindBtn = page.locator('#spin button[aria-label="Toggle Mind"]');
@@ -89,14 +89,20 @@ async function testSpinToggles() {
     const worldInitial = await worldBtn.getAttribute('aria-pressed');
 
     assert.equal(techInitial, 'true', 'Tech button must be aria-pressed="true" initially');
-    assert.equal(moneyInitial, 'true', 'Money button must be aria-pressed="true" initially');
+    assert.equal(moneyInitial, 'false', 'Money button must be aria-pressed="false" initially');
     assert.equal(mindInitial, 'true', 'Mind button must be aria-pressed="true" initially');
-    assert.equal(worldInitial, 'true', 'World button must be aria-pressed="true" initially');
+    assert.equal(worldInitial, 'false', 'World button must be aria-pressed="false" initially');
 
-    // 5. Test Money toggle cycling, then turn OFF Tech, Mind, World leaving Money ON.
+    // 5. Test Money toggle cycling, then turn OFF Tech, Mind leaving Money ON.
     console.log('5. Testing Money toggle interaction & turning OFF other groups...');
     
-    // Cycle Money toggle OFF then ON while other groups are active (activeCount > 1)
+    // Turn Money ON
+    await moneyBtn.click();
+    await page.waitForTimeout(100);
+    const moneyToggledOn = await moneyBtn.getAttribute('aria-pressed');
+    assert.equal(moneyToggledOn, 'true', 'Money button must be aria-pressed="true" when toggled on');
+
+    // Cycle Money OFF then back ON
     await moneyBtn.click();
     await page.waitForTimeout(100);
     const moneyToggledOff = await moneyBtn.getAttribute('aria-pressed');
@@ -104,15 +110,11 @@ async function testSpinToggles() {
 
     await moneyBtn.click();
     await page.waitForTimeout(100);
-    const moneyToggledOn = await moneyBtn.getAttribute('aria-pressed');
-    assert.equal(moneyToggledOn, 'true', 'Money button must be aria-pressed="true" when toggled back on');
 
-    // Now turn OFF Tech, Mind, World leaving only Money active
+    // Now turn OFF Tech and Mind (leaving only Money active)
     await techBtn.click();
     await page.waitForTimeout(100);
     await mindBtn.click();
-    await page.waitForTimeout(100);
-    await worldBtn.click();
     await page.waitForTimeout(100);
 
     const techAfter = await techBtn.getAttribute('aria-pressed');

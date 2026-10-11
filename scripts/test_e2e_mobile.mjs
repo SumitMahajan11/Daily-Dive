@@ -192,10 +192,8 @@ async function runMobileE2ETests() {
     );
     console.log('   ✓ Scrolled to Progress -> Progress bottom tab became active (aria-current="page")');
 
-    // Scroll to Settings
-    await page.evaluate(() => {
-      document.getElementById('settings')?.scrollIntoView({ behavior: 'instant', block: 'start' });
-    });
+    // Open Settings via header gear button
+    await page.locator('header button[aria-label="Settings"]').click();
     await page.waitForTimeout(600);
 
     const settingsActive = await page.evaluate(() => {
@@ -212,14 +210,18 @@ async function runMobileE2ETests() {
     assert.strictEqual(
       settingsActive.gearCurrent,
       'page',
-      `After scrolling to #settings, Settings button must have aria-current="page", found: ${settingsActive.gearCurrent}`
+      `After clicking Settings gear, Settings button must have aria-current="page", found: ${settingsActive.gearCurrent}`
     );
     assert.strictEqual(
       settingsActive.bottomNavActiveCount,
       0,
       'When Settings is active, bottom tabs must not have aria-current="page"'
     );
-    console.log('   ✓ Scrolled to Settings -> Settings navbar button became active (aria-current="page")');
+    console.log('   ✓ Clicked Settings gear -> Settings navbar button became active (aria-current="page")');
+
+    // Return via Back button
+    await page.locator('[data-testid="settings-back-button"]').click();
+    await page.waitForTimeout(400);
 
     // ─────────────────────────────────────────────────────────────
     // TEST D: Header height <= 64, streak pill height < 40 when visible

@@ -85,8 +85,9 @@ async function testKeyboard() {
   // Test Escape key behavior (e.g. closing modals or drawers)
   console.log('5. Testing Escape key handling...');
   // Open Settings or reset modal
-  await page.evaluate(() => document.getElementById('settings')?.scrollIntoView());
-  await page.waitForTimeout(500);
+  const settingsGearBtn = page.locator('header button[aria-label="Settings"]');
+  await settingsGearBtn.click();
+  await page.waitForSelector('#settings', { state: 'visible', timeout: 3000 });
   
   const resetBtn = page.locator('#reset-all-data-btn');
   await resetBtn.waitFor({ state: 'visible', timeout: 5000 });

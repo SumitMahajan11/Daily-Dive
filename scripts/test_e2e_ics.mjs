@@ -74,13 +74,11 @@ async function testICS() {
   await page.reload();
   await page.waitForSelector('#spin');
 
-  // 4. Scroll to Settings section and click Calendar Reminder button
-  console.log('4. Scrolling to Settings and clicking Calendar Reminder button...');
-  await page.evaluate(() => {
-    const el = document.getElementById('settings');
-    if (el) el.scrollIntoView();
-  });
-  await page.waitForTimeout(600);
+  // 4. Open Settings full-screen view and click Calendar Reminder button
+  console.log('4. Opening Settings and clicking Calendar Reminder button...');
+  const settingsGearBtn = page.locator('header button[aria-label="Settings"]');
+  await settingsGearBtn.click();
+  await page.waitForSelector('#settings', { state: 'visible', timeout: 3000 });
 
   const calBtn = page.locator('#settings button:has-text("Add to calendar"), button:has-text("Add to calendar")').first();
   await calBtn.waitFor({ state: 'visible', timeout: 5000 });

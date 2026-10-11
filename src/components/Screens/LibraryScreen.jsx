@@ -543,8 +543,11 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                       <span className="font-semibold text-sm text-on-surface leading-tight break-words">
                         {groupDef.label}
                       </span>
-                      <span className="text-[11px] text-on-surface-variant font-mono mt-0.5 leading-tight">
-                        {totalGroupTopics} topics · {activeCatsCount} of {groupDef.categories.length} on
+                      <span
+                        data-testid={`library-group-summary-${groupDef.group}`}
+                        className="text-[11px] text-on-surface-variant font-mono mt-0.5 leading-tight whitespace-nowrap overflow-hidden text-ellipsis"
+                      >
+                        {totalGroupTopics} topics · {activeCatsCount}/{groupDef.categories.length} on
                       </span>
                     </div>
                   </div>

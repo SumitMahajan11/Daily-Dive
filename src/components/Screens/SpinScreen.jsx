@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useMemo, useCallback } from 'react';
 import { motion, AnimatePresence, useMotionValue, useTransform } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { AudioController } from '../../lib/audio';
@@ -152,29 +152,22 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     return hasHistory || hasProgress;
   }, [history, userProgressMap]);
 
-  // Group toggles state on Spin Screen (all 4 ON by default on first run)
-  const [spinGroupState, setSpinGroupState] = useState(() => {
-    if (typeof window !== 'undefined') {
-      try {
-        const saved = localStorage.getItem('daily_dive_spin_groups');
-        if (saved) return JSON.parse(saved);
-      } catch (e) {}
-    }
-    return {
-      'tech': true,
-      'money-career': true,
-      'mind-growth': true,
-      'world-ideas': true
-    };
-  });
+  // A group pill is ON if any of its subcategories is on
+  const isGroupActive = useCallback((groupDef) => {
+    const enabledMap = userSettings?.enabled_categories || {};
+    return groupDef.categories.some(cat => {
+      const fullKey = `${groupDef.group}::${cat.name}`;
+      return enabledMap[fullKey] !== false && enabledMap[cat.name] !== false && enabledMap[groupDef.group] !== false;
+    });
+  }, [userSettings?.enabled_categories]);
 
   const toggleBroadGroup = (groupKey) => {
     const groupDef = CATEGORY_TREE.find(g => g.group === groupKey);
     if (!groupDef) return;
 
-    const nextState = { ...spinGroupState };
-    const isCurrentlyOn = nextState[groupKey] !== false;
-    const activeCount = CATEGORY_TREE.filter(g => nextState[g.group] !== false).length;
+    const enabledMap = userSettings?.enabled_categories || {};
+    const isCurrentlyOn = isGroupActive(groupDef);
+    const activeCount = CATEGORY_TREE.filter(g => isGroupActive(g)).length;
 
     if (isCurrentlyOn && activeCount <= 1) {
       if (showToast) showToast('At least one topic group must remain active.', 'warning');
@@ -182,29 +175,11 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     }
 
     const nextVal = !isCurrentlyOn;
-    nextState[groupKey] = nextVal;
-    setSpinGroupState(nextState);
-
-    try {
-      localStorage.setItem('daily_dive_spin_groups', JSON.stringify(nextState));
-    } catch (e) {}
-
-    const currentCategories = { ...(userSettings?.enabled_categories || {}) };
+    const currentCategories = { ...enabledMap };
     currentCategories[groupKey] = nextVal;
     groupDef.categories.forEach(cat => {
       currentCategories[`${groupKey}::${cat.name}`] = nextVal;
       currentCategories[cat.name] = nextVal;
-    });
-
-    // Ensure any other group active in spinGroupState is also active in enabled_categories
-    CATEGORY_TREE.forEach(g => {
-      if (g.group !== groupKey && nextState[g.group] !== false && currentCategories[g.group] === false) {
-        currentCategories[g.group] = true;
-        g.categories.forEach(c => {
-          currentCategories[`${g.group}::${c.name}`] = true;
-          currentCategories[c.name] = true;
-        });
-      }
     });
 
     updateSettings({ enabled_categories: currentCategories });
@@ -214,9 +189,9 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   const activeReelCategories = useMemo(() => {
     const enabledMap = userSettings?.enabled_categories || {};
     const filtered = BASE_REEL_CATEGORIES.filter(cat => {
-      if (spinGroupState[cat.group] === false) return false;
       if (enabledMap[cat.group] === false) return false;
       if (enabledMap[`${cat.group}::${cat.name}`] === false) return false;
+      if (enabledMap[cat.name] === false) return false;
       return true;
     });
 
@@ -235,7 +210,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     }
 
     return filtered.length > 0 ? filtered : BASE_REEL_CATEGORIES;
-  }, [userSettings?.enabled_categories, spinGroupState, topics]);
+  }, [userSettings?.enabled_categories, topics]);
 
   const reelStrip = useMemo(() => {
     return Array.from({ length: REPEAT_COUNT }, (_, r) =>
@@ -513,7 +488,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
           {streak >= 1 && (
             <span className="inline-flex items-center gap-1 font-semibold text-primary">
               <Flame size={13} className="text-amber-500 fill-amber-500" />
-              <span className="font-mono">{streak}</span>-day streak
+              <span><span className="font-mono">{streak}</span>-day streak</span>
             </span>
           )}
           {streak >= 1 && toReviewCount > 0 && <span>·</span>}
@@ -848,25 +823,25 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       <div className="w-full mt-2.5">
         <div className="grid grid-cols-4 gap-1.5 sm:gap-2 w-full">
           {CATEGORY_TREE.map(groupDef => {
-            const isGroupActive = spinGroupState[groupDef.group] !== false;
+            const groupActive = isGroupActive(groupDef);
             const shortLabel = GROUP_SHORT_LABELS[groupDef.group] || groupDef.label;
             return (
               <button
                 key={groupDef.group}
                 type="button"
-                aria-pressed={isGroupActive ? 'true' : 'false'}
+                aria-pressed={groupActive ? 'true' : 'false'}
                 aria-label={`Toggle ${shortLabel}`}
                 data-testid={`spin-group-pill-${groupDef.group}`}
                 onClick={() => toggleBroadGroup(groupDef.group)}
                 className={`h-9 sm:h-10 rounded-xl px-2 flex items-center justify-center gap-1.5 text-xs transition-all cursor-pointer select-none border focus-visible:ring-2 focus-visible:ring-primary ${
-                  isGroupActive
+                  groupActive
                     ? 'bg-primary text-white border-primary font-semibold shadow-xs'
                     : 'bg-transparent text-on-surface-variant/80 border border-outline-variant/50 hover:border-outline-variant hover:text-on-surface font-medium'
                 }`}
               >
                 <span
                   className={`w-1.5 h-1.5 rounded-full shrink-0 ${
-                    isGroupActive ? 'bg-white' : 'border border-current bg-transparent'
+                    groupActive ? 'bg-white' : 'border border-current bg-transparent'
                   }`}
                 />
                 <span className="truncate">{shortLabel}</span>

@@ -104,15 +104,17 @@ async function runUpdateTest() {
   assert.ok(isControlled, 'V1 page must be controlled by Service Worker');
 
   // Verify V1 build stamp in Settings
-  await page.evaluate(() => document.getElementById('settings')?.scrollIntoView());
-  await page.waitForTimeout(500);
+  const settingsGearBtn = page.locator('header button[aria-label="Settings"]');
+  await settingsGearBtn.click();
+  await page.waitForSelector('#settings', { state: 'visible', timeout: 3000 });
   const v1SettingsContent = await page.evaluate(() => {
     return document.querySelector('#settings')?.textContent || '';
   });
   assert.ok(v1SettingsContent.includes('v1-commit-round7'), 'Initial page must run V1 build "v1-commit-round7"');
 
-  // Scroll back to top
-  await page.evaluate(() => document.getElementById('spin')?.scrollIntoView());
+  // Click Back button to return to previous view
+  const settingsBackBtn = page.locator('[data-testid="settings-back-button"]');
+  await settingsBackBtn.click();
   await page.waitForTimeout(500);
 
   // Step 5: Deploy V2 to server
@@ -176,8 +178,9 @@ async function runUpdateTest() {
   await page.waitForSelector('#spin');
 
   // Step 9: Assert V2 is now active and build stamp changed
-  await page.evaluate(() => document.getElementById('settings')?.scrollIntoView());
-  await page.waitForTimeout(1000);
+  const settingsGearBtnAfterReload = page.locator('header button[aria-label="Settings"]');
+  await settingsGearBtnAfterReload.click();
+  await page.waitForSelector('#settings', { state: 'visible', timeout: 3000 });
 
   const v2SettingsContent = await page.evaluate(() => {
     return document.querySelector('#settings')?.textContent || '';
