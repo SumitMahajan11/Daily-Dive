@@ -106,9 +106,11 @@ async function runMobileE2ETests() {
     console.log('[TEST A] Verifying no horizontal overflow on every section...');
     const sections = ['spin', 'library', 'progress', 'settings'];
     for (const secId of sections) {
-      await page.evaluate((id) => {
-        document.getElementById(id)?.scrollIntoView();
-      }, secId);
+      if (secId === 'settings') {
+        await page.locator('header button[aria-label="Settings"]').first().click();
+      } else {
+        await page.locator(`button[data-nav-id="${secId}"]:visible`).first().click();
+      }
       await page.waitForTimeout(400);
 
       const overflowData = await page.evaluate(() => ({
@@ -178,10 +180,8 @@ async function runMobileE2ETests() {
     // ─────────────────────────────────────────────────────────────
     console.log('\n[TEST C] Testing IntersectionObserver scroll-driven section activation...');
     
-    // Scroll to Progress
-    await page.evaluate(() => {
-      document.getElementById('progress')?.scrollIntoView({ behavior: 'instant', block: 'start' });
-    });
+    // Navigate to Progress
+    await page.locator('nav.md\\:hidden button[data-nav-id="progress"]').click();
     await page.waitForTimeout(600);
 
     const progressAriaCurrent = await page.locator('nav.md\\:hidden button[data-nav-id="progress"]').getAttribute('aria-current');
@@ -258,7 +258,7 @@ async function runMobileE2ETests() {
     // TEST E: Each group card in Filter has visible text for its group name
     // ─────────────────────────────────────────────────────────────
     console.log('\n[TEST E] Checking Filter Group cards visible group names & subline format...');
-    await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
+    await page.locator('button[data-nav-id="library"]:visible').first().click();
     await page.waitForTimeout(500);
 
     const expectedGroups = ['Tech', 'Money & Career', 'Mind & Growth', 'World & Ideas'];
@@ -279,7 +279,7 @@ async function runMobileE2ETests() {
     // TEST F: Review queue age element: scrollWidth <= clientWidth
     // ─────────────────────────────────────────────────────────────
     console.log('\n[TEST F] Testing Review queue age elements (no truncation, scrollWidth <= clientWidth)...');
-    await page.evaluate(() => document.getElementById('progress')?.scrollIntoView());
+    await page.locator('button[data-nav-id="progress"]:visible').first().click();
     await page.waitForTimeout(500);
 
     const ageElements = page.locator('[data-testid="review-queue-age"]');
@@ -316,7 +316,7 @@ async function runMobileE2ETests() {
     // TEST G: Post-spin card: Learned, Spin again, Share have same top within 2px; First source link scrollWidth <= clientWidth
     // ─────────────────────────────────────────────────────────────
     console.log('\n[TEST G] Testing Post-spin card button alignment and first source link wrap...');
-    await page.evaluate(() => document.getElementById('spin')?.scrollIntoView());
+    await page.locator('button[data-nav-id="spin"]:visible').first().click();
     await page.waitForTimeout(400);
 
     // Click Spin button

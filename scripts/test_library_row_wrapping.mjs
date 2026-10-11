@@ -32,9 +32,8 @@ async function testLibraryWrappingAtWidth(port, width) {
   const browser = await chromium.launch();
   try {
     const page = await browser.newPage({ viewport: { width, height: 844 } });
-    await page.goto(`http://127.0.0.1:${port}/`);
+    await page.goto(`http://127.0.0.1:${port}/#/library`);
     await page.waitForSelector('#library');
-    await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
     await page.waitForTimeout(500);
 
     const summaries = page.locator('[data-testid^="library-group-summary-"]');
