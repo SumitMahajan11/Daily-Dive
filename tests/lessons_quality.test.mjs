@@ -152,58 +152,51 @@ function validateLessons(filePath) {
           }
         });
 
-        // Rule 5a & 5c for pending lessons
-        if (filePath.includes('pending')) {
-          it('no example contains "imagine", "team" or "analogy"', () => {
-            const forbidden = ['imagine', 'team', 'analogy'];
-            for (const fw of forbidden) {
-              const re = new RegExp(`\\b${fw}\\b`, 'i');
-              assert.ok(
-                !re.test(lesson.example),
-                `example for "${id}" contains forbidden word "${fw}"`
-              );
-            }
-          });
+        it('no example contains "imagine", "team" or "analogy"', () => {
+          const forbidden = ['imagine', 'team', 'analogy'];
+          for (const fw of forbidden) {
+            const re = new RegExp(`\\b${fw}\\b`, 'i');
+            assert.ok(
+              !re.test(lesson.example),
+              `example for "${id}" contains forbidden word "${fw}"`
+            );
+          }
+        });
 
-          it('idea/why mentions every part of the title', () => {
-            const topic = topicIndex[id];
-            assert.ok(topic, `no curated topic for id ${id}`);
-            const parts = topic.title.split(/\s+and\s+|&|-/i).map(s => s.trim()).filter(Boolean);
-            const ideaWhy = `${lesson.idea} ${lesson.why}`.toLowerCase();
-            const stopWords = new Set(['the', 'a', 'an', 'of', 'in', 'on', 'at', 'for', 'to', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'using', 'via', 'into', 'and', 'or', 'as']);
+        it('idea/why mentions every part of the title', () => {
+          const topic = topicIndex[id];
+          assert.ok(topic, `no curated topic for id ${id}`);
+          const parts = topic.title.split(/\s+and\s+|&|-/i).map(s => s.trim()).filter(Boolean);
+          const ideaWhy = `${lesson.idea} ${lesson.why}`.toLowerCase();
+          const stopWords = new Set(['the', 'a', 'an', 'of', 'in', 'on', 'at', 'for', 'to', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'using', 'via', 'into', 'and', 'or', 'as']);
 
-            for (const part of parts) {
-              const rawWords = part.replace(/[^A-Za-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
-              const contentWords = rawWords.filter(w => w.length > 1 && !stopWords.has(w.toLowerCase()) && !/^\d+$/.test(w));
-              if (contentWords.length === 0) continue;
-              const matched = contentWords.some(w => ideaWhy.includes(w.toLowerCase()));
-              assert.ok(
-                matched,
-                `idea/why for "${id}" does not mention title part "${part}" (content words: ${contentWords.join(', ')})`
-              );
-            }
-          });
-        }
+          for (const part of parts) {
+            const rawWords = part.replace(/[^A-Za-z0-9]/g, ' ').split(/\s+/).filter(Boolean);
+            const contentWords = rawWords.filter(w => w.length > 1 && !stopWords.has(w.toLowerCase()) && !/^\d+$/.test(w));
+            if (contentWords.length === 0) continue;
+            const matched = contentWords.some(w => ideaWhy.includes(w.toLowerCase()));
+            assert.ok(
+              matched,
+              `idea/why for "${id}" does not mention title part "${part}" (content words: ${contentWords.join(', ')})`
+            );
+          }
+        });
       });
     }
 
-    // Rule 5b: unique first 3 words across all examples in the file
-    if (filePath.includes('pending')) {
-      it('no two examples share their first 3 words', () => {
-        const seen = new Map();
-        for (const id of ids) {
-          const ex = data[id].example || '';
-          const prefix = ex.trim().split(/\s+/).slice(0, 3).join(' ').toLowerCase().replace(/[^a-z0-9 ]/g, '');
-          assert.ok(
-            !seen.has(prefix),
-            `duplicate example 3-word prefix "${prefix}" in "${id}" (already used by "${seen.get(prefix)}")`
-          );
-          seen.set(prefix, id);
-        }
-      });
-    }
+    it('no two examples share their first 3 words', () => {
+      const seen = new Map();
+      for (const id of ids) {
+        const ex = data[id].example || '';
+        const prefix = ex.trim().split(/\s+/).slice(0, 3).join(' ').toLowerCase().replace(/[^a-z0-9 ]/g, '');
+        assert.ok(
+          !seen.has(prefix),
+          `duplicate example 3-word prefix "${prefix}" in "${id}" (already used by "${seen.get(prefix)}")`
+        );
+        seen.set(prefix, id);
+      }
+    });
   });
 }
 
 validateLessons('data/lessons.json');
-validateLessons('data/lessons.pending.json');
