@@ -23,7 +23,8 @@ const suites = [
   'scripts/test_round18_look_and_hero.mjs',
   'scripts/test_e2e_real_tabs.mjs',
   'scripts/test_e2e_extract_review.mjs',
-  'scripts/test_spin_timing.mjs'
+  'scripts/test_spin_timing.mjs',
+  'scripts/test_spin_visual.mjs'
 ];
 
 console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');

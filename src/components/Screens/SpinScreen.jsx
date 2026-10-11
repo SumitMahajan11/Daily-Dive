@@ -32,6 +32,7 @@ import { Skeleton } from '../UI/Skeleton';
 import { requestStoragePersistence } from '../../lib/storage';
 import { loadAllBuiltinTopics } from '../../lib/topicLoader';
 import { selectReviewQueue } from '../../lib/selectors';
+import { starterTopics } from '../../data/starterTopics';
 
 // Visual metadata for categories
 const CATEGORY_META = {
@@ -114,7 +115,7 @@ const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarge
 
         <div className="relative z-10">
           <div className="text-[11px] font-semibold text-on-surface truncate leading-tight">
-            {item.shortLabel}
+            {item.title || item.shortLabel}
           </div>
         </div>
       </div>
@@ -186,38 +187,57 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     updateSettings({ enabled_categories: currentCategories });
   };
 
-  // Derive active reel categories strictly from enabled categories & custom pool
-  const activeReelCategories = useMemo(() => {
-    const enabledMap = userSettings?.enabled_categories || {};
-    const filtered = BASE_REEL_CATEGORIES.filter(cat => {
-      if (enabledMap[cat.group] === false) return false;
-      if (enabledMap[`${cat.group}::${cat.name}`] === false) return false;
-      if (enabledMap[cat.name] === false) return false;
-      return true;
-    });
+  const activeTopicsPool = useMemo(() => {
+    if (eligibleTopics && eligibleTopics.length > 0) return eligibleTopics;
+    if (topics && topics.length > 0) return topics;
+    return starterTopics;
+  }, [eligibleTopics, topics]);
 
-    const hasCustom = (topics || []).some(t => t.is_custom);
-    if (hasCustom && enabledMap['custom'] !== false) {
-      filtered.push({
-        group: 'custom',
-        groupLabel: 'Custom',
-        name: 'custom-notes',
-        label: 'Custom Notes',
-        icon: Sparkles,
-        shortLabel: 'Custom Notes',
-        bgBadge: 'bg-primary/15 text-primary border-primary/30',
-        accentColor: '#e06841'
-      });
+  const mapTopicToCard = useCallback((topic) => {
+    if (!topic) return null;
+    const catName = topic.category || topic.sub;
+    const meta = CATEGORY_META[catName] || {
+      icon: Cpu,
+      shortLabel: catName || 'Topic',
+      bgBadge: 'bg-primary/20 text-on-surface border-primary/40',
+      accentColor: '#e06841'
+    };
+    return {
+      id: topic.id,
+      title: topic.title,
+      group: topic.group || topic.group_name || 'tech',
+      groupLabel: GROUP_SHORT_LABELS[topic.group] || topic.group || 'Tech',
+      category: catName,
+      ...meta
+    };
+  }, []);
+
+  const BASE_INDEX = 5;
+  const TOTAL_STRIP_CARDS = 80;
+
+  const buildStripCards = useCallback((centerTopic, pool, targetIdx = null, targetTopic = null) => {
+    const list = [];
+    const poolList = (pool && pool.length > 0) ? pool : starterTopics;
+    const poolLen = poolList.length;
+    for (let i = 0; i < TOTAL_STRIP_CARDS; i++) {
+      if (targetIdx !== null && i === targetIdx && targetTopic) {
+        list.push(mapTopicToCard(targetTopic));
+      } else if (i === BASE_INDEX && centerTopic) {
+        list.push(mapTopicToCard(centerTopic));
+      } else {
+        const offset = i - BASE_INDEX;
+        const topic = poolList[((offset % poolLen) + poolLen) % poolLen];
+        list.push(mapTopicToCard(topic));
+      }
     }
+    return list;
+  }, [mapTopicToCard]);
 
-    return filtered.length > 0 ? filtered : BASE_REEL_CATEGORIES;
-  }, [userSettings?.enabled_categories, topics]);
+  const [stripCards, setStripCards] = useState(() => {
+    return buildStripCards(currentTopic || starterTopics[0], starterTopics);
+  });
 
-  const reelStrip = useMemo(() => {
-    return Array.from({ length: REPEAT_COUNT }, (_, r) =>
-      activeReelCategories.map(cat => ({ ...cat, repeatIdx: r }))
-    ).flat();
-  }, [activeReelCategories]);
+  const [reelIndex, setReelIndex] = useState(BASE_INDEX);
 
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(358);
@@ -227,20 +247,16 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   const [showLandingHalo, setShowLandingHalo] = useState(false);
   const [activeAccentColor, setActiveAccentColor] = useState('#e06841');
 
-  const [reelIndex, setReelIndex] = useState(() => {
-    const initCat = currentTopic?.category || currentTopic?.sub;
-    const foundIdx = activeReelCategories.findIndex(c => c.name === initCat);
-    return (3 * activeReelCategories.length) + (foundIdx >= 0 ? foundIdx : 0);
-  });
-
-  const translateX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
+  const cWidth = containerRef.current ? containerRef.current.clientWidth : containerWidth;
+  const translateX = (cWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
   const motionX = useMotionValue(translateX);
 
   useEffect(() => {
     if (!isSpinning) {
-      motionX.set(translateX);
+      const currentCWidth = containerRef.current ? containerRef.current.clientWidth : containerWidth;
+      motionX.set((currentCWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP));
     }
-  }, [translateX, isSpinning, motionX]);
+  }, [containerWidth, reelIndex, isSpinning, motionX]);
 
   const lastFiredIndexRef = useRef(-1);
   const spinStartTimeRef = useRef(0);
@@ -350,25 +366,27 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     const selected = spinNextTopic();
     requestStoragePersistence().catch(() => {});
 
-    const targetCat = selected?.category || selected?.sub;
-    let foundIdx = activeReelCategories.findIndex(c => c.name === targetCat);
-    if (foundIdx < 0 && selected?.is_custom) {
-      foundIdx = activeReelCategories.findIndex(c => c.name === 'custom-notes');
-    }
-    const baseIndex = foundIdx >= 0 ? foundIdx : 0;
+    const travelCards = 32;
+    const startIdx = BASE_INDEX;
+    const targetIdx = startIdx + travelCards; // 37
 
-    const landedCatDef = activeReelCategories[baseIndex];
+    // Build strip containing currentTopic at startIdx and selected at targetIdx
+    const nextStrip = buildStripCards(currentTopic || selected, activeTopicsPool, targetIdx, selected);
+    setStripCards(nextStrip);
+
+    const landedDef = mapTopicToCard(selected);
 
     if (isReduced) {
+      setReelIndex(targetIdx);
       isSpinningRef.current = false;
       setIsSpinning(false);
+      setCurrentTopic(selected);
       setShowResult(true);
       setIsLanded(true);
       AudioController.playLanding();
-      setActiveAccentColor(landedCatDef?.accentColor || '#e06841');
+      setActiveAccentColor(landedDef?.accentColor || '#e06841');
       setShowLandingHalo(true);
       setTimeout(() => setShowLandingHalo(false), 400);
-      setReelIndex(baseIndex + (3 * activeReelCategories.length));
       return;
     }
 
@@ -380,21 +398,17 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     setIsLanded(false);
     setShowLandingHalo(false);
 
-    const currentBase = reelIndex % activeReelCategories.length;
-    let forwardOffset = baseIndex - currentBase;
-    if (forwardOffset <= 0) forwardOffset += activeReelCategories.length;
-    const desiredCards = 32;
-    const minLoops = Math.max(2, Math.round((desiredCards - forwardOffset) / activeReelCategories.length));
-    const travelCards = (minLoops * activeReelCategories.length) + forwardOffset;
-    const targetIndex = reelIndex + travelCards;
+    setReelIndex(startIdx);
 
     const timeline = createSpinTimeline(travelCards);
 
     AudioController.playWhoosh(SPIN_DURATION_MS);
     AudioController.scheduleSpinTicks(timeline.tickTimes);
 
-    const startX = (containerWidth - ITEM_WIDTH) / 2 - (reelIndex * ITEM_STEP);
-    const targetX = (containerWidth - ITEM_WIDTH) / 2 - (targetIndex * ITEM_STEP);
+    const currentCWidth = containerRef.current ? containerRef.current.clientWidth : containerWidth;
+    const startX = (currentCWidth - ITEM_WIDTH) / 2 - (startIdx * ITEM_STEP);
+    const targetX = (currentCWidth - ITEM_WIDTH) / 2 - (targetIdx * ITEM_STEP);
+    motionX.set(startX);
     const startTime = performance.now();
 
     if (animFrameRef.current) {
@@ -405,14 +419,15 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       const elapsed = now - startTime;
       if (elapsed >= SPIN_DURATION_MS) {
         motionX.set(targetX);
-        setReelIndex(targetIndex);
+        setReelIndex(targetIdx);
         isSpinningRef.current = false;
         setIsSpinning(false);
+        setCurrentTopic(selected);
         setShowResult(true);
         setIsLanded(true);
 
         AudioController.playLanding();
-        setActiveAccentColor(landedCatDef?.accentColor || '#e06841');
+        setActiveAccentColor(landedDef?.accentColor || '#e06841');
         setShowLandingHalo(true);
         setTimeout(() => setShowLandingHalo(false), 800);
 
@@ -428,10 +443,6 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
         if (userSettings?.haptics_enabled && navigator.vibrate) {
           try { navigator.vibrate([30, 50, 90]); } catch (e) {}
         }
-
-        setTimeout(() => {
-          setReelIndex(prev => (prev % activeReelCategories.length) + (3 * activeReelCategories.length));
-        }, 500);
       } else {
         const progress = timeline.getProgress(elapsed);
         motionX.set(startX + (targetX - startX) * progress);
@@ -536,7 +547,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
         </div>
       )}
 
-      {/* ── REEL SLOT / POST-SPIN TOPIC CARD SLOT (TOPIC CARD REPLACES REEL IN SAME PLACE) ── */}
+      {/* ── THE REEL (3 CARDS VISIBLE) ── */}
       <div className="w-full">
         {loadingData ? (
           <div data-testid="reel-skeleton" className="w-full h-24 rounded-2xl bg-surface-container-low border border-outline-variant/30 animate-pulse flex items-center justify-center gap-3 px-4">
@@ -544,8 +555,71 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             <div className="w-28 h-16 rounded-xl bg-surface-container-high/80" />
             <div className="w-24 h-16 rounded-xl bg-surface-container-high/60" />
           </div>
-        ) : showResult && currentTopic && !isSpinning ? (
-          /* POST-SPIN TOPIC CARD */
+        ) : (
+          <div
+            ref={containerRef}
+            className="relative w-full h-24 sm:h-28 overflow-hidden rounded-2xl dial-chassis flex items-center select-none shadow-md"
+          >
+            <AnimatePresence>
+              {showLandingHalo && (
+                <motion.div
+                  key="landing-halo"
+                  initial={{ opacity: 0.8, scale: 0.4 }}
+                  animate={{ opacity: 0, scale: 2.8 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.75, ease: 'easeOut' }}
+                  style={{ backgroundColor: activeAccentColor }}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-3xl pointer-events-none z-10"
+                />
+              )}
+            </AnimatePresence>
+
+            {/* Center Precision Target Aperture */}
+            <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-between pointer-events-none w-8">
+              <div className="flex flex-col items-center -mt-0.5 filter drop-shadow">
+                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
+                <div className="w-[1.5px] h-2 bg-primary" />
+              </div>
+
+              <div className="relative flex items-center justify-center">
+                <div className={`w-3 h-3 rounded-full border border-primary/60 flex items-center justify-center transition-all duration-300 ${isSpinning ? 'scale-125 border-primary shadow-[0_0_8px_rgba(var(--color-primary),0.8)]' : isLanded ? 'scale-110 border-primary ring-2 ring-primary/40' : 'scale-90'}`}>
+                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
+                </div>
+              </div>
+
+              <div className="flex flex-col items-center -mb-0.5 filter drop-shadow">
+                <div className="w-[1.5px] h-2 bg-primary" />
+                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
+              </div>
+            </div>
+
+            {/* Vignette Edge Gradient Masks */}
+            <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
+            <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
+
+            {/* Animated Reel Strip */}
+            <motion.div
+              className="flex items-center absolute left-0"
+              style={{ gap: `${ITEM_GAP}px`, x: motionX }}
+            >
+              {stripCards.map((item, idx) => (
+                <PrecisionReelCard
+                  key={`${item.id || item.title || idx}-${idx}`}
+                  item={item}
+                  idx={idx}
+                  motionX={motionX}
+                  containerWidth={containerWidth}
+                  isSelectedTarget={isLanded && (idx === reelIndex)}
+                />
+              ))}
+            </motion.div>
+          </div>
+        )}
+      </div>
+
+      {/* ── POST-SPIN TOPIC CARD ── */}
+      {showResult && currentTopic && !isSpinning && (
+        <div className="w-full mt-3">
           <motion.article
             key={currentTopic.id}
             data-testid="post-spin-topic-card"
@@ -726,68 +800,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               </button>
             </div>
           </motion.article>
-        ) : (
-          /* THE REEL (3 CARDS VISIBLE) */
-          <div
-            ref={containerRef}
-            className="relative w-full h-24 sm:h-28 overflow-hidden rounded-2xl dial-chassis flex items-center select-none shadow-md"
-          >
-            <AnimatePresence>
-              {showLandingHalo && (
-                <motion.div
-                  key="landing-halo"
-                  initial={{ opacity: 0.8, scale: 0.4 }}
-                  animate={{ opacity: 0, scale: 2.8 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.75, ease: 'easeOut' }}
-                  style={{ backgroundColor: activeAccentColor }}
-                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-40 h-40 rounded-full blur-3xl pointer-events-none z-10"
-                />
-              )}
-            </AnimatePresence>
-
-            {/* Center Precision Target Aperture */}
-            <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-between pointer-events-none w-8">
-              <div className="flex flex-col items-center -mt-0.5 filter drop-shadow">
-                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
-                <div className="w-[1.5px] h-2 bg-primary" />
-              </div>
-
-              <div className="relative flex items-center justify-center">
-                <div className={`w-3 h-3 rounded-full border border-primary/60 flex items-center justify-center transition-all duration-300 ${isSpinning ? 'scale-125 border-primary shadow-[0_0_8px_rgba(var(--color-primary),0.8)]' : isLanded ? 'scale-110 border-primary ring-2 ring-primary/40' : 'scale-90'}`}>
-                  <div className="w-1.5 h-1.5 rounded-full bg-primary" />
-                </div>
-              </div>
-
-              <div className="flex flex-col items-center -mb-0.5 filter drop-shadow">
-                <div className="w-[1.5px] h-2 bg-primary" />
-                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
-              </div>
-            </div>
-
-            {/* Vignette Edge Gradient Masks */}
-            <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
-            <div className="absolute inset-y-0 right-0 w-8 sm:w-16 bg-gradient-to-l from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
-
-            {/* Animated Reel Strip */}
-            <motion.div
-              className="flex items-center absolute left-0"
-              style={{ gap: `${ITEM_GAP}px`, x: motionX }}
-            >
-              {reelStrip.map((item, idx) => (
-                <PrecisionReelCard
-                  key={`${item.name}-${idx}`}
-                  item={item}
-                  idx={idx}
-                  motionX={motionX}
-                  containerWidth={containerWidth}
-                  isSelectedTarget={isLanded && (idx === reelIndex)}
-                />
-              ))}
-            </motion.div>
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* ── ONE FULL-WIDTH BUTTON LABELLED "SPIN", 56PX TALL ── */}
       <div className="w-full mt-3">
