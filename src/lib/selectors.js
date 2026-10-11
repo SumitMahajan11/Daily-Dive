@@ -91,6 +91,21 @@ export function selectReviewQueueCount(topics = [], userProgressMap = {}, nowDat
 }
 
 /**
+ * Calculates display age for a review queue item based on calendar-day difference.
+ * Always returns at least "1d ago" because topics in the review queue were seen
+ * on a previous calendar day. No queue row may ever say "Today".
+ */
+export function selectReviewQueueAge(lastSeen, nowDate = new Date()) {
+  if (!lastSeen) return '1d ago';
+  const now = nowDate instanceof Date ? nowDate : new Date(nowDate);
+  const seen = lastSeen instanceof Date ? lastSeen : new Date(lastSeen);
+  const todayMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()).getTime();
+  const seenMidnight = new Date(seen.getFullYear(), seen.getMonth(), seen.getDate()).getTime();
+  const diffDays = Math.max(1, Math.round((todayMidnight - seenMidnight) / 86400000));
+  return `${diffDays}d ago`;
+}
+
+/**
  * Reconciles user streak records with actual activity dates across history,
  * persistent topic progress, and streak metadata.
  * Computes current streak, longest (best) streak, active today status, and 7-day activity strip.

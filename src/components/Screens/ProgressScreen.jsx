@@ -17,6 +17,7 @@ import {
   selectExploredCount,
   selectLearnedCount,
   selectReviewQueue,
+  selectReviewQueueAge,
   selectStreakMetrics,
   selectFilteredHistory
 } from '../../lib/selectors';
@@ -275,13 +276,7 @@ export const ProgressScreen = ({ onReviewTopic }) => {
           <div className="space-y-2">
             {reviewQueue.map(topic => {
               const prog = userProgressMap[topic.id];
-              const daysAgo = prog?.last_seen 
-                ? Math.max(0, Math.floor((Date.now() - new Date(prog.last_seen).getTime()) / 86400000))
-                : 0;
-
-              const ageText = daysAgo === 0 
-                ? 'Today' 
-                : `${daysAgo}d ago`;
+              const ageText = selectReviewQueueAge(prog?.last_seen);
 
               return (
                 <div

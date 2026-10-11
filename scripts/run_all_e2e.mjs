@@ -16,7 +16,10 @@ const suites = [
   'scripts/test_e2e_topic_card.mjs',
   'scripts/test_e2e_declutter.mjs',
   'scripts/test_e2e_round15.mjs',
-  'scripts/test_e2e_share_pages.mjs'
+  'scripts/test_e2e_share_pages.mjs',
+  'scripts/test_audio_volume.mjs',
+  'scripts/test_library_row_wrapping.mjs',
+  'scripts/test_round17_real_state.mjs'
 ];
 
 console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');

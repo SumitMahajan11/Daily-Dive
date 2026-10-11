@@ -170,14 +170,64 @@ async function test1d() {
     const settingsText = await page.innerText('#settings');
     assert.ok(!settingsText.includes('Theme'), 'Settings must not contain element with text "Theme"');
     assert.ok(!settingsText.includes('light and dark'), 'Settings must not contain element with text "light and dark"');
+
+    // Hardware / system back button simulation: page.goBack() closes Settings and stays on site
+    await page.goBack();
+    await page.waitForTimeout(300);
+    const settingsVisible = await page.locator('#settings').isVisible();
+    assert.strictEqual(settingsVisible, false, 'Settings must be closed after page.goBack()');
+    const currentUrl = page.url();
+    assert.ok(currentUrl.startsWith(`http://127.0.0.1:${port}`), `URL must still be the site, found: ${currentUrl}`);
   } finally {
     await browser.close();
     server.close();
   }
 }
 
-const which = process.argv[2];
-if (which === '1a') test1a().then(() => console.log('1a PASSED')).catch(err => { console.error(err); process.exit(1); });
-else if (which === '1b') test1b().then(() => console.log('1b PASSED')).catch(err => { console.error(err); process.exit(1); });
-else if (which === '1c') test1c().then(() => console.log('1c PASSED')).catch(err => { console.error(err); process.exit(1); });
-else if (which === '1d') test1d().then(() => console.log('1d PASSED')).catch(err => { console.error(err); process.exit(1); });
+async function main() {
+  const which = process.argv[2];
+  if (which === '1a') {
+    await test1a();
+    console.log('[PASS] 1a: saved state pills');
+    return;
+  }
+  if (which === '1b') {
+    await test1b();
+    console.log('[PASS] 1b: real spin review queue exclusion');
+    return;
+  }
+  if (which === '1c') {
+    await test1c();
+    console.log('[PASS] 1c: streak status line pixel gap');
+    return;
+  }
+  if (which === '1d') {
+    await test1d();
+    console.log('[PASS] 1d: settings screen declutter');
+    return;
+  }
+
+  console.log('Running test 1a (saved state pills)...');
+  await test1a();
+  console.log('  [PASS] 1a: saved state pills');
+
+  console.log('Running test 1b (real spin review queue exclusion)...');
+  await test1b();
+  console.log('  [PASS] 1b: real spin review queue exclusion');
+
+  console.log('Running test 1c (streak status line pixel gap)...');
+  await test1c();
+  console.log('  [PASS] 1c: streak status line pixel gap');
+
+  console.log('Running test 1d (settings screen declutter)...');
+  await test1d();
+  console.log('  [PASS] 1d: settings screen declutter');
+
+  console.log('[PASS] All Round 17 real-state checks passed successfully.');
+}
+
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
+
