@@ -333,6 +333,9 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     } catch (e) {}
 
     AudioController.init();
+    if (AudioController.ctx && AudioController.ctx.state === 'suspended') {
+      AudioController.ctx.resume().catch(() => {});
+    }
     const selected = spinNextTopic();
     requestStoragePersistence().catch(() => {});
 
