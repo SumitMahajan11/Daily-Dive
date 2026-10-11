@@ -161,8 +161,13 @@ async function runTopicCardE2ETests() {
       console.log(`  [PASS] Test (d): Toast "Link copied" shown and clipboard text verified (${clipboardText}).`);
 
       // ── TEST (B): Topic without lesson ─────────────────────────────────────
-      console.log('Test (b): Loading topic without lesson (?topic=framing-effects-and-cognitive-anchoring-in-persuasion)...');
-      await page.goto(`http://localhost:${port}/?topic=framing-effects-and-cognitive-anchoring-in-persuasion`, { waitUntil: 'networkidle' });
+      const curatedTopics = JSON.parse(fs.readFileSync(path.resolve('data/topics.curated.json'), 'utf8'));
+      const lessonsData = JSON.parse(fs.readFileSync(path.resolve('data/lessons.json'), 'utf8'));
+      const topicWithoutLesson = curatedTopics.find(t => !lessonsData[t.id])?.id;
+      assert.ok(topicWithoutLesson, 'Must find at least one curated topic without a lesson');
+
+      console.log(`Test (b): Loading topic without lesson (?topic=${topicWithoutLesson})...`);
+      await page.goto(`http://localhost:${port}/?topic=${topicWithoutLesson}`, { waitUntil: 'networkidle' });
       await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
 
       // Assert lesson blocks do NOT exist

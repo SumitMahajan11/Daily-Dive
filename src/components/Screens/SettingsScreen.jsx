@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
+import { useTheme } from '../../context/ThemeContext';
 import {
   Clock,
   Calendar,
@@ -10,6 +11,7 @@ import {
   AlertTriangle,
   Volume2,
   Vibrate,
+  Sun,
   ShieldCheck,
   Info,
   MessageSquare
@@ -61,6 +63,8 @@ export const SettingsScreen = () => {
     importDataBackup,
     showToast
   } = useData();
+
+  const { theme, toggleTheme } = useTheme();
 
   const [osPermission, setOsPermission] = useState('default');
   const [deferredPrompt, setDeferredPrompt] = useState(null);
@@ -240,8 +244,8 @@ export const SettingsScreen = () => {
           <div className="flex items-center gap-2.5">
             <Clock size={18} className="text-primary" />
             <div>
-              <h2 className="font-display text-base font-bold text-on-surface">Daily In-App Reminder</h2>
-              <p className="text-xs text-on-surface-variant">In-app reminder when Daily Dive is open in your browser.</p>
+              <h2 className="font-display text-base font-bold text-on-surface">Notifications &amp; Reminders</h2>
+              <p className="text-xs text-on-surface-variant">Reminders appear only while the app is open.</p>
             </div>
           </div>
           <Toggle
@@ -298,7 +302,7 @@ export const SettingsScreen = () => {
         </div>
       </section>
 
-      {/* ── SECTION 2: SOUND AND HAPTICS ── */}
+      {/* ── SECTION 2: SOUND, HAPTICS AND THEME ── */}
       <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-4">
         <h2 className="font-display text-base font-bold text-on-surface">Sound and Haptics</h2>
         
@@ -330,6 +334,21 @@ export const SettingsScreen = () => {
               checked={Boolean(userSettings.haptics_enabled)}
               onChange={(chk) => updateSettings({ haptics_enabled: chk })}
               ariaLabel="Toggle haptic feedback"
+            />
+          </div>
+
+          <div className="pt-2 border-t border-outline-variant/15 flex items-center justify-between">
+            <div className="flex items-center gap-2.5">
+              <Sun size={18} className="text-on-surface-variant" />
+              <div>
+                <span className="text-sm font-semibold text-on-surface block">Theme</span>
+                <span className="text-xs text-on-surface-variant">Switch between light and dark modes.</span>
+              </div>
+            </div>
+            <Toggle
+              checked={theme === 'dark'}
+              onChange={toggleTheme}
+              ariaLabel="Toggle dark theme"
             />
           </div>
         </div>
@@ -381,34 +400,27 @@ export const SettingsScreen = () => {
             <span>Reset All Data &amp; History</span>
           </button>
         </div>
-
-        {/* Retention & Privacy Policy */}
-        <div className="pt-2 border-t border-outline-variant/20 space-y-1">
-          <p className="text-xs text-on-surface font-medium">
-            Your data stays on this device. Daily Dive does not use cookies, trackers, or remote accounts.
-          </p>
-          <p className="text-[11px] font-mono text-on-surface-variant">
-            History is capped at 150 entries and pruned after 90 days.
-          </p>
-        </div>
       </section>
 
       {/* ── SECTION 4: ABOUT ── */}
       <section className="journal-card rounded-2xl p-5 sm:p-6 border border-outline-variant/30 space-y-3">
         <h2 className="font-display text-base font-bold text-on-surface">About Daily Dive</h2>
-        <div className="text-xs text-on-surface-variant space-y-1.5 leading-relaxed">
+        <div className="text-xs text-on-surface-variant space-y-2 leading-relaxed">
           <p>
             Version 2.1.0 · <span className="font-mono text-[11px] text-primary">Build {typeof __COMMIT_HASH__ !== 'undefined' ? __COMMIT_HASH__ : 'dev'} ({typeof __BUILD_DATE__ !== 'undefined' ? __BUILD_DATE__ : 'today'})</span> · MIT License
           </p>
+          <p className="text-xs text-on-surface">
+            Your data stays on your device. Daily Dive does not use cookies, trackers, or remote accounts.
+          </p>
           <div className="pt-2 border-t border-outline-variant/20">
             <a
-              href="https://github.com/SumitMahajan11/Daily-Dive/issues/new"
+              href="https://github.com/SumitMahajan11/Daily-Dive/issues"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:underline focus-visible:ring-2 focus-visible:ring-primary rounded"
             >
               <MessageSquare size={13} />
-              <span>Send feedback / Report an issue</span>
+              <span>Send feedback</span>
             </a>
           </div>
         </div>

@@ -110,7 +110,7 @@ export function selectStreakMetrics({
   const todayStr = getLocalCalendarDate(nowDate);
   const streakDays = [];
 
-  for (let i = 6; i >= 0; i--) {
+  for (let i = 13; i >= 0; i--) {
     const d = new Date(nowDate);
     d.setDate(nowDate.getDate() - i);
     const dateStr = getLocalCalendarDate(d);
