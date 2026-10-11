@@ -215,9 +215,8 @@ async function runRound15E2ETests() {
     const streakNumberEl = page.locator('#spin .font-mono').first();
     await streakNumberEl.waitFor({ state: 'visible', timeout: 5000 });
 
-    const streakContainer = page.locator('#spin').filter({ hasText: /-day streak/ }).locator('text=/-day streak/').first();
-    const streakLineText = (await streakContainer.textContent()).trim();
-    assert.ok(streakLineText.includes('2-day streak'), `Status line must read "2-day streak", found: "${streakLineText}"`);
+    const statusLineText = (await page.locator('[data-testid="spin-status-line"]').first().innerText()).trim();
+    assert.ok(statusLineText.includes('2-day streak'), `Status line must read "2-day streak", found: "${statusLineText}"`);
 
     const gap = await page.evaluate(() => {
       const statusLine = document.querySelector('[data-testid="spin-status-line"]');
