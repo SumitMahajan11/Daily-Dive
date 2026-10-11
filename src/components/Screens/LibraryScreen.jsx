@@ -1072,11 +1072,6 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           </div>
         )}
 
-        {/* Engine Notice & Privacy */}
-        <div className="pt-2 border-t border-outline-variant/20 text-xs text-on-surface-variant">
-          <p>Files are read on your device. If you add a Gemini key, extracted text is sent to Google.</p>
-        </div>
-
         {/* Improve Results (Optional) Disclosure */}
         <details className="text-xs text-on-surface-variant group pt-1">
           <summary className="cursor-pointer font-medium hover:text-primary transition-colors select-none">
@@ -1111,7 +1106,6 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                 </button>
               )}
             </div>
-            <p className="text-[11px] text-on-surface-variant/80">Stored only on this device.</p>
           </div>
         </details>
 

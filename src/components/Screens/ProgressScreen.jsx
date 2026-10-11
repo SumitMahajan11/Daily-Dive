@@ -195,8 +195,8 @@ export const ProgressScreen = ({ onReviewTopic }) => {
         )}
       </div>
 
-      {/* ── THREE METRIC TILES ── */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      {/* ── METRIC TILES ── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {/* 1. Streak Tile */}
         <div className="journal-card p-4 sm:p-5 rounded-2xl border border-outline-variant/30 flex flex-col justify-between">
           <div className="flex items-center justify-between">
@@ -204,12 +204,20 @@ export const ProgressScreen = ({ onReviewTopic }) => {
             <Flame size={18} className={isActiveToday ? 'text-amber-500 fill-amber-500' : 'text-on-surface-variant'} />
           </div>
           <div className="my-2">
-            <span className="font-display text-3xl font-bold text-on-surface">{activeStreak}</span>
-            <span className="text-xs text-on-surface-variant ml-1.5 font-medium">days</span>
+            {activeStreak === 0 ? (
+              <p className="text-sm font-semibold text-on-surface py-2">Start your streak today</p>
+            ) : (
+              <>
+                <span className="font-display text-3xl font-bold text-on-surface">{activeStreak}</span>
+                <span className="text-xs text-on-surface-variant ml-1.5 font-medium">days</span>
+              </>
+            )}
           </div>
-          <p className="text-xs text-on-surface-variant">
-            {activeStreak === 0 ? 'Start your streak today' : `Best: ${longestStreak} days`}
-          </p>
+          {activeStreak > 0 && (
+            <p className="text-xs text-on-surface-variant">
+              Best: {longestStreak} days
+            </p>
+          )}
         </div>
 
         {/* 2. Dives Tile */}
@@ -223,20 +231,6 @@ export const ProgressScreen = ({ onReviewTopic }) => {
           </div>
           <p className="text-xs text-on-surface-variant">
             Concepts explored
-          </p>
-        </div>
-
-        {/* 3. Learned Tile */}
-        <div className="journal-card p-4 sm:p-5 rounded-2xl border border-outline-variant/30 flex flex-col justify-between">
-          <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-on-surface-variant">Learned</span>
-            <Check size={18} className="text-emerald-500" />
-          </div>
-          <div className="my-2">
-            <span className="font-display text-3xl font-bold text-on-surface">{learnedCount}</span>
-          </div>
-          <p className="text-xs text-on-surface-variant">
-            Mastered topics
           </p>
         </div>
       </div>
