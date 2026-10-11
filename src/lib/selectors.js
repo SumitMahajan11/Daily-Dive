@@ -63,7 +63,8 @@ export function selectReviewQueue(topics = [], userProgressMap = {}, limit = 4, 
       const hasSeen = (Number(p.times_seen) > 0) || Boolean(p.last_seen) || Boolean(p.learned);
       if (!hasSeen || !p.last_seen) return false;
       try {
-        return true; // BREAK-IT 1b: include topics seen today
+        const lastSeenDateStr = getLocalCalendarDate(new Date(p.last_seen));
+        return lastSeenDateStr < todayStr;
       } catch (e) {
         return false;
       }
