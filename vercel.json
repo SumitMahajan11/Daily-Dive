@@ -1,0 +1,14 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    {
+      "source": "/t/:topicId",
+      "destination": "/api/share?topicId=:topicId"
+    }
+  ],
+  "functions": {
+    "api/**/*.js": {
+      "includeFiles": "data/**"
+    }
+  }
+}

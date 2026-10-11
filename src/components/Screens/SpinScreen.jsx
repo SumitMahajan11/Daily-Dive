@@ -290,7 +290,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     async function resolveTopicFromUrl() {
       try {
         const params = new URLSearchParams(window.location.search);
-        const topicParam = params.get('topic') || params.get('t');
+        const pathMatch = window.location.pathname.match(/\/t\/([^/?#]+)/);
+        const topicParam = params.get('topic') || params.get('t') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
         if (!topicParam) return;
         const cleanSlug = topicParam.trim().toLowerCase();
 
@@ -451,7 +452,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   const handleShareTopic = async () => {
     if (!currentTopic) return;
     const origin = typeof window !== 'undefined' ? window.location.origin : 'https://daily-dive.vercel.app';
-    const shareUrl = `${origin}/?topic=${encodeURIComponent(currentTopic.id)}`;
+    const shareUrl = `${origin}/t/${encodeURIComponent(currentTopic.id)}`;
     const shareData = {
       title: `Daily Dive: ${currentTopic.title}`,
       text: `Explore today's concept on Daily Dive: ${currentTopic.title}`,
