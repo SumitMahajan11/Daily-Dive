@@ -32,12 +32,7 @@ export const topics = [
         "label": "Corporate Finance Institute: DCF Model Training & Formula Guide",
         "url": "https://corporatefinanceinstitute.com/resources/valuation/dcf-formula-discounted-cash-flow/"
       }
-    ],
-    "lesson": {
-      "idea": "Discounted cash flow estimates the value of an investment today based on cash generated across future periods. Future cash is adjusted downward because money available today can earn returns.",
-      "why": "Relying purely on past earnings can mislead investors about prospective performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
-      "example": "Imagine an investor evaluating a local enterprise by projecting incoming cash flows and discounting those receipts back to an estimated present value."
-    }
+    ]
   },
   {
     "id": "weighted-average-cost-of-capital-wacc",
@@ -66,12 +61,7 @@ export const topics = [
         "label": "Harvard Business Review: A Refresher on Cost of Capital",
         "url": "https://hbr.org/2015/04/a-refresher-on-cost-of-capital"
       }
-    ],
-    "lesson": {
-      "idea": "This metric calculates the average financing rate an enterprise pays to support operations through both borrowed debt and shareholder equity.",
-      "why": "A company must earn an operating return exceeding this blended rate to create lasting economic value. It establishes a necessary hurdle rate for approving capital projects.",
-      "example": "Imagine a manufacturing company weighing capital expenditures against financing costs to ensure prospective earnings exceed overall borrowing expenses."
-    }
+    ]
   },
   {
     "id": "capital-structure-and-modigliani-miller-theorem",
@@ -169,9 +159,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Companies return surplus earnings to owners either through regular cash dividends or by repurchasing and retiring corporate shares in public markets.",
-      "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer capital flexibility and increase remaining owners' proportional ownership stake.",
-      "example": "Imagine a profitable firm retiring surplus equity from open circulation, which lowers total shares outstanding and lifts future earnings per share."
+      "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
+      "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer tax flexibility and increase remaining owners' percentage stake.",
+      "example": "A mature tech company repurchases outstanding shares, reducing total share count and raising future earnings per share for all remaining shareholders."
     }
   },
   {
@@ -201,12 +191,7 @@ export const topics = [
         "label": "Corporate Finance Institute: Cash Conversion Cycle Guide",
         "url": "https://corporatefinanceinstitute.com/resources/commercial-lending/cash-conversion-cycle-ccc/"
       }
-    ],
-    "lesson": {
-      "idea": "The cash conversion cycle measures the elapsed timeframe for a business to turn inventory outlays back into liquid cash from completed customer sales.",
-      "why": "Compressing this cycle releases trapped working capital without requiring outside credit lines. Businesses achieving negative cycles collect payments before paying their suppliers.",
-      "example": "Imagine a merchant that collects receivables from purchasers promptly while settling trade invoices on extended supplier terms to fund operating overhead."
-    }
+    ]
   },
   {
     "id": "roic-vs-wacc-economic-value-added",
@@ -294,12 +279,7 @@ export const topics = [
         "label": "Steven N. Kaplan & Per Strömberg: Leveraged Buyouts and Private Equity (Journal of Economic Perspectives 2009)",
         "url": "https://www.aeaweb.org/articles?id=10.1257/jep.23.1.121"
       }
-    ],
-    "lesson": {
-      "idea": "A leveraged buyout represents the purchase of an enterprise using substantial debt financing, with the target firm's assets pledged as borrowing collateral.",
-      "why": "Utilizing debt amplifies equity returns for acquiring sponsors as long as acquired operations generate reliable operating cash to service borrowing burdens.",
-      "example": "Imagine an acquisition group purchasing an industrial firm with funded debt, using target operating cash flow to retire outstanding obligations over time."
-    }
+    ]
   },
   {
     "id": "time-value-of-money-npv-and-irr",

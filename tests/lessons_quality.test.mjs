@@ -92,7 +92,7 @@ function validateLessons(filePath) {
 
         it('no digit sequences or number words absent from topic source', () => {
           const topic = topicIndex[id];
-          if (!topic) return;
+          assert.ok(topic, `no curated topic for id ${id}`);
           const ref = refText(topic).toLowerCase();
           const allText = `${lesson.idea} ${lesson.why} ${lesson.example}`;
 
@@ -121,7 +121,7 @@ function validateLessons(filePath) {
 
         it('no capitalized words (outside sentence starts) absent from topic source', () => {
           const topic = topicIndex[id];
-          if (!topic) return;
+          assert.ok(topic, `no curated topic for id ${id}`);
           const ref = refText(topic);
           const allText = `${lesson.idea} ${lesson.why} ${lesson.example}`;
           const { words, starts } = sentenceStartIndices(allText);
@@ -167,7 +167,7 @@ function validateLessons(filePath) {
 
           it('idea/why mentions every part of the title', () => {
             const topic = topicIndex[id];
-            if (!topic) return;
+            assert.ok(topic, `no curated topic for id ${id}`);
             const parts = topic.title.split(/\s+and\s+|&|-/i).map(s => s.trim()).filter(Boolean);
             const ideaWhy = `${lesson.idea} ${lesson.why}`.toLowerCase();
             const stopWords = new Set(['the', 'a', 'an', 'of', 'in', 'on', 'at', 'for', 'to', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'using', 'via', 'into', 'and', 'or', 'as']);

@@ -32,9 +32,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Attention allows a model to connect every token in a sentence to every other token at the same time. Multiple attention heads let the system examine relationships from different angles simultaneously.",
-      "why": "Before this method, models read text sequentially, often forgetting earlier details in long passages. Multi-head attention captures rich context instantly across text.",
-      "example": "Imagine an automated reader evaluating a passage; a distinct attention head connects a pronoun to a subject while another head connects verbs to objects."
+      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
+      "why": "Before this method, models read text a word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
+      "example": "In the sentence 'The bank approved the loan because it had funds', an attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
     }
   },
   {
@@ -93,7 +93,7 @@ export const topics = [
     "lesson": {
       "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
       "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
-      "example": "Imagine an assistant reading an entire lengthy technical document in a single pass without slowing down toward final pages."
+      "example": "A smart assistant can read an entire lengthy financial report in a single pass without slowing down on the final pages."
     }
   },
   {
@@ -177,9 +177,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Vision Transformers process images by splitting visual scenes into a grid of small square patches and treating each patch like a token.",
-      "why": "Traditional vision models use rigid spatial filters across pixels. Vision transformers learn global relationships across an entire scene from early layers.",
-      "example": "Imagine an image divided into a grid of patches where attention layers analyze connections between distant segments across the frame."
+      "idea": "Vision Transformers process images by splitting pictures into a grid of small square patches and treating each patch like a word token in text.",
+      "why": "Traditional vision models use rigid spatial filters across pixels. Vision transformers learn global relationships across the entire image from the start.",
+      "example": "An image of a cat is divided into multiple smaller squares, and the model analyzes how the ear patch relates to the paw patch across the photo."
     }
   },
   {
@@ -209,9 +209,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Swin Transformer architectures compute self-attention inside local windows and shift window boundaries across successive layers to enable cross-window communication.",
-      "why": "Calculating attention across every pixel in high-resolution images requires excessive computation. Shifted windows maintain linear complexity while connecting distant image regions.",
-      "example": "Imagine a visual inspection tool analyzing local image grids before shifting boundaries to recognize extended structures crossing grid borders."
+      "idea": "Swin transformers compute self-attention inside small local windows and shift window boundaries across successive layers to allow cross-window communication.",
+      "why": "Calculating attention across every pixel in high-resolution images is too slow. Shifted windows maintain linear computation while connecting distant image regions.",
+      "example": "A camera system inspects an ultra-wide panorama by analyzing local grids first, then shifting grid borders to detect large objects crossing grid lines."
     }
   },
   {

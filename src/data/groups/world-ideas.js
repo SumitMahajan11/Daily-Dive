@@ -24,9 +24,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Entropy measures the degree of disorder in a physical system. Physical thermodynamics indicates that total entropy in an isolated system tends to increase over time.",
-      "why": "This physical principle explains why heat flows from hot objects to colder surroundings and why time progresses in an asymmetric forward direction.",
-      "example": "Imagine hot liquid left on a desk cooling as thermal energy disperses across surrounding space without spontaneously concentrating again."
+      "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system consistently increases over time.",
+      "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in a forward direction.",
+      "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, without spontaneously reheating."
     }
   },
   {
