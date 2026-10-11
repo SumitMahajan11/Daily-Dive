@@ -81,15 +81,15 @@ async function runAudioTest() {
 
     console.log('Audio Spy Results:', JSON.stringify(result, null, 2));
 
-    // Verify tick volume raised by ~50% (was 0.07 -> 0.105, 0.10 -> 0.15)
-    assert.strictEqual(result.tickStart, 0.105, 'Tick volume at progress 0 must be 0.105 (was 0.07)');
-    assert.strictEqual(result.tickEnd, 0.15, 'Tick volume at progress 1 must be 0.15 (was 0.10)');
+    // Verify tick volume roughly doubled (was 0.105 -> 0.25, 0.15 -> 0.35)
+    assert.strictEqual(result.tickStart, 0.25, 'Tick volume at progress 0 must be 0.25 (was 0.105)');
+    assert.strictEqual(result.tickEnd, 0.35, 'Tick volume at progress 1 must be 0.35 (was 0.15)');
 
-    // Verify landing thud and chime raised by ~50% (thud was 0.24 -> 0.36, chime was 0.12 -> 0.18)
-    assert.strictEqual(result.landingGains[0], 0.36, 'Landing thud gain must be 0.36 (was 0.24)');
-    assert.strictEqual(result.landingGains[1], 0.18, 'Landing chime note 1 must be 0.18 (was 0.12)');
-    assert.strictEqual(result.landingGains[2], 0.18, 'Landing chime note 2 must be 0.18 (was 0.12)');
-    assert.strictEqual(result.landingGains[3], 0.18, 'Landing chime note 3 must be 0.18 (was 0.12)');
+    // Verify landing thud and chime roughly doubled (thud was 0.36 -> 0.70, chime was 0.18 -> 0.36)
+    assert.strictEqual(result.landingGains[0], 0.70, 'Landing thud gain must be 0.70 (was 0.36)');
+    assert.strictEqual(result.landingGains[1], 0.36, 'Landing chime note 1 must be 0.36 (was 0.18)');
+    assert.strictEqual(result.landingGains[2], 0.36, 'Landing chime note 2 must be 0.36 (was 0.18)');
+    assert.strictEqual(result.landingGains[3], 0.36, 'Landing chime note 3 must be 0.36 (was 0.18)');
 
     // Verify all gain values <= 1.0
     for (const g of [result.tickStart, result.tickEnd, ...result.landingGains]) {

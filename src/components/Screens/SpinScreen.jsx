@@ -333,6 +333,9 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     } catch (e) {}
 
     AudioController.init();
+    if (AudioController.ctx && AudioController.ctx.state === 'suspended') {
+      AudioController.ctx.resume().catch(() => {});
+    }
     const selected = spinNextTopic();
     requestStoragePersistence().catch(() => {});
 
@@ -784,7 +787,11 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             type="button"
             data-testid="primary-spin-button"
             disabled={true}
-            className="w-full h-14 min-h-[56px] rounded-2xl bg-primary text-white font-bold text-base tracking-wide flex items-center justify-center gap-2 opacity-75 cursor-not-allowed"
+            className="w-full h-14 min-h-[56px] rounded-2xl bg-primary bg-[linear-gradient(90deg,#ba5c3c,#ab4c2b,#ba5c3c)] text-white font-bold text-base tracking-wide flex items-center justify-center gap-2 opacity-75 cursor-not-allowed"
+            style={{
+              backgroundColor: '#b5502e',
+              backgroundImage: 'linear-gradient(90deg, #ba5c3c, #ab4c2b, #ba5c3c)'
+            }}
           >
             <RotateCw size={18} className="animate-spin" />
             <span>Loading...</span>
@@ -805,7 +812,11 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             data-testid="primary-spin-button"
             onClick={handleSpin}
             disabled={isSpinning}
-            className="w-full h-14 min-h-[56px] rounded-2xl bg-primary text-white font-bold text-base tracking-wide flex items-center justify-center gap-2 shadow-md hover:bg-primary/95 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            className="w-full h-14 min-h-[56px] rounded-2xl bg-primary bg-[linear-gradient(90deg,#ba5c3c,#ab4c2b,#ba5c3c)] text-white font-bold text-base tracking-wide flex items-center justify-center gap-2 shadow-md hover:brightness-105 active:scale-[0.99] transition-all cursor-pointer disabled:opacity-75 disabled:cursor-not-allowed focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+            style={{
+              backgroundColor: '#b5502e',
+              backgroundImage: 'linear-gradient(90deg, #ba5c3c, #ab4c2b, #ba5c3c)'
+            }}
           >
             <RotateCw
               size={18}
