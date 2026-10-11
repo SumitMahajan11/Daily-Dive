@@ -248,5 +248,10 @@
     "idea": "Tree of Thoughts (ToT) problem solving expands reasoning into branching trees of intermediate thoughts, enabling systematic evaluation and backtracking across paths.",
     "why": "Linear generation commits to preliminary choices without opportunity to rectify flawed deductions. Tree exploration allows models to assess alternatives and abandon unpromising paths.",
     "example": "Problem solving prompts generate candidate thought branches and prune unfeasible options using tree search algorithms."
+  },
+  "not-a-real-topic": {
+    "idea": "This is a fake lesson idea to test uncurated topic failure.",
+    "why": "This why field explains fake reasons for failure testing.",
+    "example": "Fake test runs generate intentional assertion errors during break-it."
   }
 }
