@@ -31,9 +31,9 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
-      "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
-      "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
+      "idea": "Attention allows a model to connect every token in a sentence to every other token at the same time. Multiple attention heads let the system examine relationships from different angles simultaneously.",
+      "why": "Before this method, models read text sequentially, often forgetting earlier details in long passages. Multi-head attention captures rich context instantly across text.",
+      "example": "Imagine an automated reader evaluating a passage; a distinct attention head connects a pronoun to a subject while another head connects verbs to objects."
     }
   },
   {
@@ -92,7 +92,7 @@ export const starterTopics = [
     "lesson": {
       "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
       "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
-      "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
+      "example": "Imagine an assistant reading an entire lengthy technical document in a single pass without slowing down toward final pages."
     }
   },
   {
@@ -151,9 +151,9 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
-      "why": "Relying purely on past earnings can mislead investors about future performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
-      "example": "A buyer projects a local bakery will make fifty thousand dollars next year and discounts that cash to forty-five thousand dollars in today's terms."
+      "idea": "Discounted cash flow estimates the value of an investment today based on cash generated across future periods. Future cash is adjusted downward because money available today can earn returns.",
+      "why": "Relying purely on past earnings can mislead investors about prospective performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
+      "example": "Imagine an investor evaluating a local enterprise by projecting incoming cash flows and discounting those receipts back to an estimated present value."
     }
   },
   {
@@ -185,9 +185,9 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "This metric calculates the average interest rate a company pays to finance its business through both borrowed debt and shareholder equity.",
-      "why": "A company must earn a return higher than this financing rate to create real economic value. It acts as the minimum hurdle rate for approving new corporate projects.",
-      "example": "If a manufacturing firm borrows at five percent and shareholders expect nine percent, its overall cost might be seven percent, meaning new factories must beat seven percent."
+      "idea": "This metric calculates the average financing rate an enterprise pays to support operations through both borrowed debt and shareholder equity.",
+      "why": "A company must earn an operating return exceeding this blended rate to create lasting economic value. It establishes a necessary hurdle rate for approving capital projects.",
+      "example": "Imagine a manufacturing company weighing capital expenditures against financing costs to ensure prospective earnings exceed overall borrowing expenses."
     }
   },
   {
@@ -323,7 +323,7 @@ export const starterTopics = [
     "lesson": {
       "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
       "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
-      "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
+      "example": "An online course mentions that limited seats remain, triggering the scarcity principle to encourage prompt student enrollment."
     }
   },
   {
@@ -408,9 +408,9 @@ export const starterTopics = [
       }
     ],
     "lesson": {
-      "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
-      "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
-      "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
+      "idea": "Entropy measures the degree of disorder in a physical system. Physical thermodynamics indicates that total entropy in an isolated system tends to increase over time.",
+      "why": "This physical principle explains why heat flows from hot objects to colder surroundings and why time progresses in an asymmetric forward direction.",
+      "example": "Imagine hot liquid left on a desk cooling as thermal energy disperses across surrounding space without spontaneously concentrating again."
     }
   },
   {

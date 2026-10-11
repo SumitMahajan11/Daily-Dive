@@ -1,23 +1,23 @@
 {
   "multi-head-self-attention": {
-    "idea": "Attention allows an AI model to connect every word in a sentence to every other word at the same time. Multiple attention heads let the system look at relationships from different angles simultaneously.",
-    "why": "Before this method, models read text one word at a time in order, often forgetting earlier details in long paragraphs. Multi-head attention captures rich context instantly across long passages.",
-    "example": "In the sentence 'The bank approved the loan because it had funds', one attention head links 'it' to 'bank' while another links 'funds' to 'loan'."
+    "idea": "Attention allows a model to connect every token in a sentence to every other token at the same time. Multiple attention heads let the system examine relationships from different angles simultaneously.",
+    "why": "Before this method, models read text sequentially, often forgetting earlier details in long passages. Multi-head attention captures rich context instantly across text.",
+    "example": "Imagine an automated reader evaluating a passage; a distinct attention head connects a pronoun to a subject while another head connects verbs to objects."
   },
   "mamba-state-space-models": {
     "idea": "Mamba processes long sequences of data continuously in linear time by updating an internal memory state instead of comparing every word to all past words.",
     "why": "Standard attention models become significantly slower as text length increases because processing cost grows quadratically. Mamba handles very long context windows efficiently without ballooning memory usage.",
-    "example": "A smart assistant can read an entire hundred-page financial report in one pass without slowing down on the final pages."
+    "example": "Imagine an assistant reading an entire lengthy technical document in a single pass without slowing down toward final pages."
   },
   "discounted-cash-flow-dcf-valuation": {
-    "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
-    "why": "Relying purely on past earnings can mislead investors about future performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
-    "example": "A buyer projects a local bakery will make fifty thousand dollars next year and discounts that cash to forty-five thousand dollars in today's terms."
+    "idea": "Discounted cash flow estimates the value of an investment today based on cash generated across future periods. Future cash is adjusted downward because money available today can earn returns.",
+    "why": "Relying purely on past earnings can mislead investors about prospective performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
+    "example": "Imagine an investor evaluating a local enterprise by projecting incoming cash flows and discounting those receipts back to an estimated present value."
   },
   "weighted-average-cost-of-capital-wacc": {
-    "idea": "This metric calculates the average interest rate a company pays to finance its business through both borrowed debt and shareholder equity.",
-    "why": "A company must earn a return higher than this financing rate to create real economic value. It acts as the minimum hurdle rate for approving new corporate projects.",
-    "example": "If a manufacturing firm borrows at five percent and shareholders expect nine percent, its overall cost might be seven percent, meaning new factories must beat seven percent."
+    "idea": "This metric calculates the average financing rate an enterprise pays to support operations through both borrowed debt and shareholder equity.",
+    "why": "A company must earn an operating return exceeding this blended rate to create lasting economic value. It establishes a necessary hurdle rate for approving capital projects.",
+    "example": "Imagine a manufacturing company weighing capital expenditures against financing costs to ensure prospective earnings exceed overall borrowing expenses."
   },
   "capital-structure-and-modigliani-miller-theorem": {
     "idea": "This financial theory states that in a friction-free market without taxes or bankruptcy costs, a firm's total value remains unchanged whether financed by debt or equity.",
@@ -37,7 +37,7 @@
   "cialdini-principles-of-persuasion": {
     "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
     "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
-    "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
+    "example": "An online course mentions that limited seats remain, triggering the scarcity principle to encourage prompt student enrollment."
   },
   "elaboration-likelihood-model-central-vs-peripheral": {
     "idea": "People process persuasive messages through two routes: a deep central path focused on facts, or a fast peripheral path guided by surface cues.",
@@ -45,34 +45,34 @@
     "example": "A car advertisement highlights crash test ratings for analytical buyers while showcasing an attractive celebrity driving along the coast for casual viewers."
   },
   "entropy-second-law-thermodynamics": {
-    "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system always increases over time.",
-    "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in one forward direction.",
-    "example": "A hot cup of coffee left on a desk cools down as its heat disperses into the cooler surrounding room, never spontaneously reheating."
+    "idea": "Entropy measures the degree of disorder in a physical system. Physical thermodynamics indicates that total entropy in an isolated system tends to increase over time.",
+    "why": "This physical principle explains why heat flows from hot objects to colder surroundings and why time progresses in an asymmetric forward direction.",
+    "example": "Imagine hot liquid left on a desk cooling as thermal energy disperses across surrounding space without spontaneously concentrating again."
   },
   "vision-transformers-vit": {
-    "idea": "Vision Transformers process images by splitting pictures into a grid of small square patches and treating each patch like a word token in text.",
-    "why": "Traditional vision models use rigid spatial filters across pixels. Vision transformers learn global relationships across the entire image from the start.",
-    "example": "An image of a cat is divided into sixteen smaller squares, and the model analyzes how the ear patch relates to the paw patch across the photo."
+    "idea": "Vision Transformers process images by splitting visual scenes into a grid of small square patches and treating each patch like a token.",
+    "why": "Traditional vision models use rigid spatial filters across pixels. Vision transformers learn global relationships across an entire scene from early layers.",
+    "example": "Imagine an image divided into a grid of patches where attention layers analyze connections between distant segments across the frame."
   },
   "swin-transformer-shifted-windows": {
-    "idea": "Swin Transformers compute self-attention inside small local windows and shift window boundaries across successive layers to allow cross-window communication.",
-    "why": "Calculating attention across every pixel in high-resolution images is too slow. Shifted windows maintain linear computation while connecting distant image regions.",
-    "example": "A camera system inspects an ultra-wide panorama by analyzing local grids first, then shifting grid borders to detect large objects crossing grid lines."
+    "idea": "Swin Transformer architectures compute self-attention inside local windows and shift window boundaries across successive layers to enable cross-window communication.",
+    "why": "Calculating attention across every pixel in high-resolution images requires excessive computation. Shifted windows maintain linear complexity while connecting distant image regions.",
+    "example": "Imagine a visual inspection tool analyzing local image grids before shifting boundaries to recognize extended structures crossing grid borders."
   },
   "dividend-policy-vs-share-buybacks": {
-    "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
-    "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer tax flexibility and increase remaining owners' percentage stake.",
-    "example": "A mature tech company repurchases ten million shares, reducing total share count and raising future earnings per share for all remaining shareholders."
+    "idea": "Companies return surplus earnings to owners either through regular cash dividends or by repurchasing and retiring corporate shares in public markets.",
+    "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer capital flexibility and increase remaining owners' proportional ownership stake.",
+    "example": "Imagine a profitable firm retiring surplus equity from open circulation, which lowers total shares outstanding and lifts future earnings per share."
   },
   "working-capital-management-cash-conversion-cycle": {
-    "idea": "The cash conversion cycle measures how many days it takes for a company to convert investments in inventory into collected cash from customers.",
-    "why": "Shorter cycles free up working capital without requiring outside loans. Companies with negative cycles get paid by customers before paying suppliers.",
-    "example": "An online bookstore sells books in twenty days but pays publishers in forty-five days, allowing it to fund operations with suppliers' money."
+    "idea": "The cash conversion cycle measures the elapsed timeframe for a business to turn inventory outlays back into liquid cash from completed customer sales.",
+    "why": "Compressing this cycle releases trapped working capital without requiring outside credit lines. Businesses achieving negative cycles collect payments before paying their suppliers.",
+    "example": "Imagine a merchant that collects receivables from purchasers promptly while settling trade invoices on extended supplier terms to fund operating overhead."
   },
   "leveraged-buyouts-lbo-mechanics": {
-    "idea": "A leveraged buyout is the acquisition of a company using a large portion of borrowed money, with the acquired firm's assets serving as collateral.",
-    "why": "Using debt amplifies returns for the buying group if the acquired company generates steady cash to pay down the loans over time.",
-    "example": "A private equity firm purchases a family-owned tool company with seventy percent debt, using the factory's cash flows to retire the debt over five years."
+    "idea": "A leveraged buyout represents the purchase of an enterprise using substantial debt financing, with the target firm's assets pledged as borrowing collateral.",
+    "why": "Utilizing debt amplifies equity returns for acquiring sponsors as long as acquired operations generate reliable operating cash to service borrowing burdens.",
+    "example": "Imagine an acquisition group purchasing an industrial firm with funded debt, using target operating cash flow to retire outstanding obligations over time."
   },
   "monroe-motivated-sequence-persuasive-speech": {
     "idea": "Monroe's sequence is a five-step speech framework: grab attention, establish a need, satisfy the problem, visualize the positive outcome, and call for action.",
@@ -81,8 +81,8 @@
   },
   "inoculation-theory-building-cognitive-resistance": {
     "idea": "Inoculation theory suggests that exposing people to a weakened counter-argument alongside strong rebuttals builds mental immunity against future persuasion attempts.",
-    "why": "Beliefs that are never challenged can crumble quickly under intense pressure. Preempting deceptive arguments strengthens personal conviction before opponents strike.",
-    "example": "A public health campaign explains a common myth before refuting it with clear scientific evidence, preparing citizens to spot false claims later."
+    "why": "Beliefs that remain unchallenged can crumble under intense adversarial pressure. Preempting deceptive arguments strengthens personal conviction before hostile messaging appears.",
+    "example": "Imagine a community campaign presenting a common misconception alongside systematic rebuttals, preparing individuals to identify misleading claims during subsequent discussions."
   },
   "central-dogma-molecular-biology": {
     "idea": "The central dogma describes the primary flow of genetic information inside living cells from DNA storage to RNA messengers to functional proteins.",

@@ -70,7 +70,7 @@ export const topics = [
     "lesson": {
       "idea": "Human decisions are guided by key behavioral shortcuts including reciprocity, scarcity, authority, consistency, liking, and social consensus.",
       "why": "People face thousands of daily choices and rely on mental shortcuts to make fast decisions. Understanding these cues helps teams design honest and compelling messages.",
-      "example": "An online course mentions that only ten seats remain, triggering the scarcity principle to encourage prompt student enrollment."
+      "example": "An online course mentions that limited seats remain, triggering the scarcity principle to encourage prompt student enrollment."
     }
   },
   {
@@ -200,8 +200,8 @@ export const topics = [
     ],
     "lesson": {
       "idea": "Inoculation theory suggests that exposing people to a weakened counter-argument alongside strong rebuttals builds mental immunity against future persuasion attempts.",
-      "why": "Beliefs that are never challenged can crumble quickly under intense pressure. Preempting deceptive arguments strengthens personal conviction before opponents strike.",
-      "example": "A public health campaign explains a common myth before refuting it with clear scientific evidence, preparing citizens to spot false claims later."
+      "why": "Beliefs that remain unchallenged can crumble under intense adversarial pressure. Preempting deceptive arguments strengthens personal conviction before hostile messaging appears.",
+      "example": "Imagine a community campaign presenting a common misconception alongside systematic rebuttals, preparing individuals to identify misleading claims during subsequent discussions."
     }
   },
   {

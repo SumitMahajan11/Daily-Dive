@@ -34,9 +34,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Discounted cash flow estimates the true value of an investment today based on the cash it will generate in the future. Future money is adjusted downward because money available today can earn returns.",
-      "why": "Relying purely on past earnings can mislead investors about future performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
-      "example": "A buyer projects a local bakery will make fifty thousand dollars next year and discounts that cash to forty-five thousand dollars in today's terms."
+      "idea": "Discounted cash flow estimates the value of an investment today based on cash generated across future periods. Future cash is adjusted downward because money available today can earn returns.",
+      "why": "Relying purely on past earnings can mislead investors about prospective performance. This framework forces realistic assumptions about future growth, interest rates, and financial risks.",
+      "example": "Imagine an investor evaluating a local enterprise by projecting incoming cash flows and discounting those receipts back to an estimated present value."
     }
   },
   {
@@ -68,9 +68,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "This metric calculates the average interest rate a company pays to finance its business through both borrowed debt and shareholder equity.",
-      "why": "A company must earn a return higher than this financing rate to create real economic value. It acts as the minimum hurdle rate for approving new corporate projects.",
-      "example": "If a manufacturing firm borrows at five percent and shareholders expect nine percent, its overall cost might be seven percent, meaning new factories must beat seven percent."
+      "idea": "This metric calculates the average financing rate an enterprise pays to support operations through both borrowed debt and shareholder equity.",
+      "why": "A company must earn an operating return exceeding this blended rate to create lasting economic value. It establishes a necessary hurdle rate for approving capital projects.",
+      "example": "Imagine a manufacturing company weighing capital expenditures against financing costs to ensure prospective earnings exceed overall borrowing expenses."
     }
   },
   {
@@ -169,9 +169,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
-      "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer tax flexibility and increase remaining owners' percentage stake.",
-      "example": "A mature tech company repurchases ten million shares, reducing total share count and raising future earnings per share for all remaining shareholders."
+      "idea": "Companies return surplus earnings to owners either through regular cash dividends or by repurchasing and retiring corporate shares in public markets.",
+      "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer capital flexibility and increase remaining owners' proportional ownership stake.",
+      "example": "Imagine a profitable firm retiring surplus equity from open circulation, which lowers total shares outstanding and lifts future earnings per share."
     }
   },
   {
@@ -203,9 +203,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "The cash conversion cycle measures how many days it takes for a company to convert investments in inventory into collected cash from customers.",
-      "why": "Shorter cycles free up working capital without requiring outside loans. Companies with negative cycles get paid by customers before paying suppliers.",
-      "example": "An online bookstore sells books in twenty days but pays publishers in forty-five days, allowing it to fund operations with suppliers' money."
+      "idea": "The cash conversion cycle measures the elapsed timeframe for a business to turn inventory outlays back into liquid cash from completed customer sales.",
+      "why": "Compressing this cycle releases trapped working capital without requiring outside credit lines. Businesses achieving negative cycles collect payments before paying their suppliers.",
+      "example": "Imagine a merchant that collects receivables from purchasers promptly while settling trade invoices on extended supplier terms to fund operating overhead."
     }
   },
   {
@@ -296,9 +296,9 @@ export const topics = [
       }
     ],
     "lesson": {
-      "idea": "A leveraged buyout is the acquisition of a company using a large portion of borrowed money, with the acquired firm's assets serving as collateral.",
-      "why": "Using debt amplifies returns for the buying group if the acquired company generates steady cash to pay down the loans over time.",
-      "example": "A private equity firm purchases a family-owned tool company with seventy percent debt, using the factory's cash flows to retire the debt over five years."
+      "idea": "A leveraged buyout represents the purchase of an enterprise using substantial debt financing, with the target firm's assets pledged as borrowing collateral.",
+      "why": "Utilizing debt amplifies equity returns for acquiring sponsors as long as acquired operations generate reliable operating cash to service borrowing burdens.",
+      "example": "Imagine an acquisition group purchasing an industrial firm with funded debt, using target operating cash flow to retire outstanding obligations over time."
     }
   },
   {

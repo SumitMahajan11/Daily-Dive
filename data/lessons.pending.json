@@ -1,0 +1,252 @@
+{
+  "mixture-of-experts-moe": {
+    "idea": "Instead of sending every input through a single large feed-forward network, sparse routing activates only a few specialized expert sub-networks per token via a top-k gating mechanism.",
+    "why": "Dense layers waste capacity on inputs that do not need all parameters. Sparse expert routing scales model capacity while keeping per-token computation manageable.",
+    "example": "Imagine a team that routes each support ticket to the specialist who handles that category, so no single agent must master every domain."
+  },
+  "rotary-positional-embeddings-rope": {
+    "idea": "Token positions are encoded by rotating query and key vectors in paired dimensions using orthogonal rotation matrices, making relative distance emerge naturally from the dot product.",
+    "why": "Fixed sinusoidal embeddings struggle when sequences grow beyond the lengths seen during training. Rotary embeddings allow attention to extrapolate to longer contexts more gracefully.",
+    "example": "Imagine a team that labels each desk with a compass heading; the relative angle between adjacent desks reveals their spatial relationship without absolute coordinates."
+  },
+  "residual-connections-resnet": {
+    "idea": "Identity skip connections let each layer learn a residual correction on top of its input rather than an entirely new mapping, easing gradient flow through deep stacks.",
+    "why": "Very deep networks suffer from vanishing gradients and degradation, where added layers paradoxically increase training error. Skip connections stabilize learning by providing gradient shortcuts.",
+    "example": "Imagine a team that reviews a draft document where each editor marks only the changes, keeping the original text intact so no revision can make the document worse than the prior version."
+  },
+  "sliding-window-and-longformer-attention": {
+    "idea": "Each token attends only to a fixed-size local window of neighbors plus a few designated global anchor tokens, replacing the full quadratic attention matrix with sparse bands.",
+    "why": "Full self-attention over very long documents is prohibitively expensive. Sliding windows with dilated and global tokens preserve relevant long-range context at a fraction of the cost.",
+    "example": "Imagine a team that assigns each member to coordinate with nearby seats but also connects a few leads who can relay information across the entire room."
+  },
+  "grouped-query-attention-gqa": {
+    "idea": "Multiple query heads share a smaller set of key-value heads, reducing the memory bandwidth required to load cached key-value tensors during generation.",
+    "why": "Standard multi-head attention duplicates key-value projections for every query head, wasting memory bandwidth at inference. Grouping preserves quality while cutting memory transfers.",
+    "example": "Imagine a team that shares one reference binder among several analysts instead of photocopying it for each person, cutting supply costs without losing access to the information."
+  },
+  "lora-low-rank-adaptation": {
+    "idea": "Pre-trained weights stay frozen while small trainable rank-decomposition matrix pairs are injected into attention and MLP layers, drastically reducing the parameter count updated during fine-tuning.",
+    "why": "Full fine-tuning of large models demands enormous memory and storage for separate weight copies. Low-rank adapters achieve comparable task performance with a tiny fraction of trainable parameters.",
+    "example": "Imagine a team that customizes a shared office template by attaching small sticky-note overlays rather than rewriting the entire manual for each department."
+  },
+  "qlora-quantized-fine-tuning": {
+    "idea": "Combines low-rank adaptation with aggressive weight quantization so that a very large frozen model fits in memory on limited hardware while remaining fine-tunable through small adapters.",
+    "why": "Even with parameter-efficient methods, loading the base model consumes most available memory. Quantizing the frozen weights reclaims that space so adapters can still be trained.",
+    "example": "Imagine a team that compresses a huge reference library into summary cards so the entire collection fits on a single shelf, then adds detailed margin notes only where needed."
+  },
+  "direct-preference-optimization-dpo": {
+    "idea": "Trains a language model directly on pairs of preferred and rejected outputs using a classification-style loss, removing the need for a separate reward model or reinforcement learning loop.",
+    "why": "Reward-model-based alignment pipelines add engineering complexity, instability, and extra compute. A direct preference loss simplifies the pipeline while producing comparable alignment quality.",
+    "example": "Imagine a team that asks editors to pick the better of paired drafts and uses those choices directly to train a writing assistant, skipping the step of scoring every possible draft."
+  },
+  "rlhf-proximal-policy-optimization": {
+    "idea": "A reward model trained on human comparison judgments provides a scalar signal that guides policy gradient updates to align language model outputs with human intentions.",
+    "why": "Supervised fine-tuning on curated examples teaches style but not preferences among open-ended responses. Reinforcement signals from human comparisons steer the model toward broadly preferred behavior.",
+    "example": "Imagine a team that asks taste-testers to rank recipe variations, then uses those rankings to guide a chef toward dishes that satisfy the widest palate."
+  },
+  "constitutional-ai-and-rlaif": {
+    "idea": "A set of natural-language principles forms a constitution that the model uses to self-critique and revise its own outputs, generating synthetic preference pairs for training without human labeling.",
+    "why": "Collecting human feedback is slow and expensive at scale. Self-critique loops guided by explicit principles can produce alignment data more rapidly while remaining transparent.",
+    "example": "Imagine a team that posts a code-of-conduct checklist on the wall and asks each writer to self-edit against it before submitting, reducing the need for external reviewers."
+  },
+  "kahneman-tversky-optimization-kto": {
+    "idea": "Applies prospect theory from behavioral economics to model alignment, weighting losses from bad outputs more heavily than equivalent gains from good outputs using unpaired binary feedback.",
+    "why": "Paired preference data is hard to collect at scale. Treating each output independently as acceptable or unacceptable simplifies data collection while capturing asymmetric human value sensitivity.",
+    "example": "Imagine a team that rates each customer service reply as either helpful or unhelpful, then weighs unhelpful replies more heavily when retraining the response guide."
+  },
+  "prompt-tuning-and-prefix-tuning": {
+    "idea": "All pre-trained weights remain frozen while a small set of continuous learnable virtual token embeddings is prepended to the input or injected into key-value layers to steer model behavior.",
+    "why": "Full fine-tuning demands separate weight copies per task. Learning only a handful of soft prompt parameters enables multi-task serving from a single shared base model.",
+    "example": "Imagine a team that keeps the employee handbook untouched but adds a custom cover page for each department that frames how staff should interpret the same rules."
+  },
+  "flashattention-tiling-kernel": {
+    "idea": "Restructures the attention computation into memory-aware tiles that shuttle data between fast on-chip memory and slower main memory, avoiding materialization of the full attention matrix.",
+    "why": "Standard attention kernels are bottlenecked by memory reads and writes, not raw arithmetic. Tiling the softmax computation to stay on-chip dramatically improves throughput and cuts memory use.",
+    "example": "Imagine a team that processes a large spreadsheet by loading only a few rows at a time into a fast desktop calculator rather than printing the entire sheet and scanning it repeatedly."
+  },
+  "kv-caching-autoregressive-decoding": {
+    "idea": "During token-by-token generation, previously computed key and value tensors are cached so each new token only needs to compute its own projections and attend to the stored history.",
+    "why": "Without caching, every generated token would recompute attention over the entire preceding sequence, making generation quadratically expensive. Caching reduces each step to a single new row of work.",
+    "example": "Imagine a team that keeps meeting minutes in a shared notebook so each new attendee reads the notes instead of replaying the entire discussion from scratch."
+  },
+  "pagedattention-virtual-memory": {
+    "idea": "Borrows virtual memory paging concepts from operating systems to manage the key-value cache in non-contiguous memory blocks, eliminating fragmentation waste during concurrent request serving.",
+    "why": "Pre-allocating contiguous memory per request wastes space when sequence lengths vary widely. Paging allows flexible, on-demand allocation that raises overall serving throughput.",
+    "example": "Imagine a team that stores archive boxes on whichever shelf has space rather than reserving a full row per project, freeing up room for more active projects."
+  },
+  "speculative-decoding-draft-models": {
+    "idea": "A smaller, faster draft model generates several candidate tokens in parallel, and the larger target model verifies them in a single forward pass, accepting correct guesses and rejecting wrong tokens.",
+    "why": "Large model inference is bottlenecked by memory bandwidth rather than computation. Batching verification of cheap speculative tokens amortizes that bandwidth cost over multiple accepted tokens.",
+    "example": "Imagine a team that has a junior assistant draft a paragraph and a senior editor reviews it in a single pass, keeping correct sentences and rewriting only the flawed parts."
+  },
+  "awq-activation-aware-quantization": {
+    "idea": "Compresses model weights to low-bit precision by identifying the salient weight channels that correspond to high-magnitude activations and protecting them with per-channel scaling before quantization.",
+    "why": "Uniform quantization degrades model quality by rounding critical weights. Protecting activation-sensitive channels preserves output accuracy while still achieving substantial compression.",
+    "example": "Imagine a team that rounds most budget line items to coarse figures but keeps the high-impact items at exact dollar amounts to maintain overall fiscal accuracy."
+  },
+  "gptq-post-training-quantization": {
+    "idea": "Uses second-order error compensation to quantize each weight column sequentially, redistributing rounding error to remaining unquantized columns so that overall layer output stays close to the original.",
+    "why": "Naive rounding of weights accumulates error rapidly across a large model. Layer-wise curvature-guided compensation keeps total output deviation small even at aggressive compression levels.",
+    "example": "Imagine a team that adjusts each ingredient in a recipe sequentially, tweaking subsequent ingredients to compensate so the final dish tastes like the original."
+  },
+  "continuous-batching-orca": {
+    "idea": "Schedules requests at the token-iteration level rather than the request level, immediately filling empty batch slots when any request finishes instead of waiting for the entire batch to complete.",
+    "why": "Static batching wastes compute when short requests finish early but must wait for long ones. Continuous insertion keeps hardware utilization high across variable-length workloads.",
+    "example": "Imagine a team that fills empty chairs at a group workshop the moment a participant leaves, rather than waiting for the whole session to end before seating newcomers."
+  },
+  "beam-search-and-top-p-sampling": {
+    "idea": "Nucleus sampling dynamically selects from the smallest set of tokens whose cumulative probability exceeds a threshold, balancing diversity and coherence during text generation.",
+    "why": "Greedy or fixed-k sampling either produces repetitive text or includes low-probability noise. A dynamic probability threshold adapts to each step's confidence distribution naturally.",
+    "example": "Imagine a team that brainstorms ideas by considering only the suggestions that collectively cover most of the group's confidence, discarding fringe proposals automatically."
+  },
+  "dense-retrieval-bi-encoders": {
+    "idea": "Twin neural encoders map queries and documents into a shared continuous embedding space so that relevance reduces to a fast nearest-neighbor vector similarity search.",
+    "why": "Keyword matching misses semantically similar passages that use different wording. Dense embeddings capture meaning rather than surface tokens, improving recall on paraphrased content.",
+    "example": "Imagine a team that summarizes each report into a fingerprint code, then finds related reports by comparing fingerprints rather than scanning every page for shared keywords."
+  },
+  "cross-encoder-reranking": {
+    "idea": "Feeds a query-document pair jointly through full self-attention layers, capturing deep token-level interactions that bi-encoder similarity scores miss, to rerank a shortlist of retrieval candidates.",
+    "why": "Bi-encoders encode query and document independently, limiting interaction to a single similarity score. Joint encoding enables fine-grained relevance distinctions among top candidates.",
+    "example": "Imagine a team that first filters resumes by keyword match, then has a senior reviewer read each shortlisted resume alongside the job description for a nuanced ranking."
+  },
+  "hierarchical-navigable-small-world-hnsw": {
+    "idea": "Builds a multi-layer proximity graph where upper layers contain long-range skip connections and lower layers hold dense local edges, enabling greedy nearest-neighbor search in logarithmic time.",
+    "why": "Exhaustive search through millions of high-dimensional vectors is too slow for real-time applications. The hierarchical graph structure provides sub-millisecond approximate lookups with high recall.",
+    "example": "Imagine a team that organizes a library using an express index of broad categories on the top floor and progressively more detailed catalogs on each lower floor to find any book quickly."
+  },
+  "graphrag-knowledge-graph-retrieval": {
+    "idea": "Extracts entity-relationship graphs and community summaries from document collections so that retrieval can traverse structured connections rather than relying solely on vector similarity.",
+    "why": "Flat vector search struggles to synthesize answers that require connecting facts scattered across many separate passages. Graph traversal gathers related entities along explicit relationship edges.",
+    "example": "Imagine a team that builds an org chart from scattered meeting notes, then answers questions about reporting chains by following the chart rather than re-reading every note."
+  },
+  "hypothetical-document-embeddings-hyde": {
+    "idea": "An instruction-tuned language model generates a hypothetical answer document for a user query, and that synthetic document is embedded and used to retrieve real documents by vector similarity.",
+    "why": "Queries are typically short and lack the vocabulary overlap that dense retrievers rely on. A generated pseudo-document bridges the lexical gap between terse queries and verbose passages.",
+    "example": "Imagine a team that writes a rough draft answer to a research question first, then searches the archive for documents that sound similar to that draft."
+  },
+  "denoising-diffusion-probabilistic-models-ddpm": {
+    "idea": "Generates data by learning to reverse a fixed forward process that incrementally adds noise to training samples, recovering clean data from pure noise step by step through a learned denoising network.",
+    "why": "Generative adversarial approaches suffer from unstable training dynamics and mode collapse. The iterative denoising framework offers stable training with a simple reconstruction objective.",
+    "example": "Imagine a team that trains a photo restorer by gradually blurring training images and teaching the system to sharpen each stage until the original clarity is recovered."
+  },
+  "classifier-free-guidance-cfg": {
+    "idea": "Steers the diffusion sampling process toward a text prompt by jointly training conditional and unconditional generation paths, then amplifying the difference between them at inference.",
+    "why": "Classifier-based guidance requires training a separate classifier on noisy inputs. Dropping the classifier simplifies the pipeline and allows more flexible prompt-following behavior.",
+    "example": "Imagine a team that drafts paired versions of a poster, with and without a creative brief, then exaggerates the differences to make the final poster strongly reflect that brief."
+  },
+  "latent-diffusion-models-stable-diffusion": {
+    "idea": "Moves the iterative diffusion and denoising process from high-dimensional pixel space into the compressed latent space of a pre-trained autoencoder, dramatically reducing computational cost.",
+    "why": "Running diffusion directly on full-resolution images consumes enormous compute and memory. Operating in a compact latent space preserves visual quality while making generation feasible.",
+    "example": "Imagine a team that sketches thumbnails to iterate on composition quickly, then expands the chosen thumbnail into a full-size painting only at the final step."
+  },
+  "variational-autoencoders-vae": {
+    "idea": "Encodes inputs into a smooth continuous latent distribution using the reparameterization trick, enabling both faithful reconstruction and generation of new samples by sampling from that distribution.",
+    "why": "Standard autoencoders learn fragmented latent spaces with gaps that produce nonsensical outputs when sampled. Enforcing a smooth prior ensures meaningful interpolation and generation.",
+    "example": "Imagine a team that catalogs furniture designs on a smooth style spectrum so that picking any point on the spectrum produces a coherent new design rather than a random collage."
+  },
+  "vector-quantized-vae-vqvae": {
+    "idea": "Replaces the continuous latent space of a standard autoencoder with a discrete codebook, snapping each encoded vector to its nearest codebook entry to learn compact symbolic representations.",
+    "why": "Continuous latent spaces can suffer from posterior collapse in powerful decoders. Discrete codes force the encoder to use the bottleneck meaningfully and enable autoregressive generation over tokens.",
+    "example": "Imagine a team that compresses voice recordings into sequences of short standard phoneme codes, then reconstructs speech by playing back the corresponding code entries in order."
+  },
+  "adamw-decoupled-weight-decay": {
+    "idea": "Separates weight decay from the adaptive gradient update so that regularization strength remains consistent regardless of the per-parameter learning rate scaling applied by the optimizer.",
+    "why": "When weight decay is coupled with adaptive momentum, parameters with large gradients receive disproportionately weak regularization. Decoupling ensures uniform shrinkage across all weights.",
+    "example": "Imagine a team that applies a flat overhead fee to every department rather than folding it into variable performance bonuses, keeping the administrative charge predictable."
+  },
+  "rms-normalization-and-layer-norm": {
+    "idea": "Normalizes activations by their root mean square alone, skipping the mean-centering step used in standard layer normalization, yielding a simpler and computationally cheaper operation.",
+    "why": "Mean centering adds extra computation and memory accesses with minimal quality benefit in deep transformer stacks. Removing it speeds up each normalization step without degrading model accuracy.",
+    "example": "Imagine a team that calibrates instruments by scaling readings to a standard magnitude without first subtracting the average, saving a step while achieving equivalent precision."
+  },
+  "cosine-annealing-warmup-schedules": {
+    "idea": "Starts training with a low learning rate that linearly ramps up during a warmup phase, then smoothly decays following a cosine curve toward zero over the remaining training steps.",
+    "why": "Large learning rates at initialization can destabilize randomly initialized parameters. Gradual warmup lets the optimizer settle before the cosine decay refines convergence toward a good minimum.",
+    "example": "Imagine a team that eases new employees into full workloads over their onboarding period, then gradually reduces task intensity as the project winds down."
+  },
+  "gradient-accumulation-and-mixed-precision": {
+    "idea": "Runs forward and backward passes in half-precision floating point on tensor cores while maintaining a master copy of weights in full precision, halving memory use and boosting throughput.",
+    "why": "Full-precision arithmetic underutilizes modern accelerator hardware designed for half-precision tensor operations. Mixed precision exploits that hardware while a full-precision master copy guards against rounding drift.",
+    "example": "Imagine a team that drafts all internal memos in shorthand to save time but keeps a master copy in formal language to prevent meaning from drifting over successive edits."
+  },
+  "proximal-policy-optimization-ppo": {
+    "idea": "An on-policy actor-critic algorithm that clips the policy gradient objective to prevent any single update from moving the policy too far from its previous version.",
+    "why": "Unconstrained policy gradient updates can catastrophically collapse performance by overshooting into poor policy regions. Clipping the surrogate objective enforces stable, incremental improvement.",
+    "example": "Imagine a team that limits each sprint's process changes to small adjustments so that no single retrospective overhaul destabilizes the workflow."
+  },
+  "monte-carlo-tree-search-alphazero": {
+    "idea": "Combines a learned policy and value network with tree search, using upper confidence bounds to balance exploring new moves and exploiting promising branches during decision-making.",
+    "why": "Exhaustive search of game trees is computationally infeasible for complex domains. Neural-guided tree search focuses computation on the most promising branches, reaching strong play efficiently.",
+    "example": "Imagine a team that plans a marketing campaign by sketching several strategy branches, estimating each branch's potential, and expanding only the top contenders in detail."
+  },
+  "deep-q-networks-dqn-experience-replay": {
+    "idea": "Stores past transitions in a replay buffer and samples mini-batches randomly for training, breaking temporal correlations that destabilize action-value function approximation with neural networks.",
+    "why": "Training on consecutive experiences causes the network to overfit to recent states and forget earlier lessons. Random replay decorrelates samples and stabilizes learning across diverse situations.",
+    "example": "Imagine a team that reviews a shuffled collection of past project post-mortems during training sessions rather than only discussing the most recent project."
+  },
+  "clip-contrastive-language-image-pretraining": {
+    "idea": "Trains paired image and text encoders on web-scale image-caption data using a contrastive loss that pulls matching pairs together and pushes non-matching pairs apart in a shared embedding space.",
+    "why": "Traditional vision models require task-specific labeled datasets for each new classification problem. Contrastive language-image training enables flexible recognition of unseen categories guided by natural language descriptions.",
+    "example": "Imagine a team that teaches an archivist to match photographs with their captions so well that the archivist can later sort unseen photos into any described category."
+  },
+  "llava-visual-instruction-tuning": {
+    "idea": "Bridges a pre-trained vision encoder and a language model decoder through a projection layer, enabling the combined system to follow visual instructions and answer questions about images.",
+    "why": "Standalone language models cannot perceive visual content, and standalone vision models lack conversational reasoning. Connecting them through a learned projection yields a unified visual dialogue system.",
+    "example": "Imagine a team that pairs a skilled photographer with a writer through a translator, so the writer can describe and discuss any photograph the photographer shares."
+  },
+  "neural-radiance-fields-nerf": {
+    "idea": "Represents a scene as a continuous volumetric function that maps spatial coordinates and viewing direction to color and density, enabling photorealistic novel-view synthesis from a set of posed images.",
+    "why": "Traditional rendering pipelines require explicit geometry meshes, which are expensive to create for complex real-world scenes. A neural implicit function learns the scene directly from photographs.",
+    "example": "Imagine a team that photographs a sculpture from several angles and then generates a realistic view from any new angle without building a physical replica."
+  },
+  "3d-gaussian-splatting": {
+    "idea": "Represents scenes as collections of anisotropic 3D Gaussian primitives that are rasterized via differentiable tile-based splatting, enabling real-time radiance field rendering.",
+    "why": "Neural implicit methods like volumetric ray marching are too slow for interactive applications. Explicit point-based primitives with fast rasterization achieve comparable visual quality at interactive frame rates.",
+    "example": "Imagine a team that reconstructs a room by placing and adjusting thousands of soft colored blobs in space, then renders any viewpoint by projecting those blobs onto a screen in real time."
+  },
+  "knowledge-distillation-teacher-student": {
+    "idea": "Trains a compact student model to reproduce the soft probability distributions output by a larger teacher model, transferring learned knowledge into a more deployable form.",
+    "why": "Large models capture rich inter-class relationships in their output distributions that hard labels alone do not convey. Distilling these soft targets into a smaller model preserves much of that knowledge.",
+    "example": "Imagine a team that has a senior analyst write detailed explanation memos so that a junior analyst can learn the reasoning patterns without shadowing every meeting."
+  },
+  "word2vec-skipgram-negative-sampling": {
+    "idea": "Trains a shallow neural network to predict surrounding context words from a center word, producing dense vector embeddings where semantically related words cluster together in geometric space.",
+    "why": "Sparse indicator word representations cannot capture similarity or analogy relationships. Dense learned vectors encode meaning so that vector arithmetic reveals linguistic regularities.",
+    "example": "Imagine a team that assigns each product a coordinate on a map such that similar products sit close together and complementary products form consistent directional patterns."
+  },
+  "contrastive-representation-learning-simclr": {
+    "idea": "Learns visual representations by maximizing agreement between differently augmented views of the same image while pushing apart representations of different images in the batch.",
+    "why": "Labeled image datasets are expensive and limited in scope. Self-supervised contrastive learning extracts transferable features from unlabeled images, reducing dependence on manual annotation.",
+    "example": "Imagine a team that identifies documents as related by checking whether different photocopies of the same page look similar, while ensuring copies of different pages look distinct."
+  },
+  "masked-autoencoders-mae": {
+    "idea": "Randomly masks a large proportion of image patches and trains an asymmetric encoder-decoder to reconstruct the missing pixels, forcing the encoder to learn meaningful visual representations.",
+    "why": "Processing all patches is computationally expensive and provides little self-supervisory signal. Masking most patches accelerates training and compels the model to understand spatial structure rather than memorize textures.",
+    "example": "Imagine a team that gives puzzle solvers jigsaw boards with most pieces removed, training them to infer the missing sections from context clues in the visible fragments."
+  },
+  "chinchilla-compute-optimal-scaling-laws": {
+    "idea": "Compute-optimal training recommends scaling model parameters and training data in tandem rather than making models as large as possible, achieving equivalent performance with less total computation.",
+    "why": "Over-parameterized models trained on insufficient data waste compute and underperform relative to their budget. Balancing model size with data volume maximizes quality per unit of computation.",
+    "example": "Imagine a team that balances hiring new staff with providing adequate training materials, recognizing that a larger team without enough documentation performs worse than a well-resourced smaller team."
+  },
+  "emergent-abilities-and-grokking": {
+    "idea": "Grokking describes the phenomenon where a neural network memorizes training data quickly but then, after extended further training, suddenly transitions to genuine generalization on held-out inputs.",
+    "why": "Standard learning curves suggest that overfitting and generalization are opposing forces. Grokking reveals that prolonged optimization can reorganize internal representations into generalizable circuits long after memorization.",
+    "example": "Imagine a team that memorizes safety procedures by rote for weeks, then suddenly begins applying the underlying principles flexibly to novel emergency scenarios."
+  },
+  "mechanistic-interpretability-induction-heads": {
+    "idea": "Reverse-engineers trained neural networks into discrete, human-interpretable computational circuits, identifying specific attention head compositions responsible for capabilities like in-context pattern matching.",
+    "why": "Treating a model as an opaque black box limits trust, debugging, and safety analysis. Identifying concrete circuits enables targeted interventions and deeper understanding of model behavior.",
+    "example": "Imagine a team that traces a factory's output defect back to a specific pair of machines working in sequence, rather than blaming the entire assembly line."
+  },
+  "react-reasoning-and-acting": {
+    "idea": "Interleaves chain-of-thought reasoning traces with tool-use actions in an alternating loop, letting a language model plan its next step, execute it, observe the result, and reason again.",
+    "why": "Pure reasoning without external grounding can hallucinate facts, while blind tool calls without planning waste steps. Alternating thought and action enables self-correcting, grounded problem solving.",
+    "example": "Imagine a team that tackles a research question by first hypothesizing an answer, then searching a database, reviewing the result, and refining the hypothesis before continuing."
+  },
+  "tree-of-thoughts-prompting": {
+    "idea": "Expands a single reasoning chain into a branching tree of intermediate thoughts, allowing the model to evaluate, compare, and backtrack among multiple solution paths before committing to an answer.",
+    "why": "Linear chain-of-thought prompting commits early to a single reasoning path and cannot recover from mistakes. Tree search enables deliberate exploration and pruning of dead-end strategies.",
+    "example": "Imagine a team that sketches several possible floor plans for an office, scores each on key criteria, and drops the weakest layouts before refining the top candidates."
+  }
+}
