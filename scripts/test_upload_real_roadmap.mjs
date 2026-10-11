@@ -75,7 +75,7 @@ async function testUploadRealRoadmap() {
   await reviewHeading.waitFor({ state: 'visible', timeout: 15000 });
 
   // Extract rendered candidates from the review list
-  const candidateCards = page.locator('div[role="button"][aria-pressed]');
+  const candidateCards = page.locator('div[data-testid="review-topic-row"]');
   const count = await candidateCards.count();
   console.log(`\nExtracted ${count} candidate topics from real ROADMAP.md:\n`);
 
@@ -84,7 +84,7 @@ async function testUploadRealRoadmap() {
   const candidates = [];
   for (let i = 0; i < count; i++) {
     const card = candidateCards.nth(i);
-    const title = (await card.locator('h4').textContent()).trim();
+    const title = (await card.locator('input[type="text"]').inputValue()).trim();
     const desc = (await card.locator('p').first().textContent()).trim();
     const tagElements = await card.locator('span.font-mono, span.rounded-md').allTextContents();
     const tags = tagElements.map(t => t.trim()).filter(Boolean);

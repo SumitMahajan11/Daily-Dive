@@ -283,6 +283,27 @@ export function toTitleCase(str) {
 }
 
 /**
+ * Titles longer than 70 characters are cut at the last full word before
+ * 70 characters, and "…" is added. Never cut inside a word.
+ * If title <= 70 characters, returned unchanged.
+ * If a single very long word with no spaces, never cut inside a word.
+ */
+export function truncateTitle(title, maxLen = 70) {
+  if (!title || typeof title !== 'string') return '';
+  const trimmed = title.trim();
+  if (trimmed.length <= maxLen) {
+    return trimmed;
+  }
+  const sub = trimmed.slice(0, maxLen);
+  const lastSpace = sub.lastIndexOf(' ');
+  if (lastSpace === -1) {
+    // Single very long word with no spaces: never cut inside a word
+    return trimmed;
+  }
+  return sub.slice(0, lastSpace).trim() + '…';
+}
+
+/**
  * Truncates string at a whole word boundary and strips trailing non-terminal tokens/punctuation.
  */
 export function truncateAtWord(str, maxLen = 45) {
@@ -291,10 +312,11 @@ export function truncateAtWord(str, maxLen = 45) {
   if (s.length > maxLen) {
     const sub = s.slice(0, maxLen);
     const lastSpace = sub.lastIndexOf(' ');
-    if (lastSpace > 10) {
+    if (lastSpace !== -1) {
       s = sub.slice(0, lastSpace);
     } else {
-      s = sub;
+      // Never cut inside a word
+      s = str.trim();
     }
   }
   // Strip trailing punctuation & non-terminal connectors
@@ -1357,9 +1379,9 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     }
 
     if (!needsReview) {
-      finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(finalTitle)), 45);
+      finalTitle = truncateTitle(toTitleCase(cleanCandidateTitle(finalTitle)), 70);
     } else {
-      finalTitle = truncateAtWord(cleanCandidateTitle(finalTitle), 45);
+      finalTitle = truncateTitle(cleanCandidateTitle(finalTitle), 70);
     }
 
     // Dedup check
@@ -1630,7 +1652,7 @@ ${truncatedText}
 
     return {
       id: `custom-gemini-${timestamp}-${idx}`,
-      title: truncateAtWord(item.title || 'Untitled Topic', 60),
+      title: truncateTitle(item.title || 'Untitled Topic', 70),
       description: finalDesc,
       group_name: 'custom',
       category: 'custom-notes',

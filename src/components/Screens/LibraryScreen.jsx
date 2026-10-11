@@ -378,23 +378,26 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       let rawText = '';
       const ext = file.name.split('.').pop().toLowerCase();
 
+      let extractedData = null;
       if (ext === 'pdf') {
         const { extractFromPdf } = await import('../../lib/extractors/pdfExtractor');
-        rawText = await extractFromPdf(file, (p) => setProgress(p));
+        extractedData = await extractFromPdf(file, (p) => setProgress(p));
       } else if (ext === 'pptx') {
         const { extractFromPptx } = await import('../../lib/extractors/pptxExtractor');
-        rawText = await extractFromPptx(file, (p) => setProgress(p));
+        extractedData = await extractFromPptx(file, (p) => setProgress(p));
       } else if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
         const { extractFromImage } = await import('../../lib/extractors/imageExtractor');
-        rawText = await extractFromImage(file, (p) => setProgress(p));
+        extractedData = await extractFromImage(file, (p) => setProgress(p));
       } else if (['mp4', 'webm', 'mov'].includes(ext)) {
         const { extractFromVideo } = await import('../../lib/extractors/videoExtractor');
-        rawText = await extractFromVideo(file, (p) => setProgress(p));
+        extractedData = await extractFromVideo(file, (p) => setProgress(p));
       } else if (['txt', 'md'].includes(ext)) {
-        rawText = await file.text();
+        extractedData = await file.text();
       } else {
         throw new Error(`Unsupported file format .${ext}. Please upload a PDF, PPTX, image, or markdown note.`);
       }
+
+      rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
 
       if (!rawText || rawText.trim().length < 20) {
         throw new Error('No legible text could be found in the document.');
@@ -433,13 +436,11 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         };
       });
 
-      const autoAcceptedIds = new Set(scored.filter(t => !t.needs_review).map(t => t.id));
-      if (autoAcceptedIds.size === 0 && scored.length > 0) {
-        autoAcceptedIds.add(scored[0].id);
-      }
+      // All extracted topics are checked by default
+      const allSelectedIds = new Set(scored.map(t => t.id));
 
       setCandidateTopics(scored);
-      setSelectedTopicIds(autoAcceptedIds);
+      setSelectedTopicIds(allSelectedIds);
       setProcessingState('review');
     } catch (err) {
       setProcessingState('error');
@@ -447,10 +448,32 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
     }
   };
 
+  const handleToggleCandidate = (id) => {
+    setSelectedTopicIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) {
+        next.delete(id);
+      } else {
+        next.add(id);
+      }
+      return next;
+    });
+  };
+
+  const handleUpdateCandidateTitle = (id, newTitle) => {
+    setCandidateTopics(prev => prev.map(t => (t.id === id ? { ...t, title: newTitle } : t)));
+  };
+
+  const handleCancelReview = () => {
+    setProcessingState('idle');
+    setCandidateTopics([]);
+    setSelectedTopicIds(new Set());
+    setSelectedFile(null);
+  };
+
   const handleSaveReviewedCandidates = () => {
     const selected = candidateTopics.filter(t => selectedTopicIds.has(t.id));
     if (selected.length === 0) {
-      if (showToast) showToast('Please select at least one topic to import', 'warning');
       return;
     }
 
@@ -458,6 +481,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
     const now = Date.now();
     const finalized = selected.map(t => ({
       ...t,
+      title: t.title.trim() || 'Untitled Topic',
       lifecycle: isPermanent ? 'permanent' : 'temporary',
       expires_at: isPermanent ? null : new Date(now + 14 * 86400000).toISOString(),
       expiry_rule: isPermanent ? null : '14_days'
@@ -995,81 +1019,74 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
               </div>
             </div>
 
-            <div className="space-y-2.5 max-h-[360px] overflow-y-auto pr-1">
+            <div data-testid="review-topic-list" className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
               {candidateTopics.map(topic => {
                 const isSelected = selectedTopicIds.has(topic.id);
                 return (
                   <div
                     key={topic.id}
-                    role="button"
-                    tabIndex={0}
-                    aria-pressed={isSelected}
-                    onClick={() => {
-                      const next = new Set(selectedTopicIds);
-                      if (next.has(topic.id)) next.delete(topic.id);
-                      else next.add(topic.id);
-                      setSelectedTopicIds(next);
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === ' ' || e.key === 'Enter') {
-                        e.preventDefault();
-                        const next = new Set(selectedTopicIds);
-                        if (next.has(topic.id)) next.delete(topic.id);
-                        else next.add(topic.id);
-                        setSelectedTopicIds(next);
-                      }
-                    }}
-                    className={`p-3 rounded-xl border cursor-pointer transition-all ${
+                    data-testid="review-topic-row"
+                    data-topic-id={topic.id}
+                    className={`p-3 rounded-xl border transition-all ${
                       isSelected
-                        ? 'border-primary bg-primary-container/15'
-                        : 'border-outline-variant/30 bg-surface hover:border-outline-variant/60'
+                        ? 'border-primary/50 bg-primary-container/10'
+                        : 'border-outline-variant/30 bg-surface/60 opacity-70'
                     }`}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <h4 className="text-xs font-bold text-on-surface">{topic.title}</h4>
-                      <div
-                        aria-hidden="true"
-                        className={`w-4 h-4 rounded-md flex items-center justify-center text-xs font-bold ${
-                          isSelected ? 'bg-primary text-white' : 'border border-outline-variant'
-                        }`}
-                      >
-                        {isSelected ? '✓' : ''}
-                      </div>
-                    </div>
-                    <p className="text-xs text-on-surface-variant mt-1 leading-relaxed">
-                      {topic.description}
-                    </p>
-                    {topic.needs_review && (
-                      <div className="flex items-center gap-1.5 mt-2 flex-wrap">
-                        <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-500 border border-amber-500/30">
-                          Needs review
-                        </span>
-                        {topic.review_reasons?.length > 0 && (
-                          <span className="text-[10px] text-on-surface-variant/80 truncate">
-                            {topic.review_reasons.join(' · ')}
-                          </span>
+                    <div className="flex items-start gap-3">
+                      <input
+                        type="checkbox"
+                        checked={isSelected}
+                        onChange={() => handleToggleCandidate(topic.id)}
+                        className="mt-1 w-4 h-4 rounded text-primary focus:ring-primary cursor-pointer accent-primary shrink-0"
+                        aria-label={`Select ${topic.title}`}
+                      />
+                      <div className="flex-1 min-w-0 space-y-1.5">
+                        <input
+                          type="text"
+                          value={topic.title}
+                          onChange={(e) => handleUpdateCandidateTitle(topic.id, e.target.value)}
+                          className="w-full bg-surface hover:bg-surface-container focus:bg-surface border border-outline-variant/40 focus:border-primary rounded-lg px-2.5 py-1 text-xs sm:text-sm font-semibold text-on-surface outline-none transition-colors"
+                          placeholder="Topic title"
+                          aria-label="Edit topic title"
+                        />
+                        <p className="text-xs text-on-surface-variant leading-relaxed px-0.5">
+                          {topic.description}
+                        </p>
+                        {topic.needs_review && (
+                          <div className="flex items-center gap-1.5 mt-1 flex-wrap px-0.5">
+                            <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-500 border border-amber-500/30">
+                              Needs review
+                            </span>
+                            {topic.review_reasons?.length > 0 && (
+                              <span className="text-[10px] text-on-surface-variant/80 truncate">
+                                {topic.review_reasons.join(' · ')}
+                              </span>
+                            )}
+                          </div>
                         )}
                       </div>
-                    )}
+                    </div>
                   </div>
                 );
               })}
             </div>
 
-            <div className="pt-2 flex items-center justify-between border-t border-outline-variant/20">
+            <div className="pt-3 flex items-center justify-between border-t border-outline-variant/20 gap-3">
               <button
                 type="button"
-                onClick={() => setProcessingState('idle')}
-                className="text-xs text-on-surface-variant hover:text-on-surface"
+                onClick={handleCancelReview}
+                className="px-3 py-1.5 rounded-lg text-xs font-semibold text-on-surface-variant hover:text-on-surface hover:bg-surface-container transition-colors cursor-pointer"
               >
                 Cancel
               </button>
               <Button
                 variant="primary"
+                disabled={selectedTopicIds.size === 0}
                 onClick={handleSaveReviewedCandidates}
-                className="h-9 px-4 text-xs font-semibold"
+                className="h-9 px-4 text-xs font-semibold cursor-pointer disabled:opacity-40 disabled:cursor-not-allowed"
               >
-                Save {selectedTopicIds.size} topics
+                Save selected ({selectedTopicIds.size})
               </Button>
             </div>
           </div>

@@ -4,7 +4,8 @@ import {
   extractTopicsLocally,
   scoreCandidateTitle,
   CONFIDENCE_THRESHOLD,
-  isNonTopicHeading
+  isNonTopicHeading,
+  truncateTitle
 } from '../src/lib/topicExtractor.js';
 
 console.log('================================================================');
@@ -364,6 +365,31 @@ assert(readmeAudit.autoAccepted.length > 0, 'README fixture extracted valid topi
 assert(
   !readmeAudit.autoAccepted.some(t => t.description.includes('[![') || t.description.includes('img.shields.io')),
   'README fixture stripped markdown badges and image links from description'
+);
+
+// ── PART 4: TITLE TRUNCATION UNIT TESTS (70 Chars, Word Boundary, Ellipsis) ──
+console.log('\n[4/4] Running Title Truncation Unit Tests (3 Cases)...');
+
+// Case 1: Short title unchanged (<= 70 characters)
+const shortTitle = 'Thermal Comfort Fundamentals';
+assert(
+  truncateTitle(shortTitle) === shortTitle,
+  `Case 1: Short title unchanged: "${shortTitle}"`
+);
+
+// Case 2: Long title cut at a word (> 70 characters, cut at last word before 70, adds …)
+const longTitle = 'AI ML Climate Adaptive Shelter Technical Seminar: Interpretable Machine Learning';
+const expectedLongCut = 'AI ML Climate Adaptive Shelter Technical Seminar: Interpretable…';
+assert(
+  truncateTitle(longTitle) === expectedLongCut,
+  `Case 2: Long title cut at a word with ellipsis: "${truncateTitle(longTitle)}"`
+);
+
+// Case 3: A single very long word with no spaces (> 70 characters, never cut inside a word)
+const longWord = 'SupercalifragilisticexpialidociousSupercalifragilisticexpialidociousLongWord';
+assert(
+  truncateTitle(longWord) === longWord,
+  `Case 3: Single very long word with no spaces uncut: "${truncateTitle(longWord)}"`
 );
 
 console.log('================================================================');
