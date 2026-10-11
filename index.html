@@ -6,7 +6,7 @@
     (function() {
       try {
         var t = localStorage.getItem('daily-dive-theme');
-        var isDark = t === 'dark' || (!t && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        var isDark = t === 'dark';
         if (isDark) {
           document.documentElement.classList.add('dark');
         } else {
