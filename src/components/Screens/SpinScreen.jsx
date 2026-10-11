@@ -30,6 +30,7 @@ import { Button } from '../UI/Button';
 import { Skeleton } from '../UI/Skeleton';
 import { requestStoragePersistence } from '../../lib/storage';
 import { loadAllBuiltinTopics } from '../../lib/topicLoader';
+import { selectReviewQueue } from '../../lib/selectors';
 
 // Visual metadata for categories
 const CATEGORY_META = {
@@ -478,10 +479,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
 
   const streak = (effectiveStreak || userStreaks)?.current_streak || 0;
   
-  // Calculate review queue count
+  // Calculate review queue count (only topics whose last_seen local calendar day is before today)
   const toReviewCount = useMemo(() => {
-    return Object.values(userProgressMap || {}).filter(p => (p.times_seen || 0) > 0).length;
-  }, [userProgressMap]);
+    return selectReviewQueue(topics, userProgressMap, Infinity).length;
+  }, [topics, userProgressMap]);
 
   const topicProgress = currentTopic ? userProgressMap[currentTopic.id] : null;
   const isLearned = topicProgress && topicProgress.times_seen > 0;
@@ -852,16 +853,21 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
               <button
                 key={groupDef.group}
                 type="button"
-                aria-pressed={isGroupActive}
+                aria-pressed={isGroupActive ? 'true' : 'false'}
                 aria-label={`Toggle ${shortLabel}`}
+                data-testid={`spin-group-pill-${groupDef.group}`}
                 onClick={() => toggleBroadGroup(groupDef.group)}
                 className={`h-9 sm:h-10 rounded-xl px-2 flex items-center justify-center gap-1.5 text-xs transition-all cursor-pointer select-none border focus-visible:ring-2 focus-visible:ring-primary ${
                   isGroupActive
-                    ? 'bg-primary/15 text-on-surface border-2 border-primary/60 font-bold shadow-xs'
-                    : 'bg-surface-container-low text-on-surface-variant border border-outline-variant/40 hover:border-outline-variant/80 font-medium'
+                    ? 'bg-primary text-white border-primary font-semibold shadow-xs'
+                    : 'bg-transparent text-on-surface-variant/80 border border-outline-variant/50 hover:border-outline-variant hover:text-on-surface font-medium'
                 }`}
               >
-                <span className={`w-1.5 h-1.5 rounded-full shrink-0 ${isGroupActive ? 'bg-primary' : 'bg-outline-variant'}`} />
+                <span
+                  className={`w-1.5 h-1.5 rounded-full shrink-0 ${
+                    isGroupActive ? 'bg-white' : 'border border-current bg-transparent'
+                  }`}
+                />
                 <span className="truncate">{shortLabel}</span>
               </button>
             );

@@ -9,7 +9,7 @@
     "prebuild": "npm run build:data",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "node --test tests/data_quality.test.mjs tests/regression_extractor.test.mjs tests/test_backup_exclusion.test.mjs tests/test_prune_and_selectors.test.mjs tests/test_gemini_model_chooser.test.mjs tests/test_total_dives.test.mjs tests/test_queue_history.test.mjs tests/lessons_quality.test.mjs scripts/test_part_a_invariants.mjs scripts/test_part_c_durability.mjs scripts/test_part_c_share_and_calendar.mjs scripts/test_part_d_backup.mjs scripts/reproduce_round2_leads.mjs",
+    "test": "node --test tests/data_quality.test.mjs tests/regression_extractor.test.mjs tests/test_backup_exclusion.test.mjs tests/test_prune_and_selectors.test.mjs tests/test_gemini_model_chooser.test.mjs tests/test_total_dives.test.mjs tests/test_queue_history.test.mjs tests/lessons_quality.test.mjs tests/test_review_queue_calendar.test.mjs scripts/test_part_a_invariants.mjs scripts/test_part_c_durability.mjs scripts/test_part_c_share_and_calendar.mjs scripts/test_part_d_backup.mjs scripts/reproduce_round2_leads.mjs",
     "test:e2e": "node scripts/run_all_e2e.mjs"
   },
   "dependencies": {

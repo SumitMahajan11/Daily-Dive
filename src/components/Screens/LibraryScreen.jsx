@@ -907,7 +907,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
             </div>
 
             <p className="text-sm font-semibold text-on-surface">
-              Drop notes or slides here<span className="hidden [@media(pointer:fine)]:inline">, or position documents directly onto the collection tray</span>
+              Drop files here or choose a file
             </p>
             <p className="text-xs text-on-surface-variant mt-1 whitespace-nowrap">
               PDF, slides, images, video
@@ -1074,7 +1074,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
 
         {/* Engine Notice & Privacy */}
         <div className="pt-2 border-t border-outline-variant/20 text-xs text-on-surface-variant">
-          <p>Files are read on your device. If you add a Gemini key, extracted text is sent to Google.</p>
+          <p>Files are read on your device.</p>
         </div>
 
         {/* Improve Results (Optional) Disclosure */}
@@ -1085,6 +1085,9 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           <div className="mt-3 p-3.5 rounded-xl bg-surface-container border border-outline-variant/30 space-y-2.5">
             <p className="text-xs text-on-surface leading-relaxed">
               Add your Google Gemini API key to enable enhanced topic structuring for complex manuscripts.
+            </p>
+            <p className="text-xs text-on-surface-variant leading-relaxed">
+              If you add a Gemini key, extracted text is sent to Google.
             </p>
             <div className="flex items-center gap-2">
               <input
