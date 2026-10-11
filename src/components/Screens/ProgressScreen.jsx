@@ -209,13 +209,15 @@ export const ProgressScreen = ({ onReviewTopic }) => {
             ) : (
               <>
                 <span className="font-display text-3xl font-bold text-on-surface">{activeStreak}</span>
-                <span className="text-xs text-on-surface-variant ml-1.5 font-medium">days</span>
+                <span className="text-xs text-on-surface-variant ml-1.5 font-medium">
+                  {activeStreak === 1 ? 'day' : 'days'}
+                </span>
               </>
             )}
           </div>
           {activeStreak > 0 && (
             <p className="text-xs text-on-surface-variant">
-              Best: {longestStreak} days
+              Best: {longestStreak} {longestStreak === 1 ? 'day' : 'days'}
             </p>
           )}
         </div>
@@ -263,13 +265,13 @@ export const ProgressScreen = ({ onReviewTopic }) => {
       </div>
 
       {/* ── SPACED REPETITION REVIEW QUEUE (FULL TITLES & AGES, NO ELLIPSIS) ── */}
-      {reviewQueue.length > 0 && (
-        <div className="journal-card p-4 sm:p-5 rounded-2xl border border-outline-variant/30 space-y-3">
-          <div className="flex items-center gap-2">
-            <Zap size={16} className="text-amber-500" />
-            <h2 className="font-display text-sm font-bold text-on-surface">Review queue</h2>
-          </div>
+      <div className="journal-card p-4 sm:p-5 rounded-2xl border border-outline-variant/30 space-y-3" data-testid="review-queue-section">
+        <div className="flex items-center gap-2">
+          <Zap size={16} className="text-amber-500" />
+          <h2 className="font-display text-sm font-bold text-on-surface">Review queue</h2>
+        </div>
 
+        {reviewQueue.length > 0 ? (
           <div className="space-y-2">
             {reviewQueue.map(topic => {
               const prog = userProgressMap[topic.id];
@@ -306,8 +308,12 @@ export const ProgressScreen = ({ onReviewTopic }) => {
               );
             })}
           </div>
-        </div>
-      )}
+        ) : (
+          <p className="text-xs text-on-surface-variant leading-relaxed">
+            Nothing to review yet. Topics you learn show up here the next day.
+          </p>
+        )}
+      </div>
 
       {/* ── COLLAPSED LEARNING HISTORY SECTION ── */}
       <details className="journal-card rounded-2xl p-4 sm:p-5 border border-outline-variant/30 group">

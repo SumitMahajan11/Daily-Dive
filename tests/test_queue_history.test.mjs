@@ -39,7 +39,7 @@ describe('Round 11: Review Queue vs History Invariants', () => {
   });
 
   // Helper simulating real DataContext operations
-  function simulateSpin(topic, state, nowDate = new Date()) {
+  function simulateSpin(topic, state, nowDate = new Date(Date.now() - 86400000 * 2)) {
     const nowIso = nowDate.toISOString();
     const curProgress = state.userProgressMap[topic.id] || { times_seen: 0, last_seen: null };
     state.userProgressMap[topic.id] = {
@@ -51,7 +51,7 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     return state;
   }
 
-  function simulateMarkLearned(topic, state, nowDate = new Date()) {
+  function simulateMarkLearned(topic, state, nowDate = new Date(Date.now() - 86400000 * 2)) {
     const nowIso = nowDate.toISOString();
     const curProgress = state.userProgressMap[topic.id] || { times_seen: 0, last_seen: null };
     state.userProgressMap[topic.id] = {
@@ -82,8 +82,8 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     const state = {
       topics: sampleTopics,
       userProgressMap: {
-        [sampleTopics[0].id]: { times_seen: 2, last_seen: new Date(Date.now() - 50000).toISOString() },
-        [sampleTopics[1].id]: { times_seen: 1, last_seen: new Date(Date.now() - 100000).toISOString() },
+        [sampleTopics[0].id]: { times_seen: 2, last_seen: new Date(Date.now() - 86400000 * 2).toISOString() },
+        [sampleTopics[1].id]: { times_seen: 1, last_seen: new Date(Date.now() - 86400000 * 3).toISOString() },
         [sampleTopics[2].id]: { times_seen: 0, last_seen: null }, // unstudied / times_seen = 0
         [sampleTopics[3].id]: { times_seen: 0, last_seen: null, learned: false } // zero times seen
       },
