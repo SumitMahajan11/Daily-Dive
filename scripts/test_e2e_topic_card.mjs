@@ -149,14 +149,14 @@ async function runTopicCardE2ETests() {
         await toast.waitFor({ state: 'visible', timeout: 5000 });
       }, 'Toast with "Link copied" must appear');
 
-      // Verify clipboard content
+      // Verify clipboard content matches /t/<id>
       const clipboardText = await page.evaluate(async () => {
         return await navigator.clipboard.readText();
       });
       assert.strictEqual(
         clipboardText,
-        `http://localhost:${port}/?topic=multi-head-self-attention`,
-        `Clipboard must contain full deeplink URL (got: ${clipboardText})`
+        `http://localhost:${port}/t/multi-head-self-attention`,
+        `Clipboard must contain full /t/<id> share URL (got: ${clipboardText})`
       );
       console.log(`  [PASS] Test (d): Toast "Link copied" shown and clipboard text verified (${clipboardText}).`);
 
