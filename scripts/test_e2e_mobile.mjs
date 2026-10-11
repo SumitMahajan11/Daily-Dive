@@ -325,7 +325,7 @@ async function runMobileE2ETests() {
     
     // Wait for post-spin card to appear
     const postSpinCard = page.locator('[data-testid="post-spin-topic-card"]');
-    await postSpinCard.waitFor({ state: 'visible', timeout: 10000 });
+    await postSpinCard.waitFor({ state: 'visible', timeout: 6000 });
     await page.waitForTimeout(500);
 
     // Locate the 3 action buttons

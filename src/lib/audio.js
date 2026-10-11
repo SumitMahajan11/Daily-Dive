@@ -5,7 +5,6 @@ class AudioSynthesizer {
   constructor() {
     this.ctx = null;
     this.soundEnabled = false;
-    this.activeSpinOscillators = [];
   }
 
   init() {
@@ -77,15 +76,14 @@ class AudioSynthesizer {
   /**
    * Progressive tick sound whose pitch rises as it approaches landing.
    * @param {number} progress Normalized completion (0.0 at start, 1.0 at target)
-   * @param {number|null} scheduledTime Optional AudioContext time in seconds
    */
-  playTick(progress = 0, scheduledTime = null) {
+  playTick(progress = 0) {
     if (!this.soundEnabled) return;
     try {
       this.init();
       if (!this.ctx) return;
 
-      const now = scheduledTime !== null ? scheduledTime : this.ctx.currentTime;
+      const now = this.ctx.currentTime;
       const clampedProgress = Math.min(1, Math.max(0, progress));
       // Pitch rises from 360Hz to 780Hz as the spin decelerates toward landing
       const freq = 360 + clampedProgress * 420;
@@ -103,46 +101,7 @@ class AudioSynthesizer {
       gain.connect(this.ctx.destination);
       osc.start(now);
       osc.stop(now + 0.035);
-
-      if (this.activeSpinOscillators) {
-        this.activeSpinOscillators.push(osc);
-      }
     } catch (e) {}
-  }
-
-  /**
-   * Schedules a precalculated list of tick times on the AudioContext timeline.
-   * @param {number[]} tickTimes Array of millisecond offsets from spin start
-   * @param {number|null} baseAudioTime Optional base AudioContext time in seconds
-   */
-  scheduleSpinTicks(tickTimes = [], baseAudioTime = null) {
-    if (!this.soundEnabled) return;
-    try {
-      this.init();
-      if (!this.ctx) return;
-      const start = baseAudioTime !== null ? baseAudioTime : this.ctx.currentTime;
-      this.activeSpinOscillators = [];
-      for (let i = 0; i < tickTimes.length; i++) {
-        const tSec = start + (tickTimes[i] / 1000);
-        const progress = (i + 1) / tickTimes.length;
-        this.playTick(progress, tSec);
-      }
-    } catch (e) {}
-  }
-
-  /**
-   * Cancels all scheduled spin audio oscillators if the user leaves the screen.
-   */
-  cancelSpinAudio() {
-    if (this.activeSpinOscillators && this.activeSpinOscillators.length > 0) {
-      for (const osc of this.activeSpinOscillators) {
-        try {
-          osc.stop();
-          osc.disconnect();
-        } catch (e) {}
-      }
-      this.activeSpinOscillators = [];
-    }
   }
 
   /**
