@@ -25,7 +25,8 @@ const suites = [
   'scripts/test_e2e_extract_review.mjs',
   'scripts/test_spin_timing.mjs',
   'scripts/test_spin_visual.mjs',
-  'scripts/test_spin_finish.mjs'
+  'scripts/test_spin_finish.mjs',
+  'scripts/test_single_page.mjs'
 ];
 
 console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');

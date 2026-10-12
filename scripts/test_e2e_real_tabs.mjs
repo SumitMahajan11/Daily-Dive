@@ -75,9 +75,9 @@ async function runRealTabsE2E() {
       });
 
       // ─────────────────────────────────────────────────────────────
-      // a) Library screen shows no Spin button
+      // a) Library open: #spin, #progress and #library all exist, and #library is scrolled into view (top within 80 px)
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST a] Verifying Library screen shows NO Spin button...');
+      console.log('\n[TEST a] Verifying Library open: all 3 sections exist and #library is scrolled into view...');
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
       await page.waitForSelector('#spin');
 
@@ -85,35 +85,40 @@ async function runRealTabsE2E() {
       const libraryTabBtn = page.locator('button[data-nav-id="library"]:visible').first();
       await libraryTabBtn.click();
       await page.waitForSelector('#library', { state: 'visible', timeout: 5000 });
+      await page.waitForTimeout(600);
 
-      // Check #spin is absent from DOM
+      // Check all 3 sections exist in DOM and #library is scrolled into view
       const spinSectionCount = await page.locator('#spin').count();
-      assert.strictEqual(
-        spinSectionCount,
-        0,
-        `Expected #spin section to NOT be in the DOM when on Library screen, found count: ${spinSectionCount}`
-      );
+      const progressSectionCount = await page.locator('#progress').count();
+      const librarySectionCount = await page.locator('#library').count();
+      assert.strictEqual(spinSectionCount, 1, 'Expected #spin section to exist in DOM');
+      assert.strictEqual(progressSectionCount, 1, 'Expected #progress section to exist in DOM');
+      assert.strictEqual(librarySectionCount, 1, 'Expected #library section to exist in DOM');
 
-      // Check no spin button exists
-      const primarySpinCount = await page.locator('button[data-testid="primary-spin-button"]').count();
-      const allSpinButtonsCount = await page.locator('#spin button').count();
-      assert.strictEqual(primarySpinCount, 0, 'No primary spin button must exist on Library screen');
-      assert.strictEqual(allSpinButtonsCount, 0, 'No spin section buttons must exist on Library screen');
-      console.log('  [PASS] (a) Library screen is isolated: #spin absent, no spin button in DOM.');
+      const libraryTop = await page.evaluate(() => {
+        const el = document.getElementById('library');
+        return el ? el.getBoundingClientRect().top : null;
+      });
+      assert.ok(libraryTop !== null && libraryTop >= -20 && libraryTop <= 80, `Library section top must be within 80px, got: ${libraryTop}`);
+      console.log('  [PASS] (a) Library open: #spin, #progress and #library all exist, and #library is scrolled into view.');
 
       // ─────────────────────────────────────────────────────────────
-      // b) Browser Back returns to the previous screen
+      // b) Browser Back returns to the previous screen (scrolled back to #spin)
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST b] Verifying Browser Back returns to the previous screen...');
+      console.log('\n[TEST b] Verifying Browser Back returns to the previous screen (scrolled to #spin)...');
       // We are currently on Library (#/library). Now click browser Back:
       await page.goBack();
       await page.waitForSelector('#spin', { state: 'visible', timeout: 5000 });
+      await page.waitForTimeout(600);
 
       const spinVisibleAfterBack = await page.locator('#spin').isVisible();
-      const libraryCountAfterBack = await page.locator('#library').count();
+      const spinTopAfterBack = await page.evaluate(() => {
+        const el = document.getElementById('spin');
+        return el ? el.getBoundingClientRect().top : null;
+      });
       assert.strictEqual(spinVisibleAfterBack, true, 'Browser Back must restore the Spin screen');
-      assert.strictEqual(libraryCountAfterBack, 0, 'Library screen must be unmounted after navigating Back to Spin');
-      console.log('  [PASS] (b) Browser Back returned successfully from Library to Spin screen.');
+      assert.ok(spinTopAfterBack !== null && spinTopAfterBack >= -20 && spinTopAfterBack <= 80, `Spin section top must be within 80px after Back, got: ${spinTopAfterBack}`);
+      console.log('  [PASS] (b) Browser Back returned successfully: page is scrolled back to #spin.');
 
       // ─────────────────────────────────────────────────────────────
       // c) Refresh on the Library screen stays on Library
@@ -126,32 +131,34 @@ async function runRealTabsE2E() {
       // Refresh / reload the page
       await page.reload({ waitUntil: 'networkidle' });
       await page.waitForSelector('#library', { state: 'visible', timeout: 5000 });
+      await page.waitForTimeout(600);
 
       const libraryVisibleAfterReload = await page.locator('#library').isVisible();
-      const spinCountAfterReload = await page.locator('#spin').count();
+      const libraryTopAfterReload = await page.evaluate(() => {
+        const el = document.getElementById('library');
+        return el ? el.getBoundingClientRect().top : null;
+      });
       const currentUrl = page.url();
       assert.strictEqual(libraryVisibleAfterReload, true, 'Library screen must remain visible after page reload');
-      assert.strictEqual(spinCountAfterReload, 0, '#spin section must NOT be rendered after reload on Library');
+      assert.ok(libraryTopAfterReload !== null && libraryTopAfterReload >= -20 && libraryTopAfterReload <= 80, `Library section top must be within 80px after reload, got: ${libraryTopAfterReload}`);
       assert.ok(currentUrl.includes('library'), `URL after reload must contain "library", got: ${currentUrl}`);
       console.log('  [PASS] (c) Refresh on Library screen maintained Library view and URL.');
 
       // ─────────────────────────────────────────────────────────────
-      // d) Space on the Library screen does NOT spin
+      // d) Space on the Library screen (outside an input): a spin starts
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST d] Verifying Space key on Library screen does NOT spin...');
-      // While on Library screen, press Spacebar
+      console.log('\n[TEST d] Verifying Space key on Library screen starts a spin...');
+      // While on Library screen (outside an input), press Spacebar
       await page.keyboard.press('Space');
-      await page.waitForTimeout(500);
+      await page.waitForTimeout(400);
 
-      // Verify we are still exclusively on Library, no spin card or spin wheel appeared
-      const libraryStillVisible = await page.locator('#library').isVisible();
-      const spinCountAfterSpace = await page.locator('#spin').count();
-      const topicCardCountAfterSpace = await page.locator('[data-testid="post-spin-topic-card"]').count();
-
-      assert.strictEqual(libraryStillVisible, true, 'Library screen must remain open after pressing Space');
-      assert.strictEqual(spinCountAfterSpace, 0, 'Spin section must NOT mount when Space is pressed on Library');
-      assert.strictEqual(topicCardCountAfterSpace, 0, 'No topic card must appear when Space is pressed on Library');
-      console.log('  [PASS] (d) Space key on Library screen did NOT trigger spin.');
+      const isSpinningAfterSpace = await page.evaluate(() => {
+        const spinBtn = document.querySelector('button[data-testid="primary-spin-button"]');
+        return spinBtn ? spinBtn.disabled : false;
+      });
+      assert.strictEqual(isSpinningAfterSpace, true, 'Space on Library (outside an input) must start a spin');
+      await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 12000 });
+      console.log('  [PASS] (d) Space on Library (outside an input) successfully started a spin.');
 
       // ─────────────────────────────────────────────────────────────
       // e) /t/<id> still opens the topic
@@ -165,11 +172,14 @@ async function runRealTabsE2E() {
       const topicCardVisible = await page.locator('[data-testid="post-spin-topic-card"]').isVisible();
       const topicHeading = await page.locator('[data-testid="post-spin-topic-card"] h2, #spin article h2').first().innerText();
       const spinVisibleOnDeeplink = await page.locator('#spin').isVisible();
-      const libraryCountOnDeeplink = await page.locator('#library').count();
+      const spinTopOnDeeplink = await page.evaluate(() => {
+        const el = document.getElementById('spin');
+        return el ? el.getBoundingClientRect().top : null;
+      });
 
       assert.strictEqual(topicCardVisible, true, `Topic card must be visible when opening /t/${testTopicId}`);
       assert.strictEqual(spinVisibleOnDeeplink, true, 'Spin screen must contain the topic card');
-      assert.strictEqual(libraryCountOnDeeplink, 0, 'Library must not be mounted on /t/<id>');
+      assert.ok(spinTopOnDeeplink !== null && spinTopOnDeeplink >= -20 && spinTopOnDeeplink <= 80, `Spin section must be scrolled to top on /t/<id>, got: ${spinTopOnDeeplink}`);
       assert.ok(topicHeading.includes('Scaled Dot-Product'), `Expected heading to contain "Scaled Dot-Product", got: "${topicHeading}"`);
       console.log(`  [PASS] (e) Deeplink /t/${testTopicId} opened topic card "${topicHeading}".`);
 
