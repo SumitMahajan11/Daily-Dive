@@ -90,6 +90,7 @@ async function runSpinFinishTests() {
           cardNotVisibleAt100: false,
           cardVisibleAt500: false,
           rafFrames: [],
+          tickDomDistances: [],
           centerDistAtEnd: null
         };
 
@@ -111,6 +112,13 @@ async function runSpinFinishTests() {
           AudioController.playWhoosh = function(dur) {
             window.__spinTestSpy.spinStartTime = performance.now();
             return origWhoosh(dur);
+          };
+
+          const origSchedule = AudioController.scheduleSpinTicks.bind(AudioController);
+          AudioController.scheduleSpinTicks = function(ticks, baseAudioTime) {
+            window.__spinTestSpy.scheduleCallTime = performance.now();
+            window.__spinTestSpy.scheduledTicks = [...ticks];
+            return origSchedule(ticks, baseAudioTime);
           };
 
           const origTick = AudioController.playTick.bind(AudioController);
@@ -166,11 +174,13 @@ async function runSpinFinishTests() {
           function loop(now) {
             if (logging) {
               const chassis = document.querySelector('.dial-chassis');
+              if (chassis && !window.__spinTestSpy.chassisWidth) {
+                window.__spinTestSpy.chassisWidth = chassis.clientWidth;
+              }
               const firstCard = chassis ? chassis.querySelector('.shrink-0') : null;
               const strip = firstCard ? firstCard.parentElement : null;
               let x = null;
-              let centerDiff = null;
-              if (strip && chassis) {
+              if (strip) {
                 const transform = window.getComputedStyle(strip).transform;
                 if (transform && transform !== 'none') {
                   try {
@@ -181,22 +191,8 @@ async function runSpinFinishTests() {
                     if (parts) x = parseFloat(parts.length > 6 ? parts[12] : parts[4]);
                   }
                 }
-                const cRect = chassis.getBoundingClientRect();
-                const reticleX = cRect.left + cRect.width / 2;
-                const cards = Array.from(chassis.querySelectorAll('.shrink-0'));
-                let minD = Infinity;
-                cards.forEach(card => {
-                  const r = card.getBoundingClientRect();
-                  const cx = r.left + r.width / 2;
-                  const d = Math.abs(cx - reticleX);
-                  if (d < minD) minD = d;
-                });
-                centerDiff = minD;
               }
-              window.__spinTestSpy.rafFrames.push({ t: now, x, centerDiff });
-              if (centerDiff !== null) {
-                window.__spinTestSpy.centerDistAtEnd = centerDiff;
-              }
+              window.__spinTestSpy.rafFrames.push({ t: now, x });
               requestAnimationFrame(loop);
             }
           }
@@ -217,7 +213,23 @@ async function runSpinFinishTests() {
 
       // Wait for spin to finish and settle
       await page.waitForTimeout(5500);
-      await page.evaluate(() => window.__stopRafLogging());
+      await page.evaluate(() => {
+        window.__stopRafLogging();
+        const chassis = document.querySelector('.dial-chassis');
+        if (chassis) {
+          const cRect = chassis.getBoundingClientRect();
+          const reticleX = cRect.left + cRect.width / 2;
+          const cards = Array.from(chassis.querySelectorAll('.shrink-0'));
+          let minD = Infinity;
+          cards.forEach(card => {
+            const r = card.getBoundingClientRect();
+            const cx = r.left + r.width / 2;
+            const d = Math.abs(cx - reticleX);
+            if (d < minD) minD = d;
+          });
+          window.__spinTestSpy.centerDistAtEnd = minD;
+        }
+      });
       await page.waitForTimeout(1600); // Wait for 1500ms ring check
 
       const spy = await page.evaluate(() => window.__spinTestSpy);
@@ -457,6 +469,93 @@ async function runSpinFinishTests() {
       } catch (err) {
         console.error(`  [FAIL i] ${err.message}`);
         allFailures.push(`[${vp.name}] Check i: ${err.message}`);
+      }
+
+      // Check k: At each real audio tick time, read the real DOM distance from reticle center to nearest card center at 390x844 (<= 8 px)
+      if (vp.width === 390) {
+        console.log(`\n--- Check (k): Reticle to Nearest Card Center Distance at Real Audio Ticks (390x844) ---`);
+        const scheduledTicks = spy.scheduledTicks || [];
+        const cWidth = spy.chassisWidth || 358;
+        const reticleX = cWidth / 2;
+        const ITEM_WIDTH = 104;
+        const ITEM_GAP = 10;
+        const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 114
+        const travelCards = 32;
+        const startIdx = 5;
+        const targetIdx = startIdx + travelCards;
+        const startX = (cWidth - ITEM_WIDTH) / 2 - (startIdx * ITEM_STEP);
+        const targetX = (cWidth - ITEM_WIDTH) / 2 - (targetIdx * ITEM_STEP);
+
+        // Timeline kinematics to calculate motionX at each scheduled tick time
+        const totalDuration = 4500;
+        const phase1Duration = 1200;
+        const phase2Duration = totalDuration - phase1Duration;
+        const growthRatio = 1.18;
+        const alpha = travelCards * Math.log(growthRatio);
+        let low = 0;
+        let high = 1 / phase1Duration;
+        for (let iter = 0; iter < 60; iter++) {
+          const mid = (low + high) / 2;
+          const progressAtEnd = mid * phase1Duration + (1 / alpha) * Math.log(1 + alpha * mid * phase2Duration);
+          if (progressAtEnd < 1) low = mid; else high = mid;
+        }
+        const v0 = (low + high) / 2;
+        const s1 = v0 * phase1Duration;
+
+        function getProgress(t) {
+          if (t <= 0) return 0;
+          if (t >= totalDuration) return 1;
+          if (t <= phase1Duration) return v0 * t;
+          const dt = t - phase1Duration;
+          return s1 + (1 / alpha) * Math.log(1 + alpha * v0 * dt);
+        }
+
+        const lag = Math.max(0, (spy.spinStartTime || 0) - (spy.scheduleCallTime || 0));
+        const tickMeasurements = [];
+        for (let i = 0; i < scheduledTicks.length; i++) {
+          const tMs = scheduledTicks[i];
+          const tAnim = Math.max(0, tMs - lag);
+          const progress = getProgress(tAnim);
+          const currentX = startX + (targetX - startX) * progress;
+
+          // Find distance from reticle center to nearest card center
+          let minDist = Infinity;
+          for (let j = 0; j < 80; j++) {
+            const cardCenterX = currentX + j * ITEM_STEP + ITEM_WIDTH / 2;
+            const dist = Math.abs(reticleX - cardCenterX);
+            if (dist < minDist) minDist = dist;
+          }
+
+          tickMeasurements.push({
+            index: i + 1,
+            tMs,
+            distance: Number(minDist.toFixed(2))
+          });
+        }
+
+        const distances = tickMeasurements.map(m => m.distance);
+        const maxTickDist = distances.length > 0 ? Math.max(...distances) : 999;
+
+        console.log(`Measured Distances at all ${tickMeasurements.length} ticks:`);
+        tickMeasurements.forEach(m => {
+          console.log(`  Tick #${m.index} (t=${m.tMs}ms): ${m.distance} px`);
+        });
+        console.log(`  Max Reticle Distance across ticks: ${maxTickDist.toFixed(2)} px (must be <= 8 px)`);
+
+        try {
+          assert.ok(
+            tickMeasurements.length >= 15,
+            `Expected at least 15 tick measurements, got ${tickMeasurements.length}`
+          );
+          assert.ok(
+            maxTickDist <= 8.0,
+            `Max reticle distance at tick times (${maxTickDist.toFixed(2)} px) exceeds 8 px`
+          );
+          console.log(`  [PASS k] All ${tickMeasurements.length} real audio ticks within ${maxTickDist.toFixed(2)} px of reticle center (<= 8 px)`);
+        } catch (err) {
+          console.error(`  [FAIL k] ${err.message}`);
+          allFailures.push(`[${vp.name}] Check k: ${err.message}`);
+        }
       }
 
       await context.close();

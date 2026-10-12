@@ -91,7 +91,7 @@ export const DataProvider = ({ children }) => {
       enabled_categories: STARTER_ENABLED_CATEGORIES,
       reminder_time: '09:00 AM',
       notifications_enabled: false,
-      sound_enabled: true,
+      sound_enabled: false,
       haptics_enabled: false
     };
   });
