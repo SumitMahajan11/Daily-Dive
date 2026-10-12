@@ -25,17 +25,29 @@ export const SPIN_PHASE2_DURATION_MS = SPIN_TOTAL_DURATION_MS - SPIN_PHASE1_DURA
 export function createSpinTimeline(numCards = 32, {
   totalDuration = SPIN_TOTAL_DURATION_MS,
   phase1Duration = SPIN_PHASE1_DURATION_MS,
-  decelRatio = 5.5,
-  p = 2.0
+  growthRatio = 1.18
 } = {}) {
   const phase2Duration = totalDuration - phase1Duration;
-  const R = decelRatio;
-  const denom = phase1Duration + phase2Duration * (1 / R + (1 - 1 / R) / (p + 1));
-  const v0 = 1 / denom; // normalized speed per ms in Phase 1
-  const vend = v0 / R;
+  const alpha = numCards * Math.log(growthRatio);
+
+  // Solve v0 * phase1Duration + (1 / alpha) * Math.log(1 + alpha * v0 * phase2Duration) = 1
+  let low = 0;
+  let high = 1 / phase1Duration;
+  for (let iter = 0; iter < 60; iter++) {
+    const mid = (low + high) / 2;
+    const progressAtEnd = mid * phase1Duration + (1 / alpha) * Math.log(1 + alpha * mid * phase2Duration);
+    if (progressAtEnd < 1) {
+      low = mid;
+    } else {
+      high = mid;
+    }
+  }
+  const v0 = (low + high) / 2; // normalized speed per ms in Phase 1
+  const s1 = v0 * phase1Duration;
 
   /**
    * Normalized progress in [0, 1] as a function of elapsed milliseconds.
+   * Continuous at phase1Duration (v = v0) with smooth geometric gap deceleration.
    */
   function getProgress(t) {
     if (t <= 0) return 0;
@@ -43,27 +55,21 @@ export function createSpinTimeline(numCards = 32, {
     if (t <= phase1Duration) {
       return v0 * t;
     }
-    const tau = (t - phase1Duration) / phase2Duration;
-    const s1 = v0 * phase1Duration;
-    const s2 = phase2Duration * (vend * tau + ((v0 - vend) / (p + 1)) * (1 - Math.pow(1 - tau, p + 1)));
-    return s1 + s2;
+    const dt = t - phase1Duration;
+    return s1 + (1 / alpha) * Math.log(1 + alpha * v0 * dt);
   }
 
   // Calculate crossing time for each item boundary (ticks)
   const tickTimes = [];
   for (let k = 1; k < numCards; k++) {
     const targetProgress = k / numCards;
-    let low = 0;
-    let high = totalDuration;
-    for (let iter = 0; iter < 45; iter++) {
-      const mid = (low + high) / 2;
-      if (getProgress(mid) < targetProgress) {
-        low = mid;
-      } else {
-        high = mid;
-      }
+    let t;
+    if (targetProgress <= s1) {
+      t = targetProgress / v0;
+    } else {
+      t = phase1Duration + (Math.exp(alpha * (targetProgress - s1)) - 1) / (alpha * v0);
     }
-    tickTimes.push(Number(low.toFixed(1)));
+    tickTimes.push(Number(t.toFixed(1)));
   }
 
   const gaps = [];

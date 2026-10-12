@@ -265,13 +265,15 @@ async function runSpinFinishTests() {
       }
 
       const vAt1200 = p2Speeds[0]?.v || 1.0;
-      const settleFrames = speeds.filter(s => s.t >= totalSpinDuration);
-      const lastFrameSpeed = settleFrames.length > 0 ? settleFrames[settleFrames.length - 1].v : (speeds[speeds.length - 1]?.v || 0);
-      const finalSpeedPct = (lastFrameSpeed / vAt1200) * 100;
+      // Last moving frame before stop (while wheel is actively moving in Phase 2)
+      const movingPhase2Frames = p2Speeds.filter(s => s.v > 0.01);
+      const lastMovingFrame = movingPhase2Frames.length > 0 ? movingPhase2Frames[movingPhase2Frames.length - 1] : p2Speeds[p2Speeds.length - 1];
+      const lastMovingSpeed = lastMovingFrame ? lastMovingFrame.v : 0;
+      const finalSpeedPct = (lastMovingSpeed / vAt1200) * 100;
 
       console.log(`Measured Speed Dynamics after Phase 1:`);
       console.log(`  Speed at 1200 ms: ${vAt1200.toFixed(4)} px/ms`);
-      console.log(`  Final Speed at end: ${lastFrameSpeed.toFixed(4)} px/ms (${finalSpeedPct.toFixed(2)}% of 1200ms speed)`);
+      console.log(`  Speed at last moving frame: ${lastMovingSpeed.toFixed(4)} px/ms (${finalSpeedPct.toFixed(2)}% of 1200ms speed)`);
       console.log(`  Largest Speed Increase: ${maxIncrease.toFixed(2)}%`);
       console.log(`  Largest Speed Drop (excl. last 100ms): ${maxDrop.toFixed(2)}%`);
 
@@ -293,16 +295,28 @@ async function runSpinFinishTests() {
         allFailures.push(`[${vp.name}] Check a: ${err.message}`);
       }
 
-      // Check b: Overall speed at end must be below 15% of speed at 1200ms
+      // Check b: Speed at last moving frame before stop must be below 15% of speed at 1200ms
       try {
         assert.ok(
-          finalSpeedPct <= 15.0,
-          `Final speed is ${finalSpeedPct.toFixed(2)}% of speed at 1200ms (must be < 15%)`
+          finalSpeedPct < 15.0,
+          `Speed at last moving frame is ${finalSpeedPct.toFixed(2)}% of speed at 1200ms (must be < 15%)`
         );
-        console.log(`  [PASS b] Final speed is ${finalSpeedPct.toFixed(2)}% of speed at 1200ms (< 15%)`);
+        console.log(`  [PASS b] Speed at last moving frame: ${lastMovingSpeed.toFixed(4)} px/ms (${finalSpeedPct.toFixed(2)}% of 1200ms speed, < 15%)`);
       } catch (err) {
         console.error(`  [FAIL b] ${err.message}`);
         allFailures.push(`[${vp.name}] Check b: ${err.message}`);
+      }
+
+      // Check drop: Largest frame-to-frame speed drop outside last 100ms <= 30%
+      try {
+        assert.ok(
+          maxDrop <= 30.0,
+          `Largest frame-to-frame speed drop outside last 100ms is ${maxDrop.toFixed(2)}% (must be <= 30%)`
+        );
+        console.log(`  [PASS drop] Largest frame-to-frame speed drop outside last 100ms: ${maxDrop.toFixed(2)}% (<= 30%)`);
+      } catch (err) {
+        console.error(`  [FAIL drop] ${err.message}`);
+        allFailures.push(`[${vp.name}] Check drop: ${err.message}`);
       }
 
       // Compute tick gaps
@@ -324,8 +338,16 @@ async function runSpinFinishTests() {
 
       const lastTickTime = spy.tickTimes[spy.tickTimes.length - 1];
       const lastTickGap = gaps[gaps.length - 1];
-      const stopDuration = Number(((spy.landingTime - spy.spinStartTime) - lastTickTime).toFixed(1));
+      const stopTime = Number((spy.landingTime - spy.spinStartTime).toFixed(1));
+      const stopDuration = Number((stopTime - lastTickTime).toFixed(1));
       const stopRatio = Number((stopDuration / lastTickGap).toFixed(3));
+
+      console.log(`\n--- Single-Run Timing Check (${vp.name}) ---`);
+      console.log(`  Tick 31 Timestamp:      ${lastTickTime.toFixed(1)} ms`);
+      console.log(`  Stop Timestamp:         ${stopTime.toFixed(1)} ms`);
+      console.log(`  Difference:             ${stopDuration.toFixed(1)} ms`);
+      console.log(`  Last Gap:               ${lastTickGap.toFixed(1)} ms`);
+      console.log(`  Ratio (Diff / LastGap): ${stopRatio}x`);
 
       console.log(`\nTick Gaps in Phase 2 (ms):`, p2Gaps);
       console.log(`Phase 2 Tick Gap Ratios:`, gapRatios);
