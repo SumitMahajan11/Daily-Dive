@@ -263,21 +263,25 @@ async function runSpinVisualTests() {
         // Timeline kinematics to calculate motionX at each scheduled tick time
         const totalDuration = 4500;
         const phase1Duration = 1200;
-        const phase2Duration = 3300;
-        const R = 5.5;
-        const p = 2.0;
-        const denom = phase1Duration + phase2Duration * (1 / R + (1 - 1 / R) / (p + 1));
-        const v0 = 1 / denom;
-        const vend = v0 / R;
+        const phase2Duration = totalDuration - phase1Duration;
+        const growthRatio = 1.18;
+        const alpha = travelCards * Math.log(growthRatio);
+        let low = 0;
+        let high = 1 / phase1Duration;
+        for (let iter = 0; iter < 60; iter++) {
+          const mid = (low + high) / 2;
+          const progressAtEnd = mid * phase1Duration + (1 / alpha) * Math.log(1 + alpha * mid * phase2Duration);
+          if (progressAtEnd < 1) low = mid; else high = mid;
+        }
+        const v0 = (low + high) / 2;
+        const s1 = v0 * phase1Duration;
 
         function getProgress(t) {
           if (t <= 0) return 0;
           if (t >= totalDuration) return 1;
           if (t <= phase1Duration) return v0 * t;
-          const tau = (t - phase1Duration) / phase2Duration;
-          const s1 = v0 * phase1Duration;
-          const s2 = phase2Duration * (vend * tau + ((v0 - vend) / (p + 1)) * (1 - Math.pow(1 - tau, p + 1)));
-          return s1 + s2;
+          const dt = t - phase1Duration;
+          return s1 + (1 / alpha) * Math.log(1 + alpha * v0 * dt);
         }
 
         let maxErr = 0;

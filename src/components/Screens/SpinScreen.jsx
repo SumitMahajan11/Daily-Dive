@@ -82,7 +82,7 @@ const ITEM_STEP = ITEM_WIDTH + ITEM_GAP; // 114px
 const SPIN_DURATION_MS = SPIN_TOTAL_DURATION_MS; // 4500ms
 const SPIN_EASING = [0.12, 0.98, 0.24, 1.0];
 
-const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarget }) => {
+const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarget, isLandingScale }) => {
   const Icon = item.icon;
   const cardCenter = idx * ITEM_STEP + ITEM_WIDTH / 2;
 
@@ -97,7 +97,9 @@ const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarge
       style={{ width: `${ITEM_WIDTH}px`, scale }}
       className="shrink-0 flex items-center justify-center select-none"
     >
-      <div
+      <motion.div
+        animate={isLandingScale ? { scale: [1, 1.06, 1] } : { scale: 1 }}
+        transition={isLandingScale ? { duration: 0.4, ease: 'easeInOut' } : { duration: 0 }}
         className={`w-full h-20 rounded-2xl p-2 flex flex-col justify-between transition-all duration-300 relative overflow-hidden ${
           isSelectedTarget
             ? 'bg-surface-container-high border-2 border-primary ring-2 ring-primary/20 shadow-md'
@@ -118,7 +120,7 @@ const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarge
             {item.title || item.shortLabel}
           </div>
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 };
@@ -245,6 +247,9 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   const [showResult, setShowResult] = useState(false);
   const [isLanded, setIsLanded] = useState(false);
   const [showLandingHalo, setShowLandingHalo] = useState(false);
+  const [showLandingRing, setShowLandingRing] = useState(false);
+  const [isLandingScale, setIsLandingScale] = useState(false);
+  const [isReticleFlash, setIsReticleFlash] = useState(false);
   const [activeAccentColor, setActiveAccentColor] = useState('#e06841');
 
   const cWidth = containerRef.current ? containerRef.current.clientWidth : containerWidth;
@@ -262,12 +267,21 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   const spinStartTimeRef = useRef(0);
   const isSpinningRef = useRef(false);
   const animFrameRef = useRef(null);
+  const timersRef = useRef([]);
+
+  const safeSetTimeout = useCallback((fn, delay) => {
+    const id = setTimeout(fn, delay);
+    timersRef.current.push(id);
+    return id;
+  }, []);
 
   useEffect(() => {
     return () => {
       if (animFrameRef.current) {
         cancelAnimationFrame(animFrameRef.current);
       }
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
       AudioController.cancelSpinAudio();
     };
   }, []);
@@ -386,10 +400,12 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       AudioController.playLanding();
       setActiveAccentColor(landedDef?.accentColor || '#e06841');
       setShowLandingHalo(true);
-      setTimeout(() => setShowLandingHalo(false), 400);
+      safeSetTimeout(() => setShowLandingHalo(false), 400);
       return;
     }
 
+    timersRef.current.forEach(clearTimeout);
+    timersRef.current = [];
     isSpinningRef.current = true;
     spinStartTimeRef.current = Date.now();
 
@@ -397,52 +413,96 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     setShowResult(false);
     setIsLanded(false);
     setShowLandingHalo(false);
+    setShowLandingRing(false);
+    setIsLandingScale(false);
+    setIsReticleFlash(false);
 
     setReelIndex(startIdx);
 
     const timeline = createSpinTimeline(travelCards);
 
-    AudioController.playWhoosh(SPIN_DURATION_MS);
-    AudioController.scheduleSpinTicks(timeline.tickTimes);
-
     const currentCWidth = containerRef.current ? containerRef.current.clientWidth : containerWidth;
     const startX = (currentCWidth - ITEM_WIDTH) / 2 - (startIdx * ITEM_STEP);
     const targetX = (currentCWidth - ITEM_WIDTH) / 2 - (targetIdx * ITEM_STEP);
     motionX.set(startX);
-    const startTime = performance.now();
 
     if (animFrameRef.current) {
       cancelAnimationFrame(animFrameRef.current);
     }
 
+    let startTime = null;
+
     const step = (now) => {
+      if (startTime === null) {
+        startTime = now;
+        AudioController.playWhoosh(SPIN_DURATION_MS);
+        AudioController.scheduleSpinTicks(timeline.tickTimes);
+      }
       const elapsed = now - startTime;
       if (elapsed >= SPIN_DURATION_MS) {
         motionX.set(targetX);
         setReelIndex(targetIdx);
-        isSpinningRef.current = false;
-        setIsSpinning(false);
-        setCurrentTopic(selected);
-        setShowResult(true);
         setIsLanded(true);
 
+        // a) playLanding() starts at that moment (not later)
         AudioController.playLanding();
         setActiveAccentColor(landedDef?.accentColor || '#e06841');
         setShowLandingHalo(true);
-        setTimeout(() => setShowLandingHalo(false), 800);
+        safeSetTimeout(() => setShowLandingHalo(false), 800);
 
-        try {
-          confetti({
-            particleCount: 40,
-            spread: 60,
-            origin: { y: 0.6 },
-            colors: ['#e06841', '#f59e0b', '#94a88f', '#ff8c69']
-          });
-        } catch (e) {}
+        // b, c, d, e: Landing effects (only if reduced motion is off)
+        if (!isReduced) {
+          // c) A ring of the primary color expands from reticle center and fades out over ~600ms
+          setShowLandingRing(true);
+          safeSetTimeout(() => setShowLandingRing(false), 650);
 
-        if (userSettings?.haptics_enabled && navigator.vibrate) {
-          try { navigator.vibrate([30, 50, 90]); } catch (e) {}
+          // b) Chosen card scales 1 -> 1.06 -> 1 over ~400ms
+          setIsLandingScale(true);
+          safeSetTimeout(() => setIsLandingScale(false), 450);
+
+          // d) Reticle diamonds flash brighter for ~300ms
+          setIsReticleFlash(true);
+          safeSetTimeout(() => setIsReticleFlash(false), 300);
+
+          // e) navigator.vibrate(20), only if navigator.vibrate exists and reduced motion is off
+          if (typeof navigator !== 'undefined' && typeof navigator.vibrate === 'function') {
+            try { navigator.vibrate(20); } catch (e) {}
+          }
         }
+
+        // Step 3: Settle at the stop over about 300ms
+        const settleStartTime = performance.now();
+        const settleDuration = 300;
+        const travelDir = targetX < startX ? -1 : 1;
+        const settleC = 10 / 0.4752; // Peak amplitude exactly 10px
+
+        const settleStep = (settleNow) => {
+          const settleElapsed = settleNow - settleStartTime;
+          if (settleElapsed >= settleDuration) {
+            motionX.set(targetX);
+            isSpinningRef.current = false;
+            setIsSpinning(false);
+            setCurrentTopic(selected);
+            setShowResult(true);
+
+            // Confetti and topic card appear after the settle ends
+            try {
+              confetti({
+                particleCount: 40,
+                spread: 60,
+                origin: { y: 0.6 },
+                colors: ['#e06841', '#f59e0b', '#94a88f', '#ff8c69']
+              });
+            } catch (e) {}
+          } else {
+            const tau = settleElapsed / settleDuration;
+            const delta = settleC * Math.sin(Math.PI * tau) * Math.exp(-1.8 * tau);
+            motionX.set(targetX + travelDir * delta);
+            animFrameRef.current = requestAnimationFrame(settleStep);
+          }
+        };
+
+        animFrameRef.current = requestAnimationFrame(settleStep);
       } else {
         const progress = timeline.getProgress(elapsed);
         motionX.set(startX + (targetX - startX) * progress);
@@ -577,7 +637,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
             {/* Center Precision Target Aperture */}
             <div className="absolute inset-y-0 left-1/2 -translate-x-1/2 z-30 flex flex-col items-center justify-between pointer-events-none w-8">
               <div className="flex flex-col items-center -mt-0.5 filter drop-shadow">
-                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
+                <div className={`w-3 h-3 bg-primary rotate-45 border-2 border-surface transition-all duration-300 ${isReticleFlash ? 'brightness-150 scale-125 shadow-[0_0_16px_rgba(181,80,46,1)]' : 'shadow-[0_0_8px_rgba(var(--color-primary),0.8)]'}`} />
                 <div className="w-[1.5px] h-2 bg-primary" />
               </div>
 
@@ -589,9 +649,25 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
 
               <div className="flex flex-col items-center -mb-0.5 filter drop-shadow">
                 <div className="w-[1.5px] h-2 bg-primary" />
-                <div className="w-3 h-3 bg-primary rotate-45 border-2 border-surface shadow-[0_0_8px_rgba(var(--color-primary),0.8)]" />
+                <div className={`w-3 h-3 bg-primary rotate-45 border-2 border-surface transition-all duration-300 ${isReticleFlash ? 'brightness-150 scale-125 shadow-[0_0_16px_rgba(181,80,46,1)]' : 'shadow-[0_0_8px_rgba(var(--color-primary),0.8)]'}`} />
               </div>
             </div>
+
+            {/* Expanding Landing Ring (Primary Color rgb 181 80 46) */}
+            <AnimatePresence>
+              {showLandingRing && (
+                <motion.div
+                  key="landing-ring"
+                  data-testid="landing-ring"
+                  initial={{ width: 16, height: 16, opacity: 1 }}
+                  animate={{ width: 140, height: 140, opacity: 0 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.6, ease: 'easeOut' }}
+                  style={{ borderColor: 'rgb(181, 80, 46)' }}
+                  className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 rounded-full border-2 pointer-events-none z-25"
+                />
+              )}
+            </AnimatePresence>
 
             {/* Vignette Edge Gradient Masks */}
             <div className="absolute inset-y-0 left-0 w-8 sm:w-16 bg-gradient-to-r from-surface via-surface/80 to-transparent z-20 pointer-events-none" />
@@ -610,6 +686,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
                   motionX={motionX}
                   containerWidth={containerWidth}
                   isSelectedTarget={isLanded && (idx === reelIndex)}
+                  isLandingScale={isLandingScale && isLanded && (idx === reelIndex)}
                 />
               ))}
             </motion.div>

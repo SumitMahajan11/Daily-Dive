@@ -63,6 +63,7 @@ async function runSpinTimingTest() {
         tickTimes: [],
         landingTime: 0,
         whooshTime: 0,
+        ringAppearTime: 0,
         cardAppearTime: 0,
         spinCount: 0
       };
@@ -96,8 +97,12 @@ async function runSpinTimingTest() {
         return origLanding();
       };
 
-      // Watch for post-spin topic card appearance
+      // Watch for landing ring and post-spin topic card appearance
       const obs = new MutationObserver(() => {
+        const ring = document.querySelector('[data-testid="landing-ring"]');
+        if (ring && !window.__spin_spy.ringAppearTime) {
+          window.__spin_spy.ringAppearTime = performance.now();
+        }
         const card = document.querySelector('[data-testid="post-spin-topic-card"]');
         if (card && !window.__spin_spy.cardAppearTime) {
           window.__spin_spy.cardAppearTime = performance.now();
@@ -194,17 +199,23 @@ async function runSpinTimingTest() {
     );
     console.log(`  [PASS] (c) Last gap (${lastGap} ms) is ${ratio.toFixed(2)}x first gap (${firstGap} ms) (>= 3x).`);
 
-    // d) Landing sound plays after last tick and within 150 ms of topic card appearance
+    // d) Landing sound plays after last tick and within 150 ms of landing moment (landing-ring appearance)
     assert.ok(
       spy.landingTime > (spy.clickTime + lastTickTime),
       `Landing sound (${totalTimeMs.toFixed(1)} ms) must play after last tick (${lastTickTime.toFixed(1)} ms)`
     );
-    const cardLandingDiff = Math.abs(spy.landingTime - spy.cardAppearTime);
+    const ringLandingDiff = Math.abs(spy.landingTime - spy.ringAppearTime);
     assert.ok(
-      cardLandingDiff <= 150,
-      `Landing sound must play within 150 ms of topic card appearance, diff: ${cardLandingDiff.toFixed(1)} ms`
+      ringLandingDiff <= 150,
+      `Landing sound must play within 150 ms of landing ring appearance, diff: ${ringLandingDiff.toFixed(1)} ms`
     );
-    console.log(`  [PASS] (d) Landing sound played after last tick (delay: ${landingDelay.toFixed(1)} ms) and within ${cardLandingDiff.toFixed(1)} ms of topic card.`);
+    const cardDelayAfterLanding = spy.cardAppearTime - spy.landingTime;
+    assert.ok(
+      cardDelayAfterLanding >= 250 && cardDelayAfterLanding <= 450,
+      `Topic card must appear 250 to 450 ms after landing sound, diff: ${cardDelayAfterLanding.toFixed(1)} ms`
+    );
+    console.log(`  [PASS] (d) Landing sound played after last tick (delay: ${landingDelay.toFixed(1)} ms) and within ${ringLandingDiff.toFixed(1)} ms of landing ring.`);
+    console.log(`  [PASS] (d2) Topic card appeared ${cardDelayAfterLanding.toFixed(1)} ms after landing sound (within 250-450 ms).`);
 
     // Print measured numbers table
     console.log('\n================================================================');
@@ -217,7 +228,8 @@ async function runSpinTimingTest() {
     console.log(`Deceleration Ratio (Last / First): ${ratio.toFixed(2)}x`);
     console.log(`Last Tick Time:                    ${lastTickTime.toFixed(1)} ms`);
     console.log(`Landing Sound Delay (from last):   ${landingDelay.toFixed(1)} ms`);
-    console.log(`Card Appearance vs Landing Diff:   ${cardLandingDiff.toFixed(1)} ms`);
+    console.log(`Landing Sound vs Ring Diff:        ${ringLandingDiff.toFixed(1)} ms`);
+    console.log(`Card Delay After Landing:          ${cardDelayAfterLanding.toFixed(1)} ms`);
     console.log('\nTable of All Consecutive Tick Gaps (ms):');
     console.log(gaps.map((g, idx) => `  [#${idx + 1}->#${idx + 2}] ${g.toFixed(1)} ms`).join('\n'));
     console.log('================================================================\n');
