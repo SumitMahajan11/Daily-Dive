@@ -203,7 +203,33 @@ export const DataProvider = ({ children }) => {
       const mergedTopics = [...storedCustom, ...builtinTopics];
       setTopics(mergedTopics);
 
-      const initialSelected = selectWeightedTopic(mergedTopics, guestProgress, guestCategories);
+      // Check if URL specifies a deeplinked topic
+      let urlTopic = null;
+      if (typeof window !== 'undefined') {
+        const params = new URLSearchParams(window.location.search);
+        const pathMatch = window.location.pathname.match(/\/t\/([^/?#]+)/);
+        const topicParam = params.get('topic') || params.get('t') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
+        if (topicParam) {
+          const cleanSlug = topicParam.trim().toLowerCase();
+          urlTopic = mergedTopics.find(t => {
+            const idMatch = t.id && t.id.toLowerCase() === cleanSlug;
+            const slugMatch = t.slug && t.slug.toLowerCase() === cleanSlug;
+            const titleSlug = t.title ? t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+            return idMatch || slugMatch || titleSlug === cleanSlug;
+          });
+          if (!urlTopic) {
+            const allTopics = await loadAllBuiltinTopics();
+            urlTopic = allTopics.find(t => {
+              const idMatch = t.id && t.id.toLowerCase() === cleanSlug;
+              const slugMatch = t.slug && t.slug.toLowerCase() === cleanSlug;
+              const titleSlug = t.title ? t.title.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '') : '';
+              return idMatch || slugMatch || titleSlug === cleanSlug;
+            });
+          }
+        }
+      }
+
+      const initialSelected = urlTopic || selectWeightedTopic(mergedTopics, guestProgress, guestCategories);
       setCurrentTopic(initialSelected || mergedTopics[0]);
     } catch (err) {
       console.warn('Local topic data loaded as default fallback:', err);
