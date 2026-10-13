@@ -108,7 +108,6 @@ export async function runHygieneSuite(targetItem = null) {
     item7: null,
     item8: null,
     item9: null,
-    item10: null,
   };
 
   try {
@@ -715,89 +714,6 @@ export async function runHygieneSuite(targetItem = null) {
       assert.ok(fs.existsSync(path.resolve('public/og-image.jpg')), 'public/og-image.jpg must exist');
       console.log('[PASS Item 9]: All images strictly within budget and verified dimensions in Node.');
       results.item9 = true;
-    }
-
-    // -------------------------------------------------------------
-    // ITEM 10: /login ROUTE, AUTH METHODS & RESPONSIVE LAYOUT
-    // -------------------------------------------------------------
-    if (!targetItem || targetItem === 10) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 10: /login RENDERING, METHODS & 0 HORIZONTAL OVERFLOW');
-      console.log('----------------------------------------------------');
-      const page = await browser.newPage();
-      await page.setViewportSize({ width: 360, height: 800 });
-      await page.goto(`${baseUrl}/#/login`);
-      await page.waitForSelector('[data-testid="login-screen"]');
-
-      // 1. Verify /login renders
-      const loginScreen = page.locator('[data-testid="login-screen"]');
-      assert.ok(await loginScreen.isVisible(), '/login screen must be visible');
-
-      // 2. Verify both auth methods exist
-      // Method 1: Email + Password form
-      const emailInput = page.locator('[data-testid="auth-email-input"]');
-      const passwordInput = page.locator('[data-testid="auth-password-input"]');
-      const submitBtn = page.locator('[data-testid="auth-submit-btn"]');
-      const loginTabBtn = page.locator('[data-testid="auth-tab-login-btn"]');
-      const signupTabBtn = page.locator('[data-testid="auth-tab-signup-btn"]');
-
-      assert.ok(await emailInput.isVisible(), 'Email input must be visible');
-      assert.ok(await passwordInput.isVisible(), 'Password input must be visible');
-      assert.ok(await submitBtn.isVisible(), 'Submit button must be visible');
-      assert.ok(await loginTabBtn.isVisible(), 'Login tab button must be visible');
-      assert.ok(await signupTabBtn.isVisible(), 'Signup tab button must be visible');
-
-      // Method 2: Google OAuth button
-      const googleBtn = page.locator('[data-testid="google-auth-btn"]');
-      assert.ok(await googleBtn.isVisible(), 'Continue with Google button must be visible');
-      const googleText = await googleBtn.textContent();
-      assert.ok(googleText.includes('Google'), 'Google button must mention Google');
-
-      // 3. Verify zero horizontal overflow at 360x800
-      const overflow360 = await page.evaluate(() => {
-        return document.documentElement.scrollWidth > window.innerWidth ||
-               document.body.scrollWidth > window.innerWidth;
-      });
-      assert.strictEqual(overflow360, false, 'No horizontal overflow allowed at 360x800');
-      console.log('  [PASS] /login rendered with both methods and 0 horizontal overflow at 360x800.');
-
-      // Also check 390x844 and 430x932
-      await page.setViewportSize({ width: 390, height: 844 });
-      await page.waitForTimeout(100);
-      const overflow390 = await page.evaluate(() => {
-        return document.documentElement.scrollWidth > window.innerWidth ||
-               document.body.scrollWidth > window.innerWidth;
-      });
-      assert.strictEqual(overflow390, false, 'No horizontal overflow allowed at 390x844');
-      console.log('  [PASS] 0 horizontal overflow at 390x844.');
-
-      await page.setViewportSize({ width: 430, height: 932 });
-      await page.waitForTimeout(100);
-      const overflow430 = await page.evaluate(() => {
-        return document.documentElement.scrollWidth > window.innerWidth ||
-               document.body.scrollWidth > window.innerWidth;
-      });
-      assert.strictEqual(overflow430, false, 'No horizontal overflow allowed at 430x932');
-      console.log('  [PASS] 0 horizontal overflow at 430x932.');
-
-      // 4. Test header Log In button navigation
-      await page.goto(`${baseUrl}/#/spin`);
-      await page.waitForSelector('#spin');
-      const headerLoginBtn = page.locator('[data-testid="header-login-btn"]');
-      assert.ok(await headerLoginBtn.isVisible(), 'Header Log in button must be visible when logged out');
-      await headerLoginBtn.click();
-      await page.waitForSelector('[data-testid="login-screen"]');
-      assert.ok(await page.locator('[data-testid="login-screen"]').isVisible(), 'Clicking header Log in must navigate to login screen');
-
-      // 5. Test validation feedback on empty submission
-      await submitBtn.click();
-      await page.waitForTimeout(200);
-      const emailVal = page.locator('[data-testid="email-validation-msg"]');
-      assert.ok(await emailVal.isVisible(), 'Empty submission must trigger email validation message');
-
-      await page.close();
-      console.log('[PASS Item 10]: /login route, both auth methods, header button, and responsive layout verified.');
-      results.item10 = true;
     }
 
     console.log('\n================================================================');

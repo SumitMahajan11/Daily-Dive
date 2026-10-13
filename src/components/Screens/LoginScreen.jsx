@@ -131,6 +131,57 @@ export const LoginScreen = ({ onBack, onSuccess }) => {
     }
   };
 
+  if (!isConfigured) {
+    return (
+      <div
+        id="login-screen"
+        data-testid="login-screen"
+        className="flex flex-col items-center justify-center w-full max-w-md mx-auto px-4 pt-2 pb-12"
+      >
+        {/* Top Back Nav */}
+        <div className="w-full flex items-center justify-between mb-4">
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              data-testid="auth-back-button"
+              aria-label="Back to home"
+              className="inline-flex items-center gap-1.5 text-xs text-on-surface-variant hover:text-on-surface font-medium transition-colors cursor-pointer py-1"
+            >
+              <ArrowLeft size={16} />
+              <span>Back to Daily Dive</span>
+            </button>
+          )}
+        </div>
+
+        {/* Unconfigured Notice */}
+        <div className="w-full rounded-3xl bg-surface-container-lowest/80 border border-outline-variant/30 shadow-xl p-6 sm:p-8 backdrop-blur-md text-center">
+          <div className="w-14 h-14 mx-auto mb-4 rounded-2xl bg-primary-container/20 border border-primary-container/30 flex items-center justify-center text-primary shadow-sm">
+            <LogIn size={26} />
+          </div>
+
+          <h1 className="font-serif text-2xl sm:text-3xl font-bold text-on-surface mb-2">
+            Sign-in isn't set up yet.
+          </h1>
+
+          <p className="text-xs sm:text-sm text-on-surface-variant leading-relaxed mb-6">
+            Supabase environment variables are missing. All daily dive spins, libraries, and topics remain 100% functional and offline.
+          </p>
+
+          {onBack && (
+            <button
+              type="button"
+              onClick={onBack}
+              className="w-full h-11 rounded-xl bg-primary text-on-primary font-semibold text-sm hover:opacity-90 active:scale-[0.99] transition-all cursor-pointer shadow-md shadow-primary/20"
+            >
+              Return to Daily Dive
+            </button>
+          )}
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div
       id="login-screen"

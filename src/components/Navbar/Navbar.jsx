@@ -7,7 +7,7 @@ import { useAuth } from '../../context/AuthContext';
 export const Navbar = ({ activeTab, onNavigateTab }) => {
   const { userStreaks, effectiveStreak } = useData();
   const { theme, toggleTheme } = useTheme();
-  const { user, signOut } = useAuth();
+  const { user, signOut, isConfigured } = useAuth();
 
   const streak = (effectiveStreak || userStreaks)?.current_streak || 0;
   const isActiveToday = effectiveStreak?.is_active_today;
@@ -51,7 +51,7 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
             </div>
           )}
 
-          {/* Auth State Button (Log in when logged out; Email + Log out when logged in) */}
+          {/* Auth State Button (Log in when logged out and configured; Email + Log out when logged in; hidden if unconfigured) */}
           {user ? (
             <div
               data-testid="header-user-badge"
@@ -80,7 +80,7 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
                 Log out
               </button>
             </div>
-          ) : (
+          ) : isConfigured ? (
             <button
               type="button"
               onClick={() => onNavigateTab('login')}
@@ -96,7 +96,7 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
               <LogIn size={14} className="shrink-0 text-primary" />
               <span className="whitespace-nowrap text-[11px] sm:text-xs text-on-surface font-semibold">Log in</span>
             </button>
-          )}
+          ) : null}
 
           {/* Theme Toggle Button (>=44x44 touch target) */}
           <button

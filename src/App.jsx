@@ -154,9 +154,8 @@ const MainLayout = () => {
   // Initial deep link scroll
   useEffect(() => {
     const initialScreen = getScreenFromUrl();
-    if (initialScreen && initialScreen !== 'spin' && initialScreen !== 'settings' && initialScreen !== 'login') {
+    if (initialScreen && initialScreen !== 'settings' && initialScreen !== 'login') {
       const doScroll = () => {
-        if (getScreenFromUrl() !== initialScreen) return;
         const el = document.getElementById(initialScreen);
         if (el) {
           el.scrollIntoView({ behavior: 'instant', block: 'start' });
