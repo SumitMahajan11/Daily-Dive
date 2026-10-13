@@ -457,6 +457,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       setCurrentTopic(selected);
       setShowResult(true);
       setIsLanded(true);
+      setIsNotFound(false);
       AudioController.playLanding();
       setActiveAccentColor(landedDef?.accentColor || '#e06841');
       setShowLandingHalo(true);
@@ -472,6 +473,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     setIsSpinning(true);
     setShowResult(false);
     setIsLanded(false);
+    setIsNotFound(false);
     setShowLandingHalo(false);
     setShowLandingRing(false);
     setIsLandingScale(false);

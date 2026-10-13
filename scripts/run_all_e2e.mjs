@@ -28,7 +28,8 @@ const suites = [
   'scripts/test_spin_finish.mjs',
   'scripts/test_single_page.mjs',
   'scripts/test_hygiene.mjs',
-  'scripts/test_review_consume.mjs'
+  'scripts/test_review_consume.mjs',
+  'scripts/test_spin_clears_not_found.mjs'
 ];
 
 console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');
