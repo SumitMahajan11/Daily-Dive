@@ -53,14 +53,33 @@ async function testLoginRenderingAndOverflow() {
     const page = await browser.newPage({ viewport: { width: 360, height: 800 } });
     await page.goto(`http://127.0.0.1:${port}/#/login`, { waitUntil: 'networkidle' });
 
-    console.log('[1/3] Verifying /login route renders [data-testid="login-screen"]...');
+    console.log('[1/4] Verifying /login route renders [data-testid="login-screen"]...');
     const loginScreen = page.locator('[data-testid="login-screen"]');
     await loginScreen.waitFor({ state: 'visible', timeout: 5000 });
     const isVisible = await loginScreen.isVisible();
     assert.strictEqual(isVisible, true, '/login screen must be visible');
     console.log('  [PASS] /login screen is rendered and visible.');
 
-    console.log('\n[2/3] Measuring horizontal overflow at 360x800...');
+    console.log('\n[2/4] Asserting form elements visibility...');
+    const emailInput = page.locator('[data-testid="auth-email-input"]');
+    const googleBtn = page.locator('[data-testid="google-auth-btn"]');
+    const hasEmail = (await emailInput.count()) > 0;
+    if (hasEmail) {
+      const emailVisible = await emailInput.isVisible();
+      const googleVisible = await googleBtn.isVisible();
+      assert.strictEqual(emailVisible, true, 'Email input must be visible on /login');
+      assert.strictEqual(googleVisible, true, 'Google button must be visible on /login');
+      console.log(`  [PASS] Email field is visible: ${emailVisible}`);
+      console.log(`  [PASS] Google button is visible: ${googleVisible}`);
+    } else {
+      const unconfNotice = page.locator('text=Sign-in isn\'t set up yet.');
+      await unconfNotice.waitFor({ state: 'visible', timeout: 5000 });
+      const unconfVisible = await unconfNotice.isVisible();
+      assert.strictEqual(unconfVisible, true, 'Unconfigured notice must be visible');
+      console.log(`  [PASS] Unconfigured notice is visible: ${unconfVisible}`);
+    }
+
+    console.log('\n[3/4] Measuring horizontal overflow at 360x800...');
     const overflowMetrics = await page.evaluate(() => {
       function isClippedByAncestor(el) {
         let p = el.parentElement;
@@ -123,7 +142,7 @@ async function testLoginRenderingAndOverflow() {
     assert.strictEqual(overflowMetrics.overflows, false, 'No horizontal overflow allowed at 360x800');
     console.log('  [PASS] No horizontal overflow detected at 360x800.');
 
-    console.log('\n[3/3] Verifying interactive controls within viewport bounds...');
+    console.log('\n[4/4] Verifying interactive controls within viewport bounds...');
     const loginCard = page.locator('[data-testid="login-screen"]');
     const bbox = await loginCard.boundingBox();
     assert.ok(bbox, 'Login card bounding box must exist');
