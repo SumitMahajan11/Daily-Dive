@@ -683,6 +683,8 @@ export async function runHygieneSuite(targetItem = null) {
         }
       }
 
+      assert.ok(!fs.existsSync(path.resolve('public/og-image.png')), 'public/og-image.png must be deleted');
+      assert.ok(fs.existsSync(path.resolve('public/og-image.jpg')), 'public/og-image.jpg must exist');
       console.log('[PASS Item 9]: All images strictly within budget.');
       results.item9 = true;
     }
