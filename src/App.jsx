@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import { DataProvider, useData } from './context/DataContext';
+import { AuthProvider } from './context/AuthContext';
 import { Navbar } from './components/Navbar/Navbar';
 import { BottomNavigation } from './components/Navbar/BottomNavigation';
 import { SpinScreen } from './components/Screens/SpinScreen';
@@ -10,6 +11,7 @@ import { RotateCw, BookOpen, BarChart3 } from 'lucide-react';
 const LibraryScreen = lazy(() => import('./components/Screens/LibraryScreen').then(m => ({ default: m.LibraryScreen })));
 const ProgressScreen = lazy(() => import('./components/Screens/ProgressScreen').then(m => ({ default: m.ProgressScreen })));
 const SettingsScreen = lazy(() => import('./components/Screens/SettingsScreen').then(m => ({ default: m.SettingsScreen })));
+const LoginScreen = lazy(() => import('./components/Screens/LoginScreen').then(m => ({ default: m.LoginScreen })));
 
 const SECTIONS = [
   { id: 'spin',     label: 'Spin',     icon: RotateCw,  kbd: '1' },
@@ -68,12 +70,14 @@ const getScreenFromUrl = () => {
   if (hash === 'library') return 'library';
   if (hash === 'progress') return 'progress';
   if (hash === 'settings') return 'settings';
+  if (hash === 'login' || hash === 'auth') return 'login';
   if (hash === 'spin') return 'spin';
 
   const path = window.location.pathname.trim().toLowerCase();
   if (path === '/library') return 'library';
   if (path === '/progress') return 'progress';
   if (path === '/settings') return 'settings';
+  if (path === '/login' || path === '/auth') return 'login';
 
   return 'spin';
 };
@@ -85,15 +89,15 @@ const MainLayout = () => {
   const isScrollingProgrammatically = useRef(false);
 
   const scrollToSection = useCallback((id, instant = false) => {
-    if (id === 'settings') {
-      if (activeSection !== 'settings') {
+    if (id === 'settings' || id === 'login') {
+      if (activeSection !== 'settings' && activeSection !== 'login') {
         setPreviousTab(activeSection);
       }
-      const targetHash = '#/settings';
+      const targetHash = `#/${id}`;
       if (window.location.hash !== targetHash) {
         window.location.hash = targetHash;
       }
-      setActiveSection('settings');
+      setActiveSection(id);
       window.scrollTo({ top: 0, behavior: 'instant' });
       return;
     }
@@ -123,7 +127,7 @@ const MainLayout = () => {
   }, [scrollToSection]);
 
   const handleBackFromSettings = useCallback(() => {
-    const target = previousTab && previousTab !== 'settings' ? previousTab : 'spin';
+    const target = previousTab && previousTab !== 'settings' && previousTab !== 'login' ? previousTab : 'spin';
     if (window.history.length > 1) {
       window.history.back();
     } else {
@@ -131,11 +135,28 @@ const MainLayout = () => {
     }
   }, [previousTab, scrollToSection]);
 
+  const handleBackFromLogin = useCallback(() => {
+    const target = previousTab && previousTab !== 'settings' && previousTab !== 'login' ? previousTab : 'spin';
+    if (window.history.length > 1) {
+      window.history.back();
+    } else {
+      scrollToSection(target);
+    }
+  }, [previousTab, scrollToSection]);
+
+  const handleLoginSuccess = useCallback(() => {
+    if (typeof window !== 'undefined') {
+      window.location.hash = '#/spin';
+    }
+    scrollToSection('spin');
+  }, [scrollToSection]);
+
   // Initial deep link scroll
   useEffect(() => {
     const initialScreen = getScreenFromUrl();
-    if (initialScreen && initialScreen !== 'settings') {
+    if (initialScreen && initialScreen !== 'spin' && initialScreen !== 'settings' && initialScreen !== 'login') {
       const doScroll = () => {
+        if (getScreenFromUrl() !== initialScreen) return;
         const el = document.getElementById(initialScreen);
         if (el) {
           el.scrollIntoView({ behavior: 'instant', block: 'start' });
@@ -155,8 +176,8 @@ const MainLayout = () => {
   useEffect(() => {
     const handleUrlChange = () => {
       const screen = getScreenFromUrl();
-      if (screen === 'settings') {
-        setActiveSection('settings');
+      if (screen === 'settings' || screen === 'login') {
+        setActiveSection(screen);
         window.scrollTo({ top: 0, behavior: 'instant' });
       } else {
         scrollToSection(screen, false);
@@ -173,7 +194,7 @@ const MainLayout = () => {
 
   // Active section tracking via IntersectionObserver
   useEffect(() => {
-    if (activeSection === 'settings') return;
+    if (activeSection === 'settings' || activeSection === 'login') return;
 
     const observer = new IntersectionObserver(
       (entries) => {
@@ -251,12 +272,21 @@ const MainLayout = () => {
           </div>
         </aside>
 
-        {/* Scrollable Content or Full-Screen Settings View */}
+        {/* Scrollable Content, Full-Screen Settings View, or Login View */}
         {activeSection === 'settings' ? (
           <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
             <ChunkErrorBoundary>
               <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
                 <SettingsScreen onBack={handleBackFromSettings} />
+              </Suspense>
+            </ChunkErrorBoundary>
+            <div className="h-28" />
+          </main>
+        ) : activeSection === 'login' ? (
+          <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
+            <ChunkErrorBoundary>
+              <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+                <LoginScreen onBack={handleBackFromLogin} onSuccess={handleLoginSuccess} />
               </Suspense>
             </ChunkErrorBoundary>
             <div className="h-28" />
@@ -323,8 +353,10 @@ const MainLayout = () => {
 
 export default function App() {
   return (
-    <DataProvider>
-      <MainLayout />
-    </DataProvider>
+    <AuthProvider>
+      <DataProvider>
+        <MainLayout />
+      </DataProvider>
+    </AuthProvider>
   );
 }

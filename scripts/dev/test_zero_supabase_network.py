@@ -32,9 +32,40 @@ def run_session_network_audit():
 
         page.on('request', on_request)
 
-        # 1. Load app
-        log("[1/5] Loading application at http://localhost:5173...")
-        page.goto('http://localhost:5173', wait_until='networkidle')
+        # 1. Load app (support TEST_BASE_URL, running dev server, or auto-served dist)
+        import urllib.request
+        import threading
+        from http.server import SimpleHTTPRequestHandler, HTTPServer
+
+        server_thread = None
+        httpd = None
+
+        target_url = os.environ.get('TEST_BASE_URL')
+        if not target_url:
+            try:
+                urllib.request.urlopen('http://localhost:5173', timeout=1)
+                target_url = 'http://localhost:5173'
+            except Exception:
+                dist_dir = os.path.abspath('dist')
+                class SPAHandler(SimpleHTTPRequestHandler):
+                    def __init__(self, *args, **kwargs):
+                        super().__init__(*args, directory=dist_dir, **kwargs)
+                    def do_GET(self):
+                        path = self.translate_path(self.path)
+                        if not os.path.exists(path) or os.path.isdir(path):
+                            self.path = '/index.html'
+                        return super().do_GET()
+                    def log_message(self, format, *args):
+                        pass
+
+                httpd = HTTPServer(('127.0.0.1', 0), SPAHandler)
+                port = httpd.server_address[1]
+                target_url = f'http://127.0.0.1:{port}'
+                server_thread = threading.Thread(target=httpd.serve_forever, daemon=True)
+                server_thread.start()
+
+        log(f"[1/5] Loading application at {target_url}...")
+        page.goto(target_url, wait_until='networkidle')
         page.wait_for_timeout(800)
 
         # 2. Spin wheel
@@ -83,6 +114,8 @@ def run_session_network_audit():
                 page.wait_for_timeout(400)
 
         browser.close()
+        if httpd:
+            httpd.shutdown()
 
     log("\n--- NETWORK REQUEST AUDIT RESULTS ---")
     log(f"Total Network Requests Captured: {len(network_requests)}")

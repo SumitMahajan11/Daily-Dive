@@ -1348,7 +1348,7 @@
         </div>
         <div>
           <label class="block text-[11px] font-mono uppercase text-on-surface-variant mb-1">VITE_SUPABASE_ANON_KEY</label>
-          <input type="password" id="config-supabase-key" placeholder="eyJhbGciOiJIUzI1NiIsInR5cCI6..." class="w-full h-9 px-3 rounded-lg bg-surface-container-high border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs font-mono focus:outline-none focus:border-primary">
+          <input type="password" id="config-supabase-key" placeholder="your-anon-key" class="w-full h-9 px-3 rounded-lg bg-surface-container-high border border-outline-variant/40 text-on-surface placeholder:text-outline text-xs font-mono focus:outline-none focus:border-primary">
         </div>
         <p class="text-[11px] text-outline leading-relaxed">Reading from <code class="font-mono text-primary">VITE_SUPABASE_URL</code> &amp; <code class="font-mono text-primary">VITE_SUPABASE_ANON_KEY</code>. You can also persist credentials directly in local browser storage.</p>
       </div>
@@ -1371,7 +1371,7 @@
 
       // 0. Supabase Auth & Configuration
       const SUPABASE_DEFAULT_URL = "https://your-project.supabase.co";
-      const SUPABASE_DEFAULT_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.dummy_anon_key";
+      const SUPABASE_DEFAULT_KEY = "";
 
       const SupabaseConfig = {
         url: window.__ENV__?.VITE_SUPABASE_URL ||

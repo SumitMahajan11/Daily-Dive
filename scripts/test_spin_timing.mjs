@@ -51,12 +51,21 @@ async function runSpinTimingTest() {
 
   try {
     const page = await browser.newPage({ viewport: { width: 1280, height: 800 } });
-    await page.goto(`http://localhost:${port}/`, { waitUntil: 'networkidle' });
 
-    // Ensure audio is enabled and install audio spy
-    await page.evaluate(() => {
+    // Ensure audio is enabled before navigation
+    await page.addInitScript(() => {
       localStorage.setItem('daily_dive_onboarding_seen', 'true');
       localStorage.setItem('daily_dive_first_run_dismissed', 'true');
+      localStorage.setItem('daily_dive_guest_settings', JSON.stringify({
+        sound_enabled: true,
+        haptics_enabled: true
+      }));
+    });
+
+    await page.goto(`http://localhost:${port}/`, { waitUntil: 'networkidle' });
+
+    // Install audio spy
+    await page.evaluate(() => {
 
       window.__spin_spy = {
         clickTime: 0,
