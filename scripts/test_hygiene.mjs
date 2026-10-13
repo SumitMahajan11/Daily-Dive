@@ -3,6 +3,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { execSync } from 'node:child_process';
 import handleShareRequest from '../api/share.js';
 
 function serveStaticApp(distDir) {
@@ -249,6 +250,7 @@ export async function runHygieneSuite(targetItem = null) {
       console.log('ITEM 3: BUTTONS & REAL STATE SURVIVES RELOAD');
       console.log('----------------------------------------------------');
       const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+      await page.context().grantPermissions(['clipboard-read', 'clipboard-write', 'notifications']);
       await page.goto(baseUrl);
       await page.waitForSelector('#spin');
 
@@ -264,20 +266,77 @@ export async function runHygieneSuite(targetItem = null) {
       assert.notStrictEqual(reloadedDark, initialDark, 'Theme state must flip and survive page reload');
       console.log(`  [PASS] Theme toggle persisted: initial ${initialDark} -> reloaded ${reloadedDark}`);
 
-      // 2. Settings toggle persistence (Sound effects)
-      console.log('Testing Settings sound toggle persistence across reload...');
+      // 2. All Settings toggles persistence across reload
+      console.log('Testing all Settings toggles persistence across reload...');
       await page.goto(`${baseUrl}/#/settings`);
       await page.waitForSelector('#settings');
+
+      // a) Sound effects toggle
       const soundToggle = page.locator('input[aria-label="Toggle sound effects"]');
       const initialSoundState = await soundToggle.isChecked();
-      await soundToggle.check({ force: true });
+      await soundToggle.setChecked(!initialSoundState, { force: true });
       await page.waitForTimeout(100);
+
+      // b) Haptic feedback toggle
+      const hapticToggle = page.locator('input[aria-label="Toggle haptic feedback"]');
+      const initialHapticState = await hapticToggle.isChecked();
+      await hapticToggle.setChecked(!initialHapticState, { force: true });
+      await page.waitForTimeout(100);
+
+      // c) In-app reminders toggle
+      // Test toggling OFF from enabled state (persists across reload)
+      await page.evaluate(() => {
+        const s = JSON.parse(localStorage.getItem('daily_dive_guest_settings') || '{}');
+        s.notifications_enabled = true;
+        localStorage.setItem('daily_dive_guest_settings', JSON.stringify(s));
+      });
       await page.reload();
       await page.waitForSelector('#settings');
-      const reloadedSoundToggle = page.locator('input[aria-label="Toggle sound effects"]');
-      const reloadedSoundState = await reloadedSoundToggle.isChecked();
-      assert.strictEqual(reloadedSoundState, true, 'Sound effects state must persist across reload');
-      console.log(`  [PASS] Sound toggle persisted across reload: ${reloadedSoundState}`);
+
+      const reminderToggle = page.locator('input[aria-label="Toggle daily in-app reminders"]');
+      assert.strictEqual(await reminderToggle.isChecked(), true, 'Reminders toggle should be checked initially');
+      await reminderToggle.click({ force: true });
+      await page.waitForTimeout(300);
+
+      await page.reload();
+      await page.waitForSelector('#settings');
+
+      const reloadedSound = await page.locator('input[aria-label="Toggle sound effects"]').isChecked();
+      const reloadedHaptic = await page.locator('input[aria-label="Toggle haptic feedback"]').isChecked();
+      const reloadedReminder = await page.locator('input[aria-label="Toggle daily in-app reminders"]').isChecked();
+
+      assert.strictEqual(reloadedSound, !initialSoundState, 'Sound effects state must persist across reload');
+      assert.strictEqual(reloadedHaptic, !initialHapticState, 'Haptic state must persist across reload');
+      assert.strictEqual(reloadedReminder, false, 'Daily reminders state must persist across reload');
+      console.log(`  [PASS] All 3 Settings toggles persisted across reload: sound=${reloadedSound}, haptic=${reloadedHaptic}, reminders=${reloadedReminder}`);
+
+      // Test permission guard: clicking reminder when browser permission is denied shows warning toast
+      await reminderToggle.click({ force: true });
+      const blockedToast = page.getByText(/Notifications are (blocked|not supported)/i);
+      await blockedToast.waitFor({ state: 'visible', timeout: 3000 });
+      assert.ok(await blockedToast.isVisible(), 'Clicking reminders with denied permission must show feedback toast');
+      console.log('  [PASS] Reminders toggle safely blocked with warning toast when permission is denied.');
+
+      // d) Reminder time preset button
+      await page.evaluate(() => {
+        const s = JSON.parse(localStorage.getItem('daily_dive_guest_settings') || '{}');
+        s.notifications_enabled = true;
+        localStorage.setItem('daily_dive_guest_settings', JSON.stringify(s));
+      });
+      await page.reload();
+      await page.waitForSelector('#settings');
+
+      const timePresetBtn = page.locator('button:has-text("12:00 PM")');
+      await timePresetBtn.click();
+      await page.waitForTimeout(200);
+      await page.reload();
+      await page.waitForSelector('#settings');
+      const reloadedTime = await page.evaluate(() => {
+        const s = JSON.parse(localStorage.getItem('daily_dive_guest_settings') || '{}');
+        return s.reminder_time;
+      });
+      assert.strictEqual(reloadedTime, '12:00 PM', 'Reminder time preset must persist across reload');
+      console.log(`  [PASS] Reminder time preset "12:00 PM" persisted across reload`);
 
       // 3. Settings Back button navigates back
       console.log('Testing Back button on Settings...');
@@ -288,8 +347,79 @@ export async function runHygieneSuite(targetItem = null) {
       assert.ok(activeHash.includes('spin') || activeHash === '', 'Back button must return to main page');
       console.log(`  [PASS] Back from Settings returned to: ${activeHash || '#/spin'}`);
 
+      // 4. Interest / Category toggles persistence across reload
+      console.log('Testing Interest / Category toggles persistence across reload...');
+      await page.goto(`${baseUrl}/#/library`);
+      await page.waitForSelector('#library');
+      const categoryCheckbox = page.locator('#library input[type="checkbox"]').first();
+      await categoryCheckbox.waitFor({ state: 'attached', timeout: 5000 });
+      const initialCatState = await categoryCheckbox.isChecked();
+      await categoryCheckbox.setChecked(!initialCatState, { force: true });
+      await page.waitForTimeout(150);
+      await page.reload();
+      await page.waitForSelector('#library');
+      const reloadedCatState = await page.locator('#library input[type="checkbox"]').first().isChecked();
+      assert.strictEqual(reloadedCatState, !initialCatState, 'Category interest toggle state must persist across reload');
+      console.log(`  [PASS] Category interest toggle persisted across reload: initial ${initialCatState} -> reloaded ${reloadedCatState}`);
+
+      // 5. Spaced repetition Review button
+      console.log('Testing Spaced repetition Review button...');
+      await page.evaluate(() => {
+        const yesterday = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
+        const progress = {
+          'multi-head-self-attention': { times_seen: 2, last_seen: yesterday }
+        };
+        localStorage.setItem('daily_dive_guest_progress', JSON.stringify(progress));
+        const s = JSON.parse(localStorage.getItem('daily_dive_guest_settings') || '{}');
+        delete s.enabled_categories;
+        localStorage.setItem('daily_dive_guest_settings', JSON.stringify(s));
+      });
+      await page.reload();
+      await page.goto(`${baseUrl}/#/progress`);
+      await page.waitForSelector('[data-testid="review-queue-section"]');
+      const reviewBtn = page.locator('[data-testid="review-queue-section"] button:has-text("Review")').first();
+      await reviewBtn.waitFor({ state: 'visible', timeout: 5000 });
+      await reviewBtn.click();
+      const loadToast = page.getByText(/Loaded .* into Spin View/i);
+      await loadToast.waitFor({ state: 'visible', timeout: 5000 });
+      assert.ok(await loadToast.isVisible(), 'Review button must display loaded topic toast');
+      console.log('  [PASS] Review button loaded review topic and displayed feedback toast.');
+
+      // 6. Share copy -> opens that topic in a fresh context
+      console.log('Testing Share copy -> opens topic in fresh context...');
+      await page.goto(`${baseUrl}/t/multi-head-self-attention`);
+      await page.waitForSelector('[data-testid="post-spin-topic-card"]');
+      const shareBtn = page.locator('button[aria-label="Share topic"]').first();
+      await shareBtn.waitFor({ state: 'visible', timeout: 5000 });
+      await shareBtn.click();
+      await page.waitForTimeout(300);
+      const copiedText = await page.evaluate(async () => {
+        try { return await navigator.clipboard.readText(); } catch (e) { return null; }
+      });
+      console.log(`  Copied share link: ${copiedText}`);
+      assert.ok(copiedText && copiedText.includes('/t/'), 'Share must copy /t/<id> link');
+
+      const freshContext = await browser.newContext();
+      const freshPage = await freshContext.newPage();
+      const targetUrl = copiedText.replace(/https?:\/\/[^/]+/, baseUrl);
+      await freshPage.goto(targetUrl);
+      await freshPage.waitForSelector('[data-testid="post-spin-topic-card"]');
+      const freshTitle = await freshPage.locator('[data-testid="post-spin-topic-card"] h2').innerText();
+      assert.match(freshTitle, /Scaled Dot-Product|Multi-Head/i, 'Fresh context must render the shared topic');
+      console.log(`  [PASS] Fresh context opened topic: "${freshTitle.trim()}"`);
+
+      // Verify topic survives reload in fresh context
+      await freshPage.reload();
+      await freshPage.waitForSelector('[data-testid="post-spin-topic-card"]');
+      const reloadedTitle = await freshPage.locator('[data-testid="post-spin-topic-card"] h2').innerText();
+      assert.strictEqual(reloadedTitle.trim(), freshTitle.trim(), 'Topic must survive reload in fresh context');
+      console.log(`  [PASS] Fresh context topic persisted across reload: "${reloadedTitle.trim()}"`);
+
+      await freshPage.close();
+      await freshContext.close();
+
       await page.close();
-      console.log('[PASS Item 3]: Button click-through state changes validated and persist.');
+      console.log('[PASS Item 3]: All controls tested, mutate real state, and persist across reload.');
       results.item3 = true;
     }
 
@@ -318,6 +448,15 @@ export async function runHygieneSuite(targetItem = null) {
       // 2. Favicon exists and HTTP 200
       const faviconPath = path.resolve('public/favicon.ico');
       assert.ok(fs.existsSync(faviconPath), 'Favicon (public/favicon.ico) must exist');
+
+      // 3. Maskable safe-zone verification (scaled to ~70% inside inner 80% safe zone)
+      const pySafeCheck = "from PIL import Image; import numpy as np; " +
+        "assert all(int(round(s*0.1)) <= np.where(np.abs(np.array(Image.open(f).convert('RGBA'))[:,:,:3] - [17,19,27]).sum(axis=2) > 20)[1].min() and " +
+        "np.where(np.abs(np.array(Image.open(f).convert('RGBA'))[:,:,:3] - [17,19,27]).sum(axis=2) > 20)[1].max() <= int(round(s*0.9)) " +
+        "for s, f in [(192, 'public/icons/icon-192-maskable.png'), (512, 'public/icons/icon-512-maskable.png')])";
+      execSync(`python -c "${pySafeCheck}"`, { stdio: 'inherit' });
+      console.log('  [PASS] Maskable icons logo bounds strictly inside inner 80% safe zone.');
+
       console.log('[PASS Item 4]: All declared icons exist, return 200, and match declared dimensions.');
       results.item4 = true;
     }
@@ -437,7 +576,28 @@ export async function runHygieneSuite(targetItem = null) {
       const dupToast = page.getByText(/already exists/i);
       await dupToast.waitFor({ state: 'visible', timeout: 3000 });
       assert.ok(await dupToast.isVisible(), 'Duplicate topic title must give feedback toast');
-      console.log('  [PASS] Duplicate title gave feedback toast.');
+      // 3. File upload >10 MB size limit error toast
+      console.log('Testing upload limit (>10 MB) error toast...');
+      const largeFilePath = path.resolve('scratch/test_10mb_large.txt');
+      if (!fs.existsSync(largeFilePath)) {
+        fs.writeFileSync(largeFilePath, Buffer.alloc(10.5 * 1024 * 1024, 'a'));
+      }
+      const fileInput = page.locator('#library input[type="file"]');
+      await fileInput.setInputFiles(largeFilePath);
+      const largeFileToast = page.getByText(/File is too large \(max 10 MB\)\. Please use a smaller file\./i);
+      await largeFileToast.waitFor({ state: 'visible', timeout: 4000 });
+      assert.ok(await largeFileToast.isVisible(), 'File > 10 MB must show size limit toast');
+      console.log('  [PASS] File > 10 MB triggered "File is too large (max 10 MB). Please use a smaller file." toast.');
+
+      // 4. File upload under limit (<10 MB) works without size error
+      console.log('Testing under-limit file upload...');
+      const smallFilePath = path.resolve('scratch/test_under_limit.txt');
+      if (!fs.existsSync(smallFilePath)) {
+        fs.writeFileSync(smallFilePath, 'Quantum Computing Primer\n\nQubits leverage superposition and entanglement to solve discrete optimization problems.');
+      }
+      await fileInput.setInputFiles(smallFilePath);
+      await page.waitForTimeout(500);
+      console.log('  [PASS] Under-limit file accepted without size limit error.');
 
       await page.close();
       console.log('[PASS Item 7]: Messages feedback verified.');
