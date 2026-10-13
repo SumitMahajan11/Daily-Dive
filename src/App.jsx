@@ -251,8 +251,8 @@ const MainLayout = () => {
           </div>
         </aside>
 
-        {/* Scrollable Content or Full-Screen Settings View */}
-        {activeSection === 'settings' ? (
+        {/* Full-Screen Settings View */}
+        {activeSection === 'settings' && (
           <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
             <ChunkErrorBoundary>
               <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
@@ -261,8 +261,10 @@ const MainLayout = () => {
             </ChunkErrorBoundary>
             <div className="h-28" />
           </main>
-        ) : (
-          <main className="flex-1 w-full overflow-x-hidden">
+        )}
+
+        {/* Scrollable Content */}
+        <main className={`flex-1 w-full overflow-x-hidden ${activeSection === 'settings' ? 'hidden' : ''}`}>
             {/* 1) Spin (id="spin") */}
             <section
               id="spin"
@@ -310,7 +312,6 @@ const MainLayout = () => {
 
             <div className="h-28" />
           </main>
-        )}
       </div>
 
       {/* Mobile Bottom Navigation */}
