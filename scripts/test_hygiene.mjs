@@ -276,7 +276,8 @@ export async function runHygieneSuite(targetItem = null) {
       await page.waitForSelector('#settings');
       const reloadedSoundToggle = page.locator('input[aria-label="Toggle sound effects"]');
       const reloadedSoundState = await reloadedSoundToggle.isChecked();
-      console.log(`  Sound toggle: initial ${initialSoundState} -> reloaded ${reloadedSoundState}`);
+      assert.strictEqual(reloadedSoundState, true, 'Sound effects state must persist across reload');
+      console.log(`  [PASS] Sound toggle persisted across reload: ${reloadedSoundState}`);
 
       // 3. Settings Back button navigates back
       console.log('Testing Back button on Settings...');
