@@ -104,7 +104,9 @@ export function generateShareHtml({ topic, lesson, origin = 'https://daily-dive.
 <head>
   <meta charset="utf-8">
   <title>Topic not found</title>
+  <meta property="og:title" content="Topic not found">
   <meta name="description" content="We couldn't find that topic. It may have been removed or the link is wrong.">
+  <meta property="og:description" content="We couldn't find that topic. It may have been removed or the link is wrong.">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body { font-family: system-ui, -apple-system, sans-serif; background: #1c1a17; color: #f7f3ec; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; box-sizing: border-box; }
