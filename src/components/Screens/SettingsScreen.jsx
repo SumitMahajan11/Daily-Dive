@@ -157,42 +157,46 @@ export const SettingsScreen = ({ onBack }) => {
   };
 
   const handleExportBackup = () => {
-    const nowIso = new Date().toISOString();
     try {
-      localStorage.setItem('daily_dive_last_backup_at', nowIso);
-    } catch (e) {}
+      const nowIso = new Date().toISOString();
+      try {
+        localStorage.setItem('daily_dive_last_backup_at', nowIso);
+      } catch (e) {}
 
-    let expiredTopics = [];
-    try {
-      const et = localStorage.getItem('daily_dive_expired_custom_topics');
-      if (et) expiredTopics = JSON.parse(et);
-    } catch (e) {}
+      let expiredTopics = [];
+      try {
+        const et = localStorage.getItem('daily_dive_expired_custom_topics');
+        if (et) expiredTopics = JSON.parse(et);
+      } catch (e) {}
 
-    const backupData = {
-      schemaVersion: SCHEMA_VERSION,
-      version: '3.0.0',
-      exported_at: nowIso,
-      last_backup_at: nowIso,
-      user_progress: userProgressMap,
-      user_streaks: userStreaks,
-      user_settings: userSettings,
-      history: history || [],
-      custom_topics: customTopics || [],
-      expired_custom_topics: expiredTopics,
-      theme: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_theme') || 'dark' : 'dark',
-      first_run_dismissed: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_first_run_dismissed') === 'true' : false
-    };
+      const backupData = {
+        schemaVersion: SCHEMA_VERSION,
+        version: '3.0.0',
+        exported_at: nowIso,
+        last_backup_at: nowIso,
+        user_progress: userProgressMap,
+        user_streaks: userStreaks,
+        user_settings: userSettings,
+        history: history || [],
+        custom_topics: customTopics || [],
+        expired_custom_topics: expiredTopics,
+        theme: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_theme') || 'dark' : 'dark',
+        first_run_dismissed: typeof window !== 'undefined' ? localStorage.getItem('daily_dive_first_run_dismissed') === 'true' : false
+      };
 
-    const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `daily-dive-backup-${nowIso.slice(0, 10)}.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
-    if (showToast) showToast('Backup exported successfully', 'success');
+      const blob = new Blob([JSON.stringify(backupData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `daily-dive-backup-${nowIso.slice(0, 10)}.json`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      if (showToast) showToast('Backup exported successfully', 'success');
+    } catch (err) {
+      if (showToast) showToast('Failed to export backup: ' + err.message, 'error');
+    }
   };
 
   const handleImportBackup = async (e) => {

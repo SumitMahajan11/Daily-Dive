@@ -306,6 +306,14 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       return;
     }
 
+    const normTitle = manualTitle.trim().toLowerCase();
+    const isDuplicate = (topics || []).some(t => t.title && t.title.trim().toLowerCase() === normTitle) ||
+                        (customTopics || []).some(t => t.title && t.title.trim().toLowerCase() === normTitle);
+    if (isDuplicate) {
+      if (showToast) showToast('A topic with this title already exists.', 'warning');
+      return;
+    }
+
     const tagsList = manualTags.trim() 
       ? manualTags.split(',').map(t => t.trim()).filter(Boolean) 
       : [];
