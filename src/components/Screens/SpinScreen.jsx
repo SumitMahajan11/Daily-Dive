@@ -298,6 +298,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     return () => ro.disconnect();
   }, []);
 
+  const [isNotFound, setIsNotFound] = useState(false);
+
   // Check URL deeplink ?topic=<id> or ?t=<slug> on mount
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -308,7 +310,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
         const params = new URLSearchParams(window.location.search);
         const pathMatch = window.location.pathname.match(/\/t\/([^/?#]+)/);
         const topicParam = params.get('topic') || params.get('t') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
-        if (!topicParam) return;
+        if (!topicParam) {
+          if (isMounted) setIsNotFound(false);
+          return;
+        }
         const cleanSlug = topicParam.trim().toLowerCase();
 
         // 1. Check in currently loaded topics
@@ -334,6 +339,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
           setCurrentTopic(matched);
           setShowResult(true);
           setIsLanded(true);
+          setIsNotFound(false);
+        } else if (!matched && isMounted) {
+          setIsNotFound(true);
+          setShowResult(false);
         }
       } catch (e) {}
     }
@@ -341,6 +350,44 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     resolveTopicFromUrl();
     return () => { isMounted = false; };
   }, [topics, setCurrentTopic]);
+
+  // Synchronize document title and description meta tag at runtime
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const defaultTitle = 'Daily Dive — Micro-learning on Demand';
+    const defaultDesc = 'A distraction-free, privacy-first single-page roulette application for daily micro-learning across tech, career, mental models, and world ideas.';
+
+    let descMeta = document.querySelector('meta[name="description"]');
+    if (!descMeta) {
+      descMeta = document.createElement('meta');
+      descMeta.setAttribute('name', 'description');
+      document.head.appendChild(descMeta);
+    }
+
+    if (isNotFound) {
+      document.title = 'Topic not found';
+      descMeta.setAttribute('content', defaultDesc);
+    } else if (showResult && currentTopic) {
+      const topicTitle = currentTopic.title ? `${currentTopic.title} — Daily Dive` : defaultTitle;
+      document.title = topicTitle;
+
+      const rawDesc = currentTopic.description || currentTopic.summary || '';
+      const match = rawDesc.match(/(.*?[.!?])(?:\s|$)/);
+      let sentence = match ? match[1].trim() : rawDesc.trim();
+      if (!sentence) sentence = defaultDesc;
+      if (sentence.length > 160) sentence = sentence.slice(0, 157) + '...';
+      descMeta.setAttribute('content', sentence);
+    } else {
+      document.title = defaultTitle;
+      descMeta.setAttribute('content', defaultDesc);
+    }
+
+    return () => {
+      document.title = defaultTitle;
+      descMeta?.setAttribute('content', defaultDesc);
+    };
+  }, [showResult, currentTopic, isNotFound]);
 
   // Keyboard shortcut: Space triggers spin
   useEffect(() => {
