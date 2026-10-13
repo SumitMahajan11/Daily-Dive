@@ -70,7 +70,7 @@ export const AuthProvider = ({ children }) => {
     if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
     }
-    const redirectTo = typeof window !== 'undefined' ? window.location.origin + window.location.pathname : undefined;
+    const redirectTo = typeof window !== 'undefined' ? window.location.origin + '/' : undefined;
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
@@ -86,7 +86,7 @@ export const AuthProvider = ({ children }) => {
     if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
     }
-    const redirectTo = typeof window !== 'undefined' ? window.location.origin + window.location.pathname : undefined;
+    const redirectTo = typeof window !== 'undefined' ? window.location.origin + '/' : undefined;
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
@@ -101,7 +101,7 @@ export const AuthProvider = ({ children }) => {
     if (!isSupabaseConfigured || !supabase) {
       throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
     }
-    const redirectTo = typeof window !== 'undefined' ? window.location.origin + window.location.pathname : undefined;
+    const redirectTo = typeof window !== 'undefined' ? window.location.origin + '/' : undefined;
     const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
       redirectTo,
     });
