@@ -125,7 +125,7 @@ const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarge
   );
 };
 
-export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtract }) => {
+export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtract, reviewedTopic, onConsumeReview }) => {
   const navigateToLibrary = onNavigateLibrary || onNavigateFilter || onNavigateExtract;
   const {
     topics,
@@ -298,6 +298,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     return () => ro.disconnect();
   }, []);
 
+  const [isNotFound, setIsNotFound] = useState(false);
+
   // Check URL deeplink ?topic=<id> or ?t=<slug> on mount
   useEffect(() => {
     if (typeof window === 'undefined') return;
@@ -308,7 +310,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
         const params = new URLSearchParams(window.location.search);
         const pathMatch = window.location.pathname.match(/\/t\/([^/?#]+)/);
         const topicParam = params.get('topic') || params.get('t') || (pathMatch ? decodeURIComponent(pathMatch[1]) : null);
-        if (!topicParam) return;
+        if (!topicParam) {
+          if (isMounted) setIsNotFound(false);
+          return;
+        }
         const cleanSlug = topicParam.trim().toLowerCase();
 
         // 1. Check in currently loaded topics
@@ -334,6 +339,10 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
           setCurrentTopic(matched);
           setShowResult(true);
           setIsLanded(true);
+          setIsNotFound(false);
+        } else if (!matched && isMounted) {
+          setIsNotFound(true);
+          setShowResult(false);
         }
       } catch (e) {}
     }
@@ -341,6 +350,57 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     resolveTopicFromUrl();
     return () => { isMounted = false; };
   }, [topics, setCurrentTopic]);
+
+  // Open topic card when a topic is selected for review from Progress screen
+  useEffect(() => {
+    if (reviewedTopic) {
+      setCurrentTopic(reviewedTopic);
+      setShowResult(true);
+      setIsLanded(true);
+      setIsNotFound(false);
+      if (onConsumeReview) {
+        onConsumeReview();
+      }
+    }
+  }, [reviewedTopic, setCurrentTopic, onConsumeReview]);
+
+  // Synchronize document title and description meta tag at runtime
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+
+    const defaultTitle = 'Daily Dive — Micro-learning on Demand';
+    const defaultDesc = 'A distraction-free, privacy-first single-page roulette application for daily micro-learning across tech, career, mental models, and world ideas.';
+
+    let descMeta = document.querySelector('meta[name="description"]');
+    if (!descMeta) {
+      descMeta = document.createElement('meta');
+      descMeta.setAttribute('name', 'description');
+      document.head.appendChild(descMeta);
+    }
+
+    if (isNotFound) {
+      document.title = 'Topic not found';
+      descMeta.setAttribute('content', defaultDesc);
+    } else if (showResult && currentTopic) {
+      const topicTitle = currentTopic.title ? `${currentTopic.title} — Daily Dive` : defaultTitle;
+      document.title = topicTitle;
+
+      const rawDesc = currentTopic.description || currentTopic.summary || '';
+      const match = rawDesc.match(/(.*?[.!?])(?:\s|$)/);
+      let sentence = match ? match[1].trim() : rawDesc.trim();
+      if (!sentence) sentence = defaultDesc;
+      if (sentence.length > 160) sentence = sentence.slice(0, 157) + '...';
+      descMeta.setAttribute('content', sentence);
+    } else {
+      document.title = defaultTitle;
+      descMeta.setAttribute('content', defaultDesc);
+    }
+
+    return () => {
+      document.title = defaultTitle;
+      descMeta?.setAttribute('content', defaultDesc);
+    };
+  }, [showResult, currentTopic, isNotFound]);
 
   // Keyboard shortcut: Space triggers spin
   useEffect(() => {
@@ -397,6 +457,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
       setCurrentTopic(selected);
       setShowResult(true);
       setIsLanded(true);
+      setIsNotFound(false);
       AudioController.playLanding();
       setActiveAccentColor(landedDef?.accentColor || '#e06841');
       setShowLandingHalo(true);
@@ -412,6 +473,7 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     setIsSpinning(true);
     setShowResult(false);
     setIsLanded(false);
+    setIsNotFound(false);
     setShowLandingHalo(false);
     setShowLandingRing(false);
     setIsLandingScale(false);
@@ -693,6 +755,40 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
           </div>
         )}
       </div>
+
+      {/* ── 404 NOT FOUND STATE ── */}
+      {isNotFound && !isSpinning && (
+        <div className="w-full mt-3" data-testid="topic-not-found-card">
+          <div className="w-full rounded-2xl bg-surface-container-high border border-outline-variant/40 p-6 sm:p-8 text-center space-y-3 shadow-sm">
+            <h1 className="font-display text-xl sm:text-2xl font-bold text-on-surface">
+              Topic not found
+            </h1>
+            <p className="text-sm text-on-surface-variant max-w-md mx-auto">
+              We couldn't find that topic. It may have been removed or the link is wrong.
+            </p>
+            <div className="pt-2">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setIsNotFound(false);
+                  if (typeof window !== 'undefined') {
+                    window.location.hash = '#/spin';
+                    if (window.history.pushState) {
+                      const url = new URL(window.location);
+                      url.searchParams.delete('topic');
+                      url.searchParams.delete('t');
+                      window.history.pushState({}, '', url.pathname + url.search + '#/spin');
+                    }
+                  }
+                }}
+                className="px-6 py-2.5 text-xs font-semibold cursor-pointer"
+              >
+                Back to Spin
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* ── POST-SPIN TOPIC CARD ── */}
       {showResult && currentTopic && !isSpinning && (

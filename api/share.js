@@ -98,16 +98,41 @@ export function lookupTopicAndLesson(topicId) {
 export function generateShareHtml({ topic, lesson, origin = 'https://daily-dive.vercel.app' }) {
   const isKnown = Boolean(topic && topic.id);
 
-  const title = isKnown ? topic.title : 'Daily Dive';
+  if (!isKnown) {
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Topic not found</title>
+  <meta property="og:title" content="Topic not found">
+  <meta name="description" content="We couldn't find that topic. It may have been removed or the link is wrong.">
+  <meta property="og:description" content="We couldn't find that topic. It may have been removed or the link is wrong.">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body { font-family: system-ui, -apple-system, sans-serif; background: #1c1a17; color: #f7f3ec; display: flex; align-items: center; justify-content: center; min-height: 100vh; margin: 0; padding: 1.5rem; box-sizing: border-box; }
+    .card { max-width: 28rem; width: 100%; text-align: center; background: #262320; border: 1px solid rgba(255,255,255,0.1); border-radius: 1.25rem; padding: 2.5rem 2rem; box-shadow: 0 20px 25px -5px rgba(0,0,0,0.5); }
+    h1 { font-size: 1.5rem; font-weight: 700; margin: 0 0 0.75rem 0; letter-spacing: -0.025em; }
+    p { font-size: 0.925rem; color: #a39e93; margin: 0 0 1.75rem 0; line-height: 1.5; }
+    a.btn { display: inline-flex; align-items: center; justify-content: center; background: #b5502e; color: #ffffff; text-decoration: none; font-weight: 600; font-size: 0.875rem; padding: 0.75rem 1.75rem; border-radius: 0.75rem; transition: background 0.2s; }
+    a.btn:hover { background: #ab4c2b; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <h1>Topic not found</h1>
+    <p>We couldn't find that topic. It may have been removed or the link is wrong.</p>
+    <a class="btn" href="/#/spin">Back to Spin</a>
+  </div>
+</body>
+</html>`;
+  }
+
+  const title = topic.title;
   let description = '';
-  if (isKnown) {
-    if (lesson && lesson.idea) {
-      description = truncateDescription(lesson.idea, 150);
-    } else {
-      description = topic.description || 'Master 690+ mental models, engineering concepts, and frameworks in daily 2-minute dives.';
-    }
+  if (lesson && lesson.idea) {
+    description = truncateDescription(lesson.idea, 150);
   } else {
-    description = 'Master 690+ mental models, engineering concepts, and frameworks in daily 2-minute dives.';
+    description = topic.description || 'Master 690+ mental models, engineering concepts, and frameworks in daily 2-minute dives.';
   }
 
   const canonicalUrl = isKnown
@@ -180,10 +205,11 @@ export default async function handleShareRequest(req, res) {
       res.setHeader('Content-Type', 'text/html; charset=utf-8');
       res.setHeader('Cache-Control', 'public, max-age=3600, s-maxage=86400, stale-while-revalidate=604800');
     }
+    const statusCode = (topic && topic.id) ? 200 : 404;
     if (res.status) {
-      res.status(200);
+      res.status(statusCode);
     } else {
-      res.statusCode = 200;
+      res.statusCode = statusCode;
     }
     if (res.send) {
       res.send(html);

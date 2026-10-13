@@ -14,15 +14,26 @@ export const Navbar = ({ activeTab, onNavigateTab }) => {
     <header className="fixed top-0 w-full z-40 pt-safe bg-surface/85 backdrop-blur-xl border-b border-outline-variant/30 h-14 max-h-16">
       <div className="max-w-6xl mx-auto h-full px-4 sm:px-6 flex items-center justify-between">
         
-        {/* Brand Wordmark Only */}
-        <div className="flex items-center gap-2.5">
+        {/* Brand Wordmark Button */}
+        <button
+          type="button"
+          onClick={() => {
+            onNavigateTab('spin');
+            if (typeof window !== 'undefined') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+          }}
+          aria-label="Daily Dive, go to Spin"
+          title="Daily Dive, go to Spin"
+          className="flex items-center gap-2.5 cursor-pointer text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-primary rounded-lg -ml-1 p-1 hover:opacity-90 transition-opacity"
+        >
           <div className="w-8 h-8 flex items-center justify-center rounded-lg bg-primary-container/20 border border-primary-container/30 text-primary">
             <Disc size={18} />
           </div>
           <span className="font-display font-bold text-base sm:text-lg text-on-surface tracking-tight whitespace-nowrap">
             Daily Dive
           </span>
-        </div>
+        </button>
         
         {/* Top Controls */}
         <div className="flex items-center gap-1 sm:gap-2">

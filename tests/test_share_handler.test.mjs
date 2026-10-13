@@ -87,7 +87,7 @@ describe('Round 16: Share Pages Handler & Open Graph Unit Tests', () => {
     assert.ok(html.includes('content="0;url=/?topic=custom-topic-no-lesson"'));
   });
 
-  test('Unknown topic returns generic site card and redirects to /', () => {
+  test('Unknown topic returns 404 Topic not found card with link to /#/spin and no redirect', async () => {
     const { topic, lesson } = lookupTopicAndLesson('non-existent-topic-id-12345');
 
     assert.strictEqual(topic, null, 'Unknown topic must resolve to null');
@@ -99,10 +99,21 @@ describe('Round 16: Share Pages Handler & Open Graph Unit Tests', () => {
       origin: 'https://daily-dive.vercel.app'
     });
 
-    assert.ok(html.includes('<meta property="og:title" content="Daily Dive">'), 'og:title must be Daily Dive');
-    assert.ok(html.includes('<meta property="og:url" content="https://daily-dive.vercel.app/">'), 'og:url must be root /');
-    assert.ok(html.includes('content="0;url=/"'), 'Meta refresh must redirect to /');
-    assert.ok(html.includes('window.location.replace("/")'), 'Script redirect must target /');
+    assert.ok(html.includes('<title>Topic not found</title>'), '<title> must be Topic not found');
+    assert.ok(html.includes('<meta property="og:title" content="Topic not found">'), 'og:title must be Topic not found');
+    assert.ok(html.includes("We couldn't find that topic. It may have been removed or the link is wrong."), 'Must include not-found message text');
+    assert.ok(html.includes('href="/#/spin"'), 'Must include Back to Spin link to /#/spin');
+    assert.ok(!html.includes('content="0;url=/"'), 'Meta refresh must NOT redirect to /');
+    assert.ok(!html.includes('window.location.replace("/")'), 'Script redirect must NOT redirect to /');
+
+    let responseCode = null;
+    const res = {
+      setHeader() {},
+      status(code) { responseCode = code; },
+      end() {}
+    };
+    await handleShareRequest({ headers: { host: 'localhost:3000' }, url: '/t/non-existent-topic-id-12345' }, res);
+    assert.strictEqual(responseCode, 404, 'handleShareRequest must return HTTP status 404 for unknown topic');
   });
 
   test('handleShareRequest end-to-end mock execution returns 200 with HTML headers', async () => {

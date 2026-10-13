@@ -37,5 +37,6 @@ evidence/
 lighthouse-report.json
 scripts/inspect_*.py
 artifacts/
+scratch/
 
 .vercel

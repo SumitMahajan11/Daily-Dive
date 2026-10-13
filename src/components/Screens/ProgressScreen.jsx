@@ -140,7 +140,7 @@ export const ProgressScreen = ({ onReviewTopic }) => {
 
   const handleReviewClick = (topic) => {
     setCurrentTopic(topic);
-    if (onReviewTopic) onReviewTopic();
+    if (onReviewTopic) onReviewTopic(topic);
     if (showToast) showToast(`Loaded "${topic.title}" into Spin View`, 'info');
   };
 
