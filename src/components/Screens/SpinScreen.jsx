@@ -741,6 +741,40 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
         )}
       </div>
 
+      {/* ── 404 NOT FOUND STATE ── */}
+      {isNotFound && !isSpinning && (
+        <div className="w-full mt-3" data-testid="topic-not-found-card">
+          <div className="w-full rounded-2xl bg-surface-container-high border border-outline-variant/40 p-6 sm:p-8 text-center space-y-3 shadow-sm">
+            <h1 className="font-display text-xl sm:text-2xl font-bold text-on-surface">
+              Topic not found
+            </h1>
+            <p className="text-sm text-on-surface-variant max-w-md mx-auto">
+              We couldn't find that topic. It may have been removed or the link is wrong.
+            </p>
+            <div className="pt-2">
+              <Button
+                variant="primary"
+                onClick={() => {
+                  setIsNotFound(false);
+                  if (typeof window !== 'undefined') {
+                    window.location.hash = '#/spin';
+                    if (window.history.pushState) {
+                      const url = new URL(window.location);
+                      url.searchParams.delete('topic');
+                      url.searchParams.delete('t');
+                      window.history.pushState({}, '', url.pathname + url.search + '#/spin');
+                    }
+                  }
+                }}
+                className="px-6 py-2.5 text-xs font-semibold cursor-pointer"
+              >
+                Back to Spin
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── POST-SPIN TOPIC CARD ── */}
       {showResult && currentTopic && !isSpinning && (
         <div className="w-full mt-3">
