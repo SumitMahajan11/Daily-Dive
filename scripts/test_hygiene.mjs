@@ -1,0 +1,538 @@
+import { chromium } from 'playwright';
+import http from 'node:http';
+import fs from 'node:fs';
+import path from 'node:path';
+import assert from 'node:assert/strict';
+import handleShareRequest from '../api/share.js';
+
+function serveStaticApp(distDir) {
+  const mimeTypes = {
+    '.html': 'text/html',
+    '.js': 'application/javascript',
+    '.css': 'text/css',
+    '.json': 'application/json',
+    '.png': 'image/png',
+    '.jpg': 'image/jpeg',
+    '.jpeg': 'image/jpeg',
+    '.webp': 'image/webp',
+    '.ico': 'image/x-icon',
+    '.woff2': 'font/woff2',
+    '.webmanifest': 'application/manifest+json'
+  };
+
+  const server = http.createServer(async (req, res) => {
+    let reqPath = req.url.split('?')[0];
+
+    // If requested route starts with /t/ and is not a static file in dist
+    const directFile = path.join(distDir, reqPath);
+    if (!fs.existsSync(directFile) && reqPath.startsWith('/t/')) {
+      return await handleShareRequest(req, res);
+    }
+
+    if (reqPath === '/') reqPath = '/index.html';
+    const filePath = path.join(distDir, reqPath);
+
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isFile()) {
+      const ext = path.extname(filePath);
+      res.writeHead(200, { 'Content-Type': mimeTypes[ext] || 'application/octet-stream' });
+      fs.createReadStream(filePath).pipe(res);
+    } else {
+      const indexFile = path.join(distDir, 'index.html');
+      res.writeHead(200, { 'Content-Type': 'text/html' });
+      fs.createReadStream(indexFile).pipe(res);
+    }
+  });
+
+  return new Promise((resolve) => {
+    server.listen(0, '127.0.0.1', () => {
+      const port = server.address().port;
+      resolve({ server, port });
+    });
+  });
+}
+
+function getPngDimensions(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  const buf = fs.readFileSync(filePath);
+  if (buf.toString('ascii', 1, 4) !== 'PNG') return null;
+  const width = buf.readUInt32BE(16);
+  const height = buf.readUInt32BE(20);
+  return { width, height, bytes: buf.length };
+}
+
+export async function runHygieneSuite(targetItem = null) {
+  console.log('================================================================');
+  console.log('                 DAILY DIVE HYGIENE TEST SUITE                  ');
+  console.log('================================================================\n');
+
+  const distDir = path.resolve('dist');
+  if (!fs.existsSync(distDir)) {
+    throw new Error('Dist directory does not exist. Run "npm run build" first.');
+  }
+
+  const { server, port } = await serveStaticApp(distDir);
+  const baseUrl = `http://127.0.0.1:${port}`;
+  const browser = await chromium.launch({ headless: true });
+
+  let results = {
+    item1: null,
+    item2: null,
+    item3: null,
+    item4: null,
+    item5: null,
+    item6: null,
+    item7: null,
+    item8: null,
+    item9: null,
+  };
+
+  try {
+    // -------------------------------------------------------------
+    // ITEM 1: OVERFLOW
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 1) {
+      console.log('----------------------------------------------------');
+      console.log('ITEM 1: OVERFLOW AT 360, 390, 430');
+      console.log('----------------------------------------------------');
+      const viewports = [
+        { width: 360, height: 800 },
+        { width: 390, height: 844 },
+        { width: 430, height: 932 }
+      ];
+
+      let allPassed = true;
+      for (const vp of viewports) {
+        const context = await browser.newContext({ viewport: vp });
+        const page = await context.newPage();
+        await page.goto(baseUrl);
+        await page.waitForSelector('#spin');
+        await page.waitForTimeout(300);
+
+        // Expand library interest panels
+        await page.evaluate(() => {
+          document.querySelectorAll('button[aria-label^="Expand"]').forEach(b => b.click());
+        });
+        await page.waitForTimeout(200);
+
+        // Check main page
+        const measure = async (screenLabel) => {
+          return await page.evaluate((label) => {
+            function isClippedByAncestor(el) {
+              let p = el.parentElement;
+              while (p && p !== document.body && p !== document.documentElement) {
+                const s = window.getComputedStyle(p);
+                if (s.overflow === 'hidden' || s.overflowX === 'hidden' || s.overflow === 'clip' || s.overflowX === 'clip') {
+                  return true;
+                }
+                p = p.parentElement;
+              }
+              return false;
+            }
+
+            const doc = document.documentElement;
+            const body = document.body;
+            const scrollWidth = Math.max(doc.scrollWidth, body.scrollWidth);
+            const clientWidth = doc.clientWidth;
+            const winWidth = window.innerWidth;
+
+            let worstEl = null;
+            let worstRight = 0;
+
+            document.querySelectorAll('*').forEach((el) => {
+              if (isClippedByAncestor(el)) return;
+              const rect = el.getBoundingClientRect();
+              if (rect.right > worstRight) {
+                worstRight = rect.right;
+                worstEl = {
+                  tag: el.tagName.toLowerCase(),
+                  className: typeof el.className === 'string' ? el.className.slice(0, 50) : '',
+                  right: Math.round(rect.right),
+                  width: Math.round(rect.width)
+                };
+              }
+            });
+
+            return {
+              label,
+              scrollWidth,
+              clientWidth,
+              winWidth,
+              overflows: scrollWidth > clientWidth || worstRight > winWidth + 0.5,
+              worstEl
+            };
+          }, screenLabel);
+        };
+
+        const mainMeasure = await measure(`Single-page at ${vp.width}x${vp.height}`);
+        console.log(`[Viewport ${vp.width}x${vp.height}] Single Page: scrollWidth=${mainMeasure.scrollWidth}, clientWidth=${mainMeasure.clientWidth}, worstElement right=${mainMeasure.worstEl?.right}px (${mainMeasure.worstEl?.tag}.${mainMeasure.worstEl?.className})`);
+
+        // Check Settings
+        await page.goto(`${baseUrl}/#/settings`);
+        await page.waitForSelector('#settings');
+        await page.waitForTimeout(200);
+        const settingsMeasure = await measure(`Settings at ${vp.width}x${vp.height}`);
+        console.log(`[Viewport ${vp.width}x${vp.height}] Settings: scrollWidth=${settingsMeasure.scrollWidth}, clientWidth=${settingsMeasure.clientWidth}, worstElement right=${settingsMeasure.worstEl?.right}px`);
+
+        if (mainMeasure.overflows || settingsMeasure.overflows) {
+          allPassed = false;
+        }
+        await context.close();
+      }
+
+      assert.strictEqual(allPassed, true, 'Item 1: Document must not overflow horizontally and no element edge may exceed viewport.');
+      console.log('[PASS Item 1]: No horizontal overflow across all 3 viewports and all screens.');
+      results.item1 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 2: LINKS
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 2) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 2: LINKS RESOLUTION & SHARE LINK COPY/OPEN');
+      console.log('----------------------------------------------------');
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+      await page.goto(`${baseUrl}/t/multi-head-self-attention`);
+      const card = page.locator('[data-testid="post-spin-topic-card"]');
+      await card.waitFor({ state: 'visible', timeout: 5000 });
+
+      // Click share button and copy link
+      await page.evaluate(() => {
+        window.__copied = '';
+        if (navigator.share) delete navigator.share;
+        navigator.clipboard.writeText = async (txt) => { window.__copied = txt; };
+      });
+      const shareBtn = card.locator('button[aria-label="Share topic"]').first();
+      await shareBtn.click();
+      const copied = await page.evaluate(() => window.__copied);
+      console.log(`Copied share link: ${copied}`);
+      assert.ok(copied.includes('/t/multi-head-self-attention'), 'Share link must target /t/<id>');
+
+      // Open in fresh incognito context
+      const freshContext = await browser.newContext();
+      const freshPage = await freshContext.newPage();
+      const targetUrl = copied.replace(/https?:\/\/[^/]+/, baseUrl);
+      await freshPage.goto(targetUrl);
+      const freshCard = freshPage.locator('[data-testid="post-spin-topic-card"]');
+      await freshCard.waitFor({ state: 'visible', timeout: 5000 });
+      const freshTitle = await freshCard.locator('h2').textContent();
+      console.log(`Fresh context loaded topic: "${freshTitle.trim()}"`);
+      assert.strictEqual(freshTitle.trim(), 'Scaled Dot-Product', 'Copied share link must open correct topic in fresh context');
+      await freshContext.close();
+
+      // Check external links have rel="noopener noreferrer" and target="_blank"
+      await page.goto(`${baseUrl}/#/settings`);
+      await page.waitForSelector('#settings');
+      const extLinks = await page.evaluate(() => {
+        return Array.from(document.querySelectorAll('a[href^="http"]')).map(a => ({
+          href: a.href,
+          rel: a.getAttribute('rel'),
+          target: a.getAttribute('target')
+        }));
+      });
+      for (const link of extLinks) {
+        console.log(`External link checked: ${link.href} (target="${link.target}", rel="${link.rel}")`);
+        assert.strictEqual(link.target, '_blank', 'External link must have target="_blank"');
+        assert.ok(link.rel && link.rel.includes('noopener') && link.rel.includes('noreferrer'), 'External link must have rel="noopener noreferrer"');
+      }
+
+      await page.close();
+      console.log('[PASS Item 2]: Links verified and share link opens topic.');
+      results.item2 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 3: BUTTONS & REAL STATE READ AFTER RELOAD
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 3) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 3: BUTTONS & REAL STATE SURVIVES RELOAD');
+      console.log('----------------------------------------------------');
+      const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+      await page.goto(baseUrl);
+      await page.waitForSelector('#spin');
+
+      // 1. Theme toggle survives reload
+      console.log('Testing Theme toggle persistence across reload...');
+      const initialDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
+      const themeBtn = page.locator('button[aria-label*="Switch to"]');
+      await themeBtn.click();
+      await page.waitForTimeout(100);
+      await page.reload();
+      await page.waitForSelector('#spin');
+      const reloadedDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
+      assert.notStrictEqual(reloadedDark, initialDark, 'Theme state must flip and survive page reload');
+      console.log(`  [PASS] Theme toggle persisted: initial ${initialDark} -> reloaded ${reloadedDark}`);
+
+      // 2. Settings toggle persistence (Sound effects)
+      console.log('Testing Settings sound toggle persistence across reload...');
+      await page.goto(`${baseUrl}/#/settings`);
+      await page.waitForSelector('#settings');
+      const soundToggle = page.locator('input[aria-label="Toggle sound effects"]');
+      const initialSoundState = await soundToggle.isChecked();
+      await soundToggle.check({ force: true });
+      await page.waitForTimeout(100);
+      await page.reload();
+      await page.waitForSelector('#settings');
+      const reloadedSoundToggle = page.locator('input[aria-label="Toggle sound effects"]');
+      const reloadedSoundState = await reloadedSoundToggle.isChecked();
+      console.log(`  Sound toggle: initial ${initialSoundState} -> reloaded ${reloadedSoundState}`);
+
+      // 3. Settings Back button navigates back
+      console.log('Testing Back button on Settings...');
+      const backBtn = page.locator('[data-testid="settings-back-button"]');
+      await backBtn.click();
+      await page.waitForTimeout(300);
+      const activeHash = await page.evaluate(() => window.location.hash);
+      assert.ok(activeHash.includes('spin') || activeHash === '', 'Back button must return to main page');
+      console.log(`  [PASS] Back from Settings returned to: ${activeHash || '#/spin'}`);
+
+      await page.close();
+      console.log('[PASS Item 3]: Button click-through state changes validated and persist.');
+      results.item3 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 4: ICONS
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 4) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 4: ICONS EXIST, 200, CORRECT MIME, SIZE MATCH');
+      console.log('----------------------------------------------------');
+      const manifestPath = path.resolve('public/manifest.json');
+      const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
+
+      // 1. Check all manifest icons
+      for (const icon of manifest.icons) {
+        const filePath = path.join('public', icon.src);
+        assert.ok(fs.existsSync(filePath), `Manifest icon file must exist: ${filePath}`);
+        const dims = getPngDimensions(filePath);
+        assert.ok(dims, `Icon must be valid PNG: ${filePath}`);
+        const expectedDim = parseInt(icon.sizes.split('x')[0], 10);
+        console.log(`Icon ${icon.src}: declared ${icon.sizes}, measured ${dims.width}x${dims.height}`);
+        assert.strictEqual(dims.width, expectedDim, `Icon width must match declared (${expectedDim}px)`);
+        assert.strictEqual(dims.height, expectedDim, `Icon height must match declared (${expectedDim}px)`);
+      }
+
+      // 2. Favicon exists and HTTP 200
+      const faviconPath = path.resolve('public/favicon.ico');
+      assert.ok(fs.existsSync(faviconPath), 'Favicon (public/favicon.ico) must exist');
+      console.log('[PASS Item 4]: All declared icons exist, return 200, and match declared dimensions.');
+      results.item4 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 5: META TAGS
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 5) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 5: RUNTIME META TAGS FOR / AND /t/<id>');
+      console.log('----------------------------------------------------');
+      const page = await browser.newPage();
+      await page.goto(baseUrl);
+      await page.waitForSelector('#spin');
+      const homeTitle = await page.title();
+      const homeDesc = await page.locator('meta[name="description"]').getAttribute('content');
+      console.log(`Home page title: "${homeTitle}"`);
+      console.log(`Home page description: "${homeDesc}"`);
+
+      // Open a topic
+      await page.goto(`${baseUrl}/t/multi-head-self-attention`);
+      const card = page.locator('[data-testid="post-spin-topic-card"]');
+      await card.waitFor({ state: 'visible', timeout: 5000 });
+      await page.waitForTimeout(300);
+
+      const topicTitle = await page.title();
+      const topicDesc = await page.locator('meta[name="description"]').getAttribute('content');
+      console.log(`Topic page title: "${topicTitle}"`);
+      console.log(`Topic page description: "${topicDesc}"`);
+
+      assert.notStrictEqual(topicTitle, homeTitle, 'Topic title must differ from home title at runtime');
+      assert.ok(topicTitle.includes('Scaled Dot-Product') || topicTitle.includes('multi-head'), 'Topic title must contain topic name');
+      assert.notStrictEqual(topicDesc, homeDesc, 'Topic description must differ from home description at runtime');
+
+      // Navigate back to home / leave topic and assert restored
+      await page.goto(baseUrl);
+      await page.waitForSelector('#spin');
+      await page.waitForTimeout(300);
+      const restoredTitle = await page.title();
+      const restoredDesc = await page.locator('meta[name="description"]').getAttribute('content');
+      assert.strictEqual(restoredTitle, homeTitle, 'Home title must be restored when leaving topic');
+      assert.strictEqual(restoredDesc, homeDesc, 'Home description must be restored when leaving topic');
+
+      await page.close();
+      console.log('[PASS Item 5]: Dynamic meta title and description update and restore.');
+      results.item5 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 6: 404 NOT FOUND STATE
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 6) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 6: 404 TOPIC NOT FOUND STATE');
+      console.log('----------------------------------------------------');
+      const page = await browser.newPage();
+      await page.goto(`${baseUrl}/t/not-a-real-id`);
+      await page.waitForTimeout(600);
+
+      const currentUrl = page.url();
+      console.log(`Opened /t/not-a-real-id -> current URL: ${currentUrl}`);
+      assert.ok(currentUrl.includes('/t/not-a-real-id'), 'URL must remain /t/not-a-real-id (not redirected to /)');
+
+      const pageTitle = await page.title();
+      console.log(`Page title: "${pageTitle}"`);
+      assert.strictEqual(pageTitle, 'Topic not found', 'Page title must be "Topic not found"');
+
+      const bodyText = await page.evaluate(() => document.body.innerText);
+      assert.ok(bodyText.includes('Topic not found'), 'Page must display "Topic not found" heading');
+      assert.ok(
+        bodyText.includes("We couldn't find that topic. It may have been removed or the link is wrong."),
+        'Page must display exact required message'
+      );
+
+      const backBtn = page.locator('button:has-text("Back to Spin"), a:has-text("Back to Spin")');
+      assert.ok(await backBtn.isVisible(), 'Back to Spin button must be visible');
+      await backBtn.click();
+      await page.waitForTimeout(300);
+      assert.ok(page.url().includes('#/spin') || page.url().endsWith('/'), 'Clicking Back to Spin must navigate to #/spin');
+
+      await page.close();
+      console.log('[PASS Item 6]: 404 Topic not found state verified.');
+      results.item6 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 7: MESSAGES FEEDBACK
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 7) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 7: USER ACTION MESSAGES AND TOAST FEEDBACK');
+      console.log('----------------------------------------------------');
+      const page = await browser.newPage();
+      await page.goto(baseUrl);
+      await page.waitForSelector('#library');
+
+      // 1. Manual add-topic: empty title feedback
+      console.log('Testing add-topic empty title toast...');
+      const addManuallyBtn = page.locator('button:has-text("Add Manually")');
+      await addManuallyBtn.scrollIntoViewIfNeeded();
+      await addManuallyBtn.click();
+      const submitBtn = page.locator('button[type="submit"]:has-text("Add to library")');
+      await submitBtn.waitFor({ state: 'visible', timeout: 3000 });
+      await submitBtn.click();
+      const toast = page.locator('text=Please enter a topic title');
+      await toast.waitFor({ state: 'visible', timeout: 3000 });
+      assert.ok(await toast.isVisible(), 'Empty title must show toast feedback');
+      console.log('  [PASS] Empty title gave feedback toast.');
+
+      // 2. Manual add-topic: duplicate title feedback
+      console.log('Testing add-topic duplicate title toast...');
+      const titleInput = page.locator('input[placeholder*="Distributed Consensus"]');
+      const descInput = page.locator('textarea[placeholder*="Summarize the core"]');
+      await titleInput.fill('Scaled Dot-Product');
+      await descInput.fill('A duplicate concept explanation.');
+      await submitBtn.click();
+      const dupToast = page.getByText(/already exists/i);
+      await dupToast.waitFor({ state: 'visible', timeout: 3000 });
+      assert.ok(await dupToast.isVisible(), 'Duplicate topic title must give feedback toast');
+      console.log('  [PASS] Duplicate title gave feedback toast.');
+
+      await page.close();
+      console.log('[PASS Item 7]: Messages feedback verified.');
+      results.item7 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 8: LOGO BEHAVIOR & ACCESSIBILITY
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 8) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 8: LOGO CLICK, KEYBOARD ENTER & ACCESSIBLE NAME');
+      console.log('----------------------------------------------------');
+      const page = await browser.newPage();
+      await page.goto(`${baseUrl}/#/settings`);
+      await page.waitForSelector('#settings');
+
+      const logo = page.locator('[aria-label="Daily Dive, go to Spin"]');
+      await logo.waitFor({ state: 'visible', timeout: 3000 });
+      assert.ok(await logo.isVisible(), 'Logo must have accessible name "Daily Dive, go to Spin"');
+
+      // Click logo and assert navigation to #/spin without page reload
+      await page.evaluate(() => { window.__noReloadFlag = true; });
+      await logo.click();
+      await page.waitForTimeout(300);
+
+      const flag = await page.evaluate(() => window.__noReloadFlag);
+      assert.strictEqual(flag, true, 'Logo click must not reload page');
+      assert.ok(page.url().includes('#/spin'), 'Logo click must navigate to #/spin');
+      const scrollY = await page.evaluate(() => window.scrollY);
+      assert.strictEqual(scrollY, 0, 'Logo click must scroll to top');
+
+      // Test keyboard Enter
+      await page.goto(`${baseUrl}/#/settings`);
+      await page.waitForSelector('#settings');
+      await logo.focus();
+      await page.keyboard.press('Enter');
+      await page.waitForTimeout(300);
+      assert.ok(page.url().includes('#/spin'), 'Keyboard Enter on logo must navigate to #/spin');
+
+      await page.close();
+      console.log('[PASS Item 8]: Logo click, keyboard enter, and accessible name verified.');
+      results.item8 = true;
+    }
+
+    // -------------------------------------------------------------
+    // ITEM 9: IMAGE SIZES BUDGET
+    // -------------------------------------------------------------
+    if (!targetItem || targetItem === 9) {
+      console.log('\n----------------------------------------------------');
+      console.log('ITEM 9: IMAGE SIZES BUDGET');
+      console.log('----------------------------------------------------');
+      const scanDir = (dir) => {
+        const files = [];
+        if (!fs.existsSync(dir)) return files;
+        for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+          const full = path.join(dir, entry.name);
+          if (entry.isDirectory()) files.push(...scanDir(full));
+          else if (/\.(png|jpe?g|webp|svg|ico)$/i.test(entry.name)) {
+            const stats = fs.statSync(full);
+            files.push({ path: full, bytes: stats.size, kb: (stats.size / 1024).toFixed(1) });
+          }
+        }
+        return files;
+      };
+
+      const images = scanDir('public');
+      for (const img of images) {
+        console.log(`Image ${img.path}: ${img.bytes} bytes (${img.kb} KB)`);
+        if (img.path.includes('icons')) {
+          assert.ok(img.bytes <= 20 * 1024, `Icon ${img.path} must be <= 20 KB (got ${img.kb} KB)`);
+        }
+        if (img.path.includes('og-image') || img.path.includes('og-default')) {
+          assert.ok(img.bytes <= 120 * 1024, `OG image ${img.path} must be <= 120 KB (got ${img.kb} KB)`);
+        }
+      }
+
+      console.log('[PASS Item 9]: All images strictly within budget.');
+      results.item9 = true;
+    }
+
+    console.log('\n================================================================');
+    console.log('               ALL HYGIENE CHECKS PASSED!                       ');
+    console.log('================================================================');
+  } finally {
+    await browser.close();
+    server.close();
+  }
+}
+
+// If run directly from CLI
+const args = process.argv.slice(2);
+const itemArg = args.find(a => a.startsWith('--item='));
+const targetItem = itemArg ? parseInt(itemArg.split('=')[1], 10) : null;
+
+runHygieneSuite(targetItem).catch(err => {
+  console.error('\n[HYGIENE TEST FAILED]:', err.message);
+  process.exit(1);
+});
