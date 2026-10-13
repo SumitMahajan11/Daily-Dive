@@ -125,7 +125,7 @@ const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarge
   );
 };
 
-export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtract, reviewedTopic }) => {
+export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtract, reviewedTopic, onConsumeReview }) => {
   const navigateToLibrary = onNavigateLibrary || onNavigateFilter || onNavigateExtract;
   const {
     topics,
@@ -244,8 +244,8 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   const containerRef = useRef(null);
   const [containerWidth, setContainerWidth] = useState(358);
   const [isSpinning, setIsSpinning] = useState(false);
-  const [showResult, setShowResult] = useState(false);
-  const [isLanded, setIsLanded] = useState(false);
+  const [showResult, setShowResult] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('daily_dive_has_spun') === 'true' && Boolean(currentTopic) : false));
+  const [isLanded, setIsLanded] = useState(() => (typeof window !== 'undefined' ? localStorage.getItem('daily_dive_has_spun') === 'true' && Boolean(currentTopic) : false));
   const [showLandingHalo, setShowLandingHalo] = useState(false);
   const [showLandingRing, setShowLandingRing] = useState(false);
   const [isLandingScale, setIsLandingScale] = useState(false);
@@ -354,12 +354,18 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
   // Open topic card when a topic is selected for review from Progress screen
   useEffect(() => {
     if (reviewedTopic) {
+      try {
+        localStorage.setItem('daily_dive_has_spun', 'true');
+      } catch (e) {}
       setCurrentTopic(reviewedTopic);
       setShowResult(true);
       setIsLanded(true);
       setIsNotFound(false);
+      if (onConsumeReview) {
+        onConsumeReview();
+      }
     }
-  }, [reviewedTopic, setCurrentTopic]);
+  }, [reviewedTopic, setCurrentTopic, onConsumeReview]);
 
   // Synchronize document title and description meta tag at runtime
   useEffect(() => {

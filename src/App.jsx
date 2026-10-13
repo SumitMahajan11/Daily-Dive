@@ -272,6 +272,7 @@ const MainLayout = () => {
               <SpinScreen
                 onNavigateLibrary={() => scrollToSection('library')}
                 reviewedTopic={reviewedTopic}
+                onConsumeReview={() => setReviewedTopic(null)}
               />
             </section>
 

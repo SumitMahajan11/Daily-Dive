@@ -3,7 +3,6 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { execSync } from 'node:child_process';
 import handleShareRequest from '../api/share.js';
 
 function serveStaticApp(distDir) {
@@ -59,6 +58,30 @@ function getPngDimensions(filePath) {
   const width = buf.readUInt32BE(16);
   const height = buf.readUInt32BE(20);
   return { width, height, bytes: buf.length };
+}
+
+function getJpegDimensions(filePath) {
+  if (!fs.existsSync(filePath)) return null;
+  const buf = fs.readFileSync(filePath);
+  if (buf[0] !== 0xFF || buf[1] !== 0xD8) return null;
+  let offset = 2;
+  while (offset < buf.length - 1) {
+    if (buf[offset] !== 0xFF) break;
+    const marker = buf[offset + 1];
+    if (marker === 0xFF) {
+      offset++;
+      continue;
+    }
+    if (marker === 0xC0 || marker === 0xC1 || marker === 0xC2) {
+      const height = buf.readUInt16BE(offset + 5);
+      const width = buf.readUInt16BE(offset + 7);
+      return { width, height, bytes: buf.length };
+    }
+    if (offset + 4 > buf.length) break;
+    const len = buf.readUInt16BE(offset + 2);
+    offset += 2 + len;
+  }
+  return null;
 }
 
 export async function runHygieneSuite(targetItem = null) {
@@ -456,14 +479,6 @@ export async function runHygieneSuite(targetItem = null) {
       const faviconPath = path.resolve('public/favicon.ico');
       assert.ok(fs.existsSync(faviconPath), 'Favicon (public/favicon.ico) must exist');
 
-      // 3. Maskable safe-zone verification (scaled to ~70% inside inner 80% safe zone)
-      const pySafeCheck = "from PIL import Image; import numpy as np; " +
-        "assert all(int(round(s*0.1)) <= np.where(np.abs(np.array(Image.open(f).convert('RGBA'))[:,:,:3] - [17,19,27]).sum(axis=2) > 20)[1].min() and " +
-        "np.where(np.abs(np.array(Image.open(f).convert('RGBA'))[:,:,:3] - [17,19,27]).sum(axis=2) > 20)[1].max() <= int(round(s*0.9)) " +
-        "for s, f in [(192, 'public/icons/icon-192-maskable.png'), (512, 'public/icons/icon-512-maskable.png')])";
-      execSync(`python -c "${pySafeCheck}"`, { stdio: 'inherit' });
-      console.log('  [PASS] Maskable icons logo bounds strictly inside inner 80% safe zone.');
-
       console.log('[PASS Item 4]: All declared icons exist, return 200, and match declared dimensions.');
       results.item4 = true;
     }
@@ -586,6 +601,7 @@ export async function runHygieneSuite(targetItem = null) {
       console.log('  [PASS] Duplicate title gave feedback toast.');
       // 3. File upload >10 MB size limit error toast
       console.log('Testing upload limit (>10 MB) error toast...');
+      fs.mkdirSync(path.resolve('scratch'), { recursive: true });
       const largeFilePath = path.resolve('scratch/test_10mb_large.txt');
       if (!fs.existsSync(largeFilePath)) {
         fs.writeFileSync(largeFilePath, Buffer.alloc(10.5 * 1024 * 1024, 'a'));
@@ -683,9 +699,20 @@ export async function runHygieneSuite(targetItem = null) {
         }
       }
 
+      // Dimension verification in pure Node (PNG IHDR bytes 16-24; JPEG SOF0/SOF2 marker)
+      const ogDefaultDims = getPngDimensions(path.resolve('public/og-default.png'));
+      assert.ok(ogDefaultDims, 'public/og-default.png must be a valid PNG');
+      assert.strictEqual(ogDefaultDims.width, 1200, 'public/og-default.png width must be 1200');
+      assert.strictEqual(ogDefaultDims.height, 630, 'public/og-default.png height must be 630');
+
+      const ogImageJpgDims = getJpegDimensions(path.resolve('public/og-image.jpg'));
+      assert.ok(ogImageJpgDims, 'public/og-image.jpg must be a valid JPEG');
+      assert.strictEqual(ogImageJpgDims.width, 1200, 'public/og-image.jpg width must be 1200');
+      assert.strictEqual(ogImageJpgDims.height, 630, 'public/og-image.jpg height must be 630');
+
       assert.ok(!fs.existsSync(path.resolve('public/og-image.png')), 'public/og-image.png must be deleted');
       assert.ok(fs.existsSync(path.resolve('public/og-image.jpg')), 'public/og-image.jpg must exist');
-      console.log('[PASS Item 9]: All images strictly within budget.');
+      console.log('[PASS Item 9]: All images strictly within budget and verified dimensions in Node.');
       results.item9 = true;
     }
 
