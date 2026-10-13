@@ -125,7 +125,7 @@ const PrecisionReelCard = ({ item, idx, motionX, containerWidth, isSelectedTarge
   );
 };
 
-export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtract }) => {
+export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtract, reviewedTopic }) => {
   const navigateToLibrary = onNavigateLibrary || onNavigateFilter || onNavigateExtract;
   const {
     topics,
@@ -350,6 +350,16 @@ export const SpinScreen = ({ onNavigateLibrary, onNavigateFilter, onNavigateExtr
     resolveTopicFromUrl();
     return () => { isMounted = false; };
   }, [topics, setCurrentTopic]);
+
+  // Open topic card when a topic is selected for review from Progress screen
+  useEffect(() => {
+    if (reviewedTopic) {
+      setCurrentTopic(reviewedTopic);
+      setShowResult(true);
+      setIsLanded(true);
+      setIsNotFound(false);
+    }
+  }, [reviewedTopic, setCurrentTopic]);
 
   // Synchronize document title and description meta tag at runtime
   useEffect(() => {

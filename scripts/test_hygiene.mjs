@@ -250,6 +250,7 @@ export async function runHygieneSuite(targetItem = null) {
       console.log('ITEM 3: BUTTONS & REAL STATE SURVIVES RELOAD');
       console.log('----------------------------------------------------');
       const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
+      page.on('pageerror', err => console.error('PAGE ERROR in Item 3:', err.message));
       await page.context().grantPermissions(['clipboard-read', 'clipboard-write', 'notifications']);
       await page.goto(baseUrl);
       await page.waitForSelector('#spin');
@@ -383,7 +384,13 @@ export async function runHygieneSuite(targetItem = null) {
       const loadToast = page.getByText(/Loaded .* into Spin View/i);
       await loadToast.waitFor({ state: 'visible', timeout: 5000 });
       assert.ok(await loadToast.isVisible(), 'Review button must display loaded topic toast');
-      console.log('  [PASS] Review button loaded review topic and displayed feedback toast.');
+
+      // Assert post-spin topic card is visible on #spin with the reviewed topic title
+      const topicCardTitle = page.locator('#spin [data-testid="post-spin-topic-card"] h2');
+      await topicCardTitle.waitFor({ state: 'visible', timeout: 3000 });
+      const renderedTitle = await topicCardTitle.innerText();
+      assert.match(renderedTitle, /Scaled Dot-Product|Multi-Head/i, 'Topic card with reviewed title must be visible on #spin');
+      console.log(`  [PASS] Review button opened topic card for "${renderedTitle.trim()}" on #spin.`);
 
       // 6. Share copy -> opens that topic in a fresh context
       console.log('Testing Share copy -> opens topic in fresh context...');
@@ -576,6 +583,7 @@ export async function runHygieneSuite(targetItem = null) {
       const dupToast = page.getByText(/already exists/i);
       await dupToast.waitFor({ state: 'visible', timeout: 3000 });
       assert.ok(await dupToast.isVisible(), 'Duplicate topic title must give feedback toast');
+      console.log('  [PASS] Duplicate title gave feedback toast.');
       // 3. File upload >10 MB size limit error toast
       console.log('Testing upload limit (>10 MB) error toast...');
       const largeFilePath = path.resolve('scratch/test_10mb_large.txt');

@@ -81,6 +81,7 @@ const getScreenFromUrl = () => {
 const MainLayout = () => {
   const [activeSection, setActiveSection] = useState(getScreenFromUrl);
   const [previousTab, setPreviousTab] = useState('spin');
+  const [reviewedTopic, setReviewedTopic] = useState(null);
   const isScrollingProgrammatically = useRef(false);
 
   const scrollToSection = useCallback((id, instant = false) => {
@@ -115,6 +116,11 @@ const MainLayout = () => {
       }, 850);
     }
   }, [activeSection]);
+
+  const handleReviewTopic = useCallback((topic) => {
+    setReviewedTopic(topic ? { ...topic, _revKey: Date.now() } : null);
+    scrollToSection('spin');
+  }, [scrollToSection]);
 
   const handleBackFromSettings = useCallback(() => {
     const target = previousTab && previousTab !== 'settings' ? previousTab : 'spin';
@@ -265,6 +271,7 @@ const MainLayout = () => {
             >
               <SpinScreen
                 onNavigateLibrary={() => scrollToSection('library')}
+                reviewedTopic={reviewedTopic}
               />
             </section>
 
@@ -278,7 +285,7 @@ const MainLayout = () => {
             >
               <ChunkErrorBoundary>
                 <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-                  <ProgressScreen onReviewTopic={() => scrollToSection('spin')} />
+                  <ProgressScreen onReviewTopic={handleReviewTopic} />
                 </Suspense>
               </ChunkErrorBoundary>
             </section>
