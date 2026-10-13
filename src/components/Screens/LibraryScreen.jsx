@@ -377,6 +377,15 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
   };
 
   const processUploadedFile = async (file) => {
+    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+    if (file && file.size > MAX_FILE_SIZE) {
+      if (showToast) {
+        showToast('File is too large (max 10 MB). Please use a smaller file.', 'error');
+      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
+      return;
+    }
+
     setSelectedFile(file);
     setProcessingState('extracting');
     setErrorMessage('');
