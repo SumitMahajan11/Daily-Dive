@@ -96,3 +96,11 @@ export function nextRecoveryState(prev = false, event = '') {
   }
   return Boolean(prev);
 }
+
+export function isUserAlreadyRegistered(dataOrUser) {
+  const user = dataOrUser && typeof dataOrUser === 'object' && 'user' in dataOrUser
+    ? dataOrUser.user
+    : dataOrUser;
+  return Boolean(user && Array.isArray(user.identities) && user.identities.length === 0);
+}
+
