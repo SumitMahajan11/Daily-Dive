@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Lock, Eye, EyeOff, AlertCircle, CheckCircle2, KeyRound } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { parseAuthUrlError, validatePasswordReset } from '../../lib/authPasswordReset';
+import { validatePasswordReset } from '../../lib/authPasswordReset';
 
 export const SetNewPasswordScreen = ({ onSuccess, onGoToForgot }) => {
   const {
@@ -20,20 +20,6 @@ export const SetNewPasswordScreen = ({ onSuccess, onGoToForgot }) => {
   const [successAlert, setSuccessAlert] = useState('');
   const [newPasswordError, setNewPasswordError] = useState('');
   const [confirmPasswordError, setConfirmPasswordError] = useState('');
-  const [urlError, setUrlError] = useState(() => parseAuthUrlError());
-
-  const handleSendNewLink = () => {
-    setUrlError(null);
-    clearRecovering();
-    if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
-      window.history.replaceState(null, '', window.location.pathname + '#/login');
-    }
-    if (onGoToForgot) {
-      onGoToForgot();
-    } else if (onSuccess) {
-      onSuccess(null, 'forgot');
-    }
-  };
 
   const handleSubmit = async (e) => {
     if (e && e.preventDefault) e.preventDefault();
@@ -94,31 +80,7 @@ export const SetNewPasswordScreen = ({ onSuccess, onGoToForgot }) => {
           </p>
         </div>
 
-        {/* Expired / Invalid URL Link Notice */}
-        {urlError && (
-          <div
-            id="auth-expired-link-box"
-            data-testid="auth-expired-link-box"
-            role="alert"
-            className="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs sm:text-sm space-y-3"
-          >
-            <div className="flex items-start gap-2.5">
-              <AlertCircle size={18} className="shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
-              <div className="flex-1 font-medium leading-relaxed">
-                {urlError.description || 'This password reset link is invalid or has expired.'}
-              </div>
-            </div>
-            <button
-              type="button"
-              id="send-new-link-btn"
-              data-testid="send-new-link-btn"
-              onClick={handleSendNewLink}
-              className="w-full sm:w-auto px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer shadow-sm"
-            >
-              Send a new link
-            </button>
-          </div>
-        )}
+
 
         {/* Error Alert State */}
         {errorAlert && (

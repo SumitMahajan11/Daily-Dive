@@ -19,9 +19,9 @@ const AuthContext = createContext({
   getFriendlyErrorMessage: (err) => err?.message || '',
 });
 
-export const AuthProvider = ({ children, supabaseClient }) => {
-  const client = supabaseClient || supabase;
-  const isConfigured = Boolean(supabaseClient || isSupabaseConfigured);
+export const AuthProvider = ({ children }) => {
+  const client = supabase;
+  const isConfigured = Boolean(isSupabaseConfigured);
 
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);

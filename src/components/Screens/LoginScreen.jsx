@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, LogIn, UserPlus, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
-import { parseAuthUrlError } from '../../lib/authPasswordReset';
+import { parseAuthUrlError, isUserAlreadyRegistered } from '../../lib/authPasswordReset';
 
 export const LoginScreen = ({ onBack, onSuccess, initialNotice, initialMode }) => {
   const {
@@ -93,7 +93,12 @@ export const LoginScreen = ({ onBack, onSuccess, initialNotice, initialMode }) =
     try {
       if (mode === 'signup') {
         const data = await signUpWithPassword(email.trim(), password);
-        if (data?.user && !data?.session) {
+        if (isUserAlreadyRegistered(data)) {
+          setAlert({
+            type: 'error',
+            message: 'An account with this email already exists. Try logging in.',
+          });
+        } else if (data?.user && !data?.session) {
           setAlert({
             type: 'success',
             message: 'Account created! Please check your email for a verification confirmation link.',

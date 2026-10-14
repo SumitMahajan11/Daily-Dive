@@ -3,7 +3,8 @@ import assert from 'node:assert/strict';
 import {
   validatePasswordReset,
   parseAuthUrlError,
-  nextRecoveryState
+  nextRecoveryState,
+  isUserAlreadyRegistered
 } from '../src/lib/authPasswordReset.js';
 
 describe('Password Reset Helper Functions (App-Used Logic)', () => {
@@ -83,6 +84,44 @@ describe('Password Reset Helper Functions (App-Used Logic)', () => {
     test('defaults to false when prev is omitted or falsey', () => {
       assert.strictEqual(nextRecoveryState(), false);
       assert.strictEqual(nextRecoveryState(undefined, 'SIGNED_IN'), false);
+    });
+  });
+
+  describe('isUserAlreadyRegistered', () => {
+    test('returns true when data.user has empty identities array', () => {
+      const signUpResponse = {
+        user: {
+          id: 'user-123',
+          email: 'existing@example.com',
+          identities: []
+        },
+        session: null
+      };
+      assert.strictEqual(isUserAlreadyRegistered(signUpResponse), true);
+      assert.strictEqual(isUserAlreadyRegistered(signUpResponse.user), true);
+    });
+
+    test('returns false when identities contains identity records', () => {
+      const newUserResponse = {
+        user: {
+          id: 'user-456',
+          email: 'newuser@example.com',
+          identities: [{ id: 'identity-1', user_id: 'user-456', provider: 'email' }]
+        },
+        session: null
+      };
+      assert.strictEqual(isUserAlreadyRegistered(newUserResponse), false);
+      assert.strictEqual(isUserAlreadyRegistered(newUserResponse.user), false);
+    });
+
+    test('returns false for missing, null, or undefined data/identities', () => {
+      assert.strictEqual(isUserAlreadyRegistered(null), false);
+      assert.strictEqual(isUserAlreadyRegistered(undefined), false);
+      assert.strictEqual(isUserAlreadyRegistered({}), false);
+      assert.strictEqual(isUserAlreadyRegistered({ user: null }), false);
+      assert.strictEqual(isUserAlreadyRegistered({ user: { id: 'abc' } }), false);
+      assert.strictEqual(isUserAlreadyRegistered({ user: { identities: null } }), false);
+      assert.strictEqual(isUserAlreadyRegistered({ user: { identities: 'not-an-array' } }), false);
     });
   });
 
