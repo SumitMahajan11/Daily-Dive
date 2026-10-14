@@ -25,6 +25,16 @@ if (typeof globalThis.DOMParser === 'undefined') {
 if (typeof globalThis.Iterator === 'undefined') {
   globalThis.Iterator = class Iterator {};
 }
+if (!Promise.withResolvers) {
+  Promise.withResolvers = function() {
+    let resolve, reject;
+    const promise = new Promise((res, rej) => {
+      resolve = res;
+      reject = rej;
+    });
+    return { promise, resolve, reject };
+  };
+}
 if (!Promise.try) Promise.try = (fn, ...args) => new Promise(resolve => resolve(fn(...args)));
 if (!Uint8Array.prototype.toHex) Uint8Array.prototype.toHex = function() { return Buffer.from(this).toString('hex'); };
 if (!Math.sumPrecise) Math.sumPrecise = (arr) => Array.from(arr).reduce((a, b) => a + b, 0);
