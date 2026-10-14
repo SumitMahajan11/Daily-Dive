@@ -140,17 +140,10 @@ python scripts/build_expanded_topics.py
 npm run build
 
 # Run unit and regression test suites
-node tests/regression_extractor.test.mjs
-node scripts/test_part_a_invariants.mjs
-node scripts/test_part_c_durability.mjs
-node scripts/test_part_d_backup.mjs
-node scripts/test_part_c_share_and_calendar.mjs
+npm test
 
-# Run Playwright end-to-end and accessibility audits
-python scripts/test_accessibility_axe.py
-python scripts/test_reduced_motion.py
-python scripts/test_lazy_load_proof.py
-python scripts/test_pwa_offline.py
+# Run Playwright end-to-end suites
+npm run test:e2e
 ```
 
 ---
