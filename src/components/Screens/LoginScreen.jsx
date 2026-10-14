@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Lock, Eye, EyeOff, ArrowLeft, LogIn, UserPlus, AlertCircle, CheckCircle2, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { parseAuthUrlError } from '../../lib/authPasswordReset';
 
-export const LoginScreen = ({ onBack, onSuccess }) => {
+export const LoginScreen = ({ onBack, onSuccess, initialNotice, initialMode }) => {
   const {
     user,
     isConfigured,
@@ -13,14 +14,38 @@ export const LoginScreen = ({ onBack, onSuccess }) => {
     getFriendlyErrorMessage,
   } = useAuth();
 
-  const [mode, setMode] = useState('login'); // 'login' | 'signup' | 'forgot'
+  const [mode, setMode] = useState(() => initialMode || 'login'); // 'login' | 'signup' | 'forgot'
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null); // { type: 'error' | 'success', message: string }
+  const [alert, setAlert] = useState(() => (
+    initialNotice ? { type: 'success', message: initialNotice } : null
+  ));
+  const [urlError, setUrlError] = useState(() => parseAuthUrlError());
   const [emailError, setEmailError] = useState('');
   const [passwordError, setPasswordError] = useState('');
+
+  useEffect(() => {
+    if (initialNotice) {
+      setAlert({ type: 'success', message: initialNotice });
+    }
+  }, [initialNotice]);
+
+  useEffect(() => {
+    if (initialMode) {
+      setMode(initialMode);
+    }
+  }, [initialMode]);
+
+  const handleSendNewLink = () => {
+    setUrlError(null);
+    setMode('forgot');
+    setAlert(null);
+    if (typeof window !== 'undefined' && window.history && window.history.replaceState) {
+      window.history.replaceState(null, '', window.location.pathname + '#/login');
+    }
+  };
 
   const validateForm = () => {
     let isValid = true;
@@ -99,6 +124,7 @@ export const LoginScreen = ({ onBack, onSuccess }) => {
         });
       }
     } catch (err) {
+      console.error('[Auth Error]', { name: err?.name, message: err?.message, status: err?.status });
       const friendlyMsg = getFriendlyErrorMessage(err);
       setAlert({
         type: 'error',
@@ -123,6 +149,7 @@ export const LoginScreen = ({ onBack, onSuccess }) => {
     try {
       await signInWithGoogle();
     } catch (err) {
+      console.error('[Auth Error]', { name: err?.name, message: err?.message, status: err?.status });
       setAlert({
         type: 'error',
         message: getFriendlyErrorMessage(err),
@@ -262,6 +289,32 @@ export const LoginScreen = ({ onBack, onSuccess }) => {
               }`}
             >
               Sign Up
+            </button>
+          </div>
+        )}
+
+        {/* Expired or Invalid Link Notice */}
+        {urlError && (
+          <div
+            id="auth-expired-link-box"
+            data-testid="auth-expired-link-box"
+            role="alert"
+            className="mb-5 p-4 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-900 dark:text-amber-200 text-xs sm:text-sm space-y-3"
+          >
+            <div className="flex items-start gap-2.5">
+              <AlertCircle size={18} className="shrink-0 mt-0.5 text-amber-600 dark:text-amber-400" />
+              <div className="flex-1 font-medium leading-relaxed">
+                {urlError.description || 'This password reset link is invalid or has expired.'}
+              </div>
+            </div>
+            <button
+              type="button"
+              id="send-new-link-btn"
+              data-testid="send-new-link-btn"
+              onClick={handleSendNewLink}
+              className="w-full sm:w-auto px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:opacity-90 active:scale-[0.98] transition-all cursor-pointer shadow-sm"
+            >
+              Send a new link
             </button>
           </div>
         )}

@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef, useCallback, Suspense, lazy } from 'react';
 import { motion } from 'framer-motion';
 import { DataProvider, useData } from './context/DataContext';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { Navbar } from './components/Navbar/Navbar';
 import { BottomNavigation } from './components/Navbar/BottomNavigation';
 import { SpinScreen } from './components/Screens/SpinScreen';
@@ -12,6 +12,7 @@ const LibraryScreen = lazy(() => import('./components/Screens/LibraryScreen').th
 const ProgressScreen = lazy(() => import('./components/Screens/ProgressScreen').then(m => ({ default: m.ProgressScreen })));
 const SettingsScreen = lazy(() => import('./components/Screens/SettingsScreen').then(m => ({ default: m.SettingsScreen })));
 const LoginScreen = lazy(() => import('./components/Screens/LoginScreen').then(m => ({ default: m.LoginScreen })));
+const SetNewPasswordScreen = lazy(() => import('./components/Screens/SetNewPasswordScreen').then(m => ({ default: m.SetNewPasswordScreen })));
 
 const SECTIONS = [
   { id: 'spin',     label: 'Spin',     icon: RotateCw,  kbd: '1' },
@@ -67,11 +68,15 @@ const HorizontalSeparator = () => (
 const getScreenFromUrl = () => {
   if (typeof window === 'undefined') return 'spin';
   const hash = window.location.hash.replace(/^#\/?/, '').trim().toLowerCase();
+  if (hash.includes('error=') || hash.includes('error_description=')) return 'login';
   if (hash === 'library') return 'library';
   if (hash === 'progress') return 'progress';
   if (hash === 'settings') return 'settings';
   if (hash === 'login' || hash === 'auth') return 'login';
   if (hash === 'spin') return 'spin';
+
+  const search = (window.location.search || '').toLowerCase();
+  if (search.includes('error=') || search.includes('error_description=')) return 'login';
 
   const path = window.location.pathname.trim().toLowerCase();
   if (path === '/library') return 'library';
@@ -83,9 +88,12 @@ const getScreenFromUrl = () => {
 };
 
 const MainLayout = () => {
+  const { recovering } = useAuth();
   const [activeSection, setActiveSection] = useState(getScreenFromUrl);
   const [previousTab, setPreviousTab] = useState('spin');
   const [reviewedTopic, setReviewedTopic] = useState(null);
+  const [loginNotice, setLoginNotice] = useState(null);
+  const [loginMode, setLoginMode] = useState(null);
   const isScrollingProgrammatically = useRef(false);
 
   const scrollToSection = useCallback((id, instant = false) => {
@@ -149,6 +157,18 @@ const MainLayout = () => {
       window.location.hash = '#/spin';
     }
     scrollToSection('spin');
+  }, [scrollToSection]);
+
+  const handlePasswordResetSuccess = useCallback((message) => {
+    setLoginNotice(message || 'Password updated. Log in with your new password.');
+    setLoginMode('login');
+    scrollToSection('login');
+  }, [scrollToSection]);
+
+  const handleGoToForgot = useCallback(() => {
+    setLoginNotice(null);
+    setLoginMode('forgot');
+    scrollToSection('login');
   }, [scrollToSection]);
 
   // Initial deep link scroll
@@ -271,8 +291,20 @@ const MainLayout = () => {
           </div>
         </aside>
 
-        {/* Scrollable Content, Full-Screen Settings View, or Login View */}
-        {activeSection === 'settings' ? (
+        {/* Scrollable Content, Full-Screen Settings View, Login View, or Set New Password View */}
+        {recovering ? (
+          <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
+            <ChunkErrorBoundary>
+              <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
+                <SetNewPasswordScreen
+                  onSuccess={handlePasswordResetSuccess}
+                  onGoToForgot={handleGoToForgot}
+                />
+              </Suspense>
+            </ChunkErrorBoundary>
+            <div className="h-28" />
+          </main>
+        ) : activeSection === 'settings' ? (
           <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
             <ChunkErrorBoundary>
               <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
@@ -285,7 +317,12 @@ const MainLayout = () => {
           <main className="flex-1 w-full max-w-4xl mx-auto px-4 sm:px-8 py-6">
             <ChunkErrorBoundary>
               <Suspense fallback={<div className="h-48 rounded-2xl bg-surface-container-low animate-pulse" />}>
-                <LoginScreen onBack={handleBackFromLogin} onSuccess={handleLoginSuccess} />
+                <LoginScreen
+                  onBack={handleBackFromLogin}
+                  onSuccess={handleLoginSuccess}
+                  initialNotice={loginNotice}
+                  initialMode={loginMode}
+                />
               </Suspense>
             </ChunkErrorBoundary>
             <div className="h-28" />
