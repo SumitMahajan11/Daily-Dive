@@ -6,20 +6,29 @@ const AuthContext = createContext({
   session: null,
   loading: false,
   isConfigured: false,
+  recovering: false,
+  setRecovering: () => {},
+  clearRecovering: () => {},
   signInWithPassword: async () => {},
   signUpWithPassword: async () => {},
   signInWithGoogle: async () => {},
   resetPassword: async () => {},
+  updatePassword: async () => {},
   signOut: async () => {},
+  getFriendlyErrorMessage: (err) => err?.message || '',
 });
 
-export const AuthProvider = ({ children }) => {
+export const AuthProvider = ({ children, supabaseClient }) => {
+  const client = supabaseClient || supabase;
+  const isConfigured = Boolean(supabaseClient || isSupabaseConfigured);
+
   const [user, setUser] = useState(null);
   const [session, setSession] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [recovering, setRecovering] = useState(false);
 
   useEffect(() => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!isConfigured || !client) {
       setLoading(false);
       return;
     }
@@ -27,7 +36,7 @@ export const AuthProvider = ({ children }) => {
     let isMounted = true;
 
     // Check active session from local storage without making eager remote network calls if unauthenticated
-    supabase.auth.getSession().then(({ data, error }) => {
+    client.auth.getSession().then(({ data, error }) => {
       if (!isMounted) return;
       if (error) {
         console.warn('Supabase getSession error:', error.message);
@@ -41,8 +50,11 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     });
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, newSession) => {
+    const { data: { subscription } } = client.auth.onAuthStateChange((event, newSession) => {
       if (!isMounted) return;
+      if (event === 'PASSWORD_RECOVERY') {
+        setRecovering(true);
+      }
       setSession(newSession ?? null);
       setUser(newSession?.user ?? null);
       setLoading(false);
@@ -52,26 +64,26 @@ export const AuthProvider = ({ children }) => {
       isMounted = false;
       subscription?.unsubscribe();
     };
-  }, []);
+  }, [client, isConfigured]);
 
   const signInWithPassword = useCallback(async (email, password) => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!isConfigured || !client) {
       throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
     }
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await client.auth.signInWithPassword({
       email,
       password,
     });
     if (error) throw error;
     return data;
-  }, []);
+  }, [client, isConfigured]);
 
   const signUpWithPassword = useCallback(async (email, password) => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!isConfigured || !client) {
       throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
     }
     const redirectTo = typeof window !== 'undefined' ? window.location.origin + '/' : undefined;
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await client.auth.signUp({
       email,
       password,
       options: {
@@ -80,14 +92,14 @@ export const AuthProvider = ({ children }) => {
     });
     if (error) throw error;
     return data;
-  }, []);
+  }, [client, isConfigured]);
 
   const signInWithGoogle = useCallback(async () => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!isConfigured || !client) {
       throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
     }
     const redirectTo = typeof window !== 'undefined' ? window.location.origin + '/' : undefined;
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await client.auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo,
@@ -95,33 +107,50 @@ export const AuthProvider = ({ children }) => {
     });
     if (error) throw error;
     return data;
-  }, []);
+  }, [client, isConfigured]);
 
   const resetPassword = useCallback(async (email) => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!isConfigured || !client) {
       throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
     }
     const redirectTo = typeof window !== 'undefined' ? window.location.origin + '/' : undefined;
-    const { data, error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { data, error } = await client.auth.resetPasswordForEmail(email, {
       redirectTo,
     });
     if (error) throw error;
     return data;
+  }, [client, isConfigured]);
+
+  const updatePassword = useCallback(async (newPassword) => {
+    if (!isConfigured || !client) {
+      throw new Error('Supabase is not configured. Please supply VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+    }
+    const { data, error } = await client.auth.updateUser({
+      password: newPassword,
+    });
+    if (error) throw error;
+    return data;
+  }, [client, isConfigured]);
+
+  const clearRecovering = useCallback(() => {
+    setRecovering(false);
   }, []);
 
   const signOut = useCallback(async () => {
-    if (!isSupabaseConfigured || !supabase) {
+    if (!isConfigured || !client) {
       setUser(null);
       setSession(null);
+      setRecovering(false);
       return;
     }
-    const { error } = await supabase.auth.signOut();
+    const { error } = await client.auth.signOut();
     if (error) {
       console.warn('Sign out warning:', error.message);
     }
     setUser(null);
     setSession(null);
-  }, []);
+    setRecovering(false);
+  }, [client, isConfigured]);
 
   return (
     <AuthContext.Provider
@@ -129,11 +158,15 @@ export const AuthProvider = ({ children }) => {
         user,
         session,
         loading,
-        isConfigured: isSupabaseConfigured,
+        recovering,
+        setRecovering,
+        clearRecovering,
+        isConfigured,
         signInWithPassword,
         signUpWithPassword,
         signInWithGoogle,
         resetPassword,
+        updatePassword,
         signOut,
         getFriendlyErrorMessage,
       }}
