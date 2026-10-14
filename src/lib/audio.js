@@ -4,17 +4,8 @@
 class AudioSynthesizer {
   constructor() {
     this.ctx = null;
-    this._soundEnabled = false;
+    this.soundEnabled = false;
     this.activeSpinOscillators = [];
-  }
-
-  get soundEnabled() {
-    if (typeof window !== 'undefined' && window.__spin_spy) return true;
-    return this._soundEnabled ?? false;
-  }
-
-  set soundEnabled(val) {
-    this._soundEnabled = val;
   }
 
   init() {
