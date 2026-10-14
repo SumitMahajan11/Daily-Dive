@@ -415,6 +415,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       }
 
       rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
+      const rawSections = extractedData?.rawPages || extractedData?.rawSlides || [];
 
       if (!rawText || rawText.trim().length < 20) {
         throw new Error('No legible text could be found in the document.');
@@ -432,10 +433,10 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           if (typeof showToast === 'function') {
             showToast(`${msg} Falling back to local offline extraction.`, 'info');
           }
-          candidates = await extractTopicsLocally(rawText, [], file.name);
+          candidates = await extractTopicsLocally(rawText, rawSections, file.name);
         }
       } else {
-        candidates = await extractTopicsLocally(rawText, [], file.name);
+        candidates = await extractTopicsLocally(rawText, rawSections, file.name);
       }
 
       if (!candidates || candidates.length === 0) {
