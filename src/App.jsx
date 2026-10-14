@@ -176,8 +176,6 @@ const MainLayout = () => {
     const initialScreen = getScreenFromUrl();
     if (initialScreen && initialScreen !== 'settings' && initialScreen !== 'login') {
       const doScroll = () => {
-        const currentScreen = getScreenFromUrl();
-        if (currentScreen !== initialScreen) return;
         const el = document.getElementById(initialScreen);
         if (el) {
           el.scrollIntoView({ behavior: 'instant', block: 'start' });
