@@ -68,8 +68,8 @@ Daily Dive compiles **692 curated micro-topics** spanning **12 categories** and 
 
 ## Privacy Policy & Data Architecture
 
-- **100% Local Storage**: All topic progress, streaks, notes, custom uploads, and settings are saved exclusively in your browser's `localStorage` and `IndexedDB`.
-- **Zero Remote Accounts & Zero Analytics**: No third-party trackers, no cookies, no user identification, and no cloud databases.
+- **100% Local Storage & On-Device Progress**: All topic progress, streaks, review history, custom uploads, and settings are saved exclusively in your browser's `localStorage` and `IndexedDB`. Signing in with an account is completely optional, and for now, all learning progress still stays on-device.
+- **Zero Third-Party Trackers & Zero Analytics**: No third-party trackers, no tracking cookies, and no remote telemetry. The core application (Spin, Library, and Progress) requires no account and operates fully offline.
 - **Optional Gemini API Key (BYOK)**: If you provide an optional Google Gemini API key in Settings to synthesize custom uploaded documents, requests are sent **directly from your browser to Google's API endpoints**. Your key is stored solely in local device storage and is never transmitted to any proxy server.
 
 ---

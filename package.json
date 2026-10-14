@@ -13,6 +13,7 @@
     "test:e2e": "node scripts/run_all_e2e.mjs"
   },
   "dependencies": {
+    "@supabase/supabase-js": "^2.117.3",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^13.2.0",
     "jszip": "^3.10.2",
