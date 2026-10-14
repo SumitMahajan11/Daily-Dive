@@ -87,34 +87,12 @@ export function parseAuthUrlError(customUrl = null) {
   return null;
 }
 
-export function determineActiveView({ activeSection, recovering }) {
-  if (recovering) {
-    return 'set-new-password';
+export function nextRecoveryState(prev = false, event = '') {
+  if (event === 'PASSWORD_RECOVERY') {
+    return true;
   }
-  return activeSection || 'spin';
-}
-
-export async function executePasswordReset({
-  client,
-  newPassword,
-  confirmPassword,
-}) {
-  const validation = validatePasswordReset(newPassword, confirmPassword);
-  if (!validation.valid) {
-    throw new Error(validation.error);
+  if (event === 'SIGNED_OUT') {
+    return false;
   }
-
-  if (!client || !client.auth || typeof client.auth.updateUser !== 'function') {
-    throw new Error('Supabase client is not available or updateUser is not supported.');
-  }
-
-  const { data, error } = await client.auth.updateUser({
-    password: newPassword,
-  });
-
-  if (error) {
-    throw error;
-  }
-
-  return data;
+  return Boolean(prev);
 }

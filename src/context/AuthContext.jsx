@@ -1,5 +1,5 @@
-import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase, isSupabaseConfigured, getFriendlyErrorMessage } from '../lib/supabase';
+import { nextRecoveryState } from '../lib/authPasswordReset';
 
 const AuthContext = createContext({
   user: null,
@@ -52,9 +52,7 @@ export const AuthProvider = ({ children, supabaseClient }) => {
 
     const { data: { subscription } } = client.auth.onAuthStateChange((event, newSession) => {
       if (!isMounted) return;
-      if (event === 'PASSWORD_RECOVERY') {
-        setRecovering(true);
-      }
+      setRecovering((prev) => nextRecoveryState(prev, event));
       setSession(newSession ?? null);
       setUser(newSession?.user ?? null);
       setLoading(false);
