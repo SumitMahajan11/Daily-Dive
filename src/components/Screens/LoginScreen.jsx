@@ -124,6 +124,7 @@ export const LoginScreen = ({ onBack, onSuccess, initialNotice, initialMode }) =
         });
       }
     } catch (err) {
+      console.error('[Auth Error]', { name: err?.name, message: err?.message, status: err?.status });
       const friendlyMsg = getFriendlyErrorMessage(err);
       setAlert({
         type: 'error',
@@ -148,6 +149,7 @@ export const LoginScreen = ({ onBack, onSuccess, initialNotice, initialMode }) =
     try {
       await signInWithGoogle();
     } catch (err) {
+      console.error('[Auth Error]', { name: err?.name, message: err?.message, status: err?.status });
       setAlert({
         type: 'error',
         message: getFriendlyErrorMessage(err),

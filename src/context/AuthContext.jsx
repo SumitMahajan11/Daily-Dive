@@ -1,3 +1,4 @@
+import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
 import { supabase, isSupabaseConfigured, getFriendlyErrorMessage } from '../lib/supabase';
 import { nextRecoveryState } from '../lib/authPasswordReset';
 
