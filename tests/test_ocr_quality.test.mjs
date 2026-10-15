@@ -188,3 +188,49 @@ test('4. Topic extraction: extractTopicsFromSections reads rawFrames', async () 
   console.log(`[TEST 4 RAW FRAMES] Extracted topics count: ${topics.length}`);
   assert.equal(topics.length, 2, `Expected 2 topics from rawFrames, got ${topics.length}`);
 });
+
+test('5. Per-page OCR gating: synthetic_mixed_document.pdf (3 image pages, 1 text page) extracts all 4 pages via per-page OCR gating', async (t) => {
+  if (!browser) {
+    t.skip('Playwright Chromium not installed in this runner environment');
+    return;
+  }
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${port}/`);
+  await page.waitForLoadState('networkidle');
+
+  const pdfBuffer = fs.readFileSync('tests/fixtures/synthetic_mixed_document.pdf');
+  const base64Pdf = pdfBuffer.toString('base64');
+
+  const result = await page.evaluate(async (base64) => {
+    const raw = atob(base64);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    const file = new File([arr], 'synthetic_mixed_document.pdf', { type: 'application/pdf' });
+
+    const { extractFromPdf } = await import('/src/lib/extractors/pdfExtractor.js');
+    const { extractTopicsFromSections } = await import('/src/lib/topicExtractor.js');
+
+    const extracted = await extractFromPdf(file);
+    const topics = await extractTopicsFromSections(extracted, file.name);
+
+    return {
+      text: extracted.text,
+      textLength: extracted.text.length,
+      rawPagesCount: extracted.rawPages.length,
+      rawPages: extracted.rawPages,
+      topicCount: topics.length,
+      topics
+    };
+  }, base64Pdf);
+
+  await page.close();
+
+  console.log(`[TEST 5 PER-PAGE OCR] Extracted pages: ${result.rawPagesCount}/4, Text length: ${result.textLength}, Topics: ${result.topicCount}`);
+  assert.equal(result.rawPagesCount, 4, `Expected all 4 pages extracted (3 OCR + 1 text layer), got ${result.rawPagesCount}`);
+  assert.ok(result.text.toLowerCase().includes('consensus') || result.text.toLowerCase().includes('raft'), 'Expected OCR text from page 1 in extracted text');
+  assert.ok(result.text.toLowerCase().includes('database') || result.text.toLowerCase().includes('b-tree') || result.text.toLowerCase().includes('lsm'), 'Expected OCR text from page 2 in extracted text');
+  assert.ok(result.text.toLowerCase().includes('streaming') || result.text.toLowerCase().includes('kafka'), 'Expected OCR text from page 3 in extracted text');
+  assert.ok(result.text.toLowerCase().includes('telemetry') || result.text.toLowerCase().includes('observability'), 'Expected text layer from page 4 in extracted text');
+  assert.ok(result.topicCount >= 3, `Expected at least 3 topics from mixed document, got ${result.topicCount}`);
+});
+
