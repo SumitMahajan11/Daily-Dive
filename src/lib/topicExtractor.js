@@ -1989,9 +1989,10 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   }
 
   // Requirement 1: Only fall back from structured path when structured returns 0 topics,
-  // or when document is short (under 600 characters of cleaned text) AND coverage is under 60%.
+  // or when document is short (under 600 characters of cleaned text, or images under 1200 characters) AND coverage is under 60%.
   // For longer documents with at least 2 structured topics, keep structured result.
-  const isShort = cleaned.length < 600;
+  const isImageOrMedia = /\.(png|jpe?g|webp|bmp|gif)$/i.test(sourceFileName || '');
+  const isShort = cleaned.length < 600 || (isImageOrMedia && cleaned.length < 1200);
   const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60);
 
   if (!shouldFallback) {
