@@ -1095,7 +1095,8 @@ export function computeExtractionCoverage(ocrText, topics) {
   if (!ocrText || typeof ocrText !== 'string' || !topics || !Array.isArray(topics) || topics.length === 0) {
     return 0;
   }
-  const cleanSourceWords = (ocrText.match(/[a-zA-Z0-9]{2,}/g) || []).map(w => w.toLowerCase());
+  const strippedText = stripMarkdownSyntax(ocrText);
+  const cleanSourceWords = (strippedText.match(/[a-zA-Z0-9]{2,}/g) || []).map(w => w.toLowerCase());
   if (cleanSourceWords.length === 0) return 0;
 
   const topicText = topics
@@ -1151,6 +1152,45 @@ function findDocLineNumbers(fullText, phrase) {
   return matched.length > 0 ? matched : [1];
 }
 
+// Common prepositions to reject when ending titles in list/sequence path
+export const LIST_PREPOSITIONS = new Set([
+  'about', 'above', 'across', 'after', 'against', 'along', 'among', 'around', 'at',
+  'before', 'behind', 'below', 'beneath', 'beside', 'between', 'beyond', 'by',
+  'down', 'during', 'except', 'for', 'from', 'in', 'inside', 'into', 'like',
+  'near', 'of', 'off', 'on', 'onto', 'out', 'outside', 'over', 'past', 'since',
+  'through', 'throughout', 'till', 'to', 'toward', 'towards', 'under', 'underneath',
+  'until', 'up', 'upon', 'with', 'within', 'without', 'via', 'vs'
+]);
+
+/**
+ * Strips stray delimiters (leading/trailing ) : ( ] [ } { - — – / \ | ; , . " ' etc.)
+ */
+export function stripStrayDelimiters(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str
+    .replace(/^[\s)\]}:;,\-—–/\\|(["'“”‘’*#.]+/g, '')
+    .replace(/[\s)\]}:;,\-—–/\\|(["'“”‘’*#.]+$|(?<=\s)[\-—–]+$/g, '')
+    .trim();
+}
+
+/**
+ * Rejects titles under 4 words or ending in a bare preposition.
+ */
+export function isValidListTitle(rawTitle) {
+  if (!rawTitle || typeof rawTitle !== 'string') return false;
+  const cleaned = stripStrayDelimiters(rawTitle);
+  if (!cleaned || cleaned.length < 3) return false;
+  if (isNonTopicHeading(cleaned)) return false;
+
+  const words = cleaned.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 4) return false;
+
+  const lastWord = words[words.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+  if (LIST_PREPOSITIONS.has(lastWord)) return false;
+
+  return true;
+}
+
 /**
  * Fallback Path 1: List / Sequence Extractor.
  * Chunks bulleted, numbered, or sequential progressions into high-coverage topic cards.
@@ -1174,6 +1214,8 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
     if (isMetaOrAsideLine(l)) return;
     if (isNonTopicHeading(cleanTitle(stripMarkdownSyntax(l)))) return;
     if (l.toLowerCase().includes('internal build-and-test order')) return;
+    if (/^#{1,6}\s+/.test(l)) return;
+    if (l.endsWith(':') && substantiveLines.length === 0) return;
     if (l.length < 3) return;
     substantiveLines.push(l);
   });
@@ -1201,7 +1243,7 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
       .trim();
     if (!cleaned || cleaned.length < 3) continue;
 
-    if (currentGroup.length > 0 && (currentLength + cleaned.length > 150 || currentGroup.length >= 3)) {
+    if (currentGroup.length > 0 && (currentLength + cleaned.length > 280 || currentGroup.length >= 5)) {
       const topic = buildListTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText);
       if (topic) topics.push(topic);
       currentGroup = [];
@@ -1229,22 +1271,31 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
   } else if (first.includes('-')) {
     titleStr = first.split('-')[0];
   }
-  let title = cleanCandidateTitle(truncateAtWord(titleStr, 45));
-  if (!title || title.length < 3 || isNonTopicHeading(title)) {
-    title = cleanCandidateTitle(truncateAtWord(first, 45));
-  }
-  if (!title || title.length < 3 || isNonTopicHeading(title)) {
-    if (lines.length > 1) {
-      title = cleanCandidateTitle(truncateAtWord(lines[1], 45));
+
+  const candidatesToTry = [
+    stripStrayDelimiters(titleStr),
+    stripStrayDelimiters(cleanCandidateTitle(truncateAtWord(first, 50))),
+    stripStrayDelimiters(cleanCandidateTitle(truncateAtWord(first, 65))),
+    stripStrayDelimiters(cleanCandidateTitle(first)),
+    lines.length > 1 ? stripStrayDelimiters(lines[1]) : null,
+    lines.length > 1 ? stripStrayDelimiters(cleanCandidateTitle(truncateAtWord(lines[1], 50))) : null
+  ].filter(Boolean);
+
+  let title = null;
+  for (const cand of candidatesToTry) {
+    const formatted = stripStrayDelimiters(truncateTitle(toTitleCase(cand), 70));
+    if (isValidListTitle(formatted)) {
+      title = formatted;
+      break;
     }
   }
-  if (!title || isNonTopicHeading(title)) {
+
+  if (!title) {
     return null;
   }
-  title = truncateTitle(toTitleCase(title), 70);
 
   const descParts = lines.map(l => {
-    let s = l.trim()
+    let s = stripStrayDelimiters(l.trim())
       .replace(/^[^A-Za-z0-9]+/, '')
       .replace(/[.;,]+$/, '');
     return s.charAt(0).toUpperCase() + s.slice(1);
@@ -1295,191 +1346,56 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
 
 /**
  * Fallback Path 2: Raw Text Extractor.
- * Handles tabular data, quote cards, and dense unstructured prose.
+ * Never split by sentence. Makes one topic for the whole text (title from filename or first line), flagged needs_review.
  */
 export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_file', options = {}) {
-  const clean = (fullText || '').trim();
+  const clean = cleanText(fullText || '').trim();
   if (clean.length < 20) return [];
 
   const timestamp = Date.now();
   const createdAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
 
-  // A. Check for Markdown Tables
-  if (clean.includes('|')) {
-    const tableLines = clean.split(/\r?\n/)
-      .map(l => l.trim())
-      .filter(l => l.startsWith('|') || l.endsWith('|'))
-      .filter(l => !/^[|\s\-:]+$/.test(l));
-    
-    if (tableLines.length >= 2) {
-      const headers = tableLines[0].split('|').map(s => stripMarkdownSyntax(s.trim())).filter(Boolean);
-      const dataRows = tableLines.slice(1);
-      const topics = [];
+  const rawLines = clean.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const firstLine = rawLines[0] || '';
 
-      for (let i = 0; i < dataRows.length; i++) {
-        const row = dataRows[i];
-        const cells = row.split('|').map(s => stripMarkdownSyntax(s.trim())).filter(Boolean);
-        if (cells.length >= 2) {
-          const subject = cells[0];
-          const details = cells.slice(1).map((c, idx) => {
-            const h = headers[idx + 1] ? `${headers[idx + 1]}: ` : '';
-            return `${h}${c}`;
-          }).join(', ');
-          
-          const title = truncateTitle(toTitleCase(cleanCandidateTitle(subject)), 70);
-          const desc = toSentence(`${subject} features ${details}.`, 175);
-          const lineNums = findDocLineNumbers(fullText, row);
-          const startLine = lineNums[0] || 1;
+  const fileBaseName = (sourceFileName || '')
+    .replace(/\.[^/.]+$/, '')
+    .replace(/[_\-]+/g, ' ')
+    .trim();
 
-          topics.push({
-            id: `custom-table-${timestamp}-${topics.length}`,
-            title,
-            raw_heading: subject,
-            description: desc,
-            category: 'custom-notes',
-            group_name: 'custom',
-            tags: ['custom-notes', 'tabular'],
-            source: sourceFileName,
-            is_custom: true,
-            lifecycle: 'temporary',
-            created_at: createdAt,
-            expires_at: expiresAt,
-            expiry_rule: '14_days',
-            resources: [],
-            confidence: 85,
-            confidence_rating: 'high',
-            needs_review: false,
-            is_confirmed: true,
-            review_reasons: [],
-            is_structural_title: false,
-            source_line_start: startLine,
-            source_line_end: startLine,
-            source_lines: [startLine, startLine],
-            title_source_line: startLine,
-            description_source_lines: [startLine]
-          });
-        }
-      }
-      if (topics.length > 0) return topics;
+  let candidateTitle = '';
+  if (firstLine) {
+    const strippedFirst = stripStrayDelimiters(stripMarkdownSyntax(firstLine));
+    if (strippedFirst && strippedFirst.length >= 3 && !isNonTopicHeading(strippedFirst)) {
+      candidateTitle = cleanCandidateTitle(truncateAtWord(strippedFirst, 50));
+      candidateTitle = stripStrayDelimiters(candidateTitle);
     }
   }
 
-  // B. Check for Quote Card
-  const quoteMatch = clean.match(/^["'“]([^"”]+)["'”]\s*(?:[—\-–]\s*([^]+))?$/s);
-  if (quoteMatch) {
-    const quoteBody = quoteMatch[1].trim();
-    const author = (quoteMatch[2] || '').trim();
-    const titleStr = author ? `${author} Quote` : quoteBody;
-    const title = truncateTitle(toTitleCase(cleanCandidateTitle(truncateAtWord(titleStr, 45))), 70);
-    const desc = toSentence(author ? `"${quoteBody}" — ${author}.` : `"${quoteBody}".`, 175);
-    return [{
-      id: `custom-quote-${timestamp}-0`,
-      title,
-      raw_heading: titleStr,
-      description: desc,
-      category: 'custom-notes',
-      group_name: 'custom',
-      tags: ['custom-notes', 'quote'],
-      source: sourceFileName,
-      is_custom: true,
-      lifecycle: 'temporary',
-      created_at: createdAt,
-      expires_at: expiresAt,
-      expiry_rule: '14_days',
-      resources: [],
-      confidence: 90,
-      confidence_rating: 'high',
-      needs_review: false,
-      is_confirmed: true,
-      review_reasons: [],
-      is_structural_title: false,
-      source_line_start: 1,
-      source_line_end: 1,
-      source_lines: [1, 1],
-      title_source_line: 1,
-      description_source_lines: [1]
-    }];
+  if (!candidateTitle || candidateTitle.length < 3 || isNonTopicHeading(candidateTitle)) {
+    candidateTitle = fileBaseName || 'Extracted Document';
   }
 
-  // C. Prose Chunker / Generic Sentences
-  const rawSentences = clean
-    .split(/(?<=[.!?])\s+|\r?\n\r?\n/)
-    .map(s => stripMarkdownSyntax(s.replace(/\s+/g, ' ').trim()))
-    .filter(s => s.length > 12 && !isMetaOrAsideLine(s));
+  const title = truncateTitle(toTitleCase(candidateTitle), 70);
 
-  if (rawSentences.length === 0) {
-    const title = truncateTitle(toTitleCase(cleanCandidateTitle(truncateAtWord(clean, 40))), 70);
-    const desc = toSentence(clean, 175);
-    return [{
-      id: `custom-raw-${timestamp}-0`,
-      title,
-      raw_heading: title,
-      description: desc,
-      category: 'custom-notes',
-      group_name: 'custom',
-      tags: ['custom-notes', 'summary'],
-      source: sourceFileName,
-      is_custom: true,
-      lifecycle: 'temporary',
-      created_at: createdAt,
-      expires_at: expiresAt,
-      expiry_rule: '14_days',
-      resources: [],
-      confidence: 75,
-      confidence_rating: 'medium',
-      needs_review: true,
-      is_confirmed: false,
-      review_reasons: ['Unverified raw text: user rewrite recommended'],
-      is_structural_title: false,
-      source_line_start: 1,
-      source_line_end: 1,
-      source_lines: [1, 1],
-      title_source_line: 1,
-      description_source_lines: [1]
-    }];
+  let desc = stripMarkdownSyntax(clean).replace(/\s+/g, ' ').trim();
+  if (desc.length > 500) {
+    desc = truncateAtWord(desc, 490);
+  }
+  desc = desc.replace(/[,\s;:–—\-.]+$/, '');
+  if (desc.length > 0) {
+    desc = desc.charAt(0).toUpperCase() + desc.slice(1) + '.';
   }
 
-  const topics = [];
-  let currentGroup = [];
-  let currentLen = 0;
-
-  for (const sent of rawSentences) {
-    if (currentGroup.length > 0 && (currentLen + sent.length > 160 || currentGroup.length >= 2)) {
-      topics.push(buildProseTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText));
-      currentGroup = [];
-      currentLen = 0;
-    }
-    currentGroup.push(sent);
-    currentLen += sent.length;
-  }
-
-  if (currentGroup.length > 0) {
-    topics.push(buildProseTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText));
-  }
-
-  return topics;
-}
-
-function buildProseTopic(group, index, sourceFileName, timestamp, fullText) {
-  const first = group[0];
-  let title = truncateTitle(toTitleCase(cleanCandidateTitle(truncateAtWord(first, 45))), 70);
-  if (!title || title.length < 3) title = 'Study Note Summary';
-
-  const desc = toSentence(group.join(' '), 175);
-  const lineNums = findDocLineNumbers(fullText, first);
-  const startLine = lineNums[0] || 1;
-  const createdAt = new Date().toISOString();
-  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
-
-  return {
-    id: `custom-prose-${timestamp}-${index}`,
+  return [{
+    id: `custom-raw-${timestamp}-0`,
     title,
-    raw_heading: first,
+    raw_heading: firstLine || title,
     description: desc,
     category: 'custom-notes',
     group_name: 'custom',
-    tags: ['custom-notes'],
+    tags: ['custom-notes', 'raw-text'],
     source: sourceFileName,
     is_custom: true,
     lifecycle: 'temporary',
@@ -1487,18 +1403,18 @@ function buildProseTopic(group, index, sourceFileName, timestamp, fullText) {
     expires_at: expiresAt,
     expiry_rule: '14_days',
     resources: [],
-    confidence: 80,
-    confidence_rating: 'high',
-    needs_review: false,
-    is_confirmed: true,
-    review_reasons: [],
+    confidence: 70,
+    confidence_rating: 'medium',
+    needs_review: true,
+    is_confirmed: false,
+    review_reasons: ['Unverified raw text: user review required'],
     is_structural_title: false,
-    source_line_start: startLine,
-    source_line_end: startLine,
-    source_lines: [startLine, startLine],
-    title_source_line: startLine,
-    description_source_lines: [startLine]
-  };
+    source_line_start: 1,
+    source_line_end: rawLines.length || 1,
+    source_lines: [1, rawLines.length || 1],
+    title_source_line: 1,
+    description_source_lines: [1]
+  }];
 }
 
 /**
@@ -1998,13 +1914,18 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
     return structuredTopics;
   }
 
-  // If structured handles it well (coverage >= 60% and topics > 0), return unchanged
-  if (structuredTopics.length > 0 && structuredCoverage >= 0.60) {
+  // Preserve structured path for multi-section documents/decks with explicit sections that structured already handles well
+  if (Array.isArray(rawSections) && rawSections.length >= 2 && structuredTopics.length >= 2) {
     return structuredTopics;
   }
 
-  // Preserve structured path for multi-section documents/decks with explicit sections that structured already handles well
-  if (Array.isArray(rawSections) && rawSections.length >= 2 && structuredTopics.length >= 2) {
+  // Requirement 1: Only fall back from structured path when structured returns 0 topics,
+  // or when document is short (under 600 characters of cleaned text) AND coverage is under 60%.
+  // For longer documents with at least 2 structured topics, keep structured result.
+  const isShort = cleaned.length < 600;
+  const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60);
+
+  if (!shouldFallback) {
     return structuredTopics;
   }
 
