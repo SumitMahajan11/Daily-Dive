@@ -1174,13 +1174,37 @@ export function stripStrayDelimiters(str) {
 }
 
 /**
- * Rejects titles under 4 words or ending in a bare preposition.
+ * Checks if a string is a clean short heading line (under 8 words, not ending in punctuation).
+ */
+export function isShortHeadingLine(str) {
+  if (!str || typeof str !== 'string') return false;
+  const cleaned = stripStrayDelimiters(str);
+  if (!cleaned || cleaned.includes('…') || cleaned.includes('...')) return false;
+  if (/[.!?]$/.test(cleaned) || /[.!?]\s+[A-Z]/.test(cleaned)) return false;
+  if (isNonTopicHeading(cleaned) || isMetaOrAsideLine(cleaned)) return false;
+
+  const words = cleaned.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length >= 8) return false;
+
+  const lastWord = words[words.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+  if (LIST_PREPOSITIONS.has(lastWord)) return false;
+
+  return true;
+}
+
+/**
+ * Rejects titles under 4 words, ending in a bare preposition, or containing sentence punctuation / ellipses.
  */
 export function isValidListTitle(rawTitle) {
   if (!rawTitle || typeof rawTitle !== 'string') return false;
   const cleaned = stripStrayDelimiters(rawTitle);
   if (!cleaned || cleaned.length < 3) return false;
   if (isNonTopicHeading(cleaned)) return false;
+
+  // Never accept truncated sentences with ellipses or sentence-ending punctuation
+  if (cleaned.includes('…') || cleaned.includes('...')) return false;
+  if (/[.!?]$/.test(cleaned)) return false;
+  if (/[.!?]\s+[A-Z]/.test(cleaned)) return false;
 
   const words = cleaned.trim().split(/\s+/).filter(Boolean);
   if (words.length < 4) return false;
@@ -1225,7 +1249,7 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
   const listMarkerRegex = /^[•\-*+·]\s*|^\d+[\.\)]\s*|^(?:first|then|next|finally|after|lastly|step|phase|stage|layer)\b/i;
   const isSequenceOrList = substantiveLines.filter(l => listMarkerRegex.test(l)).length >= Math.max(1, Math.floor(substantiveLines.length * 0.25));
 
-  if (!isSequenceOrList && substantiveLines.length > 10 && !fullText.includes('#')) {
+  if (!isSequenceOrList && !clean.includes('|') && !fullText.includes('#')) {
     return [];
   }
 
@@ -1262,31 +1286,54 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
 }
 
 function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
-  let first = lines[0];
-  let titleStr = first;
-  if (first.includes(':')) {
-    titleStr = first.split(':')[0];
-  } else if (first.includes('—')) {
-    titleStr = first.split('—')[0];
-  } else if (first.includes('-')) {
-    titleStr = first.split('-')[0];
+  let title = null;
+
+  // 1. Prefer a short heading line (under 8 words) when one exists
+  for (const l of lines) {
+    const stripped = stripStrayDelimiters(l);
+    if (!stripped) continue;
+
+    if (stripped.includes(':') || stripped.includes('—') || stripped.includes(' - ')) {
+      const parts = stripped.split(/[:—]|\s+-\s+/);
+      const prefix = stripStrayDelimiters(parts[0]);
+      if (isValidListTitle(prefix) && isShortHeadingLine(prefix)) {
+        title = toTitleCase(prefix);
+        break;
+      }
+      const suffix = stripStrayDelimiters(parts.slice(1).join(' '));
+      if (isValidListTitle(suffix) && isShortHeadingLine(suffix)) {
+        title = toTitleCase(suffix);
+        break;
+      }
+    }
+
+    if (isValidListTitle(stripped) && isShortHeadingLine(stripped)) {
+      title = toTitleCase(stripped);
+      break;
+    }
   }
 
-  const candidatesToTry = [
-    stripStrayDelimiters(titleStr),
-    stripStrayDelimiters(cleanCandidateTitle(truncateAtWord(first, 50))),
-    stripStrayDelimiters(cleanCandidateTitle(truncateAtWord(first, 65))),
-    stripStrayDelimiters(cleanCandidateTitle(first)),
-    lines.length > 1 ? stripStrayDelimiters(lines[1]) : null,
-    lines.length > 1 ? stripStrayDelimiters(cleanCandidateTitle(truncateAtWord(lines[1], 50))) : null
-  ].filter(Boolean);
+  // 2. If no line under 8 words was found, check if any line is a valid list title without being truncated
+  if (!title) {
+    for (const l of lines) {
+      const stripped = stripStrayDelimiters(l);
+      if (isValidListTitle(stripped) && !/[.!?]$/.test(stripped) && !stripped.includes('…') && !stripped.includes('...')) {
+        title = toTitleCase(stripped);
+        break;
+      }
+    }
+  }
 
-  let title = null;
-  for (const cand of candidatesToTry) {
-    const formatted = stripStrayDelimiters(truncateTitle(toTitleCase(cand), 70));
-    if (isValidListTitle(formatted)) {
-      title = formatted;
-      break;
+  // 3. Fallback: never use a truncated sentence as a title
+  if (!title) {
+    const domain = synthesizeDomainTitle(lines.join(' '));
+    if (domain && isValidListTitle(domain)) {
+      title = domain;
+    } else {
+      const fileBase = (sourceFileName || '').replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ').trim();
+      if (fileBase && fileBase.length >= 3) {
+        title = toTitleCase(fileBase);
+      }
     }
   }
 
@@ -1309,7 +1356,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
     desc = desc.charAt(0).toUpperCase() + desc.slice(1);
   }
 
-  const lineNums = findDocLineNumbers(fullText, first);
+  const lineNums = findDocLineNumbers(fullText, lines[0]);
   const startLine = lineNums[0] || 1;
   const endLine = lineNums[lineNums.length - 1] || startLine;
   const createdAt = new Date().toISOString();
@@ -1318,7 +1365,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
   return {
     id: `custom-list-${timestamp}-${index}`,
     title,
-    raw_heading: first,
+    raw_heading: lines[0],
     description: desc,
     category: 'custom-notes',
     group_name: 'custom',
@@ -1356,28 +1403,50 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
   const createdAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
 
-  const rawLines = clean.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
-  const firstLine = rawLines[0] || '';
-
   const fileBaseName = (sourceFileName || '')
     .replace(/\.[^/.]+$/, '')
     .replace(/[_\-]+/g, ' ')
     .trim();
 
+  const rawLines = clean.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+  // Requirement 4: prefer a short heading line (under 8 words) when one exists; never use a truncated sentence as a title.
   let candidateTitle = '';
-  if (firstLine) {
-    const strippedFirst = stripStrayDelimiters(stripMarkdownSyntax(firstLine));
-    if (strippedFirst && strippedFirst.length >= 3 && !isNonTopicHeading(strippedFirst)) {
-      candidateTitle = cleanCandidateTitle(truncateAtWord(strippedFirst, 50));
-      candidateTitle = stripStrayDelimiters(candidateTitle);
+
+  for (const line of rawLines) {
+    const stripped = stripStrayDelimiters(stripMarkdownSyntax(line));
+    if (!stripped) continue;
+
+    // Check prefix before colon / dash
+    if (stripped.includes(':') || stripped.includes('—') || stripped.includes(' - ')) {
+      const prefix = stripStrayDelimiters(stripped.split(/[:—]|\s+-\s+/)[0]);
+      const pWords = prefix.split(/\s+/).filter(Boolean);
+      if (pWords.length >= 2 && pWords.length < 8 && !/[.!?]$/.test(prefix) && !isNonTopicHeading(prefix)) {
+        const lastW = pWords[pWords.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+        if (!LIST_PREPOSITIONS.has(lastW)) {
+          candidateTitle = prefix;
+          break;
+        }
+      }
+    }
+
+    const words = stripped.split(/\s+/).filter(Boolean);
+    if (words.length >= 2 && words.length < 8 && !/[.!?]$/.test(stripped) && !stripped.includes('…') && !stripped.includes('...') && !/[.!?]\s+[A-Z]/.test(stripped) && !isNonTopicHeading(stripped) && !isMetaOrAsideLine(stripped)) {
+      const lastW = words[words.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+      if (!LIST_PREPOSITIONS.has(lastW)) {
+        candidateTitle = stripped;
+        break;
+      }
     }
   }
 
-  if (!candidateTitle || candidateTitle.length < 3 || isNonTopicHeading(candidateTitle)) {
-    candidateTitle = fileBaseName || 'Extracted Document';
+  // If no short heading line exists, NEVER use a truncated sentence: fallback to domain title or filename
+  if (!candidateTitle) {
+    const domainTitle = synthesizeDomainTitle(clean, fileBaseName.toLowerCase());
+    candidateTitle = domainTitle || fileBaseName || 'Extracted Document';
   }
 
-  const title = truncateTitle(toTitleCase(candidateTitle), 70);
+  const title = toTitleCase(candidateTitle);
 
   let desc = stripMarkdownSyntax(clean).replace(/\s+/g, ' ').trim();
   if (desc.length > 500) {
@@ -1391,7 +1460,7 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
   return [{
     id: `custom-raw-${timestamp}-0`,
     title,
-    raw_heading: firstLine || title,
+    raw_heading: rawLines[0] || title,
     description: desc,
     category: 'custom-notes',
     group_name: 'custom',
