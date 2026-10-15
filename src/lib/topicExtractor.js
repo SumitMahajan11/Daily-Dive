@@ -1668,3 +1668,17 @@ ${truncatedText}
   });
 }
 
+/**
+ * Extracts candidate study topics locally from an extractor result or raw string.
+ * Unifies section extraction (rawText, rawSections) for LibraryScreen and tests.
+ * 
+ * @param {string|{ text?: string, rawPages?: string[], rawSlides?: string[] }} extractedData
+ * @param {string} [fileName='']
+ * @returns {Promise<Array>}
+ */
+export async function extractTopicsFromSections(extractedData, fileName = '') {
+  const rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
+  const rawSections = extractedData?.rawPages || extractedData?.rawSlides || [];
+  return await extractTopicsLocally(rawText, rawSections, fileName);
+}
+

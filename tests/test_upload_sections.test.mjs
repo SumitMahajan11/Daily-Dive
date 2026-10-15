@@ -41,14 +41,7 @@ if (!Math.sumPrecise) Math.sumPrecise = (arr) => Array.from(arr).reduce((a, b) =
 
 import { extractFromPptx } from '../src/lib/extractors/pptxExtractor.js';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
-import { extractTopicsLocally } from '../src/lib/topicExtractor.js';
-
-// Replicates the extraction call site logic exactly as implemented in LibraryScreen.jsx
-async function extractAsLibraryScreen(file, extractedData) {
-  const rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
-  const rawSections = extractedData?.rawPages || extractedData?.rawSlides || [];
-  return await extractTopicsLocally(rawText, rawSections, file.name);
-}
+import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
 
 test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx yields 7 topics', async () => {
   const filePath = 'tests/fixtures/AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx';
@@ -57,7 +50,7 @@ test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_S
   const file = new File([buf], fileName, { type: 'application/vnd.openxmlformats-officedocument.presentationml.presentation' });
 
   const extractedData = await extractFromPptx(file);
-  const topics = await extractAsLibraryScreen(file, extractedData);
+  const topics = await extractTopicsFromSections(extractedData, file.name);
 
   console.log(`[PPTX] Extracted topics count: ${topics.length}`);
   assert.equal(topics.length, 7, `Expected 7 topics from PPTX, got ${topics.length}`);
@@ -70,7 +63,7 @@ test('PDF upload section extraction: kartik_ccl_1.pdf yields 4 topics', async ()
   const file = new File([buf], fileName, { type: 'application/pdf' });
 
   const extractedData = await extractFromPdf(file);
-  const topics = await extractAsLibraryScreen(file, extractedData);
+  const topics = await extractTopicsFromSections(extractedData, file.name);
 
   console.log(`[PDF] Extracted topics count: ${topics.length}`);
   assert.equal(topics.length, 4, `Expected 4 topics from PDF, got ${topics.length}`);

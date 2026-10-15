@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { CATEGORY_TREE, isTopicEligible, STARTER_ENABLED_CATEGORIES } from '../../lib/roulette';
-import { extractTopicsLocally, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD } from '../../lib/topicExtractor';
+import { extractTopicsLocally, extractTopicsFromSections, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD } from '../../lib/topicExtractor';
 import {
   Terminal,
   TrendingUp,
@@ -415,7 +415,6 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       }
 
       rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
-      const rawSections = extractedData?.rawPages || extractedData?.rawSlides || [];
 
       if (!rawText || rawText.trim().length < 20) {
         throw new Error('No legible text could be found in the document.');
@@ -433,10 +432,10 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           if (typeof showToast === 'function') {
             showToast(`${msg} Falling back to local offline extraction.`, 'info');
           }
-          candidates = await extractTopicsLocally(rawText, rawSections, file.name);
+          candidates = await extractTopicsFromSections(extractedData, file.name);
         }
       } else {
-        candidates = await extractTopicsLocally(rawText, rawSections, file.name);
+        candidates = await extractTopicsFromSections(extractedData, file.name);
       }
 
       if (!candidates || candidates.length === 0) {
