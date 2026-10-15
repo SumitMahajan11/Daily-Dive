@@ -135,7 +135,7 @@ export async function extractFromPdf(file, onProgress = () => {}) {
       const ocrPageLimit = Math.min(numPages, 8);
       for (let i = 1; i <= ocrPageLimit; i++) {
         const page = await pdfDocument.getPage(i);
-        const viewport = page.getViewport({ scale: 1.5 });
+        const viewport = page.getViewport({ scale: 2.5 });
         
         const canvas = document.createElement('canvas');
         const context = canvas.getContext('2d');

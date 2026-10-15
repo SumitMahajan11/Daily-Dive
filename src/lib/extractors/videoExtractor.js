@@ -118,7 +118,7 @@ export async function extractFromVideo(file, onProgress = () => {}) {
     // Calculate intelligent sample timestamps:
     // Sample every 45-60s for presentations, capping at 10 frames max
     const maxFrames = 10;
-    const sampleInterval = Math.max(15, duration / maxFrames);
+    const sampleInterval = Math.min(60, Math.max(2, duration / 10));
     const timestamps = [];
     for (let t = Math.min(5, duration * 0.1); t < duration; t += sampleInterval) {
       timestamps.push(t);
