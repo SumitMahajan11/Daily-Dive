@@ -1084,14 +1084,427 @@ export async function resolveFlashModel(apiKey, fetchFn = globalThis.fetch) {
 }
 
 /**
- * Local NLP topic synthesis from raw text / sections.
+ * Computes extraction coverage: share of OCR/input text characters that end up in topic titles and descriptions.
+ * Guaranteed 0.0 <= coverage <= 1.0.
  * 
- * @param {string} fullText 
- * @param {string[]} [rawSections] Optional array of slides, pages, or frames
- * @param {string} sourceFileName
- * @returns {Array<{ id: string, title: string, description: string, category: string, group_name: string, tags: string[], source: string, is_custom: boolean }>}
+ * @param {string} ocrText 
+ * @param {Array<{ title: string, description: string }>} topics 
+ * @returns {number}
  */
-export function extractTopicsLocally(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
+export function computeExtractionCoverage(ocrText, topics) {
+  if (!ocrText || typeof ocrText !== 'string' || !topics || !Array.isArray(topics) || topics.length === 0) {
+    return 0;
+  }
+  const cleanSourceWords = (ocrText.match(/[a-zA-Z0-9]{2,}/g) || []).map(w => w.toLowerCase());
+  if (cleanSourceWords.length === 0) return 0;
+
+  const topicText = topics
+    .map(t => `${t.title || ''} ${t.description || ''}`)
+    .join(' ')
+    .toLowerCase();
+
+  const topicWords = (topicText.match(/[a-zA-Z0-9]{2,}/g) || []).map(w => w.toLowerCase());
+  const topicWordBag = new Map();
+  for (const tw of topicWords) {
+    topicWordBag.set(tw, (topicWordBag.get(tw) || 0) + 1);
+  }
+
+  let totalChars = 0;
+  let matchedChars = 0;
+
+  for (const sw of cleanSourceWords) {
+    totalChars += sw.length;
+    const count = topicWordBag.get(sw) || 0;
+    if (count > 0) {
+      matchedChars += sw.length;
+      topicWordBag.set(sw, count - 1);
+    }
+  }
+
+  return totalChars > 0 ? Math.min(1.0, matchedChars / totalChars) : 0;
+}
+
+// Internal sentence formatter
+function toSentence(str, max = 175) {
+  let s = (str || '').trim().replace(/^["'“”‘’•\-*·\d\.\)\s:]+/, '').trim();
+  if (!s) return '';
+  if (s.length > max) {
+    const cut = s.slice(0, max - 1);
+    const lastSpace = cut.lastIndexOf(' ');
+    s = (lastSpace > 30 ? cut.slice(0, lastSpace) : cut).trim();
+  }
+  s = s.replace(/[,;:\-—\s.]+$/, '');
+  return s.charAt(0).toUpperCase() + s.slice(1) + '.';
+}
+
+// Helper to find line numbers
+function findDocLineNumbers(fullText, phrase) {
+  const allLines = (fullText || '').split(/\r?\n/);
+  const target = (phrase || '').toLowerCase().trim();
+  if (!target) return [1];
+  const matched = [];
+  allLines.forEach((l, idx) => {
+    if (l.toLowerCase().includes(target.slice(0, 30))) {
+      matched.push(idx + 1);
+    }
+  });
+  return matched.length > 0 ? matched : [1];
+}
+
+/**
+ * Fallback Path 1: List / Sequence Extractor.
+ * Chunks bulleted, numbered, or sequential progressions into high-coverage topic cards.
+ */
+export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uploaded_file', options = {}) {
+  const clean = (fullText || '').trim();
+  if (clean.length < 20) return [];
+
+  const rawLines = clean.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const noiseRegex = /^[/\\~=—\-+*•·_]{1,4}$|^[a-zA-Z0-9]{1,2}$/;
+  
+  let inCodeFence = false;
+  const substantiveLines = [];
+  rawLines.forEach(l => {
+    if (/^```/.test(l)) {
+      inCodeFence = !inCodeFence;
+      return;
+    }
+    if (inCodeFence) return;
+    if (noiseRegex.test(l)) return;
+    if (isMetaOrAsideLine(l)) return;
+    if (isNonTopicHeading(cleanTitle(stripMarkdownSyntax(l)))) return;
+    if (l.toLowerCase().includes('internal build-and-test order')) return;
+    if (l.length < 3) return;
+    substantiveLines.push(l);
+  });
+
+  if (substantiveLines.length === 0) return [];
+
+  const listMarkerRegex = /^[•\-*+·]\s*|^\d+[\.\)]\s*|^(?:first|then|next|finally|after|lastly|step|phase|stage|layer)\b/i;
+  const isSequenceOrList = substantiveLines.filter(l => listMarkerRegex.test(l)).length >= Math.max(1, Math.floor(substantiveLines.length * 0.25));
+
+  if (!isSequenceOrList && substantiveLines.length > 10 && !fullText.includes('#')) {
+    return [];
+  }
+
+  const topics = [];
+  const timestamp = Date.now();
+  let currentGroup = [];
+  let currentLength = 0;
+
+  for (let i = 0; i < substantiveLines.length; i++) {
+    const rawLine = substantiveLines[i];
+    let cleaned = stripMarkdownSyntax(rawLine)
+      .replace(/^[•\-*+·\d\.\)\s]+/, '')
+      .replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]+/i, '')
+      .replace(/^[(\s]+/, '')
+      .trim();
+    if (!cleaned || cleaned.length < 3) continue;
+
+    if (currentGroup.length > 0 && (currentLength + cleaned.length > 150 || currentGroup.length >= 3)) {
+      const topic = buildListTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText);
+      if (topic) topics.push(topic);
+      currentGroup = [];
+      currentLength = 0;
+    }
+    currentGroup.push(cleaned);
+    currentLength += cleaned.length;
+  }
+
+  if (currentGroup.length > 0) {
+    const topic = buildListTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText);
+    if (topic) topics.push(topic);
+  }
+
+  return topics;
+}
+
+function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
+  let first = lines[0];
+  let titleStr = first;
+  if (first.includes(':')) {
+    titleStr = first.split(':')[0];
+  } else if (first.includes('—')) {
+    titleStr = first.split('—')[0];
+  } else if (first.includes('-')) {
+    titleStr = first.split('-')[0];
+  }
+  let title = cleanCandidateTitle(truncateAtWord(titleStr, 45));
+  if (!title || title.length < 3 || isNonTopicHeading(title)) {
+    title = cleanCandidateTitle(truncateAtWord(first, 45));
+  }
+  if (!title || title.length < 3 || isNonTopicHeading(title)) {
+    if (lines.length > 1) {
+      title = cleanCandidateTitle(truncateAtWord(lines[1], 45));
+    }
+  }
+  if (!title || isNonTopicHeading(title)) {
+    return null;
+  }
+  title = truncateTitle(toTitleCase(title), 70);
+
+  const descParts = lines.map(l => {
+    let s = l.trim()
+      .replace(/^[^A-Za-z0-9]+/, '')
+      .replace(/[.;,]+$/, '');
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  });
+  let desc = descParts.join('. ') + '.';
+  if (desc.length > 175) {
+    desc = toSentence(desc, 175);
+  }
+  desc = desc.replace(/^[^A-Za-z]+/, '');
+  if (desc.length > 0) {
+    desc = desc.charAt(0).toUpperCase() + desc.slice(1);
+  }
+
+  const lineNums = findDocLineNumbers(fullText, first);
+  const startLine = lineNums[0] || 1;
+  const endLine = lineNums[lineNums.length - 1] || startLine;
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+
+  return {
+    id: `custom-list-${timestamp}-${index}`,
+    title,
+    raw_heading: first,
+    description: desc,
+    category: 'custom-notes',
+    group_name: 'custom',
+    tags: ['custom-notes', 'sequence'],
+    source: sourceFileName,
+    is_custom: true,
+    lifecycle: 'temporary',
+    created_at: createdAt,
+    expires_at: expiresAt,
+    expiry_rule: '14_days',
+    resources: [],
+    confidence: 85,
+    confidence_rating: 'high',
+    needs_review: false,
+    is_confirmed: true,
+    review_reasons: [],
+    is_structural_title: false,
+    source_line_start: startLine,
+    source_line_end: endLine,
+    source_lines: [startLine, endLine],
+    title_source_line: startLine,
+    description_source_lines: [startLine]
+  };
+}
+
+/**
+ * Fallback Path 2: Raw Text Extractor.
+ * Handles tabular data, quote cards, and dense unstructured prose.
+ */
+export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_file', options = {}) {
+  const clean = (fullText || '').trim();
+  if (clean.length < 20) return [];
+
+  const timestamp = Date.now();
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+
+  // A. Check for Markdown Tables
+  if (clean.includes('|')) {
+    const tableLines = clean.split(/\r?\n/)
+      .map(l => l.trim())
+      .filter(l => l.startsWith('|') || l.endsWith('|'))
+      .filter(l => !/^[|\s\-:]+$/.test(l));
+    
+    if (tableLines.length >= 2) {
+      const headers = tableLines[0].split('|').map(s => stripMarkdownSyntax(s.trim())).filter(Boolean);
+      const dataRows = tableLines.slice(1);
+      const topics = [];
+
+      for (let i = 0; i < dataRows.length; i++) {
+        const row = dataRows[i];
+        const cells = row.split('|').map(s => stripMarkdownSyntax(s.trim())).filter(Boolean);
+        if (cells.length >= 2) {
+          const subject = cells[0];
+          const details = cells.slice(1).map((c, idx) => {
+            const h = headers[idx + 1] ? `${headers[idx + 1]}: ` : '';
+            return `${h}${c}`;
+          }).join(', ');
+          
+          const title = truncateTitle(toTitleCase(cleanCandidateTitle(subject)), 70);
+          const desc = toSentence(`${subject} features ${details}.`, 175);
+          const lineNums = findDocLineNumbers(fullText, row);
+          const startLine = lineNums[0] || 1;
+
+          topics.push({
+            id: `custom-table-${timestamp}-${topics.length}`,
+            title,
+            raw_heading: subject,
+            description: desc,
+            category: 'custom-notes',
+            group_name: 'custom',
+            tags: ['custom-notes', 'tabular'],
+            source: sourceFileName,
+            is_custom: true,
+            lifecycle: 'temporary',
+            created_at: createdAt,
+            expires_at: expiresAt,
+            expiry_rule: '14_days',
+            resources: [],
+            confidence: 85,
+            confidence_rating: 'high',
+            needs_review: false,
+            is_confirmed: true,
+            review_reasons: [],
+            is_structural_title: false,
+            source_line_start: startLine,
+            source_line_end: startLine,
+            source_lines: [startLine, startLine],
+            title_source_line: startLine,
+            description_source_lines: [startLine]
+          });
+        }
+      }
+      if (topics.length > 0) return topics;
+    }
+  }
+
+  // B. Check for Quote Card
+  const quoteMatch = clean.match(/^["'“]([^"”]+)["'”]\s*(?:[—\-–]\s*([^]+))?$/s);
+  if (quoteMatch) {
+    const quoteBody = quoteMatch[1].trim();
+    const author = (quoteMatch[2] || '').trim();
+    const titleStr = author ? `${author} Quote` : quoteBody;
+    const title = truncateTitle(toTitleCase(cleanCandidateTitle(truncateAtWord(titleStr, 45))), 70);
+    const desc = toSentence(author ? `"${quoteBody}" — ${author}.` : `"${quoteBody}".`, 175);
+    return [{
+      id: `custom-quote-${timestamp}-0`,
+      title,
+      raw_heading: titleStr,
+      description: desc,
+      category: 'custom-notes',
+      group_name: 'custom',
+      tags: ['custom-notes', 'quote'],
+      source: sourceFileName,
+      is_custom: true,
+      lifecycle: 'temporary',
+      created_at: createdAt,
+      expires_at: expiresAt,
+      expiry_rule: '14_days',
+      resources: [],
+      confidence: 90,
+      confidence_rating: 'high',
+      needs_review: false,
+      is_confirmed: true,
+      review_reasons: [],
+      is_structural_title: false,
+      source_line_start: 1,
+      source_line_end: 1,
+      source_lines: [1, 1],
+      title_source_line: 1,
+      description_source_lines: [1]
+    }];
+  }
+
+  // C. Prose Chunker / Generic Sentences
+  const rawSentences = clean
+    .split(/(?<=[.!?])\s+|\r?\n\r?\n/)
+    .map(s => stripMarkdownSyntax(s.replace(/\s+/g, ' ').trim()))
+    .filter(s => s.length > 12 && !isMetaOrAsideLine(s));
+
+  if (rawSentences.length === 0) {
+    const title = truncateTitle(toTitleCase(cleanCandidateTitle(truncateAtWord(clean, 40))), 70);
+    const desc = toSentence(clean, 175);
+    return [{
+      id: `custom-raw-${timestamp}-0`,
+      title,
+      raw_heading: title,
+      description: desc,
+      category: 'custom-notes',
+      group_name: 'custom',
+      tags: ['custom-notes', 'summary'],
+      source: sourceFileName,
+      is_custom: true,
+      lifecycle: 'temporary',
+      created_at: createdAt,
+      expires_at: expiresAt,
+      expiry_rule: '14_days',
+      resources: [],
+      confidence: 75,
+      confidence_rating: 'medium',
+      needs_review: true,
+      is_confirmed: false,
+      review_reasons: ['Unverified raw text: user rewrite recommended'],
+      is_structural_title: false,
+      source_line_start: 1,
+      source_line_end: 1,
+      source_lines: [1, 1],
+      title_source_line: 1,
+      description_source_lines: [1]
+    }];
+  }
+
+  const topics = [];
+  let currentGroup = [];
+  let currentLen = 0;
+
+  for (const sent of rawSentences) {
+    if (currentGroup.length > 0 && (currentLen + sent.length > 160 || currentGroup.length >= 2)) {
+      topics.push(buildProseTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText));
+      currentGroup = [];
+      currentLen = 0;
+    }
+    currentGroup.push(sent);
+    currentLen += sent.length;
+  }
+
+  if (currentGroup.length > 0) {
+    topics.push(buildProseTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText));
+  }
+
+  return topics;
+}
+
+function buildProseTopic(group, index, sourceFileName, timestamp, fullText) {
+  const first = group[0];
+  let title = truncateTitle(toTitleCase(cleanCandidateTitle(truncateAtWord(first, 45))), 70);
+  if (!title || title.length < 3) title = 'Study Note Summary';
+
+  const desc = toSentence(group.join(' '), 175);
+  const lineNums = findDocLineNumbers(fullText, first);
+  const startLine = lineNums[0] || 1;
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+
+  return {
+    id: `custom-prose-${timestamp}-${index}`,
+    title,
+    raw_heading: first,
+    description: desc,
+    category: 'custom-notes',
+    group_name: 'custom',
+    tags: ['custom-notes'],
+    source: sourceFileName,
+    is_custom: true,
+    lifecycle: 'temporary',
+    created_at: createdAt,
+    expires_at: expiresAt,
+    expiry_rule: '14_days',
+    resources: [],
+    confidence: 80,
+    confidence_rating: 'high',
+    needs_review: false,
+    is_confirmed: true,
+    review_reasons: [],
+    is_structural_title: false,
+    source_line_start: startLine,
+    source_line_end: startLine,
+    source_lines: [startLine, startLine],
+    title_source_line: startLine,
+    description_source_lines: [startLine]
+  };
+}
+
+/**
+ * Structured topic extraction path.
+ */
+function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
   if (typeof rawSections === 'string') {
     sourceFileName = rawSections;
     rawSections = [];
@@ -1550,6 +1963,73 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   // Calculate sane yield range
   const maxAllowedYield = Math.min(15, Math.max(3, candidateTopics.length));
   return candidateTopics.slice(0, maxAllowedYield);
+}
+
+/**
+ * Local NLP topic synthesis with fallback ladder: structured -> list/sequence -> raw text.
+ * Switches path when structured result has coverage below 60%, or no topics.
+ * Keeps structured path unchanged for files it already handles well.
+ * 
+ * @param {string} fullText 
+ * @param {string[]} [rawSections] Optional array of slides, pages, or frames
+ * @param {string} sourceFileName
+ * @returns {Array<{ id: string, title: string, description: string, category: string, group_name: string, tags: string[], source: string, is_custom: boolean }>}
+ */
+export function extractTopicsLocally(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
+  if (typeof rawSections === 'string') {
+    options = sourceFileName && typeof sourceFileName === 'object' ? sourceFileName : options;
+    sourceFileName = rawSections;
+    rawSections = [];
+  }
+
+  const cleaned = cleanText(fullText || '').trim();
+  // Requirement 4: Empty or under 20 characters returns empty to trigger generic error in LibraryScreen
+  if (cleaned.length < 20) {
+    console.log(`[TOPIC_COVERAGE] ${sourceFileName || 'document'}: 0.0% coverage (text under 20 characters)`);
+    return [];
+  }
+
+  // Path 1: Structured (keep unchanged for files it already handles well)
+  const structuredTopics = extractTopicsStructured(fullText, rawSections, sourceFileName, options);
+  const structuredCoverage = computeExtractionCoverage(fullText, structuredTopics);
+  console.log(`[TOPIC_COVERAGE] Path: structured | Source: ${sourceFileName} | Topics: ${structuredTopics.length} | Coverage: ${(structuredCoverage * 100).toFixed(1)}%`);
+
+  if (options.forcePath === 'structured') {
+    return structuredTopics;
+  }
+
+  // If structured handles it well (coverage >= 60% and topics > 0), return unchanged
+  if (structuredTopics.length > 0 && structuredCoverage >= 0.60) {
+    return structuredTopics;
+  }
+
+  // Preserve structured path for multi-section documents/decks with explicit sections that structured already handles well
+  if (Array.isArray(rawSections) && rawSections.length >= 2 && structuredTopics.length >= 2) {
+    return structuredTopics;
+  }
+
+  // Path 2: List / Sequence
+  const listTopics = extractTopicsFromListOrSequence(fullText, sourceFileName, options);
+  const listCoverage = computeExtractionCoverage(fullText, listTopics);
+  console.log(`[TOPIC_COVERAGE] Path: list/sequence | Source: ${sourceFileName} | Topics: ${listTopics.length} | Coverage: ${(listCoverage * 100).toFixed(1)}%`);
+
+  if (listTopics.length > 0 && listCoverage >= 0.60) {
+    return listTopics;
+  }
+
+  // Path 3: Raw Text
+  const rawTopics = extractTopicsFromRawText(fullText, sourceFileName, options);
+  const rawCoverage = computeExtractionCoverage(fullText, rawTopics);
+  console.log(`[TOPIC_COVERAGE] Path: raw text | Source: ${sourceFileName} | Topics: ${rawTopics.length} | Coverage: ${(rawCoverage * 100).toFixed(1)}%`);
+
+  if (rawTopics.length > 0) {
+    return rawTopics;
+  }
+
+  // Return highest non-empty fallback if under 60%
+  if (listTopics.length > 0 && listCoverage >= structuredCoverage) return listTopics;
+  if (structuredTopics.length > 0) return structuredTopics;
+  return [];
 }
 
 /**
