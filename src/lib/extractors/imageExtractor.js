@@ -16,6 +16,7 @@ export async function extractFromImage(file, onProgress = () => {}) {
   }
 
   let worker;
+  let objectUrl = null;
   try {
     const { createWorker } = await import('tesseract.js');
     
@@ -36,8 +37,45 @@ export async function extractFromImage(file, onProgress = () => {}) {
       }
     });
 
+    await worker.setParameters({
+      tessedit_pageseg_mode: 3
+    });
+
     onProgress({ stage: 'Scanning image pixels', percent: 45, detail: 'Extracting characters...' });
-    const ret = await worker.recognize(file);
+
+    let imageSource = file;
+    if (typeof document !== 'undefined' && typeof Image !== 'undefined') {
+      try {
+        objectUrl = URL.createObjectURL(file);
+        const img = new Image();
+        await new Promise((resolve, reject) => {
+          img.onload = () => resolve();
+          img.onerror = () => reject(new Error('Failed to load image for upscaling'));
+          img.src = objectUrl;
+        });
+
+        const width = img.naturalWidth || img.width || 0;
+        const height = img.naturalHeight || img.height || 0;
+
+        // Upscale the image 2x onto a canvas before OCR, only if the width is under 2000px
+        if (width > 0 && width < 2000) {
+          const canvas = document.createElement('canvas');
+          canvas.width = width * 2;
+          canvas.height = height * 2;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+            imageSource = canvas;
+          }
+        }
+      } catch (upscaleErr) {
+        console.warn('Image 2x upscale warning, falling back to original file:', upscaleErr);
+      }
+    }
+
+    const ret = await worker.recognize(imageSource);
     const text = (ret?.data?.text || '').trim();
     const confidence = ret?.data?.confidence || 0;
 
@@ -64,6 +102,9 @@ export async function extractFromImage(file, onProgress = () => {}) {
     }
     throw new Error('Failed to process image OCR: ' + (err.message || 'Unknown error'));
   } finally {
+    if (objectUrl && typeof URL !== 'undefined' && URL.revokeObjectURL) {
+      URL.revokeObjectURL(objectUrl);
+    }
     if (worker) {
       await worker.terminate();
     }

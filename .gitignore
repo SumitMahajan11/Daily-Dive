@@ -38,5 +38,6 @@ lighthouse-report.json
 scripts/inspect_*.py
 artifacts/
 scratch/
+tests/fixtures/real/
 
 .vercel
