@@ -39,5 +39,6 @@ scripts/inspect_*.py
 artifacts/
 scratch/
 tests/fixtures/real/
+*.traineddata
 
 .vercel

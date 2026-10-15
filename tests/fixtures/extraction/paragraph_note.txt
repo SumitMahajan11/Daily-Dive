@@ -1,0 +1,1 @@
+Database connection pools reuse active physical connections to reduce the latency overhead of establishing TLS handshakes and authenticating every query. Proper pool sizing prevents thread starvation while keeping database memory usage predictable under heavy traffic spikes.

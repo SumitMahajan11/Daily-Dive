@@ -1084,14 +1084,428 @@ export async function resolveFlashModel(apiKey, fetchFn = globalThis.fetch) {
 }
 
 /**
- * Local NLP topic synthesis from raw text / sections.
+ * Computes extraction coverage: share of OCR/input text characters that end up in topic titles and descriptions.
+ * Guaranteed 0.0 <= coverage <= 1.0.
  * 
- * @param {string} fullText 
- * @param {string[]} [rawSections] Optional array of slides, pages, or frames
- * @param {string} sourceFileName
- * @returns {Array<{ id: string, title: string, description: string, category: string, group_name: string, tags: string[], source: string, is_custom: boolean }>}
+ * @param {string} ocrText 
+ * @param {Array<{ title: string, description: string }>} topics 
+ * @returns {number}
  */
-export function extractTopicsLocally(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
+export function computeExtractionCoverage(ocrText, topics) {
+  if (!ocrText || typeof ocrText !== 'string' || !topics || !Array.isArray(topics) || topics.length === 0) {
+    return 0;
+  }
+  const strippedText = stripMarkdownSyntax(ocrText);
+  const cleanSourceWords = (strippedText.match(/[a-zA-Z0-9]{2,}/g) || []).map(w => w.toLowerCase());
+  if (cleanSourceWords.length === 0) return 0;
+
+  const topicText = topics
+    .map(t => `${t.title || ''} ${t.description || ''}`)
+    .join(' ')
+    .toLowerCase();
+
+  const topicWords = (topicText.match(/[a-zA-Z0-9]{2,}/g) || []).map(w => w.toLowerCase());
+  const topicWordBag = new Map();
+  for (const tw of topicWords) {
+    topicWordBag.set(tw, (topicWordBag.get(tw) || 0) + 1);
+  }
+
+  let totalChars = 0;
+  let matchedChars = 0;
+
+  for (const sw of cleanSourceWords) {
+    totalChars += sw.length;
+    const count = topicWordBag.get(sw) || 0;
+    if (count > 0) {
+      matchedChars += sw.length;
+      topicWordBag.set(sw, count - 1);
+    }
+  }
+
+  return totalChars > 0 ? Math.min(1.0, matchedChars / totalChars) : 0;
+}
+
+// Internal sentence formatter
+function toSentence(str, max = 175) {
+  let s = (str || '').trim().replace(/^["'“”‘’•\-*·\d\.\)\s:]+/, '').trim();
+  if (!s) return '';
+  if (s.length > max) {
+    const cut = s.slice(0, max - 1);
+    const lastSpace = cut.lastIndexOf(' ');
+    s = (lastSpace > 30 ? cut.slice(0, lastSpace) : cut).trim();
+  }
+  s = s.replace(/[,;:\-—\s.]+$/, '');
+  return s.charAt(0).toUpperCase() + s.slice(1) + '.';
+}
+
+// Helper to find line numbers
+function findDocLineNumbers(fullText, phrase) {
+  const allLines = (fullText || '').split(/\r?\n/);
+  const target = (phrase || '').toLowerCase().trim();
+  if (!target) return [1];
+  const matched = [];
+  allLines.forEach((l, idx) => {
+    if (l.toLowerCase().includes(target.slice(0, 30))) {
+      matched.push(idx + 1);
+    }
+  });
+  return matched.length > 0 ? matched : [1];
+}
+
+// Common prepositions to reject when ending titles in list/sequence path
+export const LIST_PREPOSITIONS = new Set([
+  'about', 'above', 'across', 'after', 'against', 'along', 'among', 'around', 'at',
+  'before', 'behind', 'below', 'beneath', 'beside', 'between', 'beyond', 'by',
+  'down', 'during', 'except', 'for', 'from', 'in', 'inside', 'into', 'like',
+  'near', 'of', 'off', 'on', 'onto', 'out', 'outside', 'over', 'past', 'since',
+  'through', 'throughout', 'till', 'to', 'toward', 'towards', 'under', 'underneath',
+  'until', 'up', 'upon', 'with', 'within', 'without', 'via', 'vs'
+]);
+
+/**
+ * Strips stray delimiters (leading/trailing ) : ( ] [ } { - — – / \ | ; , . " ' etc.)
+ */
+export function stripStrayDelimiters(str) {
+  if (!str || typeof str !== 'string') return '';
+  return str
+    .replace(/^[\s)\]}:;,\-—–/\\|(["'“”‘’*#.]+/g, '')
+    .replace(/[\s)\]}:;,\-—–/\\|(["'“”‘’*#.]+$|(?<=\s)[\-—–]+$/g, '')
+    .trim();
+}
+
+/**
+ * Checks if a string is a clean short heading line (under 8 words, not ending in punctuation).
+ */
+export function isShortHeadingLine(str) {
+  if (!str || typeof str !== 'string') return false;
+  const cleaned = stripStrayDelimiters(str);
+  if (!cleaned || cleaned.includes('…') || cleaned.includes('...')) return false;
+  if (/[.!?]$/.test(cleaned) || /[.!?]\s+[A-Z]/.test(cleaned)) return false;
+  if (isNonTopicHeading(cleaned) || isMetaOrAsideLine(cleaned)) return false;
+
+  const words = cleaned.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 2 || words.length >= 8) return false;
+
+  const lastWord = words[words.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+  if (LIST_PREPOSITIONS.has(lastWord)) return false;
+
+  return true;
+}
+
+/**
+ * Rejects titles under 4 words, ending in a bare preposition, or containing sentence punctuation / ellipses.
+ */
+export function isValidListTitle(rawTitle) {
+  if (!rawTitle || typeof rawTitle !== 'string') return false;
+  const cleaned = stripStrayDelimiters(rawTitle);
+  if (!cleaned || cleaned.length < 3) return false;
+  if (isNonTopicHeading(cleaned)) return false;
+
+  // Never accept truncated sentences with ellipses or sentence-ending punctuation
+  if (cleaned.includes('…') || cleaned.includes('...')) return false;
+  if (/[.!?]$/.test(cleaned)) return false;
+  if (/[.!?]\s+[A-Z]/.test(cleaned)) return false;
+
+  const words = cleaned.trim().split(/\s+/).filter(Boolean);
+  if (words.length < 4) return false;
+
+  const lastWord = words[words.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+  if (LIST_PREPOSITIONS.has(lastWord)) return false;
+
+  return true;
+}
+
+/**
+ * Fallback Path 1: List / Sequence Extractor.
+ * Chunks bulleted, numbered, or sequential progressions into high-coverage topic cards.
+ */
+export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uploaded_file', options = {}) {
+  const clean = (fullText || '').trim();
+  if (clean.length < 20) return [];
+
+  const rawLines = clean.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+  const noiseRegex = /^[/\\~=—\-+*•·_]{1,4}$|^[a-zA-Z0-9]{1,2}$/;
+  
+  let inCodeFence = false;
+  const substantiveLines = [];
+  rawLines.forEach(l => {
+    if (/^```/.test(l)) {
+      inCodeFence = !inCodeFence;
+      return;
+    }
+    if (inCodeFence) return;
+    if (noiseRegex.test(l)) return;
+    if (/^(?:then|first|next|finally|after|lastly)\s+[a-z0-9]{1,2}$/i.test(l.trim())) return;
+
+    // Require at least one word with >= 3 characters that is not a stop word
+    const lineTokens = l.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+    const hasSubstantiveToken = lineTokens.some(w => w.length >= 3 && !STOP_WORDS.has(w));
+    if (!hasSubstantiveToken) return;
+
+    if (isMetaOrAsideLine(l)) return;
+    if (isNonTopicHeading(cleanTitle(stripMarkdownSyntax(l)))) return;
+    if (l.toLowerCase().includes('internal build-and-test order')) return;
+    if (/^#{1,6}\s+/.test(l)) return;
+    if (l.endsWith(':') && substantiveLines.length === 0) return;
+    if (l.length < 3) return;
+    substantiveLines.push(l);
+  });
+
+  if (substantiveLines.length === 0) return [];
+
+  const listMarkerRegex = /^[•\-*+·]\s*|^\d+[\.\)]\s*|^(?:first|then|next|finally|after|lastly|step|phase|stage|layer)\b/i;
+  const isSequenceOrList = substantiveLines.filter(l => listMarkerRegex.test(l)).length >= Math.max(1, Math.floor(substantiveLines.length * 0.25));
+
+  if (!isSequenceOrList && !clean.includes('|') && !fullText.includes('#')) {
+    return [];
+  }
+
+  const topics = [];
+  const timestamp = Date.now();
+  let currentGroup = [];
+  let currentLength = 0;
+  const totalSubstantiveLen = substantiveLines.reduce((acc, l) => acc + l.length, 0);
+  const isShortSingleProgression = totalSubstantiveLen <= 175;
+
+  for (let i = 0; i < substantiveLines.length; i++) {
+    const rawLine = substantiveLines[i];
+    let cleaned = stripMarkdownSyntax(rawLine)
+      .replace(/^[•\-*+·\d\.\)\s]+/, '')
+      .replace(/^(?:stage|phase|layer|step|part|level)\s*\d+[\s:–—\-]+/i, '')
+      .replace(/^[(\s]+/, '')
+      .trim();
+    if (!cleaned || cleaned.length < 3) continue;
+
+    if (!isShortSingleProgression && currentGroup.length > 0 && (currentLength + cleaned.length > 170 || (currentGroup.length >= 3 && currentLength + cleaned.length > 110))) {
+      const topic = buildListTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText);
+      if (topic) topics.push(topic);
+      currentGroup = [];
+      currentLength = 0;
+    }
+    currentGroup.push(cleaned);
+    currentLength += cleaned.length;
+  }
+
+  if (currentGroup.length > 0) {
+    const topic = buildListTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText);
+    if (topic) topics.push(topic);
+  }
+
+  return topics;
+}
+
+function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
+  // Reject groups that lack substantive content (e.g. OCR noise)
+  const groupTokens = lines.join(' ').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const substantiveGroupTokens = groupTokens.filter(w => w.length >= 3 && !STOP_WORDS.has(w));
+  if (substantiveGroupTokens.length < 2) {
+    return null;
+  }
+
+  let title = null;
+
+  // 1. Prefer a short heading line (under 8 words) when one exists
+  for (const l of lines) {
+    const stripped = stripStrayDelimiters(l);
+    if (!stripped) continue;
+
+    if (stripped.includes(':') || stripped.includes('—') || stripped.includes(' - ')) {
+      const parts = stripped.split(/[:—]|\s+-\s+/);
+      const prefix = stripStrayDelimiters(parts[0]);
+      if (isValidListTitle(prefix) && isShortHeadingLine(prefix)) {
+        title = toTitleCase(prefix);
+        break;
+      }
+      const suffix = stripStrayDelimiters(parts.slice(1).join(' '));
+      if (isValidListTitle(suffix) && isShortHeadingLine(suffix)) {
+        title = toTitleCase(suffix);
+        break;
+      }
+    }
+
+    if (isValidListTitle(stripped) && isShortHeadingLine(stripped)) {
+      title = toTitleCase(stripped);
+      break;
+    }
+  }
+
+  // 2. If no line under 8 words was found, check if any line is a valid list title without being truncated
+  if (!title) {
+    for (const l of lines) {
+      const stripped = stripStrayDelimiters(l);
+      if (isValidListTitle(stripped) && !/[.!?]$/.test(stripped) && !stripped.includes('…') && !stripped.includes('...')) {
+        title = toTitleCase(stripped);
+        break;
+      }
+    }
+  }
+
+  // 3. Fallback: never use a truncated sentence as a title
+  if (!title) {
+    const domain = synthesizeDomainTitle(lines.join(' '));
+    if (domain && isValidListTitle(domain)) {
+      title = domain;
+    } else {
+      const fileBase = (sourceFileName || '').replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ').trim();
+      if (fileBase && fileBase.length >= 3) {
+        title = toTitleCase(fileBase);
+      }
+    }
+  }
+
+  if (!title) {
+    return null;
+  }
+
+  const descParts = lines.map(l => {
+    let s = stripStrayDelimiters(l.trim())
+      .replace(/^[^A-Za-z0-9]+/, '')
+      .replace(/[.;,]+$/, '');
+    return s.charAt(0).toUpperCase() + s.slice(1);
+  });
+  let desc = descParts.join('. ') + '.';
+  if (desc.length > 175) {
+    desc = toSentence(desc, 175);
+  }
+  desc = desc.replace(/^[^A-Za-z]+/, '');
+  if (desc.length > 0) {
+    desc = desc.charAt(0).toUpperCase() + desc.slice(1);
+  }
+
+  const lineNums = findDocLineNumbers(fullText, lines[0]);
+  const startLine = lineNums[0] || 1;
+  const endLine = lineNums[lineNums.length - 1] || startLine;
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+
+  return {
+    id: `custom-list-${timestamp}-${index}`,
+    title,
+    raw_heading: lines[0],
+    description: desc,
+    category: 'custom-notes',
+    group_name: 'custom',
+    tags: ['custom-notes', 'sequence'],
+    source: sourceFileName,
+    is_custom: true,
+    lifecycle: 'temporary',
+    created_at: createdAt,
+    expires_at: expiresAt,
+    expiry_rule: '14_days',
+    resources: [],
+    confidence: 85,
+    confidence_rating: 'high',
+    needs_review: false,
+    is_confirmed: true,
+    review_reasons: [],
+    is_structural_title: false,
+    source_line_start: startLine,
+    source_line_end: endLine,
+    source_lines: [startLine, endLine],
+    title_source_line: startLine,
+    description_source_lines: [startLine]
+  };
+}
+
+/**
+ * Fallback Path 2: Raw Text Extractor.
+ * Never split by sentence. Makes one topic for the whole text (title from filename or first line), flagged needs_review.
+ */
+export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_file', options = {}) {
+  const clean = cleanText(fullText || '').trim();
+  if (clean.length < 20) return [];
+
+  const timestamp = Date.now();
+  const createdAt = new Date().toISOString();
+  const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+
+  const fileBaseName = (sourceFileName || '')
+    .replace(/\.[^/.]+$/, '')
+    .replace(/[_\-]+/g, ' ')
+    .trim();
+
+  const rawLines = clean.split(/\r?\n/).map(l => l.trim()).filter(Boolean);
+
+  // Requirement 4: prefer a short heading line (under 8 words) when one exists; never use a truncated sentence as a title.
+  let candidateTitle = '';
+
+  for (const line of rawLines) {
+    const stripped = stripStrayDelimiters(stripMarkdownSyntax(line));
+    if (!stripped) continue;
+
+    // Check prefix before colon / dash
+    if (stripped.includes(':') || stripped.includes('—') || stripped.includes(' - ')) {
+      const prefix = stripStrayDelimiters(stripped.split(/[:—]|\s+-\s+/)[0]);
+      const pWords = prefix.split(/\s+/).filter(Boolean);
+      if (pWords.length >= 2 && pWords.length < 8 && !/[.!?]$/.test(prefix) && !isNonTopicHeading(prefix)) {
+        const lastW = pWords[pWords.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+        if (!LIST_PREPOSITIONS.has(lastW)) {
+          candidateTitle = prefix;
+          break;
+        }
+      }
+    }
+
+    const words = stripped.split(/\s+/).filter(Boolean);
+    if (words.length >= 2 && words.length < 8 && !/[.!?]$/.test(stripped) && !stripped.includes('…') && !stripped.includes('...') && !/[.!?]\s+[A-Z]/.test(stripped) && !isNonTopicHeading(stripped) && !isMetaOrAsideLine(stripped)) {
+      const lastW = words[words.length - 1].toLowerCase().replace(/[^a-z]/g, '');
+      if (!LIST_PREPOSITIONS.has(lastW)) {
+        candidateTitle = stripped;
+        break;
+      }
+    }
+  }
+
+  // If no short heading line exists, NEVER use a truncated sentence: fallback to domain title or filename
+  if (!candidateTitle) {
+    const domainTitle = synthesizeDomainTitle(clean, fileBaseName.toLowerCase());
+    candidateTitle = domainTitle || fileBaseName || 'Extracted Document';
+  }
+
+  const title = toTitleCase(candidateTitle);
+
+  let desc = stripMarkdownSyntax(clean).replace(/\s+/g, ' ').trim();
+  if (desc.length > 500) {
+    desc = truncateAtWord(desc, 490);
+  }
+  desc = desc.replace(/[,\s;:–—\-.]+$/, '');
+  if (desc.length > 0) {
+    desc = desc.charAt(0).toUpperCase() + desc.slice(1) + '.';
+  }
+
+  return [{
+    id: `custom-raw-${timestamp}-0`,
+    title,
+    raw_heading: rawLines[0] || title,
+    description: desc,
+    category: 'custom-notes',
+    group_name: 'custom',
+    tags: ['custom-notes', 'raw-text'],
+    source: sourceFileName,
+    is_custom: true,
+    lifecycle: 'temporary',
+    created_at: createdAt,
+    expires_at: expiresAt,
+    expiry_rule: '14_days',
+    resources: [],
+    confidence: 70,
+    confidence_rating: 'medium',
+    needs_review: true,
+    is_confirmed: false,
+    review_reasons: ['Unverified raw text: user review required'],
+    is_structural_title: false,
+    source_line_start: 1,
+    source_line_end: rawLines.length || 1,
+    source_lines: [1, rawLines.length || 1],
+    title_source_line: 1,
+    description_source_lines: [1]
+  }];
+}
+
+/**
+ * Structured topic extraction path.
+ */
+function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
   if (typeof rawSections === 'string') {
     sourceFileName = rawSections;
     rawSections = [];
@@ -1550,6 +1964,79 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   // Calculate sane yield range
   const maxAllowedYield = Math.min(15, Math.max(3, candidateTopics.length));
   return candidateTopics.slice(0, maxAllowedYield);
+}
+
+/**
+ * Local NLP topic synthesis with fallback ladder: structured -> list/sequence -> raw text.
+ * Switches path when structured result has coverage below 60%, or no topics.
+ * Keeps structured path unchanged for files it already handles well.
+ * 
+ * @param {string} fullText 
+ * @param {string[]} [rawSections] Optional array of slides, pages, or frames
+ * @param {string} sourceFileName
+ * @returns {Array<{ id: string, title: string, description: string, category: string, group_name: string, tags: string[], source: string, is_custom: boolean }>}
+ */
+export function extractTopicsLocally(fullText, rawSections = [], sourceFileName = 'uploaded_file', options = {}) {
+  if (typeof rawSections === 'string') {
+    options = sourceFileName && typeof sourceFileName === 'object' ? sourceFileName : options;
+    sourceFileName = rawSections;
+    rawSections = [];
+  }
+
+  const cleaned = cleanText(fullText || '').trim();
+  // Requirement 4: Empty or under 20 characters returns empty to trigger generic error in LibraryScreen
+  if (cleaned.length < 20) {
+    console.log(`[TOPIC_COVERAGE] ${sourceFileName || 'document'}: 0.0% coverage (text under 20 characters)`);
+    return [];
+  }
+
+  // Path 1: Structured (keep unchanged for files it already handles well)
+  const structuredTopics = extractTopicsStructured(fullText, rawSections, sourceFileName, options);
+  const structuredCoverage = computeExtractionCoverage(fullText, structuredTopics);
+  console.log(`[TOPIC_COVERAGE] Path: structured | Source: ${sourceFileName} | Topics: ${structuredTopics.length} | Coverage: ${(structuredCoverage * 100).toFixed(1)}%`);
+
+  if (options.forcePath === 'structured') {
+    return structuredTopics;
+  }
+
+  // Preserve structured path for multi-section documents/decks with explicit sections that structured already handles well
+  if (Array.isArray(rawSections) && rawSections.length >= 2 && structuredTopics.length >= 2) {
+    return structuredTopics;
+  }
+
+  // Requirement 1: Only fall back from structured path when structured returns 0 topics,
+  // or when document is short (under 600 characters of cleaned text, or images under 1200 characters) AND coverage is under 60%.
+  // For longer documents with at least 2 structured topics, keep structured result.
+  const isImageOrMedia = /\.(png|jpe?g|webp|bmp|gif)$/i.test(sourceFileName || '');
+  const isShort = cleaned.length < 600 || (isImageOrMedia && cleaned.length < 1200);
+  const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60);
+
+  if (!shouldFallback) {
+    return structuredTopics;
+  }
+
+  // Path 2: List / Sequence
+  const listTopics = extractTopicsFromListOrSequence(fullText, sourceFileName, options);
+  const listCoverage = computeExtractionCoverage(fullText, listTopics);
+  console.log(`[TOPIC_COVERAGE] Path: list/sequence | Source: ${sourceFileName} | Topics: ${listTopics.length} | Coverage: ${(listCoverage * 100).toFixed(1)}%`);
+
+  if (listTopics.length > 0 && (listCoverage >= 0.50 || listCoverage >= structuredCoverage)) {
+    return listTopics;
+  }
+
+  // Path 3: Raw Text
+  const rawTopics = extractTopicsFromRawText(fullText, sourceFileName, options);
+  const rawCoverage = computeExtractionCoverage(fullText, rawTopics);
+  console.log(`[TOPIC_COVERAGE] Path: raw text | Source: ${sourceFileName} | Topics: ${rawTopics.length} | Coverage: ${(rawCoverage * 100).toFixed(1)}%`);
+
+  if (rawTopics.length > 0) {
+    return rawTopics;
+  }
+
+  // Return highest non-empty fallback if under 60%
+  if (listTopics.length > 0 && listCoverage >= structuredCoverage) return listTopics;
+  if (structuredTopics.length > 0) return structuredTopics;
+  return [];
 }
 
 /**
