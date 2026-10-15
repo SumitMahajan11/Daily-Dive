@@ -1235,6 +1235,13 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
     }
     if (inCodeFence) return;
     if (noiseRegex.test(l)) return;
+    if (/^(?:then|first|next|finally|after|lastly)\s+[a-z0-9]{1,2}$/i.test(l.trim())) return;
+
+    // Require at least one word with >= 3 characters that is not a stop word
+    const lineTokens = l.toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+    const hasSubstantiveToken = lineTokens.some(w => w.length >= 3 && !STOP_WORDS.has(w));
+    if (!hasSubstantiveToken) return;
+
     if (isMetaOrAsideLine(l)) return;
     if (isNonTopicHeading(cleanTitle(stripMarkdownSyntax(l)))) return;
     if (l.toLowerCase().includes('internal build-and-test order')) return;
@@ -1257,6 +1264,8 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
   const timestamp = Date.now();
   let currentGroup = [];
   let currentLength = 0;
+  const totalSubstantiveLen = substantiveLines.reduce((acc, l) => acc + l.length, 0);
+  const isShortSingleProgression = totalSubstantiveLen <= 175;
 
   for (let i = 0; i < substantiveLines.length; i++) {
     const rawLine = substantiveLines[i];
@@ -1267,7 +1276,7 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
       .trim();
     if (!cleaned || cleaned.length < 3) continue;
 
-    if (currentGroup.length > 0 && (currentLength + cleaned.length > 280 || currentGroup.length >= 5)) {
+    if (!isShortSingleProgression && currentGroup.length > 0 && (currentLength + cleaned.length > 170 || (currentGroup.length >= 3 && currentLength + cleaned.length > 110))) {
       const topic = buildListTopic(currentGroup, topics.length, sourceFileName, timestamp, fullText);
       if (topic) topics.push(topic);
       currentGroup = [];
@@ -1286,6 +1295,13 @@ export function extractTopicsFromListOrSequence(fullText, sourceFileName = 'uplo
 }
 
 function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
+  // Reject groups that lack substantive content (e.g. OCR noise)
+  const groupTokens = lines.join(' ').toLowerCase().replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+  const substantiveGroupTokens = groupTokens.filter(w => w.length >= 3 && !STOP_WORDS.has(w));
+  if (substantiveGroupTokens.length < 2) {
+    return null;
+  }
+
   let title = null;
 
   // 1. Prefer a short heading line (under 8 words) when one exists
@@ -2004,7 +2020,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   const listCoverage = computeExtractionCoverage(fullText, listTopics);
   console.log(`[TOPIC_COVERAGE] Path: list/sequence | Source: ${sourceFileName} | Topics: ${listTopics.length} | Coverage: ${(listCoverage * 100).toFixed(1)}%`);
 
-  if (listTopics.length > 0 && listCoverage >= 0.60) {
+  if (listTopics.length > 0 && (listCoverage >= 0.50 || listCoverage >= structuredCoverage)) {
     return listTopics;
   }
 

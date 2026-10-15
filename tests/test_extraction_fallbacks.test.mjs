@@ -89,13 +89,43 @@ for (const fixture of fixtures) {
       text = fs.readFileSync(filePath, 'utf8');
       topics = extractTopicsLocally(text, [], fixture.name);
     } else if (fixture.type === 'image') {
-      if (!worker) {
-        t.skip('Tesseract OCR worker unavailable in runner environment');
+      if (browser) {
+        const page = await browser.newPage();
+        await page.goto(`http://localhost:${port}/`);
+        await page.waitForLoadState('networkidle');
+
+        const imgBuf = fs.readFileSync(filePath);
+        const b64 = imgBuf.toString('base64');
+        const mime = fixture.name.endsWith('.png') ? 'image/png' : 'image/jpeg';
+
+        const extracted = await page.evaluate(async ({ b64, name, mime }) => {
+          const raw = atob(b64);
+          const arr = new Uint8Array(raw.length);
+          for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+          const file = new File([arr], name, { type: mime });
+
+          const { extractFromImage } = await import('/src/lib/extractors/imageExtractor.js');
+          const { extractTopicsFromSections } = await import('/src/lib/topicExtractor.js');
+
+          const data = await extractFromImage(file);
+          const tops = await extractTopicsFromSections(data, file.name);
+          return {
+            text: data.text,
+            topics: tops.map(tp => ({ title: tp.title, description: tp.description }))
+          };
+        }, { b64, name: fixture.name, mime });
+
+        await page.close();
+        text = extracted.text;
+        topics = extracted.topics;
+      } else if (worker) {
+        const ret = await worker.recognize(filePath);
+        text = ret?.data?.text || '';
+        topics = extractTopicsLocally(text, [], fixture.name);
+      } else {
+        t.skip('Neither browser nor Tesseract worker available');
         return;
       }
-      const ret = await worker.recognize(filePath);
-      text = ret?.data?.text || '';
-      topics = extractTopicsLocally(text, [], fixture.name);
     } else if (fixture.type === 'pdf') {
       if (!browser) {
         t.skip('Playwright browser unavailable for real PDF rendering & OCR');
@@ -170,3 +200,54 @@ for (const fixture of fixtures) {
     }
   });
 }
+
+test('decision_chain.jpg: Real OCR extraction contains all 6 keywords and no noise topics', async (t) => {
+  if (!browser) {
+    t.skip('Playwright browser unavailable for real OCR image extraction');
+    return;
+  }
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${port}/`);
+  await page.waitForLoadState('networkidle');
+
+  const imgBuf = fs.readFileSync(path.join(extractionDir, 'decision_chain.jpg'));
+  const b64 = imgBuf.toString('base64');
+
+  const result = await page.evaluate(async (base64) => {
+    const raw = atob(base64);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    const file = new File([arr], 'decision_chain.jpg', { type: 'image/jpeg' });
+
+    const { extractFromImage } = await import('/src/lib/extractors/imageExtractor.js');
+    const { extractTopicsFromSections } = await import('/src/lib/topicExtractor.js');
+
+    const data = await extractFromImage(file);
+    const topics = await extractTopicsFromSections(data, file.name);
+    return {
+      text: data.text,
+      topics: topics.map(tp => ({ title: tp.title, description: tp.description }))
+    };
+  }, b64);
+
+  await page.close();
+
+  const joinedTopicContent = result.topics
+    .map(top => `${top.title} ${top.description}`)
+    .join(' ')
+    .toLowerCase();
+
+  const requiredKeywords = ['decision', 'discipline', 'consistency', 'results', 'identity', 'freedom'];
+  for (const kw of requiredKeywords) {
+    assert(
+      joinedTopicContent.includes(kw),
+      `Expected keyword "${kw}" to appear in joined topic content, but got: "${joinedTopicContent}"`
+    );
+  }
+
+  // Verify no topic is built from OCR noise like "Then NG"
+  for (const top of result.topics) {
+    assert(!top.title.toLowerCase().includes('then ng'), `Topic title must not be "Then NG": "${top.title}"`);
+    assert(!top.description.toLowerCase().includes('then ng'), `Topic description must not contain "Then NG": "${top.description}"`);
+  }
+});
