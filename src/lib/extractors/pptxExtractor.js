@@ -101,7 +101,7 @@ export async function extractFromPptx(file, onProgress = () => {}) {
         }
       }
 
-      const slideText = currentParagraph.join(' ').replace(/\s+/g, ' ').trim();
+      const slideText = currentParagraph.join('\n').trim();
       if (slideText) {
         rawSlides.push(slideText);
       }
