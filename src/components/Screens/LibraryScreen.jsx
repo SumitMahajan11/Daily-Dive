@@ -248,6 +248,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
   const [candidateTopics, setCandidateTopics] = useState([]);
   const [selectedTopicIds, setSelectedTopicIds] = useState(new Set());
   const [addedNotice, setAddedNotice] = useState(null);
+  const [extractionWarning, setExtractionWarning] = useState(null);
 
   // BYOK State
   const [geminiApiKey, setGeminiApiKey] = useState(() => {
@@ -389,6 +390,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
     setSelectedFile(file);
     setProcessingState('extracting');
     setErrorMessage('');
+    setExtractionWarning(null);
     setProgress({ stage: 'Reading document', percent: 15, detail: file.name });
 
     try {
@@ -412,6 +414,13 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         extractedData = await file.text();
       } else {
         throw new Error(`Unsupported file format .${ext}. Please upload a PDF, PPTX, image, or markdown note.`);
+      }
+
+      if (extractedData?.warning) {
+        setExtractionWarning(extractedData.warning);
+        if (typeof showToast === 'function') {
+          showToast(extractedData.warning, 'warning');
+        }
       }
 
       rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
@@ -486,6 +495,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
     setCandidateTopics([]);
     setSelectedTopicIds(new Set());
     setSelectedFile(null);
+    setExtractionWarning(null);
   };
 
   const handleSaveReviewedCandidates = () => {
@@ -1003,6 +1013,12 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         {/* Candidate Review Flow */}
         {processingState === 'review' && (
           <div className="p-5 rounded-2xl border border-primary/30 bg-surface-container-low space-y-4">
+            {extractionWarning && (
+              <div data-testid="extraction-warning" className="p-3.5 rounded-xl bg-amber-500/10 border border-amber-500/30 flex items-center gap-2.5 text-xs text-amber-500 font-medium">
+                <AlertTriangle size={16} className="shrink-0" />
+                <span>{extractionWarning}</span>
+              </div>
+            )}
             <div className="flex items-center justify-between">
               <div>
                 <h3 className="text-sm font-bold text-on-surface">Review Extracted Topics</h3>

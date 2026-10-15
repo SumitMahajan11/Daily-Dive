@@ -1091,7 +1091,7 @@ export async function resolveFlashModel(apiKey, fetchFn = globalThis.fetch) {
  * @param {Array<{ title: string, description: string }>} topics 
  * @returns {number}
  */
-export function computeExtractionCoverage(ocrText, topics) {
+export function computeExtractionCoverage(ocrText, topics, options = {}) {
   if (!ocrText || typeof ocrText !== 'string' || !topics || !Array.isArray(topics) || topics.length === 0) {
     return 0;
   }
@@ -1122,7 +1122,19 @@ export function computeExtractionCoverage(ocrText, topics) {
     }
   }
 
-  return totalChars > 0 ? Math.min(1.0, matchedChars / totalChars) : 0;
+  let cov = totalChars > 0 ? Math.min(1.0, matchedChars / totalChars) : 0;
+
+  // Requirement 4: If empty pages are more than 30% of total pages, do not report coverage as 100%
+  if (options?.hasEmptyWarning || (typeof options?.emptyRatio === 'number' && options.emptyRatio > 0.3)) {
+    const ratio = typeof options?.emptyRatio === 'number' ? options.emptyRatio : 0.35;
+    const maxAllowed = Math.max(0.0, 1.0 - ratio);
+    cov = Math.min(cov, maxAllowed);
+    if (cov >= 1.0) {
+      cov = 0.70;
+    }
+  }
+
+  return cov;
 }
 
 // Internal sentence formatter
@@ -1992,7 +2004,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
   // Path 1: Structured (keep unchanged for files it already handles well)
   const structuredTopics = extractTopicsStructured(fullText, rawSections, sourceFileName, options);
-  const structuredCoverage = computeExtractionCoverage(fullText, structuredTopics);
+  const structuredCoverage = computeExtractionCoverage(fullText, structuredTopics, options);
   console.log(`[TOPIC_COVERAGE] Path: structured | Source: ${sourceFileName} | Topics: ${structuredTopics.length} | Coverage: ${(structuredCoverage * 100).toFixed(1)}%`);
 
   if (options.forcePath === 'structured') {
@@ -2017,7 +2029,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
   // Path 2: List / Sequence
   const listTopics = extractTopicsFromListOrSequence(fullText, sourceFileName, options);
-  const listCoverage = computeExtractionCoverage(fullText, listTopics);
+  const listCoverage = computeExtractionCoverage(fullText, listTopics, options);
   console.log(`[TOPIC_COVERAGE] Path: list/sequence | Source: ${sourceFileName} | Topics: ${listTopics.length} | Coverage: ${(listCoverage * 100).toFixed(1)}%`);
 
   if (listTopics.length > 0 && (listCoverage >= 0.50 || listCoverage >= structuredCoverage)) {
@@ -2026,7 +2038,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
 
   // Path 3: Raw Text
   const rawTopics = extractTopicsFromRawText(fullText, sourceFileName, options);
-  const rawCoverage = computeExtractionCoverage(fullText, rawTopics);
+  const rawCoverage = computeExtractionCoverage(fullText, rawTopics, options);
   console.log(`[TOPIC_COVERAGE] Path: raw text | Source: ${sourceFileName} | Topics: ${rawTopics.length} | Coverage: ${(rawCoverage * 100).toFixed(1)}%`);
 
   if (rawTopics.length > 0) {
@@ -2163,9 +2175,16 @@ ${truncatedText}
  * @param {string} [fileName='']
  * @returns {Promise<Array>}
  */
-export async function extractTopicsFromSections(extractedData, fileName = '') {
+export async function extractTopicsFromSections(extractedData, fileName = '', options = {}) {
   const rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
   const rawSections = extractedData?.rawPages || extractedData?.rawSlides || extractedData?.rawFrames || [];
-  return await extractTopicsLocally(rawText, rawSections, fileName);
+  const mergedOptions = {
+    ...options,
+    emptyPages: extractedData?.emptyPages,
+    totalPages: extractedData?.pageCount || extractedData?.totalPages,
+    emptyRatio: extractedData?.emptyRatio,
+    hasEmptyWarning: Boolean(extractedData?.warning || (typeof extractedData?.emptyRatio === 'number' && extractedData.emptyRatio > 0.3))
+  };
+  return await extractTopicsLocally(rawText, rawSections, fileName, mergedOptions);
 }
 

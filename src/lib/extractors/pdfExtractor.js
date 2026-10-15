@@ -59,11 +59,10 @@ export async function extractFromPdf(file, onProgress = () => {}) {
 
   // Max pages to process in-browser to avoid browser tab freezing
   const maxPagesToProcess = Math.min(numPages, 40);
-  const rawPages = [];
-  let totalExtractedLength = 0;
+  const pageRecords = [];
 
   for (let i = 1; i <= maxPagesToProcess; i++) {
-    const percent = Math.round(5 + ((i - 1) / maxPagesToProcess) * 65);
+    const percent = Math.round(5 + ((i - 1) / maxPagesToProcess) * 60);
     onProgress({
       stage: 'Extracting text layer',
       percent,
@@ -93,35 +92,76 @@ export async function extractFromPdf(file, onProgress = () => {}) {
       }
       if (currentLine.trim()) lines.push(currentLine.trim());
 
-      const pageText = lines.join('\n');
-      if (pageText) {
-        rawPages.push(pageText);
-        totalExtractedLength += pageText.length;
+      const pageText = lines.join('\n').trim();
+      const textChars = pageText.length;
+
+      if (textChars >= 30) {
+        pageRecords.push({ pageIndex: i, type: 'textLayer', text: pageText, textChars });
+      } else {
+        // Inspect operator list for embedded images >= 400px wide or tall
+        let hasLargeImage = false;
+        try {
+          const ops = await page.getOperatorList();
+          for (let j = 0; j < ops.fnArray.length; j++) {
+            const fn = ops.fnArray[j];
+            const args = ops.argsArray[j];
+            if (
+              fn === pdfjsLib.OPS.paintImageXObject ||
+              fn === pdfjsLib.OPS.paintImageXObjectRepeat ||
+              fn === pdfjsLib.OPS.paintImageMaskXObject ||
+              fn === pdfjsLib.OPS.paintImageMaskXObjectGroup
+            ) {
+              const w = (typeof args?.[1] === 'number') ? args[1] : (args?.[0]?.width || 0);
+              const h = (typeof args?.[2] === 'number') ? args[2] : (args?.[0]?.height || 0);
+              if (w >= 400 || h >= 400) {
+                hasLargeImage = true;
+                break;
+              }
+            } else if (
+              fn === pdfjsLib.OPS.paintInlineImageXObject ||
+              fn === pdfjsLib.OPS.paintInlineImageXObjectGroup
+            ) {
+              const w = args?.[0]?.width || 0;
+              const h = args?.[0]?.height || 0;
+              if (w >= 400 || h >= 400) {
+                hasLargeImage = true;
+                break;
+              }
+            }
+          }
+        } catch (opsErr) {
+          console.warn(`Could not inspect operators for page ${i}:`, opsErr);
+        }
+
+        if (hasLargeImage) {
+          pageRecords.push({ pageIndex: i, type: 'needsOcr', text: '', textChars });
+        } else {
+          pageRecords.push({ pageIndex: i, type: 'empty', text: '', textChars });
+        }
       }
     } catch (pageErr) {
       console.warn(`Could not extract text layer from page ${i}:`, pageErr);
+      pageRecords.push({ pageIndex: i, type: 'empty', text: '', textChars: 0 });
     }
   }
 
-  let ocrFallbackUsed = false;
+  // Run OCR on pages that have fewer than 30 text characters and an embedded image >= 400px
+  const pagesNeedingOcr = pageRecords.filter(p => p.type === 'needsOcr');
+  let ocrWorker = null;
 
-  // OCR Fallback: If text layer is extremely sparse (< 50 chars across all sampled pages),
-  // this is likely a scanned PDF or slide deck where text was rasterized into images.
-  if (totalExtractedLength < 50 && numPages > 0) {
+  if (pagesNeedingOcr.length > 0) {
     onProgress({
-      stage: 'Scanned PDF detected',
-      percent: 70,
-      detail: 'Switching to OCR image character recognition...'
+      stage: 'Scanned pages detected',
+      percent: 65,
+      detail: `Running OCR on ${pagesNeedingOcr.length} page(s)...`
     });
 
-    const ocrPages = [];
-    let worker;
     try {
       const { createWorker } = await import('tesseract.js');
-      worker = await createWorker('eng', 1, {
+      ocrWorker = await createWorker('eng', 1, {
         logger: m => {
           if (m.status === 'recognizing text') {
-            const ocrProgress = Math.round(70 + (m.progress || 0) * 25);
+            const ocrProgress = Math.round(65 + (m.progress || 0) * 30);
             onProgress({
               stage: 'Running OCR on scanned pages',
               percent: ocrProgress,
@@ -131,37 +171,80 @@ export async function extractFromPdf(file, onProgress = () => {}) {
         }
       });
 
-      // Sample up to 8 pages for OCR to keep client-side time fast and responsive
-      const ocrPageLimit = Math.min(numPages, 8);
-      for (let i = 1; i <= ocrPageLimit; i++) {
-        const page = await pdfDocument.getPage(i);
+      for (let idx = 0; idx < pagesNeedingOcr.length; idx++) {
+        const item = pagesNeedingOcr[idx];
+        const page = await pdfDocument.getPage(item.pageIndex);
         const viewport = page.getViewport({ scale: 2.5 });
-        
-        const canvas = document.createElement('canvas');
-        const context = canvas.getContext('2d');
-        canvas.height = viewport.height;
-        canvas.width = viewport.width;
 
-        await page.render({ canvasContext: context, viewport }).promise;
+        let canvas = null;
+        if (typeof document !== 'undefined' && document.createElement) {
+          canvas = document.createElement('canvas');
+          canvas.height = viewport.height;
+          canvas.width = viewport.width;
+          const context = canvas.getContext('2d');
+          await page.render({ canvasContext: context, viewport }).promise;
+        }
 
-        const ret = await worker.recognize(canvas);
-        if (ret?.data?.text) {
-          ocrPages.push(ret.data.text.trim());
+        if (canvas) {
+          const ret = await ocrWorker.recognize(canvas);
+          const ocrText = ret?.data?.text?.trim() || '';
+          console.log(`[PDF_OCR] Page ${item.pageIndex}: ${ocrText.length} characters`);
+          if (ocrText.length > 0) {
+            item.type = 'ocr';
+            item.text = ocrText;
+          } else {
+            item.type = 'empty';
+            item.text = '';
+          }
+        } else {
+          item.type = 'empty';
+          item.text = '';
         }
       }
-
-      ocrFallbackUsed = true;
-      rawPages.length = 0;
-      rawPages.push(...ocrPages);
     } catch (ocrErr) {
-      console.error('OCR fallback failed:', ocrErr);
-      throw new Error('Failed to extract text from scanned PDF: ' + ocrErr.message);
+      console.error('OCR per-page processing failed:', ocrErr);
+      for (const item of pagesNeedingOcr) {
+        if (item.type === 'needsOcr') {
+          item.type = 'empty';
+        }
+      }
     } finally {
-      if (worker) {
-        await worker.terminate();
+      if (ocrWorker) {
+        await ocrWorker.terminate();
       }
     }
   }
+
+  // Merge text and OCR output in page order
+  const rawPages = [];
+  let textLayerCount = 0;
+  let ocrCount = 0;
+  let emptyCount = 0;
+
+  for (const item of pageRecords) {
+    if (item.type === 'textLayer') {
+      textLayerCount++;
+      if (item.text) rawPages.push(item.text);
+    } else if (item.type === 'ocr') {
+      ocrCount++;
+      if (item.text) rawPages.push(item.text);
+    } else {
+      emptyCount++;
+    }
+  }
+
+  if (numPages > maxPagesToProcess) {
+    emptyCount += (numPages - maxPagesToProcess);
+  }
+
+  const totalPages = numPages;
+  console.log(`[PDF_PAGES] total=${totalPages} textLayer=${textLayerCount} ocr=${ocrCount} empty=${emptyCount}`);
+
+  const emptyRatio = totalPages > 0 ? (emptyCount / totalPages) : 0;
+  const hasEmptyWarning = emptyRatio > 0.3;
+  const warning = hasEmptyWarning
+    ? `Warning: ${emptyCount} of ${totalPages} pages (${Math.round(emptyRatio * 100)}%) are empty or unreadable.`
+    : null;
 
   const combinedText = rawPages.join('\n\n').trim();
 
@@ -182,6 +265,18 @@ export async function extractFromPdf(file, onProgress = () => {}) {
     rawPages,
     pageCount: numPages,
     sourceFormat: 'pdf',
-    ocrFallbackUsed
+    ocrFallbackUsed: ocrCount > 0,
+    pageStats: {
+      total: totalPages,
+      textLayer: textLayerCount,
+      ocr: ocrCount,
+      empty: emptyCount,
+      emptyRatio
+    },
+    warning: warning || undefined,
+    warnings: hasEmptyWarning ? [warning] : [],
+    emptyRatio,
+    emptyPages: emptyCount,
+    totalPages
   };
 }
