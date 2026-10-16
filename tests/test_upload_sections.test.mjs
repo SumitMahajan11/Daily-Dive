@@ -43,7 +43,7 @@ import { extractFromPptx } from '../src/lib/extractors/pptxExtractor.js';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
 
-test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx yields 7 topics', async () => {
+test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx satisfies invariants', async () => {
   const filePath = 'tests/fixtures/AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx';
   const fileName = 'AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx';
   const buf = fs.readFileSync(filePath);
@@ -52,11 +52,31 @@ test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_S
   const extractedData = await extractFromPptx(file);
   const topics = await extractTopicsFromSections(extractedData, file.name);
 
-  console.log(`[PPTX] Extracted topics count: ${topics.length}`);
-  assert.equal(topics.length, 7, `Expected 7 topics from PPTX, got ${topics.length}`);
+  // Invariants:
+  // 1. Every page has an outcome
+  const pageOutcomes = topics.pageOutcomes || [];
+  assert.equal(pageOutcomes.length, extractedData.slideCount, 'every slide must have an outcome');
+  for (const po of pageOutcomes) {
+    assert.ok(po.page, 'page outcome must specify page');
+    assert.ok(['topic', 'merged', 'skipped'].includes(po.outcome), `valid outcome required: ${po.outcome}`);
+    // 2. Every skipped page has a reason
+    if (po.outcome === 'skipped') {
+      assert.ok(po.reason && po.reason.trim().length > 0, `skipped page ${po.page} must have a reason`);
+    }
+  }
+
+  // 3. No title matches /^Page(\s+\d+)?$/
+  for (const t of topics) {
+    assert.ok(!/^Page(?:\s+\d+)?$/i.test(t.title), `title "${t.title}" must not match /^Page(\\s+\\d+)?$/`);
+  }
+
+  // 4. Climate file includes "Thermal Comfort Fundamentals" and "Decision-Support Framework"
+  const titles = topics.map(t => t.title);
+  assert.ok(titles.includes('Thermal Comfort Fundamentals'), 'must include "Thermal Comfort Fundamentals"');
+  assert.ok(titles.includes('Decision-Support Framework'), 'must include "Decision-Support Framework"');
 });
 
-test('PDF upload section extraction: kartik_ccl_1.pdf yields 4 topics', async () => {
+test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', async () => {
   const filePath = 'tests/fixtures/kartik_ccl_1.pdf';
   const fileName = 'kartik_ccl_1.pdf';
   const buf = fs.readFileSync(filePath);
@@ -65,6 +85,28 @@ test('PDF upload section extraction: kartik_ccl_1.pdf yields 4 topics', async ()
   const extractedData = await extractFromPdf(file);
   const topics = await extractTopicsFromSections(extractedData, file.name);
 
-  console.log(`[PDF] Extracted topics count: ${topics.length}`);
-  assert.equal(topics.length, 4, `Expected 4 topics from PDF, got ${topics.length}`);
+  // Invariants:
+  // 1. Every page has an outcome
+  const pageOutcomes = topics.pageOutcomes || [];
+  assert.equal(pageOutcomes.length, extractedData.pageCount, 'every page must have an outcome');
+  for (const po of pageOutcomes) {
+    assert.ok(po.page, 'page outcome must specify page');
+    assert.ok(['topic', 'merged', 'skipped'].includes(po.outcome), `valid outcome required: ${po.outcome}`);
+    // 2. Every skipped page has a reason
+    if (po.outcome === 'skipped') {
+      assert.ok(po.reason && po.reason.trim().length > 0, `skipped page ${po.page} must have a reason`);
+    }
+  }
+
+  // 3. No title matches /^Page(\s+\d+)?$/
+  for (const t of topics) {
+    assert.ok(!/^Page(?:\s+\d+)?$/i.test(t.title), `title "${t.title}" must not match /^Page(\\s+\\d+)?$/`);
+  }
+
+  // 4. Kartik file includes "Vertical Scaling", "Cloud Load Balancing Strategy", "Multithreading Scaling Simulation"
+  const titles = topics.map(t => t.title);
+  assert.ok(titles.includes('Vertical Scaling'), 'must include "Vertical Scaling"');
+  assert.ok(titles.includes('Cloud Load Balancing Strategy'), 'must include "Cloud Load Balancing Strategy"');
+  assert.ok(titles.includes('Multithreading Scaling Simulation'), 'must include "Multithreading Scaling Simulation"');
 });
+

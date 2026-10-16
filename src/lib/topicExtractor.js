@@ -1383,6 +1383,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
     title,
     raw_heading: lines[0],
     description: desc,
+    full_text: lines.join('\n').trim(),
     category: 'custom-notes',
     group_name: 'custom',
     tags: ['custom-notes', 'sequence'],
@@ -1478,6 +1479,7 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
     title,
     raw_heading: rawLines[0] || title,
     description: desc,
+    full_text: clean,
     category: 'custom-notes',
     group_name: 'custom',
     tags: ['custom-notes', 'raw-text'],
@@ -1501,6 +1503,8 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
     description_source_lines: [1]
   }];
 }
+
+export const CONTENT_PAGE_MIN_CHARS = 150;
 
 /**
  * Structured topic extraction path.
@@ -1548,6 +1552,12 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     return { text: String(sec), structuralTitle: null, slideNumber: idx + 1, startLine: 1, endLine: 1 };
   });
 
+  const totalExpectedPages = normalizedSections.length;
+  const pageOutcomesMap = new Map();
+  function recordPageOutcome(pageNum, outcome, reason = null) {
+    pageOutcomesMap.set(pageNum, { page: pageNum, outcome, reason });
+  }
+
   const rawSectionTexts = normalizedSections.map(s => s.text);
   let cleanedSectionTexts = rawSectionTexts.length > 0 ? stripRepeatingBoilerplate(rawSectionTexts) : [];
 
@@ -1555,22 +1565,44 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
   const validSections = [];
   (cleanedSectionTexts || []).forEach((secText, idx) => {
     const origSec = normalizedSections[idx];
+    const pageNum = origSec?.slideNumber || (idx + 1);
     const rawText = origSec ? origSec.text : secText;
     const rawLines = rawText.split('\n').map(l => cleanText(l)).filter(Boolean);
     const lines = secText.split('\n').map(l => cleanText(l)).filter(Boolean);
-    if (lines.length === 0) return;
-    if (isCoverSlide(rawLines) || isCoverSlide(lines)) return;
-    if (isOutlineSlide(rawLines) || isOutlineSlide(lines)) return;
-    if (isReferencesSlide(rawLines) || isReferencesSlide(lines)) return;
-    if (isClosingSlide(rawLines) || isClosingSlide(lines)) return;
+    const isContentPage = (rawText.trim().length >= CONTENT_PAGE_MIN_CHARS);
+
+    if (lines.length === 0) {
+      recordPageOutcome(pageNum, 'skipped', 'empty slide');
+      return;
+    }
+    if (isCoverSlide(rawLines) || isCoverSlide(lines)) {
+      recordPageOutcome(pageNum, 'skipped', 'cover filter');
+      return;
+    }
+    if (isReferencesSlide(rawLines) || isReferencesSlide(lines)) {
+      recordPageOutcome(pageNum, 'skipped', 'references filter');
+      return;
+    }
+    if (isClosingSlide(rawLines) || isClosingSlide(lines)) {
+      recordPageOutcome(pageNum, 'skipped', 'closing filter');
+      return;
+    }
+    if (!isContentPage && (isOutlineSlide(rawLines) || isOutlineSlide(lines))) {
+      recordPageOutcome(pageNum, 'skipped', 'outline filter');
+      return;
+    }
+
+    const effectiveLines = lines.length > 0 ? lines : (rawLines.length > 0 ? rawLines : [rawText.trim()]);
     validSections.push({
       index: idx,
-      lines,
-      text: lines.join('\n'),
+      lines: effectiveLines,
+      text: effectiveLines.join('\n'),
+      rawText: rawText,
+      isContentPage,
       structuralTitle: origSec?.structuralTitle || null,
-      slideNumber: origSec?.slideNumber || (idx + 1),
+      slideNumber: pageNum,
       startLine: origSec?.startLine || 1,
-      endLine: origSec?.endLine || lines.length
+      endLine: origSec?.endLine || effectiveLines.length
     });
   });
 
@@ -1585,12 +1617,15 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         const secText = currentSectionLines.map(l => l.cleaned).join('\n');
         const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
         const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
-        if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isOutlineSlide(rawLines) && !isReferencesSlide(rawLines)) {
+        const isContentSec = (secText.trim().length >= CONTENT_PAGE_MIN_CHARS);
+        if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
           validSections.push({
             index: validSections.length,
             lines: rawLines,
             lineObjects: [...currentSectionLines],
             text: secText,
+            rawText: secText,
+            isContentPage: isContentSec,
             structuralTitle: null,
             slideNumber: validSections.length + 1,
             startLine: secStartLine,
@@ -1609,12 +1644,15 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       const secText = currentSectionLines.map(l => l.cleaned).join('\n');
       const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
       const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
-      if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isOutlineSlide(rawLines) && !isReferencesSlide(rawLines)) {
+      const isContentSec = (secText.trim().length >= CONTENT_PAGE_MIN_CHARS);
+      if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
         validSections.push({
           index: validSections.length,
           lines: rawLines,
           lineObjects: [...currentSectionLines],
           text: secText,
+          rawText: secText,
+          isContentPage: isContentSec,
           structuralTitle: null,
           slideNumber: validSections.length + 1,
           startLine: secStartLine,
@@ -1669,10 +1707,23 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     const lines = unit.allLines;
     const lineObjs = unit.allLineObjects || [];
     const unitText = lines.join(' ');
+    const isContentUnit = unit.sections.some(s => s.isContentPage) || (unitText.trim().length >= CONTENT_PAGE_MIN_CHARS);
+
+    let forceAsTopic = false;
+    const unitReviewReasons = [];
 
     // Quality gate: require substantive conceptual content
     const tokens = tokenize(unitText);
-    if (tokens.length < 6 && unitText.trim().length < 35) return;
+    if (tokens.length < 6 && unitText.trim().length < 35) {
+      if (!isContentUnit) {
+        unit.sections.forEach(s => {
+          recordPageOutcome(s.slideNumber, 'skipped', 'quality gate: insufficient substantive content');
+        });
+        return;
+      }
+      forceAsTopic = true;
+      unitReviewReasons.push('quality gate: insufficient substantive content');
+    }
 
     let candidateTitle = '';
     let isStructural = false;
@@ -1714,13 +1765,28 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       }
     }
 
+    if (!candidateTitle && isContentUnit) {
+      const rawFirst = cleanCandidateTitle(lines[0] || '');
+      const slideNum = unit.sections[0]?.slideNumber || 1;
+      candidateTitle = (rawFirst && rawFirst.length >= 4 && !isNonTopicHeading(rawFirst)) ? rawFirst : `Untitled slide ${slideNum}`;
+      forceAsTopic = true;
+      unitReviewReasons.push('title check: no candidate heading found');
+    }
+
     // REQUIREMENT 2: Reject H1 document titles! (e.g. single `# ` in documents with subsections, or doc-level title)
     const hasSubSections = /^\s*#{2,6}\s+/m.test(fullText || '');
     const isDocHeadingH1 = /^#\s+[^#]/.test(rawHeadingCandidate.trim()) || (rawHeadingCandidate.trim().startsWith('# ') && !rawHeadingCandidate.trim().startsWith('## '));
     const isGenericDocTitle = /^(?:internal build-and-test order|roadmap|project roadmap|milestones overview|table of contents|overview|documentation)$/i.test(candidateTitle.toLowerCase());
 
     if ((hasSubSections && isDocHeadingH1) || isGenericDocTitle) {
-      return; // Reject H1 document title
+      if (!isContentUnit) {
+        unit.sections.forEach(s => {
+          recordPageOutcome(s.slideNumber, 'skipped', 'title check: document header or generic title');
+        });
+        return;
+      }
+      forceAsTopic = true;
+      unitReviewReasons.push('title check: document header or generic title');
     }
 
     // Strip leading numbering: "5. Methodology" -> "Methodology"
@@ -1742,12 +1808,12 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     });
 
     let finalTitle = '';
-    let needsReview = scoreResult.needsReview;
+    let needsReview = scoreResult.needsReview || forceAsTopic;
     let confidence = scoreResult.confidence;
     let confidenceRating = scoreResult.confidence_rating;
-    let reviewReasons = [...scoreResult.reviewReasons];
+    let reviewReasons = [...scoreResult.reviewReasons, ...unitReviewReasons];
 
-    if (scoreResult.isHighConfidence && !isDocTitleRepeat && !isNonTopicHeading(candidateTitle)) {
+    if (!forceAsTopic && scoreResult.isHighConfidence && !isDocTitleRepeat && !isNonTopicHeading(candidateTitle)) {
       finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(candidateTitle)), 45);
       needsReview = false;
       confidence = Math.max(75, scoreResult.confidence);
@@ -1769,7 +1835,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
           needsReview = true;
           confidence = Math.min(synthScore.confidence, 65);
           confidenceRating = 'medium';
-          reviewReasons = [...scoreResult.reviewReasons];
+          reviewReasons = [...scoreResult.reviewReasons, ...unitReviewReasons];
           if (reviewReasons.length === 0) {
             reviewReasons.push('Draft heading: title suggested from body');
           }
@@ -1800,7 +1866,31 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
 
     // Dedup check
     if (seenTitles.has(finalTitle.toLowerCase()) || finalTitle.length < 4) {
-      return;
+      if (!isContentUnit) {
+        const reason = seenTitles.has(finalTitle.toLowerCase()) ? 'title dedup: duplicate title' : 'title check: title too short';
+        unit.sections.forEach(s => {
+          recordPageOutcome(s.slideNumber, 'skipped', reason);
+        });
+        return;
+      }
+      needsReview = true;
+      const failedReason = seenTitles.has(finalTitle.toLowerCase()) ? 'title dedup: duplicate title' : 'title check: title too short';
+      if (!reviewReasons.includes(failedReason)) {
+        reviewReasons.push(failedReason);
+      }
+      let fallback = cleanCandidateTitle(unit.allLines[0] || '');
+      const slideNum = unit.sections[0]?.slideNumber || 1;
+      if (!fallback || fallback.length < 4 || isNonTopicHeading(fallback) || /^Page(?:\s+\d+)?$/i.test(fallback)) {
+        fallback = `Untitled slide ${slideNum}`;
+      }
+      if (seenTitles.has(fallback.toLowerCase())) {
+        fallback = `Untitled slide ${slideNum}`;
+      }
+      finalTitle = truncateTitle(fallback, 70);
+    }
+    if (/^Page(?:\s+\d+)?$/i.test(finalTitle.trim())) {
+      const slideNum = unit.sections[0]?.slideNumber || 1;
+      finalTitle = `Untitled slide ${slideNum}`;
     }
     seenTitles.add(finalTitle.toLowerCase());
 
@@ -1887,15 +1977,45 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         desc = desc.charAt(0).toUpperCase() + desc.slice(1);
       }
       if (!/^[A-Z]/.test(desc)) {
-        return; // Reject candidate if description does not start with a capital letter
+        if (!isContentUnit) {
+          unit.sections.forEach(s => {
+            recordPageOutcome(s.slideNumber, 'skipped', 'description check: does not start with capital');
+          });
+          return;
+        }
+        needsReview = true;
+        if (!reviewReasons.includes('description check: non-standard casing')) {
+          reviewReasons.push('description check: non-standard casing');
+        }
+        desc = 'Overview of ' + finalTitle + '.';
       }
     } else {
-      return; // Reject empty descriptions
+      if (!isContentUnit) {
+        unit.sections.forEach(s => {
+          recordPageOutcome(s.slideNumber, 'skipped', 'description check: empty description');
+        });
+        return;
+      }
+      needsReview = true;
+      if (!reviewReasons.includes('description check: empty description')) {
+        reviewReasons.push('description check: empty description');
+      }
+      const rawPreview = unitText.trim().slice(0, 150).replace(/[,\s;:–—\-.]+$/, '') + '.';
+      desc = rawPreview.charAt(0).toUpperCase() + rawPreview.slice(1);
     }
 
     // REQUIREMENT 2: Reject candidates whose description starts with "depends on" or is pure dependency/ordering note
     if (/^depends\s+(?:on|upon)\b/i.test(desc) || /^(?:pure\s+dependency|dependency\s+note|ordering\s+note|prerequisites?\s+only)\b/i.test(desc)) {
-      return; // Reject pure dependency candidate
+      if (!isContentUnit) {
+        unit.sections.forEach(s => {
+          recordPageOutcome(s.slideNumber, 'skipped', 'description check: dependency or ordering note');
+        });
+        return;
+      }
+      needsReview = true;
+      if (!reviewReasons.includes('description check: dependency or ordering note')) {
+        reviewReasons.push('description check: dependency or ordering note');
+      }
     }
 
     if (desc.length > 175) {
@@ -1908,8 +2028,19 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     // Step 5b: Evaluate Description Quality & Body Presence
     const descScore = scoreCandidateDescription(desc);
     if (!desc || desc.trim().length === 0 || descScore.confidence < 30) {
-      // Must have valid body text and sentence structure
-      return;
+      if (!isContentUnit) {
+        unit.sections.forEach(s => {
+          recordPageOutcome(s.slideNumber, 'skipped', 'description quality gate: low confidence');
+        });
+        return;
+      }
+      needsReview = true;
+      if (!reviewReasons.includes('description quality gate: low confidence')) {
+        reviewReasons.push('description quality gate: low confidence');
+      }
+      if (!desc || desc.trim().length === 0) {
+        desc = `Study notes and content for ${finalTitle}.`;
+      }
     }
 
     if (descScore.needsReview) {
@@ -1930,6 +2061,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
 
     const createdAt = new Date().toISOString();
     const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
+    const fullTextOfUnit = unit.sections.map(s => s.rawText || s.text).join('\n\n').trim();
 
     candidateTopics.push({
       id: `custom-${timestamp}-${uIdx}`,
@@ -1942,6 +2074,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       review_reasons: reviewReasons,
       is_structural_title: isStructural,
       description: desc,
+      full_text: fullTextOfUnit,
       group_name: 'custom',
       category: 'custom-notes',
       tags: enrichedTags,
@@ -1959,11 +2092,32 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       title_source_line: titleLineNumber,
       description_source_lines: descLineNumbers.length > 0 ? descLineNumbers : [unit.startLine + 1]
     });
+
+    const primarySection = unit.sections[0];
+    recordPageOutcome(primarySection.slideNumber, 'topic', null);
+    unit.sections.slice(1).forEach(s => {
+      recordPageOutcome(s.slideNumber, 'merged', `merged into "${finalTitle}"`);
+    });
   });
 
-  // Calculate sane yield range
-  const maxAllowedYield = Math.min(15, Math.max(3, candidateTopics.length));
-  return candidateTopics.slice(0, maxAllowedYield);
+  // Verify that every expected page has an outcome
+  if (totalExpectedPages > 0) {
+    for (let p = 1; p <= totalExpectedPages; p++) {
+      if (!pageOutcomesMap.has(p)) {
+        throw new Error(`Page ${p} has no extraction outcome recorded.`);
+      }
+    }
+  }
+
+  const pageOutcomes = [];
+  for (let p = 1; p <= (totalExpectedPages || pageOutcomesMap.size); p++) {
+    if (pageOutcomesMap.has(p)) {
+      pageOutcomes.push(pageOutcomesMap.get(p));
+    }
+  }
+
+  candidateTopics.pageOutcomes = pageOutcomes;
+  return candidateTopics;
 }
 
 /**
@@ -1995,6 +2149,8 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   const structuredCoverage = computeExtractionCoverage(fullText, structuredTopics);
   console.log(`[TOPIC_COVERAGE] Path: structured | Source: ${sourceFileName} | Topics: ${structuredTopics.length} | Coverage: ${(structuredCoverage * 100).toFixed(1)}%`);
 
+  extractTopicsLocally.lastPageOutcomes = structuredTopics.pageOutcomes || [];
+
   if (options.forcePath === 'structured') {
     return structuredTopics;
   }
@@ -2021,6 +2177,8 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   console.log(`[TOPIC_COVERAGE] Path: list/sequence | Source: ${sourceFileName} | Topics: ${listTopics.length} | Coverage: ${(listCoverage * 100).toFixed(1)}%`);
 
   if (listTopics.length > 0 && (listCoverage >= 0.50 || listCoverage >= structuredCoverage)) {
+    listTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
+    extractTopicsLocally.lastPageOutcomes = listTopics.pageOutcomes;
     return listTopics;
   }
 
@@ -2030,11 +2188,17 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   console.log(`[TOPIC_COVERAGE] Path: raw text | Source: ${sourceFileName} | Topics: ${rawTopics.length} | Coverage: ${(rawCoverage * 100).toFixed(1)}%`);
 
   if (rawTopics.length > 0) {
+    rawTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
+    extractTopicsLocally.lastPageOutcomes = rawTopics.pageOutcomes;
     return rawTopics;
   }
 
   // Return highest non-empty fallback if under 60%
-  if (listTopics.length > 0 && listCoverage >= structuredCoverage) return listTopics;
+  if (listTopics.length > 0 && listCoverage >= structuredCoverage) {
+    listTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
+    extractTopicsLocally.lastPageOutcomes = listTopics.pageOutcomes;
+    return listTopics;
+  }
   if (structuredTopics.length > 0) return structuredTopics;
   return [];
 }
@@ -2141,6 +2305,7 @@ ${truncatedText}
       id: `custom-gemini-${timestamp}-${idx}`,
       title: truncateTitle(item.title || 'Untitled Topic', 70),
       description: finalDesc,
+      full_text: item.full_text || item.description || '',
       group_name: 'custom',
       category: 'custom-notes',
       tags: rawTags,
@@ -2166,6 +2331,40 @@ ${truncatedText}
 export async function extractTopicsFromSections(extractedData, fileName = '') {
   const rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
   const rawSections = extractedData?.rawPages || extractedData?.rawSlides || extractedData?.rawFrames || [];
-  return await extractTopicsLocally(rawText, rawSections, fileName);
+  const topics = await extractTopicsLocally(rawText, rawSections, fileName);
+  if (!topics.pageOutcomes && extractTopicsLocally.lastPageOutcomes) {
+    topics.pageOutcomes = extractTopicsLocally.lastPageOutcomes;
+  }
+  return topics;
+}
+
+/**
+ * Formats an extraction warning message from pageOutcomes.
+ * Returns null if no pages were skipped.
+ * 
+ * @param {Array<{ page: number, outcome: string, reason: string | null }>} pageOutcomes
+ * @returns {string | null}
+ */
+export function buildExtractionWarning(pageOutcomes) {
+  if (!Array.isArray(pageOutcomes) || pageOutcomes.length === 0) return null;
+  const skipped = pageOutcomes.filter(p => p && p.outcome === 'skipped');
+  if (skipped.length === 0) return null;
+
+  // Group skipped pages by reason
+  const byReason = new Map();
+  skipped.forEach(({ page, reason }) => {
+    const r = (reason || 'non-content').trim();
+    if (!byReason.has(r)) byReason.set(r, []);
+    byReason.get(r).push(page);
+  });
+
+  const parts = [];
+  byReason.forEach((pages, reason) => {
+    const sorted = [...pages].sort((a, b) => a - b);
+    const label = sorted.length === 1 ? `Page ${sorted[0]} was` : `Pages ${sorted.join(', ')} were`;
+    parts.push(`${label} skipped: ${reason}`);
+  });
+
+  return parts.join('. ');
 }
 
