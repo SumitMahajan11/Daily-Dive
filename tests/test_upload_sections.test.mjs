@@ -278,6 +278,7 @@ test('PDF page index preservation: a PDF where page 2 is empty and page 3 has te
   const p2Outcome = pageOutcomes.find(po => po.page === 2);
   assert.ok(p2Outcome, 'Page 2 must have an outcome record');
   assert.equal(p2Outcome.outcome, 'skipped');
+  assert.equal(p2Outcome.reason, 'empty or unreadable');
 
   const p3Outcome = pageOutcomes.find(po => po.page === 3);
   assert.ok(p3Outcome, 'Page 3 must have an outcome record');
@@ -286,6 +287,49 @@ test('PDF page index preservation: a PDF where page 2 is empty and page 3 has te
   const consensusTopic = topics.find(t => t.title.toLowerCase().includes('consensus') || t.full_text.toLowerCase().includes('consensus'));
   assert.ok(consensusTopic, 'Must extract consensus topic');
   assert.equal(consensusTopic.page, 3, 'Topic from page 3 must report page 3, not 2');
+});
+
+test('Outcome reasons: cancel after page 5 of a 30-page scan asserts pages 6-30 outcome reason is "not processed", not "empty or unreadable"', async () => {
+  const mockPages = [];
+  for (let i = 1; i <= 30; i++) {
+    if (i <= 5) {
+      mockPages.push({
+        page: i,
+        text: `Substantive study topic content for slide ${i}. Detailed explanation of distributed algorithms and metrics for system reliability.`,
+        status: 'ocr'
+      });
+    } else {
+      mockPages.push({
+        page: i,
+        text: '',
+        status: 'notProcessed'
+      });
+    }
+  }
+
+  const extracted = {
+    text: mockPages.slice(0, 5).map(p => p.text).join('\n\n'),
+    pageCount: 30,
+    pages: mockPages
+  };
+
+  const topics = await extractTopicsFromSections(extracted, 'mock_scan_30.pdf');
+  const pageOutcomes = topics.pageOutcomes || [];
+  assert.equal(pageOutcomes.length, 30, 'Every page must have an outcome');
+
+  for (let p = 6; p <= 30; p++) {
+    const outcome = pageOutcomes.find(po => po.page === p);
+    assert.ok(outcome, `Page ${p} must have an outcome record`);
+    assert.equal(outcome.outcome, 'skipped');
+    assert.ok(
+      outcome.reason && outcome.reason.toLowerCase().includes('not processed'),
+      `Page ${p} reason must contain "not processed", got: ${outcome.reason}`
+    );
+    assert.ok(
+      !outcome.reason.toLowerCase().includes('empty or unreadable'),
+      `Page ${p} reason must not be "empty or unreadable", got: ${outcome.reason}`
+    );
+  }
 });
 
 

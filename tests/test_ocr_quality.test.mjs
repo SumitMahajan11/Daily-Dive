@@ -288,6 +288,7 @@ test('6. Playwright test: scan_text 30 pages in real Chromium, cancel after page
     const file = new File([arr], 'scan_text_30_pages.pdf', { type: 'application/pdf' });
 
     const { extractFromPdf } = await import('/src/lib/extractors/pdfExtractor.js');
+    const { extractTopicsFromSections } = await import('/src/lib/topicExtractor.js');
 
     const controller = new AbortController();
     const progressEvents = [];
@@ -300,14 +301,17 @@ test('6. Playwright test: scan_text 30 pages in real Chromium, cancel after page
     };
 
     const extracted = await extractFromPdf(file, onProgress, { signal: controller.signal });
+    const topics = await extractTopicsFromSections(extracted, file.name);
 
     return {
       textLength: extracted.text.length,
       pageCount: extracted.pageCount,
       warning: extracted.warning,
       pageStats: extracted.pageStats,
+      pages: extracted.pages,
       pagesLength: extracted.pages ? extracted.pages.length : 0,
       rawPagesLength: extracted.rawPages ? extracted.rawPages.length : 0,
+      pageOutcomes: topics.pageOutcomes,
       progressEvents
     };
   }, base64Pdf);
@@ -321,5 +325,31 @@ test('6. Playwright test: scan_text 30 pages in real Chromium, cancel after page
   assert.equal(result.pageStats.empty, 0, 'Unprocessed pages must not count as empty');
   assert.ok(result.warning && result.warning.toLowerCase().includes('cancel'), 'Warning must indicate cancellation');
   assert.ok(result.textLength > 0, 'Partial text must be returned');
+
+  // Verify per-page status in pages[]
+  assert.equal(result.pagesLength, 30, 'pages[] array must contain all 30 pages');
+  assert.ok(Array.isArray(result.pages), 'pages must be an array');
+  for (let p = 1; p <= 5; p++) {
+    assert.equal(result.pages[p - 1].status, 'ocr', `Page ${p} status should be 'ocr'`);
+  }
+  for (let p = 6; p <= 30; p++) {
+    assert.equal(result.pages[p - 1].status, 'notProcessed', `Page ${p} status should be 'notProcessed'`);
+  }
+
+  // Verify page outcomes: pages 6-30 reason is "not processed", not "empty or unreadable"
+  assert.ok(Array.isArray(result.pageOutcomes) && result.pageOutcomes.length === 30, 'All 30 pages must have outcomes');
+  for (let p = 6; p <= 30; p++) {
+    const outcome = result.pageOutcomes.find(po => po.page === p);
+    assert.ok(outcome, `Page ${p} must have an outcome record`);
+    assert.equal(outcome.outcome, 'skipped', `Page ${p} outcome should be skipped`);
+    assert.ok(
+      outcome.reason && outcome.reason.toLowerCase().includes('not processed'),
+      `Page ${p} reason must contain "not processed", got: ${outcome.reason}`
+    );
+    assert.ok(
+      !outcome.reason.toLowerCase().includes('empty or unreadable'),
+      `Page ${p} reason must not be "empty or unreadable", got: ${outcome.reason}`
+    );
+  }
 });
 

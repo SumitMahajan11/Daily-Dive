@@ -1545,11 +1545,12 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         text: sec.text || '',
         structuralTitle: sec.structuralTitle || null,
         slideNumber: sec.page || sec.pageNumber || sec.slideNumber || (idx + 1),
+        status: sec.status || null,
         startLine: sec.startLine || 1,
         endLine: sec.endLine || 1
       };
     }
-    return { text: String(sec), structuralTitle: null, slideNumber: idx + 1, startLine: 1, endLine: 1 };
+    return { text: String(sec), structuralTitle: null, slideNumber: idx + 1, status: null, startLine: 1, endLine: 1 };
   });
 
   const totalExpectedPages = normalizedSections.length;
@@ -1571,8 +1572,12 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     const lines = secText.split('\n').map(l => cleanText(l)).filter(Boolean);
     const isContentPage = (rawText.trim().length >= CONTENT_PAGE_MIN_CHARS);
 
-    if (lines.length === 0) {
-      recordPageOutcome(pageNum, 'skipped', 'empty slide');
+    if (origSec?.status === 'notProcessed') {
+      recordPageOutcome(pageNum, 'skipped', 'not processed (cancelled or limit)');
+      return;
+    }
+    if (origSec?.status === 'empty' || lines.length === 0) {
+      recordPageOutcome(pageNum, 'skipped', 'empty or unreadable');
       return;
     }
     if (isCoverSlide(rawLines) || isCoverSlide(lines)) {
@@ -2117,7 +2122,8 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
   // Verify that every expected section page has an outcome
   for (const s of normalizedSections) {
     if (!pageOutcomesMap.has(s.slideNumber)) {
-      recordPageOutcome(s.slideNumber, 'skipped', 'empty or unreadable');
+      console.error(`[TOPIC_EXTRACTOR] Section page ${s.slideNumber} has no outcome recorded: unaccounted: extractor bug`);
+      recordPageOutcome(s.slideNumber, 'skipped', 'unaccounted: extractor bug');
     }
   }
 
@@ -2147,7 +2153,18 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   // Requirement 4: Empty or under 20 characters returns empty to trigger generic error in LibraryScreen
   if (cleaned.length < 20) {
     console.log(`[TOPIC_COVERAGE] ${sourceFileName || 'document'}: 0.0% coverage (text under 20 characters)`);
-    return [];
+    const emptyResult = [];
+    if (Array.isArray(rawSections) && rawSections.length > 0) {
+      const outcomes = rawSections.map((sec, idx) => {
+        const pageNum = (sec && typeof sec === 'object' ? (sec.page || sec.pageNumber || sec.slideNumber) : null) || (idx + 1);
+        const status = sec && typeof sec === 'object' ? sec.status : null;
+        const reason = status === 'notProcessed' ? 'not processed (cancelled or limit)' : 'empty or unreadable';
+        return { page: pageNum, outcome: 'skipped', reason };
+      });
+      emptyResult.pageOutcomes = outcomes;
+      extractTopicsLocally.lastPageOutcomes = outcomes;
+    }
+    return emptyResult;
   }
 
   // Path 1: Structured (keep unchanged for files it already handles well)

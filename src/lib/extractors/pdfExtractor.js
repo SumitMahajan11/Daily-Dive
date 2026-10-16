@@ -300,9 +300,15 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
 
   // If cancel mid-OCR occurred, mark remaining unprocessed OCR items as notProcessed (not empty)
   if (cancelled) {
-    for (const item of pagesToOcr) {
-      if (item.type !== 'ocr' && item.type !== 'textLayer') {
+    for (const item of pageRecords) {
+      if (item.type === 'needsOcr') {
         item.type = 'notProcessed';
+      }
+    }
+  } else {
+    for (const item of pageRecords) {
+      if (item.type === 'needsOcr') {
+        item.type = 'empty';
       }
     }
   }
@@ -328,7 +334,10 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
       emptyCount++;
     }
 
-    pages.push({ page: pageNum, text: pageText });
+    const pageStatus = (item.type === 'textLayer' || item.type === 'ocr' || item.type === 'notProcessed')
+      ? item.type
+      : 'empty';
+    pages.push({ page: pageNum, text: pageText, status: pageStatus });
     rawPages.push(pageText); // keep empty strings so indices match page numbers
   }
 
@@ -336,7 +345,7 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
   if (numPages > pageRecords.length) {
     notProcessedCount += (numPages - pageRecords.length);
     for (let p = pageRecords.length + 1; p <= numPages; p++) {
-      pages.push({ page: p, text: '' });
+      pages.push({ page: p, text: '', status: 'notProcessed' });
       rawPages.push('');
     }
   }
