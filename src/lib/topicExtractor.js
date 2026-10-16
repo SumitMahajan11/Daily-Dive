@@ -2007,7 +2007,13 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       if (!reviewReasons.includes('description check: empty description')) {
         reviewReasons.push('description check: empty description');
       }
-      desc = 'Overview of ' + finalTitle + '.';
+      const rawText = stripMarkdownSyntax(unitText).replace(/^[^a-zA-Z]+/, '').trim();
+      if (rawText.length < 20) {
+        desc = 'Overview of ' + finalTitle + '.';
+      } else {
+        const rawPreview = rawText.slice(0, 150).replace(/[,\s;:–—\-.]+$/, '') + '.';
+        desc = rawPreview.charAt(0).toUpperCase() + rawPreview.slice(1);
+      }
     }
 
     // REQUIREMENT 2: Reject candidates whose description starts with "depends on" or is pure dependency/ordering note
