@@ -38,6 +38,14 @@ if (!Promise.withResolvers) {
 if (!Promise.try) Promise.try = (fn, ...args) => new Promise(resolve => resolve(fn(...args)));
 if (!Uint8Array.prototype.toHex) Uint8Array.prototype.toHex = function() { return Buffer.from(this).toString('hex'); };
 if (!Math.sumPrecise) Math.sumPrecise = (arr) => Array.from(arr).reduce((a, b) => a + b, 0);
+if (!Map.prototype.getOrInsertComputed) {
+  Map.prototype.getOrInsertComputed = function(key, cb) {
+    if (this.has(key)) return this.get(key);
+    const v = cb(key);
+    this.set(key, v);
+    return v;
+  };
+}
 
 import { extractFromPptx } from '../src/lib/extractors/pptxExtractor.js';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
@@ -110,7 +118,7 @@ test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', asy
   assert.ok(titles.includes('Multithreading Scaling Simulation'), 'must include "Multithreading Scaling Simulation"');
 });
 
-test('PDF page cap limit: 45-page in-memory PDF fixture emits limit warning and caps processed pages', async () => {
+test('PDF 100-page text extraction: processes all 100 pages in-memory without warning', async () => {
   function createMinimalPdf(pageCount) {
     let out = '%PDF-1.4\n';
     const offsets = [];
@@ -134,20 +142,91 @@ test('PDF page cap limit: 45-page in-memory PDF fixture emits limit warning and 
     return Buffer.from(out, 'utf8');
   }
 
-  const buf = createMinimalPdf(45);
-  const file = new File([buf], 'test_45_pages.pdf', { type: 'application/pdf' });
+  const buf = createMinimalPdf(100);
+  const file = new File([buf], 'test_100_pages.pdf', { type: 'application/pdf' });
   const result = await extractFromPdf(file);
 
-  assert.equal(result.pageCount, 45, 'Total pageCount should be 45');
-  assert.equal(result.rawPages.length, 40, 'Only 40 pages should be processed');
-  assert.ok(result.warning, 'Warning should be returned');
-  assert.ok(
-    result.warning.includes('Pages 41-45 were not processed (limit 40 pages).'),
-    `Expected warning to include "Pages 41-45 were not processed (limit 40 pages).", got: "${result.warning}"`
-  );
-  assert.ok(
-    result.warnings.some(w => w.includes('Pages 41-45 were not processed (limit 40 pages).')),
-    'Warnings array should include the page cap warning'
-  );
+  assert.equal(result.pageCount, 100, 'Total pageCount should be 100');
+  assert.equal(result.rawPages.length, 100, 'All 100 pages should be processed');
+  assert.equal(result.pageStats.textLayer, 100, 'All 100 pages should be textLayer');
+  assert.equal(result.pageStats.empty, 0, 'No pages should be empty');
+  assert.equal(result.pageStats.notProcessed, 0, 'No pages should be notProcessed');
+  assert.equal(result.warning, undefined, 'No warning should be emitted for 100 text pages');
 });
+
+test('PDF cancel mid-OCR: returns partial results with warning and does not count unprocessed pages as empty', async () => {
+  const buf = fs.readFileSync('tests/fixtures/synthetic_mixed_document.pdf');
+  const file = new File([buf], 'synthetic_mixed_document.pdf', { type: 'application/pdf' });
+
+  const controller = new AbortController();
+  const onProgress = (p) => {
+    if (p.stage && p.stage.toLowerCase().includes('ocr')) {
+      controller.abort();
+    }
+  };
+
+  const result = await extractFromPdf(file, onProgress, { signal: controller.signal });
+
+  assert.ok(result.rawPages.length >= 1, 'Should return partial results for text pages already extracted');
+  assert.ok(result.warning, 'Warning should be returned on cancel');
+  assert.ok(result.warning.toLowerCase().includes('cancel'), `Warning should mention cancellation: ${result.warning}`);
+  assert.ok(result.pageStats.notProcessed > 0, `Unprocessed pages should be recorded in notProcessed: ${result.pageStats.notProcessed}`);
+  assert.equal(result.pageStats.empty, 0, 'Unprocessed pages must NOT count as empty');
+  assert.equal(result.emptyPages, 0, 'emptyPages property must NOT count unprocessed pages as empty');
+});
+
+test('PDF OCR page cap limit: pages beyond OCR_MAX_PAGES (120) are marked notProcessed with limit warning', async () => {
+  function createPdfWithImagePages(count) {
+    let out = '%PDF-1.4\n';
+    const offsets = [];
+    function addObj(str) { offsets.push(out.length); out += str + '\n'; }
+    addObj('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj');
+    const kids = [];
+    for (let i = 0; i < count; i++) kids.push((4 + i * 2) + ' 0 R');
+    addObj('2 0 obj\n<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + count + ' >>\nendobj');
+    addObj('3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj');
+    
+    for (let i = 0; i < count; i++) {
+      const pageObjNum = 4 + i * 2;
+      const contentObjNum = pageObjNum + 1;
+      if (i === 0) {
+        addObj(pageObjNum + ' 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ' + contentObjNum + ' 0 R >>\nendobj');
+        const stream = 'BT /F1 12 Tf 72 712 Td (Substantive study notes for page 1 explaining high-throughput distributed systems and data processing.) Tj ET';
+        addObj(contentObjNum + ' 0 obj\n<< /Length ' + stream.length + ' >>\nstream\n' + stream + '\nendstream\nendobj');
+      } else {
+        const imgObjNum = 4 + count * 2 + (i - 1);
+        addObj(pageObjNum + ' 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /Im1 ' + imgObjNum + ' 0 R >> >> /Contents ' + contentObjNum + ' 0 R >>\nendobj');
+        const pstream = 'q 612 0 0 792 0 0 cm /Im1 Do Q';
+        addObj(contentObjNum + ' 0 obj\n<< /Length ' + pstream.length + ' >>\nstream\n' + pstream + '\nendstream\nendobj');
+      }
+    }
+
+    for (let i = 1; i < count; i++) {
+      const imgObjNum = 4 + count * 2 + (i - 1);
+      addObj(imgObjNum + ' 0 obj\n<< /Type /XObject /Subtype /Image /Width 600 /Height 800 /ColorSpace /DeviceGray /BitsPerComponent 8 /Length 1 >>\nstream\n \nendstream\nendobj');
+    }
+
+    const xrefOffset = out.length;
+    out += 'xref\n0 ' + (offsets.length + 1) + '\n0000000000 65535 f \n';
+    for (const off of offsets) out += String(off).padStart(10, '0') + ' 00000 n \n';
+    out += 'trailer\n<< /Size ' + (offsets.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF';
+    return Buffer.from(out, 'utf8');
+  }
+
+  // 1 text page + 125 image pages = 126 pages
+  const buf = createPdfWithImagePages(126);
+  const file = new File([buf], 'test_126_pages.pdf', { type: 'application/pdf' });
+  const controller = new AbortController();
+  const onProgress = (p) => {
+    if (p.stage && p.stage.toLowerCase().includes('ocr')) {
+      controller.abort();
+    }
+  };
+  const result = await extractFromPdf(file, onProgress, { signal: controller.signal });
+  assert.equal(result.pageCount, 126);
+  assert.ok(result.warnings.some(w => w.includes("were not OCR'd (limit 120)")), `Expected OCR cap warning, got: ${result.warning}`);
+  assert.ok(result.warnings.some(w => w.includes("Pages 122-126 were not OCR'd (limit 120)")), `Expected Pages 122-126 warning, got: ${result.warning}`);
+});
+
+
 
