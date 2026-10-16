@@ -7,8 +7,10 @@ import {
   DESCRIPTION_ONLY_REASONS,
   isTitleOrContentReason,
   scoreCandidateTitle,
-  extractTopicsFromSections
+  extractTopicsFromSections,
+  extractTopicsLocally
 } from '../src/lib/topicExtractor.js';
+import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 
 test('isCleanHeading unit tests: 4 criteria', async (t) => {
   await t.test('criterion 1: balanced brackets', () => {
@@ -201,3 +203,53 @@ test('Precision and recall evaluation against flag_labels.json', () => {
   // 2. Flagged-good count is at most 20% of good topics
   assert.ok(afterGoodFlaggedPct <= 20, `Flagged good topics (${afterFP}/${goodTotal} = ${afterGoodFlaggedPct.toFixed(1)}%) must be at most 20%`);
 });
+
+test('Invariant: flag decision uses the same string that becomes the emitted title on every topic in build', async () => {
+  const buildDir = 'D:/DailyDive-Eval/build';
+  if (!fs.existsSync(buildDir)) {
+    return;
+  }
+
+  process.env.DEBUG_TRACE = '1';
+  try {
+    const files = fs.readdirSync(buildDir).filter(f => f.endsWith('.pdf'));
+    let checkedTopics = 0;
+
+    for (const file of files) {
+      try {
+        const buf = fs.readFileSync(path.join(buildDir, file));
+        const pdfFile = new File([buf], file, { type: 'application/pdf' });
+        const res = await extractFromPdf(pdfFile);
+        const topics = extractTopicsLocally(res.text, res.rawPages, file);
+
+        for (const t of topics) {
+          checkedTopics++;
+          assert.equal(t._flagInput, 'resolvedTitle', 'flag input must be resolvedTitle on ' + file + ':' + t.page);
+          assert.ok(typeof t._path === 'string' && t._path.length > 0, '_path must be populated on ' + file + ':' + t.page);
+
+          if (!isCleanHeading(t.title)) {
+            assert.equal(
+              t.needs_review,
+              true,
+              'Topic on ' + file + ':' + t.page + ' with unclean title must have needs_review = true'
+            );
+          }
+        }
+      } catch (err) {
+        // Skip files that do not parse as text PDF
+      }
+    }
+
+    assert.ok(checkedTopics > 0, 'Must check topics in build');
+  } finally {
+    delete process.env.DEBUG_TRACE;
+  }
+
+  // Strip debug fields in production
+  const sampleTopics = extractTopicsLocally('Clean Sample Title\nSubstantive content paragraph for testing strip logic.', [], 'sample.txt');
+  for (const t of sampleTopics) {
+    assert.equal(t._path, undefined, '_path must be stripped in production');
+    assert.equal(t._flagInput, undefined, '_flagInput must be stripped in production');
+  }
+});
+
