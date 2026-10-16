@@ -3,6 +3,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { execSync } from 'node:child_process';
 
 function serveStatic(distDir, port = 4187) {
   const mimeTypes = {
@@ -40,6 +41,10 @@ async function testUploadRealRoadmap() {
   console.log('=== [EXTRACTOR] REAL ROADMAP.MD UPLOAD UI TEST ===\n');
 
   const distDir = path.resolve('dist');
+  if (!fs.existsSync(path.join(distDir, 'index.html'))) {
+    console.log('Building production bundle for UI test...');
+    execSync('npm run build', { stdio: 'inherit' });
+  }
   const server = await serveStatic(distDir, 4187);
 
   const browser = await chromium.launch({ headless: true });
