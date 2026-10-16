@@ -110,3 +110,44 @@ test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', asy
   assert.ok(titles.includes('Multithreading Scaling Simulation'), 'must include "Multithreading Scaling Simulation"');
 });
 
+test('PDF page cap limit: 45-page in-memory PDF fixture emits limit warning and caps processed pages', async () => {
+  function createMinimalPdf(pageCount) {
+    let out = '%PDF-1.4\n';
+    const offsets = [];
+    function addObj(str) { offsets.push(out.length); out += str + '\n'; }
+    addObj('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj');
+    const kids = [];
+    for (let i = 0; i < pageCount; i++) kids.push((4 + i * 2) + ' 0 R');
+    addObj('2 0 obj\n<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + pageCount + ' >>\nendobj');
+    addObj('3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj');
+    for (let i = 0; i < pageCount; i++) {
+      const pageObjNum = 4 + i * 2;
+      const contentObjNum = pageObjNum + 1;
+      addObj(pageObjNum + ' 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents ' + contentObjNum + ' 0 R >>\nendobj');
+      const stream = 'BT /F1 12 Tf 72 712 Td (This is page number ' + (i + 1) + ' containing substantive study material and lecture concepts.) Tj ET';
+      addObj(contentObjNum + ' 0 obj\n<< /Length ' + stream.length + ' >>\nstream\n' + stream + '\nendstream\nendobj');
+    }
+    const xrefOffset = out.length;
+    out += 'xref\n0 ' + (offsets.length + 1) + '\n0000000000 65535 f \n';
+    for (const off of offsets) out += String(off).padStart(10, '0') + ' 00000 n \n';
+    out += 'trailer\n<< /Size ' + (offsets.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF';
+    return Buffer.from(out, 'utf8');
+  }
+
+  const buf = createMinimalPdf(45);
+  const file = new File([buf], 'test_45_pages.pdf', { type: 'application/pdf' });
+  const result = await extractFromPdf(file);
+
+  assert.equal(result.pageCount, 45, 'Total pageCount should be 45');
+  assert.equal(result.rawPages.length, 40, 'Only 40 pages should be processed');
+  assert.ok(result.warning, 'Warning should be returned');
+  assert.ok(
+    result.warning.includes('Pages 41-45 were not processed (limit 40 pages).'),
+    `Expected warning to include "Pages 41-45 were not processed (limit 40 pages).", got: "${result.warning}"`
+  );
+  assert.ok(
+    result.warnings.some(w => w.includes('Pages 41-45 were not processed (limit 40 pages).')),
+    'Warnings array should include the page cap warning'
+  );
+});
+
