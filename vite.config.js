@@ -68,8 +68,6 @@ export default defineConfig({
         ]
       },
       workbox: {
-        skipWaiting: true,
-        clientsClaim: true,
         cleanupOutdatedCaches: true,
         // Precache app shell, all screens, and the 4 group chunks
         globPatterns: ['**/*.{html,css,png,svg,woff2,ico,js,webmanifest}'],
