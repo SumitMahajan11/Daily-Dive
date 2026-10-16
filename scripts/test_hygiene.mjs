@@ -599,19 +599,19 @@ export async function runHygieneSuite(targetItem = null) {
       await dupToast.waitFor({ state: 'visible', timeout: 3000 });
       assert.ok(await dupToast.isVisible(), 'Duplicate topic title must give feedback toast');
       console.log('  [PASS] Duplicate title gave feedback toast.');
-      // 3. File upload >10 MB size limit error toast
-      console.log('Testing upload limit (>10 MB) error toast...');
+      // 3. File upload >50 MB size limit error toast
+      console.log('Testing upload limit (>50 MB) error toast...');
       fs.mkdirSync(path.resolve('scratch'), { recursive: true });
-      const largeFilePath = path.resolve('scratch/test_10mb_large.txt');
+      const largeFilePath = path.resolve('scratch/test_50mb_large.txt');
       if (!fs.existsSync(largeFilePath)) {
-        fs.writeFileSync(largeFilePath, Buffer.alloc(10.5 * 1024 * 1024, 'a'));
+        fs.writeFileSync(largeFilePath, Buffer.alloc(50.5 * 1024 * 1024, 'a'));
       }
       const fileInput = page.locator('#library input[type="file"]');
       await fileInput.setInputFiles(largeFilePath);
-      const largeFileToast = page.getByText(/File is too large \(max 10 MB\)\. Please use a smaller file\./i);
+      const largeFileToast = page.getByText(/File is too large \([^)]*max 50 MB\)\. Please use a smaller file\./i);
       await largeFileToast.waitFor({ state: 'visible', timeout: 4000 });
-      assert.ok(await largeFileToast.isVisible(), 'File > 10 MB must show size limit toast');
-      console.log('  [PASS] File > 10 MB triggered "File is too large (max 10 MB). Please use a smaller file." toast.');
+      assert.ok(await largeFileToast.isVisible(), 'File > 50 MB must show size limit toast');
+      console.log('  [PASS] File > 50 MB triggered "File is too large (max 50 MB). Please use a smaller file." toast.');
 
       // 4. File upload under limit (<10 MB) works without size error
       console.log('Testing under-limit file upload...');

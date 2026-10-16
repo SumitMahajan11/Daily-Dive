@@ -243,12 +243,19 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
   const [dragActive, setDragActive] = useState(false);
   const [selectedFile, setSelectedFile] = useState(null);
   const [processingState, setProcessingState] = useState('idle'); // 'idle' | 'extracting' | 'review' | 'error'
-  const [progress, setProgress] = useState({ stage: '', percent: 0, detail: '' });
+  const [progress, setProgress] = useState({ stage: '', percent: 0, detail: '', currentPage: null, totalPages: null });
   const [errorMessage, setErrorMessage] = useState('');
   const [candidateTopics, setCandidateTopics] = useState([]);
   const [selectedTopicIds, setSelectedTopicIds] = useState(new Set());
   const [addedNotice, setAddedNotice] = useState(null);
   const [extractionWarning, setExtractionWarning] = useState(null);
+  const [extractionController, setExtractionController] = useState(null);
+
+  const handleCancelExtraction = () => {
+    if (extractionController) {
+      extractionController.abort();
+    }
+  };
 
   // BYOK State
   const [geminiApiKey, setGeminiApiKey] = useState(() => {
@@ -388,20 +395,23 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
   };
 
   const processUploadedFile = async (file) => {
-    const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MB
+    const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50 MB
     if (file && file.size > MAX_FILE_SIZE) {
+      const sizeMb = (file.size / (1024 * 1024)).toFixed(1);
       if (showToast) {
-        showToast('File is too large (max 10 MB). Please use a smaller file.', 'error');
+        showToast(`File is too large (${sizeMb} MB, max 50 MB). Please use a smaller file.`, 'error');
       }
       if (fileInputRef.current) fileInputRef.current.value = '';
       return;
     }
 
+    const controller = new AbortController();
+    setExtractionController(controller);
     setSelectedFile(file);
     setProcessingState('extracting');
     setErrorMessage('');
     setExtractionWarning(null);
-    setProgress({ stage: 'Reading document', percent: 15, detail: file.name });
+    setProgress({ stage: 'Reading document', percent: 15, detail: file.name, currentPage: null, totalPages: null });
 
     try {
       let rawText = '';
@@ -410,7 +420,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       let extractedData = null;
       if (ext === 'pdf') {
         const { extractFromPdf } = await import('../../lib/extractors/pdfExtractor');
-        extractedData = await extractFromPdf(file, (p) => setProgress(p));
+        extractedData = await extractFromPdf(file, (p) => setProgress(p), { signal: controller.signal });
       } else if (ext === 'pptx') {
         const { extractFromPptx } = await import('../../lib/extractors/pptxExtractor');
         extractedData = await extractFromPptx(file, (p) => setProgress(p));
@@ -426,7 +436,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         throw new Error(`Unsupported file format .${ext}. Please upload a PDF, PPTX, image, or markdown note.`);
       }
 
-      if (extractedData?.warning) {
+      if (extractedData?.warning && !controller.signal.aborted) {
         if (typeof showToast === 'function') {
           showToast(extractedData.warning, 'warning');
         }
@@ -484,9 +494,28 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       setSelectedTopicIds(allSelectedIds);
       setExpandedFullTextIds(new Set());
       setProcessingState('review');
+
+      if (controller.signal.aborted) {
+        const pagesCount = extractedData?.pageStats
+          ? ((extractedData.pageStats.textLayer || 0) + (extractedData.pageStats.ocr || 0))
+          : (extractedData?.pages ? extractedData.pages.filter(p => p.text && p.text.trim().length > 0).length : 0);
+        if (typeof showToast === 'function') {
+          showToast(`Cancelled, showing ${pagesCount} pages`, 'info');
+        }
+      }
     } catch (err) {
-      setProcessingState('error');
-      setErrorMessage(err.message || 'An error occurred during extraction.');
+      if (controller.signal.aborted) {
+        if (typeof showToast === 'function') {
+          showToast('Extraction cancelled.', 'info');
+        }
+        setProcessingState('idle');
+        setSelectedFile(null);
+      } else {
+        setProcessingState('error');
+        setErrorMessage(err.message || 'An error occurred during extraction.');
+      }
+    } finally {
+      setExtractionController(null);
     }
   };
 
@@ -1000,6 +1029,9 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           <div className="p-6 rounded-2xl border border-outline-variant/30 bg-surface-container-low text-center space-y-3">
             <div className="w-8 h-8 rounded-full border-2 border-primary border-t-transparent animate-spin mx-auto" />
             <h3 className="text-sm font-bold text-on-surface">{progress.stage}</h3>
+            {progress.currentPage && progress.totalPages ? (
+              <p className="text-xs font-semibold text-primary">page {progress.currentPage} of {progress.totalPages}</p>
+            ) : null}
             <p className="text-xs text-on-surface-variant">{progress.detail}</p>
             <div className="w-full bg-surface-container-highest h-1.5 rounded-full overflow-hidden max-w-xs mx-auto">
               <div
@@ -1007,6 +1039,18 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                 style={{ width: `${progress.percent}%` }}
               />
             </div>
+            {selectedFile?.name?.toLowerCase().endsWith('.pdf') && (
+              <div className="pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelExtraction}
+                  className="text-xs px-4 h-8 text-on-surface-variant hover:text-error hover:border-error/40 cursor-pointer"
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           </div>
         )}
 

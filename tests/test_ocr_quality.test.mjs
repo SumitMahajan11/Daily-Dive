@@ -234,3 +234,122 @@ test('5. Per-page OCR gating: synthetic_mixed_document.pdf (3 image pages, 1 tex
   assert.ok(result.topicCount >= 3, `Expected at least 3 topics from mixed document, got ${result.topicCount}`);
 });
 
+test('6. Playwright test: scan_text 30 pages in real Chromium, cancel after page 5, assert partial pages and notProcessed count', async (t) => {
+  if (!browser) {
+    t.skip('Playwright Chromium not installed in this runner environment');
+    return;
+  }
+  const page = await browser.newPage();
+  await page.goto(`http://localhost:${port}/`);
+  await page.waitForLoadState('networkidle');
+
+  // Build a 30-page scanned (image-only) PDF embedding a 736x920 JPEG with real scan text
+  function createScannedPdf(count) {
+    const jpgBuf = fs.readFileSync('tests/fixtures/extraction/decision_chain.jpg');
+    let out = '%PDF-1.4\n';
+    const offsets = [];
+    function addObj(str) { offsets.push(Buffer.byteLength(out, 'latin1')); out += str + '\n'; }
+    addObj('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj');
+    const kids = [];
+    for (let i = 0; i < count; i++) kids.push((4 + i * 2) + ' 0 R');
+    addObj('2 0 obj\n<< /Type /Pages /Kids [' + kids.join(' ') + '] /Count ' + count + ' >>\nendobj');
+    addObj('3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj');
+    
+    const imgObjNum = 4 + count * 2;
+    for (let i = 0; i < count; i++) {
+      const pageObjNum = 4 + i * 2;
+      const contentObjNum = pageObjNum + 1;
+      addObj(pageObjNum + ' 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /XObject << /Im1 ' + imgObjNum + ' 0 R >> >> /Contents ' + contentObjNum + ' 0 R >>\nendobj');
+      const pstream = 'q 612 0 0 792 0 0 cm /Im1 Do Q';
+      addObj(contentObjNum + ' 0 obj\n<< /Length ' + pstream.length + ' >>\nstream\n' + pstream + '\nendstream\nendobj');
+    }
+
+    const imgHeader = imgObjNum + ' 0 obj\n<< /Type /XObject /Subtype /Image /Width 736 /Height 920 /ColorSpace /DeviceRGB /BitsPerComponent 8 /Filter /DCTDecode /Length ' + jpgBuf.length + ' >>\nstream\n';
+    offsets.push(Buffer.byteLength(out, 'latin1'));
+    const headerBuf = Buffer.from(out + imgHeader, 'latin1');
+    const trailerPart = '\nendstream\nendobj\n';
+    
+    let out2 = trailerPart;
+    const xrefOffset = headerBuf.length + jpgBuf.length + Buffer.byteLength(trailerPart, 'latin1');
+    out2 += 'xref\n0 ' + (offsets.length + 1) + '\n0000000000 65535 f \n';
+    for (const off of offsets) out2 += String(off).padStart(10, '0') + ' 00000 n \n';
+    out2 += 'trailer\n<< /Size ' + (offsets.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF';
+    
+    return Buffer.concat([headerBuf, jpgBuf, Buffer.from(out2, 'latin1')]);
+  }
+
+  const pdfBuffer = createScannedPdf(30);
+  const base64Pdf = pdfBuffer.toString('base64');
+
+  const result = await page.evaluate(async (base64) => {
+    const raw = atob(base64);
+    const arr = new Uint8Array(raw.length);
+    for (let i = 0; i < raw.length; i++) arr[i] = raw.charCodeAt(i);
+    const file = new File([arr], 'scan_text_30_pages.pdf', { type: 'application/pdf' });
+
+    const { extractFromPdf } = await import('/src/lib/extractors/pdfExtractor.js');
+    const { extractTopicsFromSections } = await import('/src/lib/topicExtractor.js');
+
+    const controller = new AbortController();
+    const progressEvents = [];
+    const onProgress = (p) => {
+      progressEvents.push({ ...p });
+      // Cancel after page 5 is completed (when OCR page 6 begins):
+      if (p.stage && p.stage.toLowerCase().includes('ocr') && p.currentPage > 5) {
+        controller.abort();
+      }
+    };
+
+    const extracted = await extractFromPdf(file, onProgress, { signal: controller.signal });
+    const topics = await extractTopicsFromSections(extracted, file.name);
+
+    return {
+      textLength: extracted.text.length,
+      pageCount: extracted.pageCount,
+      warning: extracted.warning,
+      pageStats: extracted.pageStats,
+      pages: extracted.pages,
+      pagesLength: extracted.pages ? extracted.pages.length : 0,
+      rawPagesLength: extracted.rawPages ? extracted.rawPages.length : 0,
+      pageOutcomes: topics.pageOutcomes,
+      progressEvents
+    };
+  }, base64Pdf);
+
+  await page.close();
+
+  console.log(`[TEST 6 CANCEL OCR] OCR pages: ${result.pageStats.ocr}, NotProcessed: ${result.pageStats.notProcessed}, Empty: ${result.pageStats.empty}`);
+  assert.equal(result.pageCount, 30, 'Total pageCount must be 30');
+  assert.ok(result.pageStats.ocr >= 5, `Expected at least 5 pages OCR'd, got ${result.pageStats.ocr}`);
+  assert.equal(result.pageStats.notProcessed, 30 - result.pageStats.ocr, 'notProcessed count must equal 30 minus processed pages');
+  assert.equal(result.pageStats.empty, 0, 'Unprocessed pages must not count as empty');
+  assert.ok(result.warning && result.warning.toLowerCase().includes('cancel'), 'Warning must indicate cancellation');
+  assert.ok(result.textLength > 0, 'Partial text must be returned');
+
+  // Verify per-page status in pages[]
+  assert.equal(result.pagesLength, 30, 'pages[] array must contain all 30 pages');
+  assert.ok(Array.isArray(result.pages), 'pages must be an array');
+  for (let p = 1; p <= 5; p++) {
+    assert.equal(result.pages[p - 1].status, 'ocr', `Page ${p} status should be 'ocr'`);
+  }
+  for (let p = 6; p <= 30; p++) {
+    assert.equal(result.pages[p - 1].status, 'notProcessed', `Page ${p} status should be 'notProcessed'`);
+  }
+
+  // Verify page outcomes: pages 6-30 reason is "not processed", not "empty or unreadable"
+  assert.ok(Array.isArray(result.pageOutcomes) && result.pageOutcomes.length === 30, 'All 30 pages must have outcomes');
+  for (let p = 6; p <= 30; p++) {
+    const outcome = result.pageOutcomes.find(po => po.page === p);
+    assert.ok(outcome, `Page ${p} must have an outcome record`);
+    assert.equal(outcome.outcome, 'skipped', `Page ${p} outcome should be skipped`);
+    assert.ok(
+      outcome.reason && outcome.reason.toLowerCase().includes('not processed'),
+      `Page ${p} reason must contain "not processed", got: ${outcome.reason}`
+    );
+    assert.ok(
+      !outcome.reason.toLowerCase().includes('empty or unreadable'),
+      `Page ${p} reason must not be "empty or unreadable", got: ${outcome.reason}`
+    );
+  }
+});
+
