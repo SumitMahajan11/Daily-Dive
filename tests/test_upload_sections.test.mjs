@@ -228,5 +228,65 @@ test('PDF OCR page cap limit: pages beyond OCR_MAX_PAGES (120) are marked notPro
   assert.ok(result.warnings.some(w => w.includes("Pages 122-126 were not OCR'd (limit 120)")), `Expected Pages 122-126 warning, got: ${result.warning}`);
 });
 
+test('PDF page index preservation: a PDF where page 2 is empty and page 3 has text must report page 3, not 2', async () => {
+  function create3PagePdf() {
+    let out = '%PDF-1.4\n';
+    const offsets = [];
+    function addObj(str) { offsets.push(out.length); out += str + '\n'; }
+    addObj('1 0 obj\n<< /Type /Catalog /Pages 2 0 R >>\nendobj');
+    addObj('2 0 obj\n<< /Type /Pages /Kids [4 0 R 6 0 R 8 0 R] /Count 3 >>\nendobj');
+    addObj('3 0 obj\n<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica >>\nendobj');
+
+    // Page 1: with text
+    addObj('4 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 5 0 R >>\nendobj');
+    const p1Stream = 'BT /F1 12 Tf 72 712 Td (Horizontal and Vertical Database Scaling Models) Tj 0 -24 Td (Database replication across distributed database clusters provides fault tolerance and high throughput. Read replicas offload primary database instances effectively across cloud availability zones.) Tj ET';
+    addObj('5 0 obj\n<< /Length ' + p1Stream.length + ' >>\nstream\n' + p1Stream + '\nendstream\nendobj');
+
+    // Page 2: empty
+    addObj('6 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 7 0 R >>\nendobj');
+    addObj('7 0 obj\n<< /Length 0 >>\nstream\n\nendstream\nendobj');
+
+    // Page 3: with text
+    addObj('8 0 obj\n<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources << /Font << /F1 3 0 R >> >> /Contents 9 0 R >>\nendobj');
+    const p3Stream = 'BT /F1 12 Tf 72 712 Td (Consensus Mechanisms and Distributed Protocols) Tj 0 -24 Td (Paxos and Raft consensus algorithms ensure leader election and deterministic state machine log replication. Distributed nodes coordinate transaction commits and state transitions reliably.) Tj ET';
+    addObj('9 0 obj\n<< /Length ' + p3Stream.length + ' >>\nstream\n' + p3Stream + '\nendstream\nendobj');
+
+    const xrefOffset = out.length;
+    out += 'xref\n0 ' + (offsets.length + 1) + '\n0000000000 65535 f \n';
+    for (const off of offsets) out += String(off).padStart(10, '0') + ' 00000 n \n';
+    out += 'trailer\n<< /Size ' + (offsets.length + 1) + ' /Root 1 0 R >>\nstartxref\n' + xrefOffset + '\n%%EOF';
+    return Buffer.from(out, 'utf8');
+  }
+
+  const buf = create3PagePdf();
+  const file = new File([buf], 'test_p2_empty_p3_text.pdf', { type: 'application/pdf' });
+  const extracted = await extractFromPdf(file);
+  assert.equal(extracted.pageCount, 3);
+  assert.equal(extracted.pages.length, 3);
+  assert.equal(extracted.pages[0].page, 1);
+  assert.equal(extracted.pages[1].page, 2);
+  assert.equal(extracted.pages[1].text, '');
+  assert.equal(extracted.pages[2].page, 3);
+  assert.ok(extracted.pages[2].text.includes('Consensus'));
+
+  const topics = await extractTopicsFromSections(extracted, file.name);
+  assert.ok(topics.length >= 2, 'Should extract topics for non-empty pages');
+
+  const pageOutcomes = topics.pageOutcomes || [];
+  assert.equal(pageOutcomes.length, 3, 'All 3 pages must have outcomes');
+
+  const p2Outcome = pageOutcomes.find(po => po.page === 2);
+  assert.ok(p2Outcome, 'Page 2 must have an outcome record');
+  assert.equal(p2Outcome.outcome, 'skipped');
+
+  const p3Outcome = pageOutcomes.find(po => po.page === 3);
+  assert.ok(p3Outcome, 'Page 3 must have an outcome record');
+  assert.equal(p3Outcome.outcome, 'topic');
+
+  const consensusTopic = topics.find(t => t.title.toLowerCase().includes('consensus') || t.full_text.toLowerCase().includes('consensus'));
+  assert.ok(consensusTopic, 'Must extract consensus topic');
+  assert.equal(consensusTopic.page, 3, 'Topic from page 3 must report page 3, not 2');
+});
+
 
 

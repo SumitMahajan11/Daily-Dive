@@ -88,8 +88,9 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
       totalPages: numPages
     });
 
+    let page = null;
     try {
-      const page = await pdfDocument.getPage(i);
+      page = await pdfDocument.getPage(i);
       const textContent = await page.getTextContent();
 
       let lines = [];
@@ -161,6 +162,10 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
     } catch (pageErr) {
       console.warn(`Could not extract text layer from page ${i}:`, pageErr);
       pageRecords.push({ pageIndex: i, type: 'empty', text: '', textChars: 0 });
+    } finally {
+      if (page && typeof page.cleanup === 'function') {
+        page.cleanup();
+      }
     }
   }
 
@@ -239,32 +244,43 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
             break;
           }
 
-          const page = await pdfDocument.getPage(item.pageIndex);
-          const viewport = page.getViewport({ scale: 2.5 });
-
+          let page = null;
           let canvas = null;
-          if (typeof document !== 'undefined' && document.createElement) {
-            canvas = document.createElement('canvas');
-            canvas.height = viewport.height;
-            canvas.width = viewport.width;
-            const context = canvas.getContext('2d');
-            await page.render({ canvasContext: context, viewport }).promise;
-          }
+          try {
+            page = await pdfDocument.getPage(item.pageIndex);
+            const viewport = page.getViewport({ scale: 2.5 });
 
-          if (canvas) {
-            const ret = await ocrWorker.recognize(canvas);
-            const ocrText = ret?.data?.text?.trim() || '';
-            console.log(`[PDF_OCR] Page ${item.pageIndex}: ${ocrText.length} characters`);
-            if (ocrText.length > 0) {
-              item.type = 'ocr';
-              item.text = ocrText;
+            if (typeof document !== 'undefined' && document.createElement) {
+              canvas = document.createElement('canvas');
+              canvas.height = viewport.height;
+              canvas.width = viewport.width;
+              const context = canvas.getContext('2d');
+              await page.render({ canvasContext: context, viewport }).promise;
+            }
+
+            if (canvas) {
+              const ret = await ocrWorker.recognize(canvas);
+              const ocrText = ret?.data?.text?.trim() || '';
+              console.log(`[PDF_OCR] Page ${item.pageIndex}: ${ocrText.length} characters`);
+              if (ocrText.length > 0) {
+                item.type = 'ocr';
+                item.text = ocrText;
+              } else {
+                item.type = 'empty';
+                item.text = '';
+              }
             } else {
               item.type = 'empty';
               item.text = '';
             }
-          } else {
-            item.type = 'empty';
-            item.text = '';
+          } finally {
+            if (canvas) {
+              canvas.width = 0;
+              canvas.height = 0;
+            }
+            if (page && typeof page.cleanup === 'function') {
+              page.cleanup();
+            }
           }
         }
       }
@@ -292,6 +308,7 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
   }
 
   // Merge text and OCR output in page order
+  const pages = [];
   const rawPages = [];
   let textLayerCount = 0;
   let ocrCount = 0;
@@ -299,22 +316,29 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
   let notProcessedCount = 0;
 
   for (const item of pageRecords) {
+    const pageNum = item.pageIndex;
+    const pageText = item.text || '';
     if (item.type === 'textLayer') {
       textLayerCount++;
-      if (item.text) rawPages.push(item.text);
     } else if (item.type === 'ocr') {
       ocrCount++;
-      if (item.text) rawPages.push(item.text);
     } else if (item.type === 'notProcessed') {
       notProcessedCount++;
     } else {
       emptyCount++;
     }
+
+    pages.push({ page: pageNum, text: pageText });
+    rawPages.push(pageText); // keep empty strings so indices match page numbers
   }
 
   // Pages never processed (e.g. if cancelled during text layer loop) must not count as empty
   if (numPages > pageRecords.length) {
     notProcessedCount += (numPages - pageRecords.length);
+    for (let p = pageRecords.length + 1; p <= numPages; p++) {
+      pages.push({ page: p, text: '' });
+      rawPages.push('');
+    }
   }
 
   const cancelWarning = cancelled
@@ -333,7 +357,7 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
   const allWarnings = [cancelWarning, ocrCapWarning, emptyWarning].filter(Boolean);
   const warning = allWarnings.length > 0 ? allWarnings.join(' ') : null;
 
-  const combinedText = rawPages.join('\n\n').trim();
+  const combinedText = pages.map(p => p.text).filter(Boolean).join('\n\n').trim();
 
   if (!combinedText || combinedText.length < 20) {
     if (cancelled) {
@@ -347,11 +371,12 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
   onProgress({
     stage: 'Extraction complete',
     percent: 100,
-    detail: `Extracted ${rawPages.length} pages (${Math.round(combinedText.length / 5)} words)`
+    detail: `Extracted ${pages.filter(p => p.text).length} pages (${Math.round(combinedText.length / 5)} words)`
   });
 
   return {
     text: combinedText,
+    pages,
     rawPages,
     pageCount: numPages,
     sourceFormat: 'pdf',

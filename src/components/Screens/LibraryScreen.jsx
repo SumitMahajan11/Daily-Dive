@@ -436,7 +436,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         throw new Error(`Unsupported file format .${ext}. Please upload a PDF, PPTX, image, or markdown note.`);
       }
 
-      if (extractedData?.warning) {
+      if (extractedData?.warning && !controller.signal.aborted) {
         if (typeof showToast === 'function') {
           showToast(extractedData.warning, 'warning');
         }
@@ -494,6 +494,15 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       setSelectedTopicIds(allSelectedIds);
       setExpandedFullTextIds(new Set());
       setProcessingState('review');
+
+      if (controller.signal.aborted) {
+        const pagesCount = extractedData?.pageStats
+          ? ((extractedData.pageStats.textLayer || 0) + (extractedData.pageStats.ocr || 0))
+          : (extractedData?.pages ? extractedData.pages.filter(p => p.text && p.text.trim().length > 0).length : 0);
+        if (typeof showToast === 'function') {
+          showToast(`Cancelled, showing ${pagesCount} pages`, 'info');
+        }
+      }
     } catch (err) {
       if (controller.signal.aborted) {
         if (typeof showToast === 'function') {
@@ -1030,16 +1039,18 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                 style={{ width: `${progress.percent}%` }}
               />
             </div>
-            <div className="pt-2">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleCancelExtraction}
-                className="text-xs px-4 h-8 text-on-surface-variant hover:text-error hover:border-error/40 cursor-pointer"
-              >
-                Cancel
-              </Button>
-            </div>
+            {selectedFile?.name?.toLowerCase().endsWith('.pdf') && (
+              <div className="pt-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={handleCancelExtraction}
+                  className="text-xs px-4 h-8 text-on-surface-variant hover:text-error hover:border-error/40 cursor-pointer"
+                >
+                  Cancel
+                </Button>
+              </div>
+            )}
           </div>
         )}
 

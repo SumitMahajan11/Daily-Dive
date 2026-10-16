@@ -922,7 +922,7 @@ export function stripRepeatingBoilerplate(rawPages = []) {
 
   // Split each page into lines
   const pagesLines = rawPages.map(page =>
-    (page || '')
+    (typeof page === 'string' ? page : (page?.text || ''))
       .split('\n')
       .map(l => cleanText(l))
       .filter(Boolean)
@@ -1544,7 +1544,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       return {
         text: sec.text || '',
         structuralTitle: sec.structuralTitle || null,
-        slideNumber: sec.slideNumber || (idx + 1),
+        slideNumber: sec.page || sec.pageNumber || sec.slideNumber || (idx + 1),
         startLine: sec.startLine || 1,
         endLine: sec.endLine || 1
       };
@@ -2074,6 +2074,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     const createdAt = new Date().toISOString();
     const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
     const fullTextOfUnit = unit.sections.map(s => s.rawText || s.text).join('\n\n').trim();
+    const primarySection = unit.sections[0];
 
     candidateTopics.push({
       id: `custom-${timestamp}-${uIdx}`,
@@ -2091,6 +2092,8 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       category: 'custom-notes',
       tags: enrichedTags,
       source: sourceFileName,
+      page: primarySection.slideNumber,
+      slideNumber: primarySection.slideNumber,
       is_custom: true,
       lifecycle: 'temporary',
       created_at: createdAt,
@@ -2105,29 +2108,20 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       description_source_lines: descLineNumbers.length > 0 ? descLineNumbers : [unit.startLine + 1]
     });
 
-    const primarySection = unit.sections[0];
     recordPageOutcome(primarySection.slideNumber, 'topic', null);
     unit.sections.slice(1).forEach(s => {
       recordPageOutcome(s.slideNumber, 'merged', `merged into "${finalTitle}"`);
     });
   });
 
-  // Verify that every expected page has an outcome
-  if (totalExpectedPages > 0) {
-    for (let p = 1; p <= totalExpectedPages; p++) {
-      if (!pageOutcomesMap.has(p)) {
-        throw new Error(`Page ${p} has no extraction outcome recorded.`);
-      }
+  // Verify that every expected section page has an outcome
+  for (const s of normalizedSections) {
+    if (!pageOutcomesMap.has(s.slideNumber)) {
+      recordPageOutcome(s.slideNumber, 'skipped', 'empty or unreadable');
     }
   }
 
-  const pageOutcomes = [];
-  for (let p = 1; p <= (totalExpectedPages || pageOutcomesMap.size); p++) {
-    if (pageOutcomesMap.has(p)) {
-      pageOutcomes.push(pageOutcomesMap.get(p));
-    }
-  }
-
+  const pageOutcomes = Array.from(pageOutcomesMap.values()).sort((a, b) => a.page - b.page);
   candidateTopics.pageOutcomes = pageOutcomes;
   return candidateTopics;
 }
@@ -2342,7 +2336,7 @@ ${truncatedText}
  */
 export async function extractTopicsFromSections(extractedData, fileName = '') {
   const rawText = typeof extractedData === 'string' ? extractedData : (extractedData?.text || '');
-  const rawSections = extractedData?.rawPages || extractedData?.rawSlides || extractedData?.rawFrames || [];
+  const rawSections = extractedData?.pages || extractedData?.rawPages || extractedData?.rawSlides || extractedData?.rawFrames || [];
   const topics = await extractTopicsLocally(rawText, rawSections, fileName);
   if (!topics.pageOutcomes && extractTopicsLocally.lastPageOutcomes) {
     topics.pageOutcomes = extractTopicsLocally.lastPageOutcomes;
