@@ -332,5 +332,41 @@ test('Outcome reasons: cancel after page 5 of a 30-page scan asserts pages 6-30 
   }
 });
 
+test('Outcome reasons: immediate cancel before any text found (<20 chars) produces valid notProcessed page outcomes', async () => {
+  const mockPages = [];
+  for (let i = 1; i <= 10; i++) {
+    mockPages.push({
+      page: i,
+      text: '',
+      status: 'notProcessed'
+    });
+  }
+
+  const extracted = {
+    text: '',
+    pageCount: 10,
+    pages: mockPages
+  };
+
+  const topics = await extractTopicsFromSections(extracted, 'immediate_cancelled.pdf');
+  assert.equal(topics.length, 0, 'Should return empty topics list when text < 20 characters');
+
+  const pageOutcomes = topics.pageOutcomes || [];
+  assert.equal(pageOutcomes.length, 10, 'All 10 pages must have outcome records');
+  for (let p = 1; p <= 10; p++) {
+    const outcome = pageOutcomes.find(po => po.page === p);
+    assert.ok(outcome, `Page ${p} must have an outcome record`);
+    assert.equal(outcome.outcome, 'skipped');
+    assert.ok(
+      outcome.reason && outcome.reason.toLowerCase().includes('not processed'),
+      `Page ${p} reason must contain "not processed", got: ${outcome.reason}`
+    );
+    assert.ok(
+      !outcome.reason.toLowerCase().includes('empty or unreadable'),
+      `Page ${p} reason must not be "empty or unreadable", got: ${outcome.reason}`
+    );
+  }
+});
+
 
 
