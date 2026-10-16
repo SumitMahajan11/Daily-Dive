@@ -30,11 +30,7 @@ function initServiceWorker() {
       `;
       document.body.appendChild(banner);
       document.getElementById('pwa-reload-btn')?.addEventListener('click', () => {
-        if (typeof updateSW === 'function') {
-          updateSW(true);
-        } else {
-          window.location.reload();
-        }
+        updateSW(true);
       });
     },
     onOfflineReady() {
