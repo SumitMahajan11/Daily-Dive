@@ -233,8 +233,10 @@ export async function extractFromPdf(file, onProgress = () => {}) {
     }
   }
 
+  let pageCapWarning = null;
   if (numPages > maxPagesToProcess) {
     emptyCount += (numPages - maxPagesToProcess);
+    pageCapWarning = `Pages ${maxPagesToProcess + 1}-${numPages} were not processed (limit ${maxPagesToProcess} pages).`;
   }
 
   const totalPages = numPages;
@@ -242,9 +244,12 @@ export async function extractFromPdf(file, onProgress = () => {}) {
 
   const emptyRatio = totalPages > 0 ? (emptyCount / totalPages) : 0;
   const hasEmptyWarning = emptyRatio > 0.3;
-  const warning = hasEmptyWarning
+  const emptyWarning = hasEmptyWarning
     ? `Warning: ${emptyCount} of ${totalPages} pages (${Math.round(emptyRatio * 100)}%) are empty or unreadable.`
     : null;
+
+  const allWarnings = [pageCapWarning, emptyWarning].filter(Boolean);
+  const warning = allWarnings.length > 0 ? allWarnings.join(' ') : null;
 
   const combinedText = rawPages.join('\n\n').trim();
 
@@ -274,7 +279,7 @@ export async function extractFromPdf(file, onProgress = () => {}) {
       emptyRatio
     },
     warning: warning || undefined,
-    warnings: hasEmptyWarning ? [warning] : [],
+    warnings: allWarnings,
     emptyRatio,
     emptyPages: emptyCount,
     totalPages

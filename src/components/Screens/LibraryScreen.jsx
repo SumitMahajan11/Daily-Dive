@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { CATEGORY_TREE, isTopicEligible, STARTER_ENABLED_CATEGORIES } from '../../lib/roulette';
-import { extractTopicsLocally, extractTopicsFromSections, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD } from '../../lib/topicExtractor';
+import { extractTopicsLocally, extractTopicsFromSections, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD, buildExtractionWarning } from '../../lib/topicExtractor';
 import {
   Terminal,
   TrendingUp,
@@ -279,6 +279,16 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
 
   // Lifecycle for batch review
   const [reviewBatchLifecycle, setReviewBatchLifecycle] = useState('temporary');
+  const [expandedFullTextIds, setExpandedFullTextIds] = useState(new Set());
+
+  const handleToggleFullText = (id) => {
+    setExpandedFullTextIds(prev => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  };
 
   // Manual Add Form State
   const [showManualForm, setShowManualForm] = useState(false);
@@ -417,7 +427,6 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       }
 
       if (extractedData?.warning) {
-        setExtractionWarning(extractedData.warning);
         if (typeof showToast === 'function') {
           showToast(extractedData.warning, 'warning');
         }
@@ -451,6 +460,11 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         throw new Error('Could not identify clear concepts in this document.');
       }
 
+      const extractorWarning = extractedData?.warning || null;
+      const skippedWarning = buildExtractionWarning(candidates.pageOutcomes || []);
+      const combinedWarning = [extractorWarning, skippedWarning].filter(Boolean).join(' ') || null;
+      setExtractionWarning(combinedWarning);
+
       const scored = candidates.map(t => {
         return {
           ...t,
@@ -458,6 +472,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
           confidence: typeof t.confidence === 'number' ? t.confidence : 75,
           needs_review: Boolean(t.needs_review),
           review_reasons: t.review_reasons || [],
+          full_text: t.full_text || '',
           lifecycle: 'temporary'
         };
       });
@@ -467,6 +482,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
 
       setCandidateTopics(scored);
       setSelectedTopicIds(allSelectedIds);
+      setExpandedFullTextIds(new Set());
       setProcessingState('review');
     } catch (err) {
       setProcessingState('error');
@@ -494,6 +510,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
     setProcessingState('idle');
     setCandidateTopics([]);
     setSelectedTopicIds(new Set());
+    setExpandedFullTextIds(new Set());
     setSelectedFile(null);
     setExtractionWarning(null);
   };
@@ -522,6 +539,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
     setProcessingState('idle');
     setCandidateTopics([]);
     setSelectedTopicIds(new Set());
+    setExpandedFullTextIds(new Set());
     setSelectedFile(null);
   };
 
@@ -1055,6 +1073,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
             <div data-testid="review-topic-list" className="space-y-2.5 max-h-[380px] overflow-y-auto pr-1">
               {candidateTopics.map(topic => {
                 const isSelected = selectedTopicIds.has(topic.id);
+                const isExpanded = expandedFullTextIds.has(topic.id);
                 return (
                   <div
                     key={topic.id}
@@ -1086,6 +1105,29 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
                         <p className="text-xs text-on-surface-variant leading-relaxed px-0.5">
                           {topic.description}
                         </p>
+                        {topic.full_text && (
+                          <div className="px-0.5">
+                            <button
+                              type="button"
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                handleToggleFullText(topic.id);
+                              }}
+                              className="text-[11px] font-medium text-primary hover:underline cursor-pointer inline-flex items-center gap-1"
+                              aria-expanded={isExpanded}
+                            >
+                              {isExpanded ? 'Hide full text' : 'Show full text'}
+                            </button>
+                            {isExpanded && (
+                              <div
+                                data-testid="full-text-content"
+                                className="mt-1.5 p-2 rounded-lg bg-surface-container border border-outline-variant/30 text-xs text-on-surface whitespace-pre-wrap leading-relaxed max-h-48 overflow-y-auto font-mono text-[11px]"
+                              >
+                                {topic.full_text}
+                              </div>
+                            )}
+                          </div>
+                        )}
                         {topic.needs_review && (
                           <div className="flex items-center gap-1.5 mt-1 flex-wrap px-0.5">
                             <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold bg-amber-500/15 text-amber-500 border border-amber-500/30">
