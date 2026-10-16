@@ -1778,15 +1778,22 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     const isDocHeadingH1 = /^#\s+[^#]/.test(rawHeadingCandidate.trim()) || (rawHeadingCandidate.trim().startsWith('# ') && !rawHeadingCandidate.trim().startsWith('## '));
     const isGenericDocTitle = /^(?:internal build-and-test order|roadmap|project roadmap|milestones overview|table of contents|overview|documentation)$/i.test(candidateTitle.toLowerCase());
 
-    if ((hasSubSections && isDocHeadingH1) || isGenericDocTitle) {
+    if (hasSubSections && isDocHeadingH1) {
+      unit.sections.forEach(s => {
+        recordPageOutcome(s.slideNumber, 'skipped', 'document header');
+      });
+      return;
+    }
+
+    if (isGenericDocTitle) {
       if (!isContentUnit) {
         unit.sections.forEach(s => {
-          recordPageOutcome(s.slideNumber, 'skipped', 'title check: document header or generic title');
+          recordPageOutcome(s.slideNumber, 'skipped', 'title check: generic title');
         });
         return;
       }
       forceAsTopic = true;
-      unitReviewReasons.push('title check: document header or generic title');
+      unitReviewReasons.push('title check: generic title');
     }
 
     // Strip leading numbering: "5. Methodology" -> "Methodology"
@@ -2000,8 +2007,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       if (!reviewReasons.includes('description check: empty description')) {
         reviewReasons.push('description check: empty description');
       }
-      const rawPreview = unitText.trim().slice(0, 150).replace(/[,\s;:–—\-.]+$/, '') + '.';
-      desc = rawPreview.charAt(0).toUpperCase() + rawPreview.slice(1);
+      desc = 'Overview of ' + finalTitle + '.';
     }
 
     // REQUIREMENT 2: Reject candidates whose description starts with "depends on" or is pure dependency/ordering note
