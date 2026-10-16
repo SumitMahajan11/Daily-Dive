@@ -427,7 +427,6 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       }
 
       if (extractedData?.warning) {
-        setExtractionWarning(extractedData.warning);
         if (typeof showToast === 'function') {
           showToast(extractedData.warning, 'warning');
         }
@@ -461,8 +460,10 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
         throw new Error('Could not identify clear concepts in this document.');
       }
 
-      const warning = buildExtractionWarning(candidates.pageOutcomes || []);
-      setExtractionWarning(warning);
+      const extractorWarning = extractedData?.warning || null;
+      const skippedWarning = buildExtractionWarning(candidates.pageOutcomes || []);
+      const combinedWarning = [extractorWarning, skippedWarning].filter(Boolean).join(' ') || null;
+      setExtractionWarning(combinedWarning);
 
       const scored = candidates.map(t => {
         return {
