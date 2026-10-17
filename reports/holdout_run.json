@@ -1,0 +1,58 @@
+[
+  {
+    "file": "14fe095781943ff9bd485e6e263b48f7_MIT6_046JS15_lec07.pdf",
+    "page_count": 33,
+    "extraction_path": "text",
+    "topic_count": 26,
+    "flagged_count": 9
+  },
+  {
+    "file": "6144f2dfbe515abfbeb32f99a6907af7_MIT6_046JS15_lec10.pdf",
+    "page_count": 7,
+    "extraction_path": "text",
+    "topic_count": 6,
+    "flagged_count": 1
+  },
+  {
+    "file": "739d86c1a582e6b5c7c61707195d32fc_MIT6_046JS15_writtenlec23.pdf",
+    "page_count": 11,
+    "extraction_path": "text",
+    "topic_count": 1,
+    "flagged_count": 0
+  },
+  {
+    "file": "7463c413c944ed72b46a3c3d02b49448_MIT6_046JS15_lec02.pdf",
+    "page_count": 7,
+    "extraction_path": "text",
+    "topic_count": 7,
+    "flagged_count": 3
+  },
+  {
+    "file": "7d59cd5e4d6cb323739deff687ed1bff_MIT6_046JS15_writtenlec6.pdf",
+    "page_count": 11,
+    "extraction_path": "text",
+    "topic_count": 1,
+    "flagged_count": 0
+  },
+  {
+    "file": "ac6b6e8ac932bb5dfb6506fd0db9d5ad_MIT6_046JS15_lec13.pdf",
+    "page_count": 20,
+    "extraction_path": "text",
+    "topic_count": 20,
+    "flagged_count": 3
+  },
+  {
+    "file": "da0bca8839760018d580ccab98f3e3e1_MIT6_046JS15_writtenlec3.pdf",
+    "page_count": 8,
+    "extraction_path": "text",
+    "topic_count": 1,
+    "flagged_count": 0
+  },
+  {
+    "file": "fda670b38d2997bdbeb9903fc4242a3d_MIT6_046JS15_writtenlec11.pdf",
+    "page_count": 9,
+    "extraction_path": "text",
+    "topic_count": 1,
+    "flagged_count": 0
+  }
+]
