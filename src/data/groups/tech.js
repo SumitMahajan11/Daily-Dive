@@ -25,10 +25,6 @@ export const topics = [
       {
         "label": "The Illustrated Transformer (Jay Alammar)",
         "url": "https://jalammar.github.io/illustrated-transformer/"
-      },
-      {
-        "label": "PyTorch MultiheadAttention Docs",
-        "url": "https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html"
       }
     ],
     "lesson": {
@@ -87,10 +83,6 @@ export const topics = [
         "url": "https://arxiv.org/abs/2312.00752"
       },
       {
-        "label": "State Space Models Annotated (Albert Gu & Tri Dao)",
-        "url": "https://srush.github.io/annotated-s4/"
-      },
-      {
         "label": "Mamba GitHub Repository",
         "url": "https://github.com/state-spaces/mamba"
       }
@@ -121,10 +113,6 @@ export const topics = [
       {
         "label": "EleutherAI: Rotary Embeddings Explanation",
         "url": "https://blog.eleuther.ai/rotary-embeddings/"
-      },
-      {
-        "label": "Hugging Face RoPE Implementation in Llama",
-        "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
     ],
     "lesson": {
@@ -151,7 +139,7 @@ export const topics = [
         "url": "https://arxiv.org/abs/1512.03385"
       },
       {
-        "label": "Understanding the Effective Path Length in ResNets (Veit et al.)",
+        "label": "Residual Networks Behave Like Ensembles of Relatively Shallow Networks (Veit et al.)",
         "url": "https://arxiv.org/abs/1605.06431"
       },
       {
@@ -217,10 +205,6 @@ export const topics = [
       {
         "label": "Microsoft Swin-Transformer GitHub Repo",
         "url": "https://github.com/microsoft/Swin-Transformer"
-      },
-      {
-        "label": "PyTorch SwinTransformer Implementation",
-        "url": "https://pytorch.org/vision/main/models/swin_transformer.html"
       }
     ],
     "lesson": {
@@ -247,7 +231,7 @@ export const topics = [
         "url": "https://arxiv.org/abs/2004.05150"
       },
       {
-        "label": "Mistral 7B Paper: Sliding Window Attention",
+        "label": "Mistral 7B (arXiv:2310.06825)",
         "url": "https://arxiv.org/abs/2310.06825"
       },
       {
@@ -283,7 +267,7 @@ export const topics = [
         "url": "https://arxiv.org/abs/1911.02150"
       },
       {
-        "label": "Llama 3 Technical Report (Meta AI)",
+        "label": "The Llama 3 Herd of Models (Meta AI)",
         "url": "https://arxiv.org/abs/2407.21783"
       }
     ],
@@ -309,10 +293,6 @@ export const topics = [
       {
         "label": "LoRA: Low-Rank Adaptation of Large Language Models (Hu et al.)",
         "url": "https://arxiv.org/abs/2106.09685"
-      },
-      {
-        "label": "Hugging Face PEFT Library Documentation",
-        "url": "https://huggingface.co/docs/peft/conceptual_guides/lora"
       },
       {
         "label": "Microsoft LoRA GitHub Repo",
@@ -341,10 +321,6 @@ export const topics = [
       {
         "label": "QLoRA: Efficient Finetuning of Quantized LLMs (Dettmers et al.)",
         "url": "https://arxiv.org/abs/2305.14314"
-      },
-      {
-        "label": "bitsandbytes Library Documentation",
-        "url": "https://github.com/TimDettmers/bitsandbytes"
       },
       {
         "label": "Hugging Face Blog: Making LLMs even more accessible with bitsandbytes",
@@ -377,10 +353,6 @@ export const topics = [
       {
         "label": "Hugging Face TRL DPO Trainer Docs",
         "url": "https://huggingface.co/docs/trl/main/en/dpo_trainer"
-      },
-      {
-        "label": "Stanford CS330: Alignment and Preference Learning",
-        "url": "https://cs330.stanford.edu/"
       }
     ],
     "lesson": {
@@ -441,10 +413,6 @@ export const topics = [
       {
         "label": "RLAIF: Scaling Reinforcement Learning from Human Feedback with AI Feedback (Google)",
         "url": "https://arxiv.org/abs/2309.00267"
-      },
-      {
-        "label": "Anthropic Research: Core Principles of Constitutional AI",
-        "url": "https://www.anthropic.com/news/claudes-constitution"
       }
     ],
     "lesson": {
@@ -537,10 +505,6 @@ export const topics = [
       {
         "label": "FlashAttention-2: Faster Attention with Better Parallelism and Work Partitioning",
         "url": "https://arxiv.org/abs/2307.08691"
-      },
-      {
-        "label": "FlashAttention Official GitHub Repository",
-        "url": "https://github.com/Dao-AILab/flash-attention"
       }
     ],
     "lesson": {
@@ -561,20 +525,7 @@ export const topics = [
       "memory-optimization",
       "deep-learning"
     ],
-    "resources": [
-      {
-        "label": "Transformers KV Cache Tutorial (Hugging Face)",
-        "url": "https://huggingface.co/blog/kv-cache-tutorial"
-      },
-      {
-        "label": "LLM Inference from Scratch (Karan Goel)",
-        "url": "https://www.youtube.com/watch?v=1yeB_u6L6eY"
-      },
-      {
-        "label": "vLLM: Efficient Memory Management for Large Language Models",
-        "url": "https://vllm.ai/"
-      }
-    ],
+    "resources": [],
     "lesson": {
       "idea": "KV-Caching in autoregressive generation retains computed key and value activations in memory across successive token generation steps.",
       "why": "Recomputing attention across historical context tokens at every step imposes quadratic computational penalties. Storing key-value tensors restricts computation to incoming tokens.",
@@ -597,14 +548,6 @@ export const topics = [
       {
         "label": "Efficient Memory Management for Large Language Model Serving with PagedAttention (Kwon et al.)",
         "url": "https://arxiv.org/abs/2309.06180"
-      },
-      {
-        "label": "vLLM Documentation and Architecture Guide",
-        "url": "https://docs.vllm.ai/"
-      },
-      {
-        "label": "Ray & vLLM High-Throughput Deployment Patterns",
-        "url": "https://docs.ray.io/en/latest/ray-air/examples/vllm.html"
       }
     ],
     "lesson": {
@@ -633,10 +576,6 @@ export const topics = [
       {
         "label": "Accelerating Large Language Model Decoding with Speculative Sampling (DeepMind)",
         "url": "https://arxiv.org/abs/2302.01318"
-      },
-      {
-        "label": "Hugging Face Speculative Decoding Guide",
-        "url": "https://huggingface.co/blog/assisted-generation"
       }
     ],
     "lesson": {
@@ -665,10 +604,6 @@ export const topics = [
       {
         "label": "AutoAWQ GitHub Implementation",
         "url": "https://github.com/casper-hansen/AutoAWQ"
-      },
-      {
-        "label": "MIT HAN Lab Model Compression Suite",
-        "url": "https://hanlab.mit.edu/projects/awq"
       }
     ],
     "lesson": {
@@ -889,10 +824,6 @@ export const topics = [
       {
         "label": "Microsoft GraphRAG Official Repository",
         "url": "https://github.com/microsoft/graphrag"
-      },
-      {
-        "label": "Neo4j GenAI Integration Guides",
-        "url": "https://neo4j.com/developer/genai/"
       }
     ],
     "lesson": {
@@ -917,14 +848,6 @@ export const topics = [
       {
         "label": "Precise Zero-Shot Dense Retrieval without Relevance Labels (Gao et al.)",
         "url": "https://arxiv.org/abs/2212.10496"
-      },
-      {
-        "label": "LangChain HyDE Implementation Cookbook",
-        "url": "https://python.langchain.com/docs/integrations/retrievers/hyde/"
-      },
-      {
-        "label": "LlamaIndex Advanced Query Transformations",
-        "url": "https://docs.llamaindex.ai/en/stable/examples/query_transformations/HyDEQueryTransformDemo/"
       }
     ],
     "lesson": {
@@ -985,10 +908,6 @@ export const topics = [
       {
         "label": "Understanding Classifier-Free Guidance (Sander Dieleman)",
         "url": "https://benanne.github.io/2022/05/26/guidance.html"
-      },
-      {
-        "label": "Stable Diffusion Sampling and Guidance Docs",
-        "url": "https://huggingface.co/docs/diffusers/using-diffusers/conditional_image_generation"
       }
     ],
     "lesson": {
@@ -1019,7 +938,7 @@ export const topics = [
         "url": "https://github.com/CompVis/stable-diffusion"
       },
       {
-        "label": "Stability AI SDXL Paper",
+        "label": "SDXL: Improving Latent Diffusion Models (Stability AI)",
         "url": "https://arxiv.org/abs/2307.01952"
       }
     ],
@@ -1081,10 +1000,6 @@ export const topics = [
       {
         "label": "Generating Diverse High-Resolution Images with VQ-VAE-2 (Razavi et al.)",
         "url": "https://arxiv.org/abs/1906.00446"
-      },
-      {
-        "label": "PyTorch VQ-VAE Tutorial",
-        "url": "https://github.com/MishaLaskin/vqvae"
       }
     ],
     "lesson": {
@@ -1109,14 +1024,6 @@ export const topics = [
       {
         "label": "Decoupled Weight Decay Regularization (Loshchilov & Hutter, 2017)",
         "url": "https://arxiv.org/abs/1711.05101"
-      },
-      {
-        "label": "PyTorch AdamW Optimizer Documentation",
-        "url": "https://pytorch.org/docs/stable/generated/torch.optim.AdamW.html"
-      },
-      {
-        "label": "Fast.ai: Why AdamW Matters",
-        "url": "https://www.fast.ai/posts/2018-07-02-adamw-and-super-convergence.html"
       }
     ],
     "lesson": {
@@ -1175,10 +1082,6 @@ export const topics = [
         "url": "https://arxiv.org/abs/1608.03983"
       },
       {
-        "label": "PyTorch CosineAnnealingLR Documentation",
-        "url": "https://pytorch.org/docs/stable/generated/torch.optim.lr_scheduler.CosineAnnealingLR.html"
-      },
-      {
         "label": "Scaling Laws for Neural Language Models (Kaplan et al.)",
         "url": "https://arxiv.org/abs/2001.08361"
       }
@@ -1205,10 +1108,6 @@ export const topics = [
       {
         "label": "Mixed Precision Training (Micikevicius et al., NVIDIA & Baidu)",
         "url": "https://arxiv.org/abs/1710.03740"
-      },
-      {
-        "label": "PyTorch Automatic Mixed Precision (torch.cuda.amp)",
-        "url": "https://pytorch.org/docs/stable/amp.html"
       },
       {
         "label": "NVIDIA Apex Documentation",
@@ -1269,10 +1168,6 @@ export const topics = [
       {
         "label": "Mastering the Game of Go without Human Knowledge (Silver et al., Nature)",
         "url": "https://www.nature.com/articles/nature24270"
-      },
-      {
-        "label": "A General Reinforcement Learning Algorithm that Masters Chess, Shogi, and Go (Science)",
-        "url": "https://www.science.org/doi/10.1126/science.aar6404"
       },
       {
         "label": "DeepMind AlphaGo Research Archive",
@@ -1401,10 +1296,6 @@ export const topics = [
       {
         "label": "Instant Neural Graphics Primitives with a Multiresolution Hash Encoding (Müller et al., NVIDIA)",
         "url": "https://arxiv.org/abs/2201.05989"
-      },
-      {
-        "label": "Nerfstudio Documentation",
-        "url": "https://docs.nerf.studio/"
       }
     ],
     "lesson": {
@@ -1433,10 +1324,6 @@ export const topics = [
       {
         "label": "Gaussian Splatting Paper (arXiv)",
         "url": "https://arxiv.org/abs/2308.04079"
-      },
-      {
-        "label": "Nerfstudio 3DGS Documentation",
-        "url": "https://docs.nerf.studio/nerfology/methods/gaussian_splatting.html"
       }
     ],
     "lesson": {
@@ -1529,10 +1416,6 @@ export const topics = [
       {
         "label": "Momentum Contrast for Unsupervised Visual Representation Learning (MoCo, He et al.)",
         "url": "https://arxiv.org/abs/1911.05722"
-      },
-      {
-        "label": "PyTorch Lightning SimCLR Tutorial",
-        "url": "https://lightning.ai/docs/pytorch/stable/notebooks/course_UvA-DL/13-contrastive-learning.html"
       }
     ],
     "lesson": {
@@ -1593,10 +1476,6 @@ export const topics = [
       {
         "label": "Scaling Laws for Neural Language Models (Kaplan et al., OpenAI)",
         "url": "https://arxiv.org/abs/2001.08361"
-      },
-      {
-        "label": "LessWrong Analysis of Chinchilla Scaling",
-        "url": "https://www.lesswrong.com/posts/6Fpvch8RR2qiKotC4/chinchilla-s-wild-implications"
       }
     ],
     "lesson": {
@@ -1685,14 +1564,6 @@ export const topics = [
       {
         "label": "ReAct: Synergizing Reasoning and Acting in Language Models (Yao et al., ICLR)",
         "url": "https://arxiv.org/abs/2210.03629"
-      },
-      {
-        "label": "LangChain ReAct Agent Documentation",
-        "url": "https://python.langchain.com/docs/modules/agents/agent_types/react/"
-      },
-      {
-        "label": "LlamaIndex ReAct Agent Implementation",
-        "url": "https://docs.llamaindex.ai/en/stable/examples/agent/react_agent/"
       }
     ],
     "lesson": {
@@ -1747,14 +1618,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Grammar-Constrained Decoding with Outlines (Dott et al.)",
-        "url": "https://github.com/outlines-dev/outlines"
-      },
-      {
-        "label": "Guidance: Controlled LLM Generation (Microsoft)",
-        "url": "https://github.com/guidance-ai/guidance"
-      },
-      {
         "label": "OpenAI Structured Outputs Guide",
         "url": "https://platform.openai.com/docs/guides/structured-outputs"
       }
@@ -1776,10 +1639,6 @@ export const topics = [
       {
         "label": "ZeRO: Memory Optimizations Toward Training Trillion Parameter Models (Rajbhandari et al., DeepSpeed)",
         "url": "https://arxiv.org/abs/1910.02054"
-      },
-      {
-        "label": "PyTorch FSDP Official Documentation",
-        "url": "https://pytorch.org/docs/stable/fsdp.html"
       },
       {
         "label": "Hugging Face Accelerate with FSDP Tutorial",
@@ -1832,8 +1691,8 @@ export const topics = [
         "url": "https://arxiv.org/abs/1811.06965"
       },
       {
-        "label": "PipeDream: Generalized Pipeline Parallelism for DNN Training (Narayanan et al.)",
-        "url": "https://arxiv.org/abs/1906.00707"
+        "label": "PipeDream: Fast and Efficient Pipeline Parallel DNN Training (Narayanan et al.)",
+        "url": "https://arxiv.org/abs/1806.03377"
       },
       {
         "label": "PyTorch Pipeline Parallelism (PiPPy)",
@@ -1857,10 +1716,6 @@ export const topics = [
       {
         "label": "Deduplicating Training Data Makes Language Models Better (Lee et al.)",
         "url": "https://arxiv.org/abs/2107.06499"
-      },
-      {
-        "label": "FineWeb Dataset Curation & Filtering Recipe (Hugging Face)",
-        "url": "https://huggingface.co/spaces/HuggingFaceFW/blogpost-fineweb-p2"
       },
       {
         "label": "Datasketch: MinHash in Python",
@@ -1888,10 +1743,6 @@ export const topics = [
       {
         "label": "Textbooks Are All You Need (Phi-1 / Phi-2, Microsoft)",
         "url": "https://arxiv.org/abs/2306.11644"
-      },
-      {
-        "label": "Argilla Distilabel Synthetic Data Pipeline",
-        "url": "https://distilabel.argilla.io/"
       }
     ]
   },
@@ -1913,10 +1764,6 @@ export const topics = [
         "url": "https://arxiv.org/abs/2306.05685"
       },
       {
-        "label": "LMSYS Chatbot Arena Leaderboard",
-        "url": "https://chat.lmsys.org/"
-      },
-      {
         "label": "OpenAI Evals Framework",
         "url": "https://github.com/openai/evals"
       }
@@ -1935,10 +1782,6 @@ export const topics = [
       "hallucinations"
     ],
     "resources": [
-      {
-        "label": "TruLens: The RAG Triad for LLM Quality",
-        "url": "https://www.trulens.org/trulens_eval/core_concepts_rag_triad/"
-      },
       {
         "label": "Ragas: Automated Evaluation of Retrieval Augmented Generation",
         "url": "https://arxiv.org/abs/2309.15217"
@@ -1969,10 +1812,6 @@ export const topics = [
       {
         "label": "Stanford CS224N: Language Models and Training Objectives",
         "url": "https://web.stanford.edu/class/cs224n/"
-      },
-      {
-        "label": "Deep Learning Book: Probability and Information Theory (Goodfellow et al.)",
-        "url": "https://www.deeplearningbook.org/contents/prob.html"
       }
     ]
   },
@@ -1996,10 +1835,6 @@ export const topics = [
       {
         "label": "Kubernetes Enhancement Proposal (KEP): Scheduling Framework Architecture",
         "url": "https://github.com/kubernetes/enhancements/tree/master/keps/sig-scheduling/624-scheduling-framework"
-      },
-      {
-        "label": "Borg, Omega, and Kubernetes (Wilkes et al., ACM Queue)",
-        "url": "https://queue.acm.org/detail.cfm?id=2898444"
       }
     ]
   },
@@ -2016,10 +1851,6 @@ export const topics = [
       "controller-runtime"
     ],
     "resources": [
-      {
-        "label": "CoreOS: Introducing Operators: Putting Operational Knowledge into Software",
-        "url": "https://cloud.redhat.com/blog/introducing-operators"
-      },
       {
         "label": "Kubernetes Documentation: Custom Resources & Controller Pattern",
         "url": "https://kubernetes.io/docs/concepts/extend-kubernetes/operator/"
@@ -2046,10 +1877,6 @@ export const topics = [
       {
         "label": "Kubernetes Documentation: StatefulSets Concept & Lifecycle",
         "url": "https://kubernetes.io/docs/concepts/workloads/controllers/statefulset/"
-      },
-      {
-        "label": "Kubernetes Documentation: Headless Services & DNS Routing",
-        "url": "https://kubernetes.io/docs/concepts/services-networking/service/#headless-services"
       }
     ]
   },
@@ -2069,10 +1896,6 @@ export const topics = [
       {
         "label": "Kubernetes Documentation: Dynamic Admission Control",
         "url": "https://kubernetes.io/docs/reference/access-authn-authz/extensible-admission-controllers/"
-      },
-      {
-        "label": "Open Policy Agent (OPA) Gatekeeper: Admission Webhook Architecture",
-        "url": "https://open-policy-agent.github.io/gatekeeper/website/docs/"
       }
     ]
   },
@@ -2093,10 +1916,6 @@ export const topics = [
       {
         "label": "Open Container Initiative (OCI) Runtime Specification",
         "url": "https://github.com/opencontainers/runtime-spec"
-      },
-      {
-        "label": "Containerd Architecture & CRI Plugin Internals",
-        "url": "https://containerd.io/docs/"
       },
       {
         "label": "Linux Kernel Namespaces & cgroups Manual (man 7 namespaces)",
@@ -2121,10 +1940,6 @@ export const topics = [
       {
         "label": "Linux Kernel Documentation: Control Group v2",
         "url": "https://docs.kernel.org/admin-guide/cgroup-v2.html"
-      },
-      {
-        "label": "Meta Engineering: Lessons from cgroups v2 Deployment at Scale",
-        "url": "https://engineering.fb.com/2022/06/20/open-source/cgroup2/"
       },
       {
         "label": "Kubernetes Documentation: Enabling and Using cgroup v2",
@@ -2153,10 +1968,6 @@ export const topics = [
       {
         "label": "Envoy Dynamic Discovery Service (xDS) Protocol Specification",
         "url": "https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol"
-      },
-      {
-        "label": "Envoy: The Universal Data Plane (Matt Klein, CNCF)",
-        "url": "https://blog.envoyproxy.io/envoy-threading-model-a8d44b922310"
       }
     ]
   },
@@ -2197,20 +2008,7 @@ export const topics = [
       "cilium",
       "kernel"
     ],
-    "resources": [
-      {
-        "label": "eBPF Official Documentation & Kernel Runtime Architecture",
-        "url": "https://ebpf.io/what-is-ebpf/"
-      },
-      {
-        "label": "Cilium Architectural Overview & eBPF Networking",
-        "url": "https://docs.cilium.io/en/stable/overview/intro/"
-      },
-      {
-        "label": "Bypassing TCP/IP Stack with eBPF (Daniel Borkmann, Kernel Recipes)",
-        "url": "https://kernel-recipes.org/en/2019/talks/ebpf-and-xdp-for-processing-packets-at-bare-metal-speed/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "kubernetes-cni-overlay-vs-flat-routing",
@@ -2226,14 +2024,6 @@ export const topics = [
       "vxlan"
     ],
     "resources": [
-      {
-        "label": "CNI Specification & Network Plugin Interface Standard",
-        "url": "https://github.com/containernetworking/cni/blob/spec-v1.0.0/SPEC.md"
-      },
-      {
-        "label": "Calico Architecture: BGP Peering and IPAM",
-        "url": "https://docs.tigera.io/calico/latest/about/"
-      },
       {
         "label": "AWS VPC CNI Plugin Architecture & Secondary IP Allocation",
         "url": "https://github.com/aws/amazon-vpc-cni-k8s"
@@ -2379,14 +2169,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "etcd Architecture & Storage Layer Deep Dive",
-        "url": "https://etcd.io/docs/latest/learning/data_model/"
-      },
-      {
-        "label": "In Search of an Understandable Consensus Algorithm (Raft Paper, Ongaro & Ousterhout)",
-        "url": "https://raft.github.io/raft.pdf"
-      },
-      {
         "label": "etcd Raft Implementation Repository",
         "url": "https://github.com/etcd-io/raft"
       }
@@ -2431,12 +2213,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "ZooKeeper: Wait-free coordination for Internet-scale systems (Hunt et al., USENIX ATC)",
-        "url": "https://www.usenix.org/legacy/event/atc10/tech/full_papers/Hunt.pdf"
-      },
-      {
-        "label": "Apache ZooKeeper Documentation: Internals & ZAB Protocol",
-        "url": "https://zookeeper.apache.org/doc/current/zookeeperInternals.html"
+        "label": "Wikipedia: Apache ZooKeeper",
+        "url": "https://en.wikipedia.org/wiki/Apache_ZooKeeper"
       }
     ]
   },
@@ -2457,10 +2235,6 @@ export const topics = [
       {
         "label": "AWS News: Amazon S3 Update – Strong Read-After-Write Consistency",
         "url": "https://aws.amazon.com/blogs/aws/amazon-s3-update-strong-read-after-write-consistency/"
-      },
-      {
-        "label": "Amazon S3 Architecture: Building and Operating a Storage Service (Marc Olson, USENIX FAST)",
-        "url": "https://www.usenix.org/conference/fast23/presentation/olson"
       }
     ]
   },
@@ -2556,14 +2330,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C Recommendation: Trace Context Specification",
-        "url": "https://www.w3.org/TR/trace-context/"
-      },
-      {
-        "label": "OpenTelemetry Official Architecture Specification",
-        "url": "https://opentelemetry.io/docs/specs/otel/overview/"
-      },
-      {
         "label": "OpenTelemetry Collector Architecture & Pipelines",
         "url": "https://opentelemetry.io/docs/collector/architecture/"
       }
@@ -2583,14 +2349,6 @@ export const topics = [
       "metrics"
     ],
     "resources": [
-      {
-        "label": "Prometheus TSDB Architecture (Fabian Reinartz)",
-        "url": "https://fabxc.org/tsdb/"
-      },
-      {
-        "label": "Gorilla: A Fast, Scalable, In-Memory Time Series Database (Pelkonen et al., VLDB)",
-        "url": "https://www.vldb.org/pvldb/vol8/p1816-teller.pdf"
-      },
       {
         "label": "Prometheus Official Storage Documentation",
         "url": "https://prometheus.io/docs/prometheus/latest/storage/"
@@ -2638,14 +2396,6 @@ export const topics = [
       {
         "label": "Brendan Gregg: Flame Graphs Visualization",
         "url": "https://www.brendangregg.com/flamegraphs.html"
-      },
-      {
-        "label": "Parca: Continuous Profiling with eBPF Architecture",
-        "url": "https://www.parca.dev/docs/overview"
-      },
-      {
-        "label": "OpenTelemetry Continuous Profiling Data Model Specification",
-        "url": "https://opentelemetry.io/docs/specs/otel/profiling/"
       }
     ]
   },
@@ -2666,10 +2416,6 @@ export const topics = [
       {
         "label": "AWS Documentation: IAM Policy Evaluation Logic Flowchart",
         "url": "https://docs.aws.amazon.com/IAM/latest/UserGuide/reference_policies_evaluation-logic.html"
-      },
-      {
-        "label": "AWS Security Blog: Attribute-Based Access Control (ABAC) in AWS",
-        "url": "https://aws.amazon.com/blogs/security/how-to-use-abac-in-aws/"
       }
     ]
   },
@@ -2687,10 +2433,6 @@ export const topics = [
       "cryptography"
     ],
     "resources": [
-      {
-        "label": "SPIFFE / SPIRE Architecture & Standards Specification",
-        "url": "https://spiffe.io/docs/latest/spiffe-about/overview/"
-      },
       {
         "label": "CNCF SPIFFE and SPIRE Production Security Guide",
         "url": "https://www.cncf.io/projects/spiffe/"
@@ -2832,10 +2574,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Cloudflare: How BGP Anycast Works across Global Edges",
-        "url": "https://www.cloudflare.com/learning/cdn/glossary/anycast-network/"
-      },
-      {
         "label": "RFC 4786: Operation of Anycast Services (IETF)",
         "url": "https://datatracker.ietf.org/doc/html/rfc4786"
       }
@@ -2858,10 +2596,6 @@ export const topics = [
       {
         "label": "RFC 5861: HTTP Cache-Control Extensions for Stale Content",
         "url": "https://datatracker.ietf.org/doc/html/rfc5861"
-      },
-      {
-        "label": "Fastly Architecture: Origin Shielding and Cache Clustering",
-        "url": "https://docs.fastly.com/en/guides/origin-shielding"
       }
     ]
   },
@@ -2904,14 +2638,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Flagger: Progressive Delivery Operator for Kubernetes Architecture",
-        "url": "https://flagger.app/architecture/"
-      },
-      {
-        "label": "Martin Fowler: CanaryRelease Architecture Pattern",
-        "url": "https://martinfowler.com/bliki/CanaryRelease.html"
-      },
-      {
         "label": "Argo Rollouts: Advanced Deployment Strategies (Canary & Blue-Green)",
         "url": "https://argoproj.github.io/argo-rollouts/"
       }
@@ -2932,10 +2658,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Martin Fowler: BlueGreenDeployment Pattern",
-        "url": "https://martinfowler.com/bliki/BlueGreenDeployment.html"
-      },
-      {
         "label": "AWS Whitepaper: Blue/Green Deployments on AWS",
         "url": "https://docs.aws.amazon.com/whitepapers/latest/overview-deployment-options/bluegreen-deployments.html"
       }
@@ -2955,10 +2677,6 @@ export const topics = [
       "kubernetes"
     ],
     "resources": [
-      {
-        "label": "OpenGitOps: The Principles of GitOps Standards",
-        "url": "https://opengitops.dev/"
-      },
       {
         "label": "Argo CD Architectural Overview & Sync Engine",
         "url": "https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/"
@@ -3034,10 +2752,6 @@ export const topics = [
       {
         "label": "Cloudflare Workers: How Workers Works (V8 Isolates Architecture)",
         "url": "https://developers.cloudflare.com/workers/reference/how-workers-works/"
-      },
-      {
-        "label": "V8 JavaScript Engine Architecture: Isolates and Contexts",
-        "url": "https://v8.dev/docs"
       }
     ]
   },
@@ -3082,14 +2796,6 @@ export const topics = [
       {
         "label": "Martin Fowler: Event Sourcing Architecture",
         "url": "https://martinfowler.com/eaaDev/EventSourcing.html"
-      },
-      {
-        "label": "Martin Fowler: CQRS (Command Query Responsibility Segregation)",
-        "url": "https://martinfowler.com/bliki/CQRS.html"
-      },
-      {
-        "label": "AWS Whitepaper: Implementing Event-Driven Architectures on AWS",
-        "url": "https://docs.aws.amazon.com/whitepapers/latest/event-driven-architecture/welcome.html"
       }
     ]
   },
@@ -3133,10 +2839,6 @@ export const topics = [
       {
         "label": "Kubernetes Documentation: Horizontal Pod Autoscaler",
         "url": "https://kubernetes.io/docs/tasks/run-application/horizontal-pod-autoscale/"
-      },
-      {
-        "label": "KEDA Documentation: Architecture & External Scalers",
-        "url": "https://keda.sh/docs/latest/concepts/"
       }
     ]
   },
@@ -3209,10 +2911,6 @@ export const topics = [
       {
         "label": "Chaos Mesh: Chaos Engineering Platform for Kubernetes",
         "url": "https://chaos-mesh.org/docs/"
-      },
-      {
-        "label": "Chaos Monkey & The Simian Army (Netflix Technology Blog)",
-        "url": "https://netflixtechblog.com/the-netflix-simian-army-16e57fbab116"
       }
     ]
   },
@@ -3355,10 +3053,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Crossplane Official Architecture & Concepts",
-        "url": "https://docs.crossplane.io/latest/concepts/"
-      },
-      {
         "label": "CNCF Crossplane Project Overview",
         "url": "https://www.cncf.io/projects/crossplane/"
       }
@@ -3379,10 +3073,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "AWS Knowledge Center: Troubleshooting NAT Gateway SNAT Port Exhaustion",
-        "url": "https://repost.aws/knowledge-center/nat-gateway-snat-port-exhaustion"
-      },
-      {
         "label": "Google Cloud NAT Architecture and Port Allocation",
         "url": "https://cloud.google.com/nat/docs/overview"
       }
@@ -3402,10 +3092,6 @@ export const topics = [
       "immutable-infrastructure"
     ],
     "resources": [
-      {
-        "label": "Martin Fowler: ImmutableServer Pattern",
-        "url": "https://martinfowler.com/bliki/ImmutableServer.html"
-      },
       {
         "label": "HashiCorp Packer Core Concepts & Automated Image Building",
         "url": "https://developer.hashicorp.com/packer/docs/intro"
@@ -3479,16 +3165,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "SWIM: Weakly-Consistent Infection-Style Process Group Membership Protocol (Das et al.)",
-        "url": "https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf"
-      },
-      {
         "label": "HashiCorp Consul Architecture Overview",
         "url": "https://developer.hashicorp.com/consul/docs/architecture"
-      },
-      {
-        "label": "Serf Gossip Protocol and Architecture",
-        "url": "https://www.serf.io/docs/internals/gossip.html"
       }
     ]
   },
@@ -3509,10 +3187,6 @@ export const topics = [
       {
         "label": "HashiCorp Nomad Architecture & Evaluation Broker Deep Dive",
         "url": "https://developer.hashicorp.com/nomad/docs/internals/architecture"
-      },
-      {
-        "label": "Scheduling 2 Million Containers in 22 Minutes (Nomad Scalability Benchmark)",
-        "url": "https://www.hashicorp.com/blog/nomad-two-million-container-benchmark"
       }
     ]
   },
@@ -3530,10 +3204,6 @@ export const topics = [
       "compilers"
     ],
     "resources": [
-      {
-        "label": "BPF CO-RE (Compile Once – Run Everywhere) (Andrii Nakryiko)",
-        "url": "https://nakryiko.com/posts/bpf-core-reference-guide/"
-      },
       {
         "label": "Linux Kernel Documentation: BPF Type Format (BTF)",
         "url": "https://docs.kernel.org/bpf/btf.html"
@@ -3555,10 +3225,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "CockroachDB Architecture: Multi-Raft Consensus Engine",
-        "url": "https://www.cockroachlabs.com/docs/stable/architecture/replication-layer.html"
-      },
-      {
         "label": "Spanner: Google's Globally-Distributed Database (Corbett et al., OSDI)",
         "url": "https://research.google/pubs/spanner-googles-globally-distributed-database/"
       }
@@ -3579,12 +3245,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "AWS Documentation: EBS io2 Block Express Architecture",
-        "url": "https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/ebs-volume-types.html#io2-block-express"
-      },
-      {
-        "label": "Single Root I/O Virtualization (SR-IOV) Architecture Specification",
-        "url": "https://www.intel.com/content/www/us/en/developer/articles/technical/single-root-io-virtualization-overview.html"
+        "label": "Wikipedia: Block-level storage",
+        "url": "https://en.wikipedia.org/wiki/Block-level_storage"
       }
     ]
   },
@@ -3603,16 +3265,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Burton H. Bloom: Space/Time Trade-offs in Hash Coding with Allowable Errors (1970 Original Paper)",
-        "url": "https://dl.acm.org/doi/10.1145/362686.362692"
-      },
-      {
-        "label": "Stanford CS166: Probabilistic Data Structures & Bloom Filter Analysis",
-        "url": "https://web.stanford.edu/class/cs166/lectures/06/Slides06.pdf"
-      },
-      {
-        "label": "Broder & Mitzenmacher: Network Applications of Bloom Filters: A Survey",
-        "url": "https://www.eecs.harvard.edu/~michaelm/postscripts/im2005b.pdf"
+        "label": "Wikipedia: Bloom filters in bioinformatics",
+        "url": "https://en.wikipedia.org/wiki/Bloom_filters_in_bioinformatics"
       }
     ]
   },
@@ -3629,16 +3283,7 @@ export const topics = [
       "hashing",
       "data-structures"
     ],
-    "resources": [
-      {
-        "label": "Fan, Andersen, Kaminsky, Mitzenmacher: Cuckoo Filter: Practically Better Than Bloom (CoNEXT 2014)",
-        "url": "https://www.cs.cmu.edu/~dga/papers/cuckoo-conext14.pdf"
-      },
-      {
-        "label": "Carnegie Mellon CS: Cuckoo Hashing and Cuckoo Filter Foundations",
-        "url": "https://www.cs.cmu.edu/~dga/papers/cuckoo-tutorial.pdf"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "hyperloglog-cardinality-estimation",
@@ -3655,12 +3300,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Flajolet, Fusy, Gandouet, Meunier: HyperLogLog: The Analysis of a Near-Optimal Cardinality Estimation Algorithm (2007)",
-        "url": "https://hal.science/inria-00406244/document"
-      },
-      {
-        "label": "Heule, Nunkesser, Hall: HyperLogLog in Practice: Algorithmic Improvements (Google Research)",
-        "url": "https://research.google/pubs/hyperloglog-in-practice-algorithmic-improvements-for-cardinality-estimation-in-a-large-scale-system/"
+        "label": "Wikipedia: HyperLogLog",
+        "url": "https://en.wikipedia.org/wiki/HyperLogLog"
       }
     ]
   },
@@ -3679,12 +3320,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Cormode & Muthukrishnan: An Improved Data Stream Summary: The Count-Min Sketch and its Applications (2005)",
-        "url": "https://dimacs.rutgers.edu/~graham/pubs/papers/cm-full.pdf"
-      },
-      {
-        "label": "Harvard CS224: Count-Min Sketch and Streaming Frequency Moments",
-        "url": "https://www.minilecture.com/cs224/lecture4.pdf"
+        "label": "Wikipedia: Count–min sketch",
+        "url": "https://en.wikipedia.org/wiki/Count%E2%80%93min_sketch"
       }
     ]
   },
@@ -3702,20 +3339,7 @@ export const topics = [
       "lsh",
       "similarity"
     ],
-    "resources": [
-      {
-        "label": "Andrei Broder: On the Resemblance and Containment of Documents (1997 Original Paper)",
-        "url": "https://www.cs.princeton.edu/courses/archive/spring13/cos598C/broder97resemblance.pdf"
-      },
-      {
-        "label": "Moses S. Charikar: Similarity Estimation Techniques from Rounding Algorithms (STOC 2002)",
-        "url": "https://dl.acm.org/doi/10.1145/509907.509965"
-      },
-      {
-        "label": "Stanford University Mining of Massive Datasets: Finding Similar Items & LSH",
-        "url": "http://www.mmds.org/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "b-tree-and-b-plus-tree-indexing",
@@ -3730,20 +3354,7 @@ export const topics = [
       "databases",
       "indexing"
     ],
-    "resources": [
-      {
-        "label": "Bayer & McCreight: Organization and Maintenance of Large Ordered Indexes (1972 Original Paper)",
-        "url": "https://link.springer.com/chapter/10.1007/978-3-642-61942-7_11"
-      },
-      {
-        "label": "Douglas Comer: The Ubiquitous B-Tree (ACM Computing Surveys)",
-        "url": "https://dl.acm.org/doi/10.1145/356770.356776"
-      },
-      {
-        "label": "CMU Database Group: B+Tree Storage & Index Internals",
-        "url": "https://15445.courses.cs.cmu.edu/fall2022/slides/08-trees.pdf"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "lsm-tree-write-optimized-storage",
@@ -3759,10 +3370,6 @@ export const topics = [
       "databases"
     ],
     "resources": [
-      {
-        "label": "O'Neil, Cheng, Gawlick, O'Neil: The Log-Structured Merge-Tree (LSM-Tree, 1996 Original Paper)",
-        "url": "https://www.cs.umb.edu/~poneil/lsmtree.pdf"
-      },
       {
         "label": "Martin Kleppmann: Designing Data-Intensive Applications (Chapter 3: Storage and Retrieval)",
         "url": "https://dataintensive.net/"
@@ -3786,10 +3393,6 @@ export const topics = [
       {
         "label": "CP-Algorithms: Segment Tree Implementation & Range Queries",
         "url": "https://cp-algorithms.com/data_structures/segment_tree.html"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.851: Advanced Data Structures — Static Range Queries",
-        "url": "https://ocw.mit.edu/courses/6-851-advanced-data-structures-spring-2012/resources/session-18-static-range-queries/"
       }
     ]
   },
@@ -3807,10 +3410,6 @@ export const topics = [
       "prefix-sums"
     ],
     "resources": [
-      {
-        "label": "Peter M. Fenwick: A New Data Structure for Cumulative Frequency Tables (1994 Original Paper)",
-        "url": "https://citeseerx.ist.psu.edu/document?repid=rep1&type=pdf&doi=10.1.1.14.8917"
-      },
       {
         "label": "Topcoder: Binary Indexed Trees Tutorial",
         "url": "https://www.topcoder.com/thrive/articles/Binary%20Indexed%20Trees"
@@ -3830,16 +3429,7 @@ export const topics = [
       "radix-tree",
       "strings"
     ],
-    "resources": [
-      {
-        "label": "Donald R. Morrison: PATRICIA — Practical Algorithm To Retrieve Information Coded in Alphanumeric (1968)",
-        "url": "https://dl.acm.org/doi/10.1145/321479.321481"
-      },
-      {
-        "label": "Linux Kernel Documentation: Radix Trees in Linux Page Cache",
-        "url": "https://docs.kernel.org/core-api/radix-tree.html"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "skip-list-probabilistic-alternative",
@@ -3854,16 +3444,7 @@ export const topics = [
       "search",
       "concurrency"
     ],
-    "resources": [
-      {
-        "label": "William Pugh: Skip Lists: A Probabilistic Alternative to Balanced Trees (1990 Original Paper)",
-        "url": "https://epaperpress.com/sortsearch/download/skiplist.pdf"
-      },
-      {
-        "label": "Maurice Herlihy & Nir Shavit: The Art of Multiprocessor Programming (Chapter 14: Concurrent Skip Lists)",
-        "url": "https://dl.acm.org/doi/book/10.5555/2385452"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "red-black-and-avl-trees",
@@ -3880,16 +3461,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Rudolf Bayer: Symmetric Binary B-Trees: Data Structure and Maintenance (Red-Black Precursor, 1972)",
-        "url": "https://link.springer.com/article/10.1007/BF00289509"
-      },
-      {
-        "label": "Adelson-Velsky & Landis: An Algorithm for the Organization of Information (1962 AVL Original Paper)",
-        "url": "https://zhusikun.github.io/pdf/AVL_Tree.pdf"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.006: Balanced Search Trees, AVL Trees, Red-Black Trees",
-        "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-6-avl-trees/"
+        "label": "Wikipedia: Red–black tree",
+        "url": "https://en.wikipedia.org/wiki/Red%E2%80%93black_tree"
       }
     ]
   },
@@ -3906,16 +3479,7 @@ export const topics = [
       "amortized",
       "self-adjusting"
     ],
-    "resources": [
-      {
-        "label": "Sleator & Tarjan: Self-Adjusting Binary Search Trees (JACM 1985 Original Paper)",
-        "url": "https://dl.acm.org/doi/10.1145/3828.3835"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.851: Splay Trees & Dynamic Optimality",
-        "url": "https://ocw.mit.edu/courses/6-851-advanced-data-structures-spring-2012/resources/session-6-splay-trees/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "treap-randomized-search-tree",
@@ -3931,10 +3495,6 @@ export const topics = [
       "data-structures"
     ],
     "resources": [
-      {
-        "label": "Raimund Seidel & Cecilia R. Aragon: Randomized Search Trees (1996 Original Paper)",
-        "url": "https://faculty.washington.edu/aragon/pubs/rst96.pdf"
-      },
       {
         "label": "CP-Algorithms: Treap Implementation and Implicit Treap Operations",
         "url": "https://cp-algorithms.com/data_structures/treap.html"
@@ -3956,10 +3516,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Mark de Berg et al.: Computational Geometry: Algorithms and Applications (Chapter 10: Range Searching)",
-        "url": "https://link.springer.com/book/10.1007/978-3-540-77974-2"
-      },
-      {
         "label": "Cormen, Leiserson, Rivest, Stein: Introduction to Algorithms (CLRS Chapter 14: Augmenting Data Structures)",
         "url": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
       }
@@ -3979,14 +3535,6 @@ export const topics = [
       "heaps"
     ],
     "resources": [
-      {
-        "label": "Edsger W. Dijkstra: A Note on Two Problems in Connexion with Graphs (1959 Original Paper)",
-        "url": "https://link.springer.com/article/10.1007/BF01386390"
-      },
-      {
-        "label": "Fredman & Tarjan: Fibonacci Heaps and Their Uses in Improved Network Optimization Algorithms (1987)",
-        "url": "https://dl.acm.org/doi/10.1145/28869.28874"
-      },
       {
         "label": "Cormen, Leiserson, Rivest, Stein: Introduction to Algorithms (CLRS Chapter 24: Single-Source Shortest Paths)",
         "url": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
@@ -4008,12 +3556,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Hart, Nilsson, Raphael: A Formal Basis for the Heuristic Determination of Minimum Cost Paths (1968 Original Paper)",
-        "url": "https://ieeexplore.ieee.org/document/4082128"
-      },
-      {
-        "label": "Stanford CS221: Artificial Intelligence — Heuristic Search and A*",
-        "url": "https://stanford-cs221.github.io/autumn2023/lectures/search1.pdf"
+        "label": "Wikipedia: A* search algorithm",
+        "url": "https://en.wikipedia.org/wiki/A*_search_algorithm"
       }
     ]
   },
@@ -4032,12 +3576,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "E. A. Dinic: Algorithm for Solution of a Problem of Maximum Flow in Networks with Power Estimation (1970)",
-        "url": "https://www.cs.bgu.ac.il/~dinitz/Papers/Dinitz_alg.pdf"
-      },
-      {
-        "label": "Ford & Fulkerson: Maximal Flow Through a Network (1956 Original Paper)",
-        "url": "https://projecteuclid.org/journals/canadian-journal-of-mathematics/volume-8/issue-none/Maximal-Flow-Through-a-Network/10.4153/CJM-1956-045-5.full"
+        "label": "Wikipedia: Max-flow min-cut theorem",
+        "url": "https://en.wikipedia.org/wiki/Max-flow_min-cut_theorem"
       }
     ]
   },
@@ -4055,10 +3595,6 @@ export const topics = [
       "kosaraju"
     ],
     "resources": [
-      {
-        "label": "Robert E. Tarjan: Depth-First Search and Linear Graph Algorithms (1972 Original Paper)",
-        "url": "https://epubs.siam.org/doi/10.1137/0201010"
-      },
       {
         "label": "MIT 6.006: Depth First Search, Strongly Connected Components",
         "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-10-depth-first-search/"
@@ -4080,10 +3616,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "A. B. Kahn: Topological Sorting of Large Networks (1962 Original Paper)",
-        "url": "https://dl.acm.org/doi/10.1145/368996.369025"
-      },
-      {
         "label": "Cormen, Leiserson, Rivest, Stein: Introduction to Algorithms (CLRS Chapter 22: Elementary Graph Algorithms)",
         "url": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
       }
@@ -4104,10 +3636,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Joseph B. Kruskal: On the Shortest Spanning Subtree of a Graph and the Traveling Salesman Problem (1956)",
-        "url": "https://www.ams.org/journals/proc/1956-007-01/S0002-9939-1956-0078686-7/S0002-9939-1956-0078686-7.pdf"
-      },
-      {
         "label": "R. C. Prim: Shortest Connection Networks And Some Generalizations (1957 Bell System Technical Journal)",
         "url": "https://archive.org/details/bstj36-6-1389"
       }
@@ -4126,16 +3654,7 @@ export const topics = [
       "dynamic-programming",
       "bellman-ford"
     ],
-    "resources": [
-      {
-        "label": "Richard Bellman: On a Routing Problem (1958 Original Paper)",
-        "url": "https://projecteuclid.org/journals/quarterly-of-applied-mathematics/volume-16/issue-1/On-a-routing-problem/10.1090/qam/102435.pdf"
-      },
-      {
-        "label": "Robert W. Floyd: Algorithm 97: Shortest Path (1962 Communications of the ACM)",
-        "url": "https://dl.acm.org/doi/10.1145/367766.368168"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "lowest-common-ancestor-binary-lifting",
@@ -4152,10 +3671,6 @@ export const topics = [
       "rmq"
     ],
     "resources": [
-      {
-        "label": "Bender & Farach-Colton: The LCA Problem Revisited (LATIN 2000)",
-        "url": "https://link.springer.com/chapter/10.1007/10719839_9"
-      },
       {
         "label": "CP-Algorithms: Lowest Common Ancestor — Binary Lifting & Farach-Colton and Bender Algorithm",
         "url": "https://cp-algorithms.com/graph/lca.html"
@@ -4177,10 +3692,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Sleator & Tarjan: A Data Structure for Dynamic Trees (STOC 1981 / JCSS 1983)",
-        "url": "https://dl.acm.org/doi/10.1145/800076.802464"
-      },
-      {
         "label": "CP-Algorithms: Heavy-Light Decomposition Tutorial",
         "url": "https://cp-algorithms.com/graph/hld.html"
       }
@@ -4201,12 +3712,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "John E. Hopcroft & Richard M. Karp: An n^(5/2) Algorithm for Maximum Matchings in Bipartite Graphs (SIAM 1973)",
-        "url": "https://epubs.siam.org/doi/10.1137/0202019"
-      },
-      {
-        "label": "Stanford CS261: Maximum Flow and Bipartite Matching",
-        "url": "https://web.stanford.edu/class/cs261/lectures/lec11.pdf"
+        "label": "Wikipedia: Maximum-cardinality matching",
+        "url": "https://en.wikipedia.org/wiki/Maximum-cardinality_matching"
       }
     ]
   },
@@ -4223,16 +3730,7 @@ export const topics = [
       "raft",
       "replication"
     ],
-    "resources": [
-      {
-        "label": "Ongaro & Ousterhout: In Search of an Understandable Consensus Algorithm (USENIX ATC 2014)",
-        "url": "https://raft.github.io/raft.pdf"
-      },
-      {
-        "label": "Raft Interactive Visualization & Formal TLA+ Specification",
-        "url": "https://raft.github.io/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "paxos-consensus-protocol",
@@ -4247,16 +3745,7 @@ export const topics = [
       "paxos",
       "fault-tolerance"
     ],
-    "resources": [
-      {
-        "label": "Leslie Lamport: The Part-Time Parliament (1998 ACM TOCS Original Paper)",
-        "url": "https://lamport.azurewebsites.net/pubs/lamport-paxos.pdf"
-      },
-      {
-        "label": "Leslie Lamport: Paxos Made Simple (2001)",
-        "url": "https://lamport.azurewebsites.net/pubs/paxos-simple.pdf"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "lamport-timestamps-and-vector-clocks",
@@ -4271,16 +3760,7 @@ export const topics = [
       "vector-clocks",
       "causality"
     ],
-    "resources": [
-      {
-        "label": "Leslie Lamport: Time, Clocks, and the Ordering of Events in a Distributed System (1978 Seminal Paper)",
-        "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf"
-      },
-      {
-        "label": "Colin J. Fidge: Timestamps in Message-Passing Systems That Preserve the Partial Ordering (1988)",
-        "url": "https://link.springer.com/chapter/10.1007/978-3-642-88544-0_2"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "crdt-conflict-free-replicated-data-types",
@@ -4296,10 +3776,6 @@ export const topics = [
       "eventual-consistency"
     ],
     "resources": [
-      {
-        "label": "Shapiro, Preguiça, Baquero, Zawirski: Conflict-Free Replicated Data Types (INRIA Research Report 2011)",
-        "url": "https://inria.hal.science/inria-00609399/document"
-      },
       {
         "label": "Martin Kleppmann: A Conflict-Free Replicated JSON Datatype (IEEE TPDS 2017)",
         "url": "https://arxiv.org/abs/1608.03960"
@@ -4321,12 +3797,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Jim Gray: Notes on Data Base Operating Systems (1978 Seminal Paper)",
-        "url": "https://research.google/pubs/notes-on-data-base-operating-systems/"
-      },
-      {
-        "label": "Dale Skeen: Nonblocking Commit Protocols (ACM SIGMOD 1981)",
-        "url": "https://dl.acm.org/doi/10.1145/582318.582339"
+        "label": "Wikipedia: Atomic commit",
+        "url": "https://en.wikipedia.org/wiki/Atomic_commit"
       }
     ]
   },
@@ -4343,16 +3815,7 @@ export const topics = [
       "epidemic",
       "membership"
     ],
-    "resources": [
-      {
-        "label": "Demers et al.: Epidemic Algorithms for Replicated Database Maintenance (ACM PODC 1987)",
-        "url": "https://dl.acm.org/doi/10.1145/41840.41841"
-      },
-      {
-        "label": "Das, Gupta, Motivala: SWIM: Weakly-Consistent Infection-Style Process Group Membership Protocol (DSN 2002)",
-        "url": "https://www.cs.cornell.edu/projects/Quicksilver/public_pdfs/SWIM.pdf"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "byzantine-fault-tolerance-pbft",
@@ -4369,12 +3832,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Castro & Liskov: Practical Byzantine Fault Tolerance (OSDI 1999 Original Paper)",
-        "url": "https://pmg.csail.mit.edu/papers/osdi99.pdf"
-      },
-      {
-        "label": "Leslie Lamport, Robert Shostak, Marshall Pease: The Byzantine Generals Problem (ACM TOPLAS 1982)",
-        "url": "https://lamport.azurewebsites.net/pubs/byz.pdf"
+        "label": "Wikipedia: Byzantine fault",
+        "url": "https://en.wikipedia.org/wiki/Byzantine_fault"
       }
     ]
   },
@@ -4393,12 +3852,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "K. Mani Chandy & Leslie Lamport: Distributed Snapshots: Determining Global States of Distributed Systems (ACM TOCS 1985)",
-        "url": "https://lamport.azurewebsites.net/pubs/chandy.pdf"
-      },
-      {
-        "label": "Martin Kleppmann: Distributed Systems Lecture Series (Snapshots & Global State)",
-        "url": "https://www.cl.cam.ac.uk/teaching/2122/ConcDisSys/dist-sys-notes.pdf"
+        "label": "Wikipedia: Chandy–Lamport algorithm",
+        "url": "https://en.wikipedia.org/wiki/Chandy%E2%80%93Lamport_algorithm"
       }
     ]
   },
@@ -4417,12 +3872,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Knuth, Morris, Pratt: Fast Pattern Matching in Strings (SIAM Journal on Computing 1977)",
-        "url": "https://epubs.siam.org/doi/10.1137/0206024"
-      },
-      {
-        "label": "CP-Algorithms: Prefix function and Knuth-Morris-Pratt Algorithm",
-        "url": "https://cp-algorithms.com/string/prefix-func.html"
+        "label": "Wikipedia: Knuth–Morris–Pratt algorithm",
+        "url": "https://en.wikipedia.org/wiki/Knuth%E2%80%93Morris%E2%80%93Pratt_algorithm"
       }
     ]
   },
@@ -4441,12 +3892,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Richard M. Karp & Michael O. Rabin: Efficient Randomized Pattern-Matching Algorithms (1987)",
-        "url": "https://www.cs.cmu.edu/~avrim/451f11/lectures/lect1004.pdf"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.006: Rolling Hashes and Rabin-Karp Algorithm",
-        "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-8-hashing-with-chaining/"
+        "label": "Wikipedia: Rabin–Karp algorithm",
+        "url": "https://en.wikipedia.org/wiki/Rabin%E2%80%93Karp_algorithm"
       }
     ]
   },
@@ -4463,16 +3910,7 @@ export const topics = [
       "lcp",
       "algorithms"
     ],
-    "resources": [
-      {
-        "label": "Manber & Myers: Suffix Arrays: A New Method for On-Line String Searches (SIAM 1993)",
-        "url": "https://epubs.siam.org/doi/10.1137/0222058"
-      },
-      {
-        "label": "Kasai et al.: Linear-Time Longest-Common-Prefix Computation in Suffix Arrays (CPM 2001)",
-        "url": "https://link.springer.com/chapter/10.1007/3-540-48194-X_17"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "aho-corasick-automaton",
@@ -4489,12 +3927,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Alfred V. Aho & Margaret J. Corasick: Efficient String Matching: An Aid to Bibliographic Search (1975)",
-        "url": "https://dl.acm.org/doi/10.1145/360825.360855"
-      },
-      {
-        "label": "Stanford CS166: Multi-String Pattern Matching and Aho-Corasick Automata",
-        "url": "https://web.stanford.edu/class/cs166/lectures/02/Slides02.pdf"
+        "label": "Wikipedia: Aho–Corasick algorithm",
+        "url": "https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_algorithm"
       }
     ]
   },
@@ -4513,12 +3947,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Vladimir I. Levenshtein: Binary Codes Capable of Correcting Deletions, Insertions and Reversals (1966)",
-        "url": "https://nymity.ch/sybilhunting/pdf/Levenshtein1966a.pdf"
-      },
-      {
-        "label": "Robert A. Wagner & Michael J. Fischer: The String-to-String Correction Problem (ACM 1974)",
-        "url": "https://dl.acm.org/doi/10.1145/321796.321811"
+        "label": "Wikipedia: Levenshtein distance",
+        "url": "https://en.wikipedia.org/wiki/Levenshtein_distance"
       }
     ]
   },
@@ -4535,16 +3965,7 @@ export const topics = [
       "ukkonen",
       "data-structures"
     ],
-    "resources": [
-      {
-        "label": "Esko Ukkonen: On-line Construction of Suffix Trees (Algorithmica 1995)",
-        "url": "https://www.cs.helsinki.fi/u/ukkonen/SuffixT1withFigs.pdf"
-      },
-      {
-        "label": "Dan Gusfield: Algorithms on Strings, Trees, and Sequences (Cambridge University Press)",
-        "url": "https://www.cambridge.org/core/books/algorithms-on-strings-trees-and-sequences/F0B0950499FB16B686C075466B34829D"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "boyer-moore-string-search",
@@ -4561,12 +3982,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Robert S. Boyer & J. Strother Moore: A Fast String Searching Algorithm (CACM 1977 Original Paper)",
-        "url": "https://dl.acm.org/doi/10.1145/359842.359859"
-      },
-      {
-        "label": "Hume & Sunday: Fast String Searching (Software: Practice and Experience)",
-        "url": "https://dl.acm.org/doi/10.1002/spe.4380211105"
+        "label": "Wikipedia: Boyer–Moore string-search algorithm",
+        "url": "https://en.wikipedia.org/wiki/Boyer%E2%80%93Moore_string-search_algorithm"
       }
     ]
   },
@@ -4586,12 +4003,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Michael Burrows & David J. Wheeler: A Block-sorting Lossless Data Compression Algorithm (SRC Research Report 1994)",
-        "url": "https://www.hpl.hp.com/techreports/Compaq-DEC/SRC-RR-124.pdf"
-      },
-      {
-        "label": "Paolo Ferragina & Giovanni Manzini: Opportunistic Data Structures with Applications (FOCS 2000 FM-Index Paper)",
-        "url": "https://ieeexplore.ieee.org/document/892127"
+        "label": "Wikipedia: Burrows–Wheeler transform",
+        "url": "https://en.wikipedia.org/wiki/Burrows%E2%80%93Wheeler_transform"
       }
     ]
   },
@@ -4610,12 +4023,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "C. A. R. Hoare: Algorithm 65: Find (Quickselect Original Paper, 1961)",
-        "url": "https://dl.acm.org/doi/10.1145/366622.366647"
-      },
-      {
-        "label": "Blum, Floyd, Pratt, Rivest, Tarjan: Time Bounds for Selection (1973 Original Paper)",
-        "url": "https://people.csail.mit.edu/rivest/pubs/BFPRT73.pdf"
+        "label": "Wikipedia: Median of medians",
+        "url": "https://en.wikipedia.org/wiki/Median_of_medians"
       }
     ]
   },
@@ -4636,10 +4045,6 @@ export const topics = [
       {
         "label": "Donald E. Knuth: The Art of Computer Programming (Volume 3: Sorting and Searching, Section 5.4)",
         "url": "https://www-cs-faculty.stanford.edu/~knuth/taocp.html"
-      },
-      {
-        "label": "CMU Database Systems: External Merge Sort Algorithm Internals",
-        "url": "https://15445.courses.cs.cmu.edu/fall2022/slides/07-sorting.pdf"
       }
     ]
   },
@@ -4660,10 +4065,6 @@ export const topics = [
       {
         "label": "Cormen, Leiserson, Rivest, Stein: Introduction to Algorithms (CLRS Chapter 8: Sorting in Linear Time)",
         "url": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.006: Linear-Time Sorting: Counting Sort, Radix Sort",
-        "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-7-counting-sort-radix-sort/"
       }
     ]
   },
@@ -4682,12 +4083,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Tim Peters: TimSort Description and Original CPython Implementation Notes",
-        "url": "https://github.com/python/cpython/blob/main/Objects/listsort.txt"
-      },
-      {
         "label": "Auger, Jugé, Nicaud, Pivoteau: On the Worst-Case Complexity of TimSort (ESA 2015)",
-        "url": "https://arxiv.org/abs/1805.04154"
+        "url": "https://arxiv.org/abs/1805.08612"
       }
     ]
   },
@@ -4705,10 +4102,6 @@ export const topics = [
       "algorithms"
     ],
     "resources": [
-      {
-        "label": "David R. Musser: Introspective Sorting and Selection Algorithms (Software: Practice and Experience 1997)",
-        "url": "https://dl.acm.org/doi/10.1002/%28SICI%291097-024X%28199708%2927%3A8%3C983%3A%3AAID-SPE117%3E3.0.CO%3B2-#"
-      },
       {
         "label": "LLVM libc++: std::sort Implementation Architecture",
         "url": "https://github.com/llvm/llvm-project/blob/main/libcxx/include/__algorithm/sort.h"
@@ -4730,12 +4123,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Karger et al.: Consistent Hashing and Random Trees: Distributed Caching Protocols (ACM STOC 1997)",
-        "url": "https://dl.acm.org/doi/10.1145/258533.258660"
-      },
-      {
-        "label": "DeCandia et al.: Dynamo: Amazon's Highly Available Key-value Store (SOSP 2007)",
-        "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
+        "label": "Wikipedia: Consistent hashing",
+        "url": "https://en.wikipedia.org/wiki/Consistent_hashing"
       }
     ]
   },
@@ -4754,12 +4143,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Fredman, Komlós, Szemerédi: Storing a Sparse Table with O(1) Worst Case Access Time (1984 Original Paper)",
-        "url": "https://dl.acm.org/doi/10.1145/828.1884"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.851: Advanced Data Structures — Perfect Hashing & FKS",
-        "url": "https://ocw.mit.edu/courses/6-851-advanced-data-structures-spring-2012/resources/session-12-hashing-1/"
+        "label": "Wikipedia: Dynamic perfect hashing",
+        "url": "https://en.wikipedia.org/wiki/Dynamic_perfect_hashing"
       }
     ]
   },
@@ -4778,12 +4163,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Pagh & Rodler: Cuckoo Hashing (Journal of Algorithms 2004)",
-        "url": "https://www.itu.dk/people/pagh/papers/cuckoo-jour.pdf"
-      },
-      {
-        "label": "Pedro Celis: Robin Hood Hashing (University of Waterloo Thesis 1986)",
-        "url": "https://cs.uwaterloo.ca/research/tr/1986/CS-86-14.pdf"
+        "label": "Wikipedia: Open addressing",
+        "url": "https://en.wikipedia.org/wiki/Open_addressing"
       }
     ]
   },
@@ -4800,16 +4181,7 @@ export const topics = [
       "security",
       "hashdos"
     ],
-    "resources": [
-      {
-        "label": "Aumasson & Bernstein: SipHash: A Fast Short-Input PRF (Indocrypt 2012 Original Paper)",
-        "url": "https://www.131002.net/siphash/siphash.pdf"
-      },
-      {
-        "label": "Crosby & Wallach: Denial of Service via Algorithmic Complexity Attacks (USENIX Security 2003)",
-        "url": "https://www.usenix.org/legacy/events/sec03/tech/full_papers/crosby/crosby.pdf"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "optimal-substructure-and-memoization",
@@ -4826,12 +4198,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Richard Bellman: Dynamic Programming (1957 Princeton University Press Classic)",
-        "url": "https://press.princeton.edu/books/paperback/9780691146683/dynamic-programming"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.006: Dynamic Programming — Memoization, Subproblems, Guessing",
-        "url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/lecture-15-dynamic-programming-part-1-srs-fibonacci-shortest-paths/"
+        "label": "Wikipedia: Dynamic programming",
+        "url": "https://en.wikipedia.org/wiki/Dynamic_programming"
       }
     ]
   },
@@ -4850,12 +4218,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Eugene W. Myers: An O(ND) Difference Algorithm and Its Variations (Algorithmica 1986)",
-        "url": "http://www.xmailserver.org/diff2.pdf"
-      },
-      {
-        "label": "Hirschberg: A Linear Space Algorithm for Computing Maximal Common Subsequences (CACM 1975)",
-        "url": "https://dl.acm.org/doi/10.1145/360825.360861"
+        "label": "Wikipedia: Longest common subsequence",
+        "url": "https://en.wikipedia.org/wiki/Longest_common_subsequence"
       }
     ]
   },
@@ -4874,12 +4238,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Martello & Toth: Knapsack Problems: Algorithms and Computer Implementations (Wiley)",
-        "url": "https://www.or.deis.unibo.it/kp/Chapter1.pdf"
-      },
-      {
-        "label": "Stanford CS161: Dynamic Programming and the Knapsack Problem",
-        "url": "https://web.stanford.edu/class/archive/cs/cs161/cs161.1168/lecture12.pdf"
+        "label": "Wikipedia: Knapsack problem",
+        "url": "https://en.wikipedia.org/wiki/Knapsack_problem"
       }
     ]
   },
@@ -4900,10 +4260,6 @@ export const topics = [
       {
         "label": "Cormen, Leiserson, Rivest, Stein: Introduction to Algorithms (CLRS Chapter 15: Dynamic Programming)",
         "url": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
-      },
-      {
-        "label": "Hu & Shing: Computation of Matrix Chain Products (SIAM Journal on Computing 1982)",
-        "url": "https://epubs.siam.org/doi/10.1137/0211028"
       }
     ]
   },
@@ -4921,10 +4277,6 @@ export const topics = [
       "held-karp"
     ],
     "resources": [
-      {
-        "label": "Michael Held & Richard M. Karp: A Dynamic Programming Approach to Sequencing Problems (SIAM 1962)",
-        "url": "https://epubs.siam.org/doi/10.1137/0110015"
-      },
       {
         "label": "CP-Algorithms: Dynamic Programming with Bitmasking & TSP",
         "url": "https://cp-algorithms.com/algebra/all-submasks.html"
@@ -4948,10 +4300,6 @@ export const topics = [
       {
         "label": "CP-Algorithms: Convex Hull Trick & Li Chao Tree Dynamic Programming Optimization",
         "url": "https://cp-algorithms.com/geometry/convex_hull_trick.html"
-      },
-      {
-        "label": "Codeforces Tutorial: Li Chao Segment Tree for Dynamic Line Envelopes",
-        "url": "https://codeforces.com/blog/entry/51532"
       }
     ]
   },
@@ -4969,10 +4317,6 @@ export const topics = [
       "algorithms"
     ],
     "resources": [
-      {
-        "label": "Codeforces Tutorial: Tree DP and Rerooting Fundamentals",
-        "url": "https://codeforces.com/blog/entry/20935"
-      },
       {
         "label": "USACO Guide: Tree DP and All-Root Aggregations",
         "url": "https://usaco.guide/gold/all-roots"
@@ -4994,12 +4338,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Robert E. Tarjan: Amortized Computational Complexity (SIAM J. Alg. Disc. Meth. 1985)",
-        "url": "https://epubs.siam.org/doi/10.1137/0606031"
-      },
-      {
-        "label": "MIT OpenCourseWare 6.046J: Design and Analysis of Algorithms — Amortized Analysis",
-        "url": "https://ocw.mit.edu/courses/6-046j-design-and-analysis-of-algorithms-spring-2015/resources/lecture-13-amortized-analysis/"
+        "label": "Wikipedia: Amortized analysis",
+        "url": "https://en.wikipedia.org/wiki/Amortized_analysis"
       }
     ]
   },
@@ -5016,20 +4356,7 @@ export const topics = [
       "np-complete",
       "cook-levin"
     ],
-    "resources": [
-      {
-        "label": "Stephen A. Cook: The Complexity of Theorem-Proving Procedures (ACM STOC 1971 Cook's Theorem)",
-        "url": "https://dl.acm.org/doi/10.1145/800157.805047"
-      },
-      {
-        "label": "Richard M. Karp: Reducibility Among Combinatorial Problems (1972 21 NP-Complete Problems)",
-        "url": "https://link.springer.com/chapter/10.1007/978-1-4684-2001-2_9"
-      },
-      {
-        "label": "Michael Sipser: Introduction to the Theory of Computation (Chapter 7: Time Complexity)",
-        "url": "https://www.cengage.com/c/introduction-to-the-theory-of-computation-3e-sipser/9781133187790/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "competitive-analysis-online-algorithms",
@@ -5044,16 +4371,7 @@ export const topics = [
       "competitive-analysis",
       "paging"
     ],
-    "resources": [
-      {
-        "label": "Sleator & Tarjan: Amortized Efficiency of List Update and Paging Rules (CACM 1985)",
-        "url": "https://dl.acm.org/doi/10.1145/3828.3835"
-      },
-      {
-        "label": "Borodin & El-Yaniv: Online Computation and Competitive Analysis (Cambridge University Press)",
-        "url": "https://www.cambridge.org/core/books/online-computation-and-competitive-analysis/D1F0FF639906FFB07FE0561578F4F2BA"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "master-theorem-for-divide-and-conquer",
@@ -5069,10 +4387,6 @@ export const topics = [
       "divide-and-conquer"
     ],
     "resources": [
-      {
-        "label": "Akra & Bazzi: On the Solution of Linear Recurrence Equations (Computational Optimization and Applications 1998)",
-        "url": "https://link.springer.com/article/10.1023/A:1008687203004"
-      },
       {
         "label": "Cormen, Leiserson, Rivest, Stein: Introduction to Algorithms (CLRS Chapter 4: Divide-and-Conquer)",
         "url": "https://mitpress.mit.edu/9780262046305/introduction-to-algorithms/"
@@ -5096,10 +4410,6 @@ export const topics = [
       {
         "label": "David P. Williamson & David B. Shmoys: The Design of Approximation Algorithms (Cambridge University Press)",
         "url": "https://www.designofapproxalgs.com/"
-      },
-      {
-        "label": "Vazirani: Approximation Algorithms (Springer Book)",
-        "url": "https://link.springer.com/book/10.1007/978-3-662-04565-7"
       }
     ]
   },
@@ -5118,12 +4428,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Andrew Chi-Chih Yao: Should Tables Be Sorted? (IEEE FOCS 1978)",
-        "url": "https://ieeexplore.ieee.org/document/4567957"
-      },
-      {
-        "label": "Peter Bro Miltersen: Lower Bounds on Data Behavior in the Cell Probe Model (Survey)",
-        "url": "https://www.cs.au.dk/~bromille/Papers/surv.pdf"
+        "label": "Wikipedia: Space–time tradeoff",
+        "url": "https://en.wikipedia.org/wiki/Space%E2%80%93time_tradeoff"
       }
     ]
   },
@@ -5142,12 +4448,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Robert E. Tarjan: Efficiency of a Good But Not Linear Set Union Algorithm (JACM 1975)",
-        "url": "https://dl.acm.org/doi/10.1145/321879.321884"
-      },
-      {
-        "label": "Tarjan & van Leeuwen: Worst-Case Analysis of Several Set Union Algorithms (JACM 1984)",
-        "url": "https://dl.acm.org/doi/10.1145/62.2160"
+        "label": "Wikipedia: Disjoint-set data structure",
+        "url": "https://en.wikipedia.org/wiki/Disjoint-set_data_structure"
       }
     ]
   },
@@ -5164,16 +4466,7 @@ export const topics = [
       "queues",
       "cas"
     ],
-    "resources": [
-      {
-        "label": "Maged M. Michael & Michael L. Scott: Simple, Fast, and Practical Non-Blocking and Blocking Concurrent Queue Algorithms (ACM PODC 1996)",
-        "url": "https://dl.acm.org/doi/10.1145/248052.248106"
-      },
-      {
-        "label": "Maurice Herlihy & Nir Shavit: The Art of Multiprocessor Programming (Chapter 10: Concurrent Queues)",
-        "url": "https://dl.acm.org/doi/book/10.5555/2385452"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "aba-problem-hazard-pointers-epoch-reclamation",
@@ -5188,16 +4481,7 @@ export const topics = [
       "hazard-pointers",
       "memory-reclamation"
     ],
-    "resources": [
-      {
-        "label": "Maged M. Michael: Hazard Pointers: Safe Memory Reclamation for Lock-Free Objects (IEEE TPDS 2004)",
-        "url": "https://dl.acm.org/doi/10.1109/TPDS.2004.8"
-      },
-      {
-        "label": "Keir Fraser: Practical Lock-Free Computing (University of Cambridge PhD Thesis 2004)",
-        "url": "https://www.cl.cam.ac.uk/techreports/UCAM-CL-TR-579.pdf"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "read-copy-update-rcu-synchronization",
@@ -5213,10 +4497,6 @@ export const topics = [
       "operating-systems"
     ],
     "resources": [
-      {
-        "label": "Paul E. McKenney & John D. Slingwine: Read-Copy Update: Using Execution History to Solve Concurrency Problems (PDCS 1998)",
-        "url": "https://www.kernel.org/doc/Documentation/RCU/rcu.txt"
-      },
       {
         "label": "Paul E. McKenney: Is Parallel Programming Hard, And, If So, What Can You Do About It? (Kernel.org Book)",
         "url": "https://mirrors.edge.kernel.org/pub/linux/kernel/people/paulmck/perfbook/perfbook.html"
@@ -5238,12 +4518,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Ori Shalev & Nir Shavit: Split-Ordered Lists: Lock-Free Extensible Hash Tables (JACM 2006)",
-        "url": "https://dl.acm.org/doi/10.1145/1147954.1147958"
-      },
-      {
-        "label": "Cliff Click: A Fast Long-Keyed Non-Blocking Hash Map (Azul Systems 2007)",
-        "url": "https://github.com/boundary/high-scale-lib/blob/master/src/main/java/org/cliffc/high_scale_lib/NonBlockingHashMap.java"
+        "label": "Wikipedia: Concurrent hash table",
+        "url": "https://en.wikipedia.org/wiki/Concurrent_hash_table"
       }
     ]
   },
@@ -5262,12 +4538,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "David Chase & Yossi Lev: Dynamic Circular Work-Stealing Deque (ACM SPAA 2005 Original Paper)",
-        "url": "https://dl.acm.org/doi/10.1145/1073970.1073974"
-      },
-      {
-        "label": "Robert D. Blumofe & Charles E. Leiserson: Scheduling Multithreaded Computations by Work Stealing (JACM 1999)",
-        "url": "https://dl.acm.org/doi/10.1145/324133.324234"
+        "label": "Wikipedia: Work stealing",
+        "url": "https://en.wikipedia.org/wiki/Work_stealing"
       }
     ]
   },
@@ -5285,16 +4557,7 @@ export const topics = [
       "kd-tree",
       "geometry"
     ],
-    "resources": [
-      {
-        "label": "Antonin Guttman: R-Trees: A Dynamic Index Structure for Spatial Searching (ACM SIGMOD 1984)",
-        "url": "https://dl.acm.org/doi/10.1145/602259.602266"
-      },
-      {
-        "label": "Jon Louis Bentley: Multidimensional Binary Search Trees Used for Associative Searching (CACM 1975)",
-        "url": "https://dl.acm.org/doi/10.1145/361002.361007"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "persistent-data-structures-fat-nodes-node-copying",
@@ -5311,12 +4574,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Driscoll, Sarnak, Sleator, Tarjan: Making Data Structures Persistent (STOC 1986 / JCSS 1989)",
-        "url": "https://dl.acm.org/doi/10.1145/12130.12142"
-      },
-      {
-        "label": "Chris Okasaki: Purely Functional Data Structures (Cambridge University Press)",
-        "url": "https://www.cambridge.org/core/books/purely-functional-data-structures/0A4C84C0CD207399EA225B810052AE08"
+        "label": "Wikipedia: Persistent data structure",
+        "url": "https://en.wikipedia.org/wiki/Persistent_data_structure"
       }
     ]
   },
@@ -5334,10 +4593,6 @@ export const topics = [
       "cache-friendly"
     ],
     "resources": [
-      {
-        "label": "J. W. J. Williams: Algorithm 232: Heapsort (1964 Original Binary Heap Paper)",
-        "url": "https://dl.acm.org/doi/10.1145/512274.512284"
-      },
       {
         "label": "Donald E. Knuth: The Art of Computer Programming (Volume 3: Heaps & Priority Queues)",
         "url": "https://www-cs-faculty.stanford.edu/~knuth/taocp.html"
@@ -5357,16 +4612,7 @@ export const topics = [
       "fibonacci-heap",
       "pairing-heap"
     ],
-    "resources": [
-      {
-        "label": "Fredman, Sedgewick, Sleator, Tarjan: The Pairing Heap: A New Form of Self-Adjusting Heap (Algorithmica 1986)",
-        "url": "https://link.springer.com/article/10.1007/BF01840439"
-      },
-      {
-        "label": "Fredman & Tarjan: Fibonacci Heaps and Their Uses in Improved Network Optimization Algorithms (JACM 1987)",
-        "url": "https://dl.acm.org/doi/10.1145/28869.28874"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "sequential-consistency-lamport",
@@ -5385,10 +4631,6 @@ export const topics = [
       {
         "label": "Leslie Lamport: How to Make a Multiprocessor Computer That Correctly Executes Multiprocess Programs (IEEE TC 1979)",
         "url": "https://www.microsoft.com/en-us/research/publication/make-multiprocessor-computer-correctly-executes-multiprocess-programs/"
-      },
-      {
-        "label": "Stanford CS240: Memory Consistency and Cache Coherence Notes",
-        "url": "https://web.stanford.edu/class/cs240/readings/consistency-coherence.pdf"
       },
       {
         "label": "Jepsen: Sequential Consistency Analysis & Model Definition",
@@ -5411,16 +4653,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Maurice Herlihy & Jeannette Wing: Linearizability: A Correctness Condition for Concurrent Objects (ACM TOPLAS 1990)",
-        "url": "https://cs.brown.edu/~mph/HerlihyW90/p463-herlihy.pdf"
-      },
-      {
-        "label": "Jepsen: Linearizability Model Verification & Formal Bounds",
-        "url": "https://jepsen.io/consistency/models/linearizable"
-      },
-      {
-        "label": "Martin Kleppmann: Linearizability Versus Serializability (Designing Data-Intensive Applications)",
-        "url": "https://martin.kleppmann.com/2014/10/25/hermitage-testing-database-transaction-isolation.html"
+        "label": "Wikipedia: Linearizability",
+        "url": "https://en.wikipedia.org/wiki/Linearizability"
       }
     ]
   },
@@ -5438,14 +4672,6 @@ export const topics = [
       "replication"
     ],
     "resources": [
-      {
-        "label": "Werner Vogels: Eventually Consistent (ACM Queue / CACM 2008)",
-        "url": "https://queue.acm.org/detail.cfm?id=1466448"
-      },
-      {
-        "label": "Douglas Terry et al.: Session Guarantees for Weakly Consistent Replicated Data (Pdis 1994)",
-        "url": "https://www.cs.utexas.edu/~lorenzo/corsi/cs380d/papers/session_guarantees.pdf"
-      },
       {
         "label": "AWS DynamoDB: Read Consistency Architecture & Eventually Consistent Reads",
         "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/HowItWorks.ReadConsistency.html"
@@ -5467,14 +4693,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Mahadev Satyanarayanan & Mustaque Ahamad: Causal Memory: Definitions, Implementation, and Programming (DistComp 1995)",
-        "url": "https://link.springer.com/article/10.1007/BF01784241"
-      },
-      {
-        "label": "Wyatt Lloyd et al.: Don't Settle for Eventual: Scalable Causal Consistency with COPS (SOSP 2011)",
-        "url": "https://www.cs.cmu.edu/~dga/papers/cops-sosp2011.pdf"
-      },
-      {
         "label": "Jepsen: Causal Consistency Formal Specification",
         "url": "https://jepsen.io/consistency/models/causal"
       }
@@ -5494,20 +4712,7 @@ export const topics = [
       "x86",
       "arm"
     ],
-    "resources": [
-      {
-        "label": "Peter Sewell et al.: x86-TSO: A Rigorous and Usable Programmer's Model for x86 Multiprocessors (CACM 2010)",
-        "url": "https://www.cl.cam.ac.uk/~pes20/weakmemory/cacm.pdf"
-      },
-      {
-        "label": "Arm Architecture Reference Manual: Memory Model Overview & Ordering Rules",
-        "url": "https://developer.arm.com/documentation/den0024/a/Memory-Ordering"
-      },
-      {
-        "label": "Paul McKenney: Memory Barriers: a Hardware View for Software Hackers (Linux Kernel Documentation)",
-        "url": "https://www.kernel.org/doc/Documentation/memory-barriers.txt"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "release-consistency-and-acquire-release-semantics",
@@ -5524,16 +4729,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Kourosh Gharachorloo et al.: Memory Consistency and Event Ordering in Scalable Shared-Memory Multiprocessors (ISCA 1990)",
-        "url": "https://dl.acm.org/doi/10.1145/325164.325102"
-      },
-      {
-        "label": "Hans-J. Boehm & Sarita V. Adve: Foundations of the C++ Concurrency Memory Model (PLDI 2008)",
-        "url": "https://www.hpl.hp.com/techreports/2008/HPL-2008-56.pdf"
-      },
-      {
-        "label": "LLVM Documentation: Atomics & Memory Model Synchronization Semantics",
-        "url": "https://llvm.org/docs/Atomics.html"
+        "label": "Wikipedia: Release consistency",
+        "url": "https://en.wikipedia.org/wiki/Release_consistency"
       }
     ]
   },
@@ -5552,16 +4749,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Mark S. Papamarcos & Janak H. Patel: A Low-Overhead Coherence Solution for Multiprocessors with Private Cache Memories (ISCA 1984)",
-        "url": "https://dl.acm.org/doi/10.1145/800015.808204"
-      },
-      {
-        "label": "Ulrich Drepper: What Every Programmer Should Know About Memory (Section 3.3 Cache Coherence)",
-        "url": "https://people.freebsd.org/~lstewart/articles/cpumemory.pdf"
-      },
-      {
-        "label": "CMU 15-418: Snoop-Based Cache Coherence Lecture Notes",
-        "url": "https://www.cs.cmu.edu/afs/cs/academic/class/15418-s18/www/lectures/08_coherence.pdf"
+        "label": "Wikipedia: MESI protocol",
+        "url": "https://en.wikipedia.org/wiki/MESI_protocol"
       }
     ]
   },
@@ -5580,16 +4769,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "AMD64 Architecture Programmer's Manual, Volume 2: System Programming (Cache Coherence & MOESI)",
-        "url": "https://www.amd.com/content/dam/amd/en/documents/processor-tech-docs/programmer-references/24593.pdf"
-      },
-      {
-        "label": "David Wood et al.: Directory-Based and Snoop-Based MOESI Protocols (Synthesis Lectures on Computer Architecture)",
-        "url": "https://www.morganclaypool.com/doi/abs/10.2200/S00366ED1V01Y201107CAC016"
-      },
-      {
-        "label": "MIT 6.823: Advanced Cache Coherence & MOESI Transitions",
-        "url": "https://ocw.mit.edu/courses/6-823-computer-system-architecture-fall-2005/resources/l13-cache-coherence/"
+        "label": "Wikipedia: MOESI protocol",
+        "url": "https://en.wikipedia.org/wiki/MOESI_protocol"
       }
     ]
   },
@@ -5608,16 +4789,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Daniel Lenoski et al.: The Stanford DASH Multiprocessor (IEEE Computer 1992)",
-        "url": "https://ieeexplore.ieee.org/document/125829"
-      },
-      {
-        "label": "Intel Ultra Path Interconnect (UPI) Architecture Whitepaper",
-        "url": "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-xeon-processor-scalable-family-technical-overview.html"
-      },
-      {
-        "label": "Sorin, Hill, & Wood: A Primer on Memory Consistency and Cache Coherence (Morgan & Claypool)",
-        "url": "https://www.morganclaypool.com/doi/abs/10.2200/S00346ED1V01Y201104CAC016"
+        "label": "Wikipedia: Non-uniform memory access",
+        "url": "https://en.wikipedia.org/wiki/Non-uniform_memory_access"
       }
     ]
   },
@@ -5664,16 +4837,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Paul E. McKenney: Memory Barriers: a Hardware View for Software Hackers",
-        "url": "http://www.rdrop.com/users/paulmck/scalability/paper/whymb.2010.07.23a.pdf"
-      },
-      {
         "label": "Intel 64 Architecture Memory Ordering & Barrier Instructions Reference",
         "url": "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
-      },
-      {
-        "label": "Dmitry Vyukov: Hardware Memory Models & Store Buffer Hazards (1024cores)",
-        "url": "http://www.1024cores.net/home/advanced-hardware/store-buffers"
       }
     ]
   },
@@ -5726,10 +4891,6 @@ export const topics = [
         "url": "https://protobuf.dev/programming-guides/encoding/"
       },
       {
-        "label": "Google Developers: Protocol Buffers Design and Wire Format Architecture",
-        "url": "https://developers.google.com/protocol-buffers"
-      },
-      {
         "label": "Martin Kleppmann: Data Encoding Formats Comparison (Designing Data-Intensive Applications)",
         "url": "https://dataintensive.net/"
       }
@@ -5750,10 +4911,6 @@ export const topics = [
       "protocols"
     ],
     "resources": [
-      {
-        "label": "Mark Slee et al.: Thrift: Scalable Cross-Language Services Framework (Facebook Whitepaper)",
-        "url": "https://thrift.apache.org/static/files/thrift-20070401.pdf"
-      },
       {
         "label": "Apache Thrift Official Documentation: Thrift Protocol Stack Specification",
         "url": "https://thrift.apache.org/docs/concepts"
@@ -5783,10 +4940,6 @@ export const topics = [
         "url": "https://microservices.io/patterns/client-side-discovery.html"
       },
       {
-        "label": "Netflix TechBlog: Eureka! Service Discovery in AWS Cloud",
-        "url": "https://netflixtechblog.com/netflix-shares-cloud-load-balancing-and-failover-tool-eureka-c106b4cac09e"
-      },
-      {
         "label": "Kubernetes Official Documentation: DNS for Services and Pods",
         "url": "https://kubernetes.io/docs/concepts/services-networking/dns-pod-service/"
       }
@@ -5812,10 +4965,6 @@ export const topics = [
         "url": "https://www.envoyproxy.io/docs/envoy/latest/api-docs/xds_protocol"
       },
       {
-        "label": "Matt Klein: Dynamic Configuration and the Envoy xDS Control Plane API",
-        "url": "https://blog.envoyproxy.io/the-universal-data-plane-api-d130a7d3bbcd"
-      },
-      {
         "label": "CNCF Istio Architecture: Pilot to Envoy xDS Communication Flow",
         "url": "https://istio.io/latest/docs/ops/deployment/architecture/"
       }
@@ -5836,10 +4985,6 @@ export const topics = [
       "kernel-bypass"
     ],
     "resources": [
-      {
-        "label": "Jens Axboe: Efficient IO with io_uring (Kernel.dk Technical Guide)",
-        "url": "https://kernel.dk/io_uring.pdf"
-      },
       {
         "label": "Anuj Kalia et al.: FaSST: Fast, Scalable and Simple Distributed Transactions with Two-Sided RDMA Datagrams (OSDI 2016)",
         "url": "https://www.usenix.org/conference/osdi16/technical-sessions/presentation/kalia"
@@ -5869,10 +5014,6 @@ export const topics = [
         "url": "https://www.postgresql.org/docs/current/warm-standby.html#STREAMING-REPLICATION"
       },
       {
-        "label": "MySQL Official Documentation: Binary Log Replication Architecture & Row-Based Format",
-        "url": "https://dev.mysql.com/doc/refman/8.0/en/replication-architecture.html"
-      },
-      {
         "label": "Martin Kleppmann: Problems with Replication Lag (Designing Data-Intensive Applications)",
         "url": "https://dataintensive.net/"
       }
@@ -5892,14 +5033,6 @@ export const topics = [
       "caching"
     ],
     "resources": [
-      {
-        "label": "Douglas Terry et al.: Session Guarantees for Weakly Consistent Replicated Data (Pdis 1994)",
-        "url": "https://www.cs.utexas.edu/~lorenzo/corsi/cs380d/papers/session_guarantees.pdf"
-      },
-      {
-        "label": "Facebook Engineering: Scaling Memcache: Read-After-Write Consistency via Remote Markers",
-        "url": "https://www.usenix.org/system/files/conference/nsdi13/nsdi13-final170_update.pdf"
-      },
       {
         "label": "CockroachDB Docs: Follower Reads and Bounded Staleness Constraints",
         "url": "https://www.cockroachlabs.com/docs/stable/follower-reads"
@@ -5950,16 +5083,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Giuseppe DeCandia et al.: Dynamo: Amazon's Highly Available Key-value Store (SOSP 2007)",
-        "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
-      },
-      {
         "label": "Apache Cassandra Documentation: How Cassandra Reads and Writes with Quorum Consistency",
         "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html"
-      },
-      {
-        "label": "Peter Bailis et al.: Probabilistically Bounded Staleness for Practical Partial Quorums (VLDB 2012)",
-        "url": "https://vldb.org/pvldb/vol5/p776_peterbailis_vldb2012.pdf"
       }
     ]
   },
@@ -5976,20 +5101,7 @@ export const topics = [
       "high-availability",
       "fault-tolerance"
     ],
-    "resources": [
-      {
-        "label": "Amazon Dynamo Paper: Sloppy Quorums and Hinted Handoff (DeCandia et al., SOSP 2007)",
-        "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
-      },
-      {
-        "label": "Apache Cassandra Documentation: Hinted Handoff Mechanism and Storage",
-        "url": "https://cassandra.apache.org/doc/latest/cassandra/operating/hints.html"
-      },
-      {
-        "label": "Riak KV Architecture Guide: Sloppy Quorums and Fallback Nodes",
-        "url": "https://docs.riak.com/riak/kv/latest/learn/concepts/replication/index.html"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "read-repair-vs-anti-entropy-merkle-trees",
@@ -6004,20 +5116,7 @@ export const topics = [
       "merkle-trees",
       "data-synchronization"
     ],
-    "resources": [
-      {
-        "label": "Apache Cassandra Documentation: Node Repair and Merkle Tree Anti-Entropy",
-        "url": "https://cassandra.apache.org/doc/latest/cassandra/operating/repair.html"
-      },
-      {
-        "label": "Ralph C. Merkle: A Digital Signature Based on a Conventional Encryption Function (CRYPTO 1987)",
-        "url": "https://link.springer.com/chapter/10.1007/3-540-48184-2_32"
-      },
-      {
-        "label": "Amazon Dynamo Paper (Section 4.6): Replica Synchronization Using Merkle Trees",
-        "url": "https://www.allthingsdistributed.com/files/amazon-dynamo-sosp2007.pdf"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "consistent-hashing-virtual-nodes",
@@ -6033,10 +5132,6 @@ export const topics = [
       "load-balancing"
     ],
     "resources": [
-      {
-        "label": "David Karger et al.: Consistent Hashing and Random Trees: Distributed Caching Protocols for Relieving Hot Spots on the World Wide Web (STOC 1997)",
-        "url": "https://www.cs.princeton.edu/courses/archive/fall09/cos518/papers/chash.pdf"
-      },
       {
         "label": "Apache Cassandra Documentation: Virtual Nodes Architecture and Allocation",
         "url": "https://cassandra.apache.org/doc/latest/cassandra/architecture/dynamo.html#virtual-nodes"
@@ -6067,10 +5162,6 @@ export const topics = [
         "url": "https://research.google/pubs/pub27898/"
       },
       {
-        "label": "CockroachDB Architecture: Range-Based Dynamic Splitting & Rebalancing",
-        "url": "https://www.cockroachlabs.com/docs/stable/architecture/distribution-layer.html"
-      },
-      {
         "label": "Martin Kleppmann: Partitioning by Key Range vs Partitioning by Hash of Key (DDIA)",
         "url": "https://dataintensive.net/"
       }
@@ -6091,14 +5182,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Vitess Documentation: Resharding Workflows & VReplication State Machine",
-        "url": "https://vitess.io/docs/user-guides/migration/resharding/"
-      },
-      {
-        "label": "Slack Engineering: Migrating Millions of Concurrent Users to New Shards with No Downtime",
-        "url": "https://slack.engineering/migrating-millions-of-concurrent-users-to-new-shards-with-no-downtime/"
-      },
-      {
         "label": "Stripe Engineering: Online Migrations at Scale: Dual Writing and Verification",
         "url": "https://stripe.com/blog/online-migrations"
       }
@@ -6118,14 +5201,6 @@ export const topics = [
       "sharding"
     ],
     "resources": [
-      {
-        "label": "Jeffrey Dean & Luiz André Barroso: The Tail at Scale (Communications of the ACM 2013)",
-        "url": "https://cacm.acm.org/magazines/2013/2/160173-the-tail-at-scale/fulltext"
-      },
-      {
-        "label": "Elasticsearch Guide: Search Phase Architecture (Query-Then-Fetch Scatter-Gather)",
-        "url": "https://www.elastic.co/guide/en/elasticsearch/reference/current/search-your-data.html"
-      },
       {
         "label": "CockroachDB: Distributed SQL Execution Engine & Vectorized Flow Routing",
         "url": "https://www.cockroachlabs.com/docs/stable/architecture/sql-layer.html"
@@ -6153,10 +5228,6 @@ export const topics = [
       {
         "label": "AWS DynamoDB Developer Guide: Global Secondary Indexes vs Local Secondary Indexes",
         "url": "https://docs.aws.amazon.com/amazondynamodb/latest/developerguide/SecondaryIndexes.html"
-      },
-      {
-        "label": "Apache Cassandra Documentation: Secondary Indexes vs Materialized Views",
-        "url": "https://cassandra.apache.org/doc/latest/cassandra/developing/indexing/index.html"
       }
     ]
   },
@@ -6178,14 +5249,6 @@ export const topics = [
       {
         "label": "Vitess Official Architecture & Component Model (VTGate, VTTablet, VTCtl)",
         "url": "https://vitess.io/docs/overview/architecture/"
-      },
-      {
-        "label": "Marco Slot et al.: Citus: Distributed PostgreSQL for Multi-Tenant and Real-Time Analytics (SIGMOD 2017)",
-        "url": "https://www.citusdata.com/blog/2017/05/17/citus-sigmod-paper/"
-      },
-      {
-        "label": "GitHub Engineering: Partitioning GitHub's Main Database with Vitess",
-        "url": "https://github.blog/2021-09-27-partitioning-githubs-relational-databases-with-vitess/"
       }
     ]
   },
@@ -6208,10 +5271,6 @@ export const topics = [
         "url": "https://www.confluent.io/blog/exactly-once-semantics-are-possible-heres-how-apache-kafka-does-it/"
       },
       {
-        "label": "Pat Helland: Idempotence Is Not a Royal Road to Exactly-Once (ACM Queue 2020)",
-        "url": "https://queue.acm.org/detail.cfm?id=3424304"
-      },
-      {
         "label": "RabbitMQ Documentation: Consumer Acknowledgements and Publisher Confirms",
         "url": "https://www.rabbitmq.com/docs/confirms"
       }
@@ -6232,10 +5291,6 @@ export const topics = [
       "commit-log"
     ],
     "resources": [
-      {
-        "label": "Jay Kreps et al.: Kafka: A Distributed Messaging System for Log Processing (NetDB 2011)",
-        "url": "https://www.microsoft.com/en-us/research/wp-content/uploads/2017/09/Kafka.pdf"
-      },
       {
         "label": "Apache Kafka Documentation: Design Principles & The Commit Log Architecture",
         "url": "https://kafka.apache.org/documentation/#design"
@@ -6267,10 +5322,6 @@ export const topics = [
       {
         "label": "Confluent Documentation: Stateful Stream Processing and Log Compaction in Kafka",
         "url": "https://docs.confluent.io/platform/current/kafka/design/log-compaction.html"
-      },
-      {
-        "label": "Martin Kleppmann: Making Sense of Stream Processing with Kafka Compaction",
-        "url": "https://www.oreilly.com/library/view/making-sense-of/9781491942437/"
       }
     ]
   },
@@ -6291,14 +5342,6 @@ export const topics = [
       {
         "label": "Reactive Streams Specification for the JVM (GitHub Working Group)",
         "url": "https://github.com/reactive-streams/reactive-streams-jvm"
-      },
-      {
-        "label": "Erik Meijer: Your Mouse is a Database (ACM Queue / Dualities of Rx & Reactive Streams)",
-        "url": "https://queue.acm.org/detail.cfm?id=2169076"
-      },
-      {
-        "label": "Akka Documentation: Backpressure and Stream Flow Control Internals",
-        "url": "https://doc.akka.io/docs/akka/current/stream/stream-flows-and-basics.html#back-pressure-explained"
       }
     ]
   },
@@ -6316,10 +5359,6 @@ export const topics = [
       "cooperative-sticky"
     ],
     "resources": [
-      {
-        "label": "KIP-429: Kafka Incremental Cooperative Rebalancing Protocol Specification",
-        "url": "https://cwiki.apache.org/confluence/display/KAFKA/KIP-429%3A+Kafka+Consumer+Incremental+Rebalance+Protocol"
-      },
       {
         "label": "Confluent Engineering Blog: Incremental Cooperative Rebalancing in Apache Kafka",
         "url": "https://www.confluent.io/blog/incremental-cooperative-rebalancing-in-kafka/"
@@ -6402,14 +5441,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Leslie Lamport: Time, Clocks, and the Ordering of Events in a Distributed System (Communications of the ACM 1978)",
-        "url": "https://lamport.azurewebsites.net/pubs/time-clocks.pdf"
-      },
-      {
-        "label": "Stanford CS244B: Distributed Systems: Lamport Clocks and Total Ordering",
-        "url": "https://cs244b.stanford.edu/"
-      },
-      {
         "label": "Martin Fowler: Lamport Clock Pattern in Distributed Systems",
         "url": "https://martinfowler.com/articles/patterns-of-distributed-systems/lamport-clock.html"
       }
@@ -6437,10 +5468,6 @@ export const topics = [
       {
         "label": "Google Cloud Whitepaper: Spanner, TrueTime and External Consistency",
         "url": "https://cloud.google.com/spanner/docs/true-time-external-consistency"
-      },
-      {
-        "label": "Andy Pavlo: Google Spanner & TrueTime Architecture Lecture (CMU 15-721)",
-        "url": "https://15721.courses.cs.cmu.edu/spring2023/slides/20-spanner.pdf"
       }
     ]
   },
@@ -6458,20 +5485,7 @@ export const topics = [
       "causality",
       "time"
     ],
-    "resources": [
-      {
-        "label": "Sandeep Kulkarni et al.: Logical Physical Clocks and Consistent Snapshots in Globally Distributed Databases (OPODIS 2014)",
-        "url": "https://cse.buffalo.edu/tech-reports/2014-04.pdf"
-      },
-      {
-        "label": "CockroachDB Docs: Living Without Atomic Clocks (Hybrid Logical Clock Implementation)",
-        "url": "https://www.cockroachlabs.com/docs/stable/architecture/transaction-layer.html#hybrid-logical-clocks-hlc"
-      },
-      {
-        "label": "MongoDB Architecture: Causally Consistent Sessions and Hybrid Logical Clocks",
-        "url": "https://www.mongodb.com/docs/manual/core/read-isolation-consistency-recency/#causally-consistent-sessions"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "vector-clock-concurrency-tradeoffs",
@@ -6488,16 +5502,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Colin J. Fidge: Timestamps in Message-Passing Systems That Preserve the Partial Ordering (Australian Computer Science 1988)",
-        "url": "https://link.springer.com/chapter/10.1007/978-3-642-88169-5_15"
-      },
-      {
         "label": "Nuno Preguiça et al.: Dotted Version Vectors: Logical Clocks for Optimistic Replication (SOCC 2014)",
         "url": "https://arxiv.org/abs/1011.5808"
-      },
-      {
-        "label": "Basho Riak Documentation: Why Vector Clocks Are Hard and How Riak Uses Version Vectors",
-        "url": "https://docs.riak.com/riak/kv/latest/learn/concepts/causal-context/index.html"
       }
     ]
   },
@@ -6518,14 +5524,6 @@ export const topics = [
       {
         "label": "Michael Nygard: Release It! Design and Deploy Production-Ready Software (Circuit Breaker Chapter)",
         "url": "https://pragprog.com/titles/mnee2/release-it-second-edition/"
-      },
-      {
-        "label": "Martin Fowler: CircuitBreaker Architecture Pattern",
-        "url": "https://martinfowler.com/bliki/CircuitBreaker.html"
-      },
-      {
-        "label": "Netflix TechBlog: Making the Netflix API More Resilient with Hystrix / Resilience4j",
-        "url": "https://netflixtechblog.com/fault-tolerance-in-a-high-volume-distributed-system-91ab4faae74a"
       }
     ]
   },
@@ -6550,10 +5548,6 @@ export const topics = [
       {
         "label": "Michael Nygard: Release It! (Bulkheads for Failure Containment)",
         "url": "https://pragprog.com/titles/mnee2/release-it-second-edition/"
-      },
-      {
-        "label": "Resilience4j Documentation: Bulkhead Configuration and Semaphore vs ThreadPool Isolation",
-        "url": "https://resilience4j.readme.io/docs/bulkhead"
       }
     ]
   },
@@ -6607,10 +5601,6 @@ export const topics = [
       {
         "label": "Google Site Reliability Engineering (SRE) Book: Chapter 22 - Addressing Cascading Failures with Deadlines",
         "url": "https://sre.google/sre-book/addressing-cascading-failures/#deadlines"
-      },
-      {
-        "label": "Marc Brooker: Timeouts, Deadlines, and Cancellation (Brooker's Blog)",
-        "url": "https://brooker.co.za/blog/2021/04/19/timeouts.html"
       }
     ]
   },
@@ -6628,14 +5618,6 @@ export const topics = [
       "capacity-planning"
     ],
     "resources": [
-      {
-        "label": "Netflix TechBlog: Performance Under Load: Adaptive Concurrency Limits",
-        "url": "https://netflixtechblog.com/performance-under-load-3e6fe9a8d5ea"
-      },
-      {
-        "label": "Uber Engineering: Load Shedding Strategies for High Availability Microservices",
-        "url": "https://www.uber.com/blog/load-shedding/"
-      },
       {
         "label": "AWS Builder's Library: Using Load Shedding to Avoid Overload",
         "url": "https://aws.amazon.com/builders-library/using-load-shedding-to-avoid-overload/"
@@ -6683,20 +5665,7 @@ export const topics = [
       "distributed-tradeoffs",
       "system-architecture"
     ],
-    "resources": [
-      {
-        "label": "Daniel J. Abadi: Consistency Tradeoffs in Modern Distributed Database System Design (IEEE Computer 2012)",
-        "url": "https://www.cs.umd.edu/~abadi/papers/abadi-pacelc.pdf"
-      },
-      {
-        "label": "Daniel Abadi's Blog: Problems with CAP and the PACELC Formulation",
-        "url": "http://dbmsmusings.blogspot.com/2010/04/problems-with-cap-and-pacelc.html"
-      },
-      {
-        "label": "AWS Architecture: Understanding Consistency Models and PACELC in Amazon DynamoDB",
-        "url": "https://aws.amazon.com/blogs/database/consistency-in-amazon-dynamodb/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "strict-vs-partial-quorums-tradeoffs",
@@ -6712,14 +5681,6 @@ export const topics = [
       "tail-latency"
     ],
     "resources": [
-      {
-        "label": "Peter Bailis et al.: Probabilistically Bounded Staleness for Practical Partial Quorums (VLDB 2012)",
-        "url": "https://vldb.org/pvldb/vol5/p776_peterbailis_vldb2012.pdf"
-      },
-      {
-        "label": "PBS Simulator & Metric Evaluation Toolkit (Peter Bailis, Berkeley)",
-        "url": "http://pbs.cs.berkeley.edu/"
-      },
       {
         "label": "Werner Vogels: Trade-offs in Distributed Systems Quorums (All Things Distributed)",
         "url": "https://www.allthingsdistributed.com/2007/12/eventually_consistent.html"
@@ -6747,10 +5708,6 @@ export const topics = [
       {
         "label": "Mike Burrows: The Chubby Lock Service for Loosely-Coupled Distributed Systems (OSDI 2006)",
         "url": "https://research.google/pubs/pub27897/"
-      },
-      {
-        "label": "Apache ZooKeeper Documentation: Ephemeral Nodes, Watches and Monotonic zxid Epochs",
-        "url": "https://zookeeper.apache.org/doc/current/zookeeperProgrammers.html"
       }
     ]
   },
@@ -6769,10 +5726,6 @@ export const topics = [
       "redis"
     ],
     "resources": [
-      {
-        "label": "Redis Official Documentation: The Redlock Algorithm Specification",
-        "url": "https://redis.io/docs/manual/patterns/distributed-locks/"
-      },
       {
         "label": "Martin Kleppmann: Is Redlock Safe? Analysis of Asynchronous Clocks and Failures",
         "url": "https://martin.kleppmann.com/2016/02/08/how-to-do-distributed-locking.html"
@@ -6798,10 +5751,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Armando Fox & Eric A. Brewer: Harvest, Yield, and Scalable Tolerant Systems (HotOS 1999)",
-        "url": "https://www.eecs.berkeley.edu/~brewer/papers/FoxBrewer99-HarvestYield.pdf"
-      },
-      {
         "label": "Eric Brewer: CAP Twelve Years Later: How the 'Rules' Have Changed (IEEE Computer 2012)",
         "url": "https://www.infoq.com/articles/cap-twelve-years-later-how-the-rules-have-changed/"
       },
@@ -6826,10 +5775,6 @@ export const topics = [
       "microservices"
     ],
     "resources": [
-      {
-        "label": "Hector Garcia-Molina & Kenneth Salem: Sagas (ACM SIGMOD 1987)",
-        "url": "https://www.cs.cornell.edu/andru/cs711/2002fa/reading/sagas.pdf"
-      },
       {
         "label": "Chris Richardson: Pattern: Saga (Microservices Architecture Patterns)",
         "url": "https://microservices.io/patterns/data/saga.html"
@@ -6862,10 +5807,6 @@ export const topics = [
       {
         "label": "Debezium Official Documentation: Architecture & Transaction Log Mining Engine",
         "url": "https://debezium.io/documentation/reference/stable/architecture.html"
-      },
-      {
-        "label": "Martin Kleppmann: Moving Beyond 2PC: Change Data Capture and Stream Processing (QCon)",
-        "url": "https://www.infoq.com/presentations/stream-processing-cdc/"
       }
     ]
   },
@@ -6914,14 +5855,6 @@ export const topics = [
       {
         "label": "Martin Kleppmann: Please Stop Approving Pull Requests with Dual Writes",
         "url": "https://martin.kleppmann.com/2015/04/23/bottled-water-real-time-postgresql-kafka.html"
-      },
-      {
-        "label": "Uber Engineering: Cherami and Asynchronous Reconciliation for Distributed Storage",
-        "url": "https://www.uber.com/blog/cherami-message-queue/"
-      },
-      {
-        "label": "Shopify Engineering: Solving Data Discrepancies with Asynchronous Reconciliation",
-        "url": "https://shopify.engineering/resilient-data-consistency-patterns"
       }
     ]
   },
@@ -6940,14 +5873,6 @@ export const topics = [
       "blocking"
     ],
     "resources": [
-      {
-        "label": "Jim Gray: Notes on Data Base Operating Systems (Section 5.8: Two Phase Commit Protocol, Springer 1978)",
-        "url": "https://link.springer.com/chapter/10.1007/3-540-08755-9_9"
-      },
-      {
-        "label": "Philip A. Bernstein, Vassos Hadzilacos, Nathan Goodman: Concurrency Control and Recovery in Database Systems (Chapter 7)",
-        "url": "https://www.microsoft.com/en-us/research/publication/concurrency-control-and-recovery-in-database-systems/"
-      },
       {
         "label": "Martin Kleppmann: The Trouble with Distributed Transactions and Two-Phase Commit",
         "url": "https://dataintensive.net/"
@@ -6971,14 +5896,6 @@ export const topics = [
       {
         "label": "Martin Fowler: Event Sourcing & CQRS Architectural Patterns",
         "url": "https://martinfowler.com/eaaDev/EventSourcing.html"
-      },
-      {
-        "label": "Jay Kreps: The Log: What Every Software Engineer Should Know About Real-Time Data's Unifying Abstraction",
-        "url": "https://engineering.linkedin.com/distributed-systems/log-what-every-software-engineer-should-know-about-real-time-datas-unifying"
-      },
-      {
-        "label": "Confluent: Building Event-Driven Microservices: Event-First Persistence",
-        "url": "https://www.confluent.io/blog/event-driven-microservices-persistence/"
       }
     ]
   },
@@ -7075,10 +5992,6 @@ export const topics = [
       {
         "label": "Jason Miller: Islands Architecture Concept (Architecture Blog)",
         "url": "https://jasonformat.com/islands-architecture/"
-      },
-      {
-        "label": "Astro Documentation: Astro Islands & Client Directives",
-        "url": "https://docs.astro.build/en/concepts/islands/"
       }
     ]
   },
@@ -7096,10 +6009,6 @@ export const topics = [
       "performance"
     ],
     "resources": [
-      {
-        "label": "Miško Hevery: HTML-first JavaScript Framework (Qwik Docs)",
-        "url": "https://qwik.dev/docs/concepts/resumable/"
-      },
       {
         "label": "Builder.io: Hydration is Pure Overhead (Miško Hevery)",
         "url": "https://www.builder.io/blog/hydration-is-pure-overhead"
@@ -7120,14 +6029,6 @@ export const topics = [
       "async"
     ],
     "resources": [
-      {
-        "label": "WHATWG HTML Living Standard: Event Loops Processing Model",
-        "url": "https://html.spec.whatwg.org/multipage/webappapis.html#event-loops"
-      },
-      {
-        "label": "Jake Archibald: In The Loop (JSConf Event Loop Deep Dive)",
-        "url": "https://jakearchibald.com/2015/tasks-microtasks-queues-and-schedules/"
-      },
       {
         "label": "MDN Web Docs: Using microtasks and the JavaScript runtime environment",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/HTML_DOM_API/Microtask_guide"
@@ -7176,10 +6077,6 @@ export const topics = [
       "performance"
     ],
     "resources": [
-      {
-        "label": "Chromium Documentation: Life of a Pixel Rendering Pipeline",
-        "url": "https://chromium.googlesource.com/chromium/src/+/master/docs/life_of_a_pixel.md"
-      },
       {
         "label": "Google Developers: Critical Rendering Path & Rendering Performance",
         "url": "https://web.dev/critical-rendering-path/"
@@ -7232,10 +6129,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "WebKit Blog: How the HTML Preload Scanner Accelerates Page Loads",
-        "url": "https://webkit.org/blog/507/preload-scanner/"
-      },
-      {
         "label": "Google Developers: Optimize Resource Loading with the Preload Scanner",
         "url": "https://web.dev/preload-scanner/"
       }
@@ -7280,10 +6173,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C Recommendation: WebRTC 1.0 Real-Time Communication Between Browsers",
-        "url": "https://www.w3.org/TR/webrtc/"
-      },
-      {
         "label": "RFC 8445: Interactive Connectivity Establishment (ICE) Protocol",
         "url": "https://datatracker.ietf.org/doc/html/rfc8445"
       },
@@ -7307,10 +6196,6 @@ export const topics = [
       "streaming"
     ],
     "resources": [
-      {
-        "label": "WHATWG HTML Living Standard: Server-Sent Events Specification",
-        "url": "https://html.spec.whatwg.org/multipage/server-sent-events.html"
-      },
       {
         "label": "MDN Web Docs: Using Server-Sent Events (EventSource API)",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events/Using_server-sent_events"
@@ -7338,10 +6223,6 @@ export const topics = [
       {
         "label": "RFC 9000: QUIC: A UDP-Based Multiplexed and Secure Transport",
         "url": "https://datatracker.ietf.org/doc/html/rfc9000"
-      },
-      {
-        "label": "Cloudflare: The Road to HTTP/3 and QUIC Architecture",
-        "url": "https://blog.cloudflare.com/the-road-to-http-2/"
       }
     ]
   },
@@ -7423,10 +6304,6 @@ export const topics = [
       {
         "label": "React Documentation: Code Splitting with React.lazy and Suspense",
         "url": "https://react.dev/reference/react/lazy"
-      },
-      {
-        "label": "Vite Guide: Dynamic Import Chunking Optimization",
-        "url": "https://vitejs.dev/guide/features.html#dynamic-import"
       }
     ]
   },
@@ -7444,10 +6321,6 @@ export const topics = [
       "rendering"
     ],
     "resources": [
-      {
-        "label": "W3C CSS Containment Module Level 3 Specification",
-        "url": "https://www.w3.org/TR/css-contain-3/"
-      },
       {
         "label": "Google Web.dev: content-visibility: the new CSS property that boosts your rendering performance",
         "url": "https://web.dev/content-visibility/"
@@ -7497,14 +6370,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C Recommendation: Resource Hints (Preconnect, Prefetch)",
-        "url": "https://www.w3.org/TR/resource-hints/"
-      },
-      {
-        "label": "W3C Preload Specification Standard",
-        "url": "https://www.w3.org/TR/preload/"
-      },
-      {
         "label": "Google Web.dev: Preload critical assets to improve loading speed",
         "url": "https://web.dev/preload-critical-assets/"
       }
@@ -7524,10 +6389,6 @@ export const topics = [
       "caching"
     ],
     "resources": [
-      {
-        "label": "W3C Recommendation: Service Workers Specification",
-        "url": "https://www.w3.org/TR/service-workers/"
-      },
       {
         "label": "Jake Archibald: The Service Worker Lifecycle Guide",
         "url": "https://web.dev/service-worker-lifecycle/"
@@ -7555,10 +6416,6 @@ export const topics = [
       {
         "label": "Google Chrome Workbox: Common Service Worker Caching Strategies",
         "url": "https://developer.chrome.com/docs/workbox/caching-strategies-overview/"
-      },
-      {
-        "label": "The Offline Cookbook (Jake Archibald)",
-        "url": "https://web.dev/offline-cookbook/"
       }
     ]
   },
@@ -7576,10 +6433,6 @@ export const topics = [
       "databases"
     ],
     "resources": [
-      {
-        "label": "W3C Recommendation: Indexed Database API 3.0",
-        "url": "https://www.w3.org/TR/IndexedDB-3/"
-      },
       {
         "label": "MDN Web Docs: IndexedDB Key Concepts and Usage",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/IndexedDB_API/Basic_Concepts_Behind_IndexedDB"
@@ -7625,10 +6478,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C CSS Containment Module Level 3: Container Queries",
-        "url": "https://www.w3.org/TR/css-contain-3/#container-queries"
-      },
-      {
         "label": "MDN Web Docs: CSS Container Queries Guide",
         "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_containment/Container_queries"
       },
@@ -7653,14 +6502,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C CSS Cascading and Inheritance Level 5 Specification",
-        "url": "https://www.w3.org/TR/css-cascade-5/#layering"
-      },
-      {
-        "label": "MDN Web Docs: Cascade Layers Architecture Guide",
-        "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/@layer"
-      },
-      {
         "label": "Bramus: The Future of CSS: Cascade Layers (CSS-Tricks)",
         "url": "https://css-tricks.com/css-cascade-layers/"
       }
@@ -7680,14 +6521,6 @@ export const topics = [
       "web-design"
     ],
     "resources": [
-      {
-        "label": "W3C CSS Selectors Level 4: The Relational Pseudo-class :has()",
-        "url": "https://www.w3.org/TR/selectors-4/#relational"
-      },
-      {
-        "label": "Google Web.dev: :has(): the family-oriented CSS selector",
-        "url": "https://web.dev/has-m105/"
-      },
       {
         "label": "MDN Web Docs: :has() Pseudo-class Reference",
         "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/:has"
@@ -7709,10 +6542,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C CSS View Transitions Module Level 1 Specification",
-        "url": "https://www.w3.org/TR/css-view-transitions-1/"
-      },
-      {
         "label": "Google Developers: Smooth and simple transitions with the View Transitions API (Jake Archibald)",
         "url": "https://developer.chrome.com/docs/web-platform/view-transitions/"
       }
@@ -7733,16 +6562,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C CSS Grid Layout Module Level 2 (Subgrid)",
-        "url": "https://www.w3.org/TR/css-grid-2/"
-      },
-      {
         "label": "MDN Web Docs: CSS Grid Layout and Subgrid Guide",
         "url": "https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_grid_layout/Subgrid"
-      },
-      {
-        "label": "Rachel Andrew: Understanding CSS Grid Track Sizing Algorithms",
-        "url": "https://rachelandrew.co.uk/archives/2017/06/01/how-does-css-grid-sizing-work/"
       }
     ]
   },
@@ -7789,10 +6610,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Facebook Flux Architecture Specification",
-        "url": "https://facebookarchive.github.io/flux/docs/in-depth-overview/"
-      },
-      {
         "label": "Redux Official Documentation: Core Principles and Reducer Patterns",
         "url": "https://redux.js.org/understanding/thinking-in-redux/three-principles"
       }
@@ -7815,10 +6632,6 @@ export const topics = [
       {
         "label": "Jotai: Primitive and Flexible State Management for React",
         "url": "https://jotai.org/docs/core/atom"
-      },
-      {
-        "label": "Dave McCabe: Recoil: State Management for Today's React (React Europe)",
-        "url": "https://recoiljs.org/"
       }
     ]
   },
@@ -7860,14 +6673,6 @@ export const topics = [
       "headers"
     ],
     "resources": [
-      {
-        "label": "W3C Content Security Policy Level 3 Specification",
-        "url": "https://www.w3.org/TR/CSP3/"
-      },
-      {
-        "label": "Google Security: CSP Is Dead, Long Live Strict CSP (Lukas Weichselbaum)",
-        "url": "https://research.google/pubs/csp-is-dead-long-live-strict-csp/"
-      },
       {
         "label": "MDN Web Docs: Content Security Policy (CSP)",
         "url": "https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP"
@@ -7917,10 +6722,6 @@ export const topics = [
         "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross_Site_Scripting_Prevention_Cheat_Sheet.html"
       },
       {
-        "label": "W3C Recommendation: Trusted Types Specification",
-        "url": "https://www.w3.org/TR/trusted-types/"
-      },
-      {
         "label": "Google Web.dev: Prevent DOM-based XSS with Trusted Types",
         "url": "https://web.dev/trusted-types/"
       }
@@ -7940,10 +6741,6 @@ export const topics = [
       "samesite"
     ],
     "resources": [
-      {
-        "label": "RFC 6265bis: Cookies: HTTP State Management Mechanism (SameSite Update)",
-        "url": "https://datatracker.ietf.org/doc/html/draft-ietf-httpbis-rfc6265bis-03"
-      },
       {
         "label": "OWASP: Cross-Site Request Forgery Prevention Cheat Sheet",
         "url": "https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html"
@@ -7989,16 +6786,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C WebAssembly Core Specification: Memory Architecture",
-        "url": "https://www.w3.org/TR/wasm-core-1/#memory-instances%E2%91%A0"
-      },
-      {
         "label": "MDN Web Docs: Understanding WebAssembly Memory",
         "url": "https://developer.mozilla.org/en-US/docs/WebAssembly/Understanding_the_text_format#webassembly_memory"
-      },
-      {
-        "label": "Bringing the Web up to Speed with WebAssembly (Haas et al., ACM PLDI)",
-        "url": "https://dl.acm.org/doi/10.1145/3062341.3062363"
       }
     ]
   },
@@ -8016,10 +6805,6 @@ export const topics = [
       "interop"
     ],
     "resources": [
-      {
-        "label": "The wasm-bindgen Guide: Rust & WebAssembly Interop Architecture",
-        "url": "https://rustwasm.github.io/wasm-bindgen/"
-      },
       {
         "label": "MDN Web Docs: Using the WebAssembly JavaScript API",
         "url": "https://developer.mozilla.org/en-US/docs/WebAssembly/Using_the_JavaScript_API"
@@ -8067,10 +6852,6 @@ export const topics = [
       {
         "label": "Bytecode Alliance: Standardizing WASI: A system interface to run WebAssembly outside the web",
         "url": "https://hacks.mozilla.org/2019/03/standardizing-wasi-a-webassembly-system-interface/"
-      },
-      {
-        "label": "WASI Subgroup Official Specification Repository",
-        "url": "https://github.com/WebAssembly/WASI"
       }
     ]
   },
@@ -8089,16 +6870,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Rollup.js Documentation: Tree-Shaking Mechanics and ES Modules",
-        "url": "https://rollupjs.org/introduction/#tree-shaking"
-      },
-      {
         "label": "Webpack Guide: Tree Shaking and Side Effects Optimization",
         "url": "https://webpack.js.org/guides/tree-shaking/"
-      },
-      {
-        "label": "Rich Harris: Tree-shaking versus dead-code elimination",
-        "url": "https://medium.com/@Rich_Harris/tree-shaking-versus-dead-code-elimination-d3765df5d7c6"
       }
     ]
   },
@@ -8120,10 +6893,6 @@ export const topics = [
       {
         "label": "Node.js Documentation: Modules: Packages and Conditional Exports",
         "url": "https://nodejs.org/api/packages.html#dual-commonjses-module-packages"
-      },
-      {
-        "label": "TypeScript Handbook: Module Resolution and ESM / CJS Interop",
-        "url": "https://www.typescriptlang.org/docs/handbook/modules/reference.html"
       }
     ]
   },
@@ -8140,16 +6909,7 @@ export const topics = [
       "compilers",
       "debugging"
     ],
-    "resources": [
-      {
-        "label": "Source Map Revision 3 Proposal Specification",
-        "url": "https://sourcemaps.info/spec.html"
-      },
-      {
-        "label": "Sentry Engineering: How Source Maps Work Under the Hood",
-        "url": "https://blog.sentry.io/how-source-maps-work/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "module-federation-micro-frontends",
@@ -8189,16 +6949,7 @@ export const topics = [
       "esbuild",
       "rspack"
     ],
-    "resources": [
-      {
-        "label": "esbuild Architecture: Why is esbuild fast?",
-        "url": "https://esbuild.github.io/faq/#why-is-esbuild-fast"
-      },
-      {
-        "label": "Rspack Architecture: High Performance Rust-based Web Bundler",
-        "url": "https://rspack.dev/guide/tech/architecture"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "dom-mutation-observers-vs-polling",
@@ -8237,16 +6988,7 @@ export const topics = [
       "observers",
       "layout-thrashing"
     ],
-    "resources": [
-      {
-        "label": "W3C Intersection Observer Specification",
-        "url": "https://www.w3.org/TR/intersection-observer/"
-      },
-      {
-        "label": "Google Developers: Trust is Good, Observation is Better (IntersectionObserver)",
-        "url": "https://developer.chrome.com/blog/intersectionobserver/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "shadow-dom-and-web-components-encapsulation",
@@ -8287,10 +7029,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C Recommendation: Subresource Integrity Specification",
-        "url": "https://www.w3.org/TR/SRI/"
-      },
-      {
         "label": "MDN Web Docs: Subresource Integrity (SRI)",
         "url": "https://developer.mozilla.org/en-US/docs/Web/Security/Subresource_Integrity"
       }
@@ -8310,10 +7048,6 @@ export const topics = [
       "typography"
     ],
     "resources": [
-      {
-        "label": "W3C CSS Fonts Module Level 4: font-display",
-        "url": "https://www.w3.org/TR/css-fonts-4/#font-display-desc"
-      },
       {
         "label": "Google Web.dev: Best practices for fonts performance",
         "url": "https://web.dev/font-best-practices/"
@@ -8359,10 +7093,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C Recommendation: Web Audio API Specification",
-        "url": "https://www.w3.org/TR/webaudio/"
-      },
-      {
         "label": "MDN Web Docs: Basic concepts behind Web Audio API",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Web_Audio_API/Basic_concepts_behind_Web_Audio_API"
       }
@@ -8383,16 +7113,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "W3C Recommendation: WebGPU Specification Standard",
-        "url": "https://www.w3.org/TR/webgpu/"
-      },
-      {
         "label": "Google Developers: WebGPU: Next-generation graphics and compute in the browser",
         "url": "https://developer.chrome.com/docs/web-platform/webgpu/"
-      },
-      {
-        "label": "Khronos Group: WebGL Specification and Reference",
-        "url": "https://www.khronos.org/webgl/"
       }
     ]
   },
@@ -8410,10 +7132,6 @@ export const topics = [
       "browser-internals"
     ],
     "resources": [
-      {
-        "label": "W3C Recommendation: Beacon Specification",
-        "url": "https://www.w3.org/TR/beacon/"
-      },
       {
         "label": "MDN Web Docs: navigator.sendBeacon() Method",
         "url": "https://developer.mozilla.org/en-US/docs/Web/API/Navigator/sendBeacon"

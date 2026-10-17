@@ -19,7 +19,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Rudolf Clausius — The Mechanical Theory of Heat (1867)",
+        "label": "Wikipedia: Second law of thermodynamics",
         "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
       }
     ],
@@ -62,8 +62,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "John S. Bell — Speakable and Unspeakable in Quantum Mechanics (Cambridge)",
-        "url": "https://www.cambridge.org"
+        "label": "Wikipedia: Quantum entanglement",
+        "url": "https://en.wikipedia.org/wiki/Quantum_entanglement"
       }
     ]
   },
@@ -79,12 +79,7 @@ export const topics = [
       "crispr",
       "genetics"
     ],
-    "resources": [
-      {
-        "label": "Doudna & Charpentier — A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity (Science 2012)",
-        "url": "https://www.science.org/doi/10.1126/science.1225829"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "central-dogma-molecular-biology",
@@ -124,8 +119,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Sewall Wright — Evolution in Mendelian Populations (Genetics 1931)",
-        "url": "https://www.genetics.org"
+        "label": "Wikipedia: Genetic drift",
+        "url": "https://en.wikipedia.org/wiki/Genetic_drift"
       }
     ]
   },
@@ -143,8 +138,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Donald Hebb — The Organization of Behavior (1949)",
-        "url": "https://en.wikipedia.org/wiki/Hebbian_theory"
+        "label": "Wikipedia: Neuroplasticity",
+        "url": "https://en.wikipedia.org/wiki/Neuroplasticity"
       }
     ]
   },
@@ -162,8 +157,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Abbott et al. — Structure and Function of the Blood-Brain Barrier (Neurobiology of Disease)",
-        "url": "https://www.sciencedirect.com"
+        "label": "Wikipedia: Blood–brain barrier",
+        "url": "https://en.wikipedia.org/wiki/Blood%E2%80%93brain_barrier"
       }
     ]
   },
@@ -219,8 +214,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "J. Tuzo Wilson — Did the Atlantic Close and then Re-Open? (Nature 1966)",
-        "url": "https://www.nature.com"
+        "label": "Wikipedia: Plate tectonics",
+        "url": "https://en.wikipedia.org/wiki/Plate_tectonics"
       }
     ]
   },
@@ -257,8 +252,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Albert Einstein — The Foundation of the General Theory of Relativity (Annalen der Physik 1916)",
-        "url": "https://einsteinpapers.press.princeton.edu"
+        "label": "Wikipedia: General relativity",
+        "url": "https://en.wikipedia.org/wiki/General_relativity"
       }
     ]
   },
@@ -276,8 +271,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Albert Einstein — On the Electrodynamics of Moving Bodies (1905)",
-        "url": "https://einsteinpapers.press.princeton.edu"
+        "label": "Wikipedia: Special relativity",
+        "url": "https://en.wikipedia.org/wiki/Special_relativity"
       }
     ]
   },
@@ -295,8 +290,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Stephen W. Hawking — Particle Creation by Black Holes (Communications in Mathematical Physics 1975)",
-        "url": "https://projecteuclid.org"
+        "label": "Wikipedia: Black hole thermodynamics",
+        "url": "https://en.wikipedia.org/wiki/Black_hole_thermodynamics"
       }
     ]
   },
@@ -314,8 +309,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Arno Penzias & Robert Wilson — A Measurement of Excess Antenna Temperature (Astrophysical Journal 1965)",
-        "url": "https://iopscience.iop.org"
+        "label": "Wikipedia: Cosmic background radiation",
+        "url": "https://en.wikipedia.org/wiki/Cosmic_background_radiation"
       }
     ]
   },
@@ -333,8 +328,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Vera C. Rubin & W. Kent Ford — Rotation of the Andromeda Nebula from a Spectroscopic Survey (1970)",
-        "url": "https://iopscience.iop.org"
+        "label": "Wikipedia: Dark matter halo",
+        "url": "https://en.wikipedia.org/wiki/Dark_matter_halo"
       }
     ]
   },
@@ -390,8 +385,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Peter Higgs — Broken Symmetries and the Masses of Gauge Bosons (Phys. Rev. Lett. 1964)",
-        "url": "https://journals.aps.org"
+        "label": "Wikipedia: Higgs mechanism",
+        "url": "https://en.wikipedia.org/wiki/Higgs_mechanism"
       }
     ]
   },
@@ -409,8 +404,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Edward N. Lorenz — Deterministic Nonperiodic Flow (Journal of the Atmospheric Sciences 1963)",
-        "url": "https://journals.ametsoc.org"
+        "label": "Wikipedia: Butterfly effect",
+        "url": "https://en.wikipedia.org/wiki/Butterfly_effect"
       }
     ]
   },
@@ -426,12 +421,7 @@ export const topics = [
       "cellular-automata",
       "emergence"
     ],
-    "resources": [
-      {
-        "label": "Martin Gardner — Mathematical Games: The fantastic combinations of John Conway's new game of 'life' (1970)",
-        "url": "https://www.scientificamerican.com"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "epigenetics-dna-methylation",
@@ -447,8 +437,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Adrian Bird — DNA Methylation Patterns and Epigenetic Memory (Genes & Development 2002)",
-        "url": "https://genesdev.cshlp.org"
+        "label": "Wikipedia: Epigenetics",
+        "url": "https://en.wikipedia.org/wiki/Epigenetics"
       }
     ]
   },
@@ -466,8 +456,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Leonard Hayflick — The Serial Cultivation of Human Diploid Cell Strains (1961)",
-        "url": "https://www.sciencedirect.com"
+        "label": "Wikipedia: Hayflick limit",
+        "url": "https://en.wikipedia.org/wiki/Hayflick_limit"
       }
     ]
   },
@@ -483,12 +473,7 @@ export const topics = [
       "medicine",
       "biology"
     ],
-    "resources": [
-      {
-        "label": "Janeway's Immunobiology (Garland Science)",
-        "url": "https://www.ncbi.nlm.nih.gov/books/NBK10757/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "prions-protein-misfolding",
@@ -502,12 +487,7 @@ export const topics = [
       "pathology",
       "prions"
     ],
-    "resources": [
-      {
-        "label": "Stanley B. Prusiner — Novel Proteinaceous Infectious Particles Cause Scrapie (Science 1982)",
-        "url": "https://www.science.org"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "anthropocene-sixth-extinction",
@@ -523,8 +503,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Paul Crutzen & Eugene Stoermer — The 'Anthropocene' (IGBP Newsletter 2000)",
-        "url": "https://www.igbp.net"
+        "label": "Wikipedia: Anthropocene",
+        "url": "https://en.wikipedia.org/wiki/Anthropocene"
       }
     ]
   },
@@ -540,12 +520,7 @@ export const topics = [
       "exoplanets",
       "kepler"
     ],
-    "resources": [
-      {
-        "label": "NASA Exoplanet Exploration Program",
-        "url": "https://exoplanets.nasa.gov"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "stellar-nucleosynthesis-fusion",
@@ -561,8 +536,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Burbidge, Burbidge, Fowler & Hoyle — Synthesis of the Elements in Stars (Reviews of Modern Physics 1957)",
-        "url": "https://journals.aps.org"
+        "label": "Wikipedia: Stellar nucleosynthesis",
+        "url": "https://en.wikipedia.org/wiki/Stellar_nucleosynthesis"
       }
     ]
   },
@@ -580,8 +555,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Abbott et al. — Multi-messenger Observations of a Binary Neutron Star Merger (Astrophysical Journal Letters 2017)",
-        "url": "https://iopscience.iop.org"
+        "label": "Wikipedia: Neutron star merger",
+        "url": "https://en.wikipedia.org/wiki/Neutron_star_merger"
       }
     ]
   },
@@ -599,8 +574,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Heinrich Holland — The Oxygenation of the Atmosphere and Oceans (Phil. Trans. R. Soc. B 2006)",
-        "url": "https://royalsocietypublishing.org"
+        "label": "Wikipedia: Great Oxidation Event",
+        "url": "https://en.wikipedia.org/wiki/Great_Oxidation_Event"
       }
     ]
   },
@@ -637,8 +612,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Stephen Jay Gould — Wonderful Life: The Burgess Shale and the Nature of History",
-        "url": "https://wwnorton.com"
+        "label": "Wikipedia: Cambrian explosion",
+        "url": "https://en.wikipedia.org/wiki/Cambrian_explosion"
       }
     ]
   },
@@ -656,8 +631,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "G. H. Hardy — Mendelian Proportions in a Mixed Population (Science 1908)",
-        "url": "https://www.science.org"
+        "label": "Wikipedia: Hardy–Weinberg principle",
+        "url": "https://en.wikipedia.org/wiki/Hardy%E2%80%93Weinberg_principle"
       }
     ]
   },
@@ -675,8 +650,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Gross & Wilczek — Ultraviolet Behavior of Non-Abelian Gauge Theories (1973)",
-        "url": "https://journals.aps.org"
+        "label": "Wikipedia: Quantum chromodynamics",
+        "url": "https://en.wikipedia.org/wiki/Quantum_chromodynamics"
       }
     ]
   },
@@ -694,8 +669,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Bardeen, Cooper & Schrieffer — Theory of Superconductivity (Physical Review 1957)",
-        "url": "https://journals.aps.org"
+        "label": "Wikipedia: BCS theory",
+        "url": "https://en.wikipedia.org/wiki/BCS_theory"
       }
     ]
   },
@@ -713,8 +688,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Albert Einstein — Concerning an Heuristic Point of View Toward the Emission and Transformation of Light (1905)",
-        "url": "https://einsteinpapers.press.princeton.edu"
+        "label": "Wikipedia: Photovoltaic effect",
+        "url": "https://en.wikipedia.org/wiki/Photovoltaic_effect"
       }
     ]
   },
@@ -749,12 +724,7 @@ export const topics = [
       "thermodynamics",
       "origin-of-life"
     ],
-    "resources": [
-      {
-        "label": "Erwin Schrödinger — What is Life? The Physical Aspect of the Living Cell (Cambridge)",
-        "url": "https://www.cambridge.org"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "miller-urey-abiogenesis",
@@ -770,8 +740,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Stanley L. Miller — A Production of Amino Acids Under Possible Primitive Earth Conditions (Science 1953)",
-        "url": "https://www.science.org"
+        "label": "Wikipedia: Miller–Urey experiment",
+        "url": "https://en.wikipedia.org/wiki/Miller%E2%80%93Urey_experiment"
       }
     ]
   },
@@ -787,12 +757,7 @@ export const topics = [
       "biology",
       "mendel"
     ],
-    "resources": [
-      {
-        "label": "Gregor Mendel — Experiments in Plant Hybridization (1866)",
-        "url": "https://www.mendelweb.org"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "drake-equation-seti",
@@ -827,8 +792,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Edwin Hubble — A Relation between Distance and Radial Velocity among Extra-Galactic Nebulae (PNAS 1929)",
-        "url": "https://www.pnas.org"
+        "label": "Wikipedia: Hubble's law",
+        "url": "https://en.wikipedia.org/wiki/Hubble's_law"
       }
     ]
   },
@@ -846,8 +811,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Hans Bethe — Energy Production in Stars (Physical Review 1939)",
-        "url": "https://journals.aps.org"
+        "label": "Wikipedia: CNO cycle",
+        "url": "https://en.wikipedia.org/wiki/CNO_cycle"
       }
     ]
   },
@@ -865,8 +830,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Cann, Stoneking & Wilson — Mitochondrial DNA and Human Evolution (Nature 1987)",
-        "url": "https://www.nature.com"
+        "label": "Wikipedia: Mitochondrial Eve",
+        "url": "https://en.wikipedia.org/wiki/Mitochondrial_Eve"
       }
     ]
   },
@@ -884,8 +849,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Elizabeth Eisenstein — The Printing Press as an Agent of Change (Cambridge)",
-        "url": "https://www.cambridge.org"
+        "label": "Wikipedia: Movable type",
+        "url": "https://en.wikipedia.org/wiki/Movable_type"
       }
     ]
   },
@@ -903,8 +868,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "H. W. Dickinson — A Short History of the Steam Engine (Cambridge)",
-        "url": "https://www.cambridge.org"
+        "label": "Wikipedia: James Watt",
+        "url": "https://en.wikipedia.org/wiki/James_Watt"
       }
     ]
   },
@@ -922,8 +887,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Henry Bessemer — Sir Henry Bessemer: An Autobiography",
-        "url": "https://archive.org"
+        "label": "Wikipedia: Bessemer process",
+        "url": "https://en.wikipedia.org/wiki/Bessemer_process"
       }
     ]
   },
@@ -941,8 +906,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Michael Riordan & Lillian Hoddeson — Crystal Fire: The Invention of the Transistor",
-        "url": "https://wwnorton.com"
+        "label": "Wikipedia: Point-contact transistor",
+        "url": "https://en.wikipedia.org/wiki/Point-contact_transistor"
       }
     ]
   },
@@ -979,8 +944,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Tom Standage — The Victorian Internet: The Remarkable Story of the Telegraph",
-        "url": "https://www.bloomsbury.com"
+        "label": "Wikipedia: Electric Telegraph Company",
+        "url": "https://en.wikipedia.org/wiki/Electric_Telegraph_Company"
       }
     ]
   },
@@ -1017,8 +982,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Benn Steil — The Battle of Bretton Woods: John Maynard Keynes, Harry Dexter White, and the Making of a New World Order",
-        "url": "https://press.princeton.edu"
+        "label": "Wikipedia: Bretton Woods system",
+        "url": "https://en.wikipedia.org/wiki/Bretton_Woods_system"
       }
     ]
   },
@@ -1036,8 +1001,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Peter Frankopan — The Silk Roads: A New History of the World",
-        "url": "https://www.bloomsbury.com"
+        "label": "Wikipedia: Silk Road",
+        "url": "https://en.wikipedia.org/wiki/Silk_Road"
       }
     ]
   },
@@ -1074,7 +1039,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Robert Koch — The Etiology of Anthrax (1876)",
+        "label": "Wikipedia: Germ theory of disease",
         "url": "https://en.wikipedia.org/wiki/Germ_theory_of_disease"
       }
     ]
@@ -1093,8 +1058,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "James Lind — A Treatise of the Scurvy (1753)",
-        "url": "https://archive.org"
+        "label": "Wikipedia: James Lind",
+        "url": "https://en.wikipedia.org/wiki/James_Lind"
       }
     ]
   },
@@ -1110,12 +1075,7 @@ export const topics = [
       "history-of-science",
       "india"
     ],
-    "resources": [
-      {
-        "label": "Brahmagupta — Brahmasphutasiddhanta (628 CE)",
-        "url": "https://en.wikipedia.org/wiki/Brahmasphutasiddhanta"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "turing-enigma-bletchley-cryptanalysis",
@@ -1131,8 +1091,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Andrew Hodges — Alan Turing: The Enigma (Princeton University Press)",
-        "url": "https://press.princeton.edu"
+        "label": "Wikipedia: Alan Turing",
+        "url": "https://en.wikipedia.org/wiki/Alan_Turing"
       }
     ]
   },
@@ -1150,8 +1110,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Paul Baran — On Distributed Communications (RAND Corporation 1964)",
-        "url": "https://www.rand.org"
+        "label": "Wikipedia: Packet switching",
+        "url": "https://en.wikipedia.org/wiki/Packet_switching"
       }
     ]
   },
@@ -1169,8 +1129,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Tim Berners-Lee — Information Management: A Proposal (CERN 1989)",
-        "url": "https://www.w3.org/History/1989/proposal.html"
+        "label": "Wikipedia: Tim Berners-Lee",
+        "url": "https://en.wikipedia.org/wiki/Tim_Berners-Lee"
       }
     ]
   },
@@ -1188,8 +1148,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Henry Ford — My Life and Work (Doubleday 1922)",
-        "url": "https://archive.org"
+        "label": "Wikipedia: Assembly line",
+        "url": "https://en.wikipedia.org/wiki/Assembly_line"
       }
     ]
   },
@@ -1226,8 +1186,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Marc Levinson — The Box: How the Shipping Container Made the World Smaller and the World Economy Bigger",
-        "url": "https://press.princeton.edu"
+        "label": "Wikipedia: Malcolm McLean",
+        "url": "https://en.wikipedia.org/wiki/Malcolm_McLean"
       }
     ]
   },
@@ -1264,8 +1224,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Margaret Hamilton — Universal Systems Language and the Apollo Computer",
-        "url": "https://www.nasa.gov"
+        "label": "Wikipedia: Apollo Guidance Computer",
+        "url": "https://en.wikipedia.org/wiki/Apollo_Guidance_Computer"
       }
     ]
   },
@@ -1283,8 +1243,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Jill Jonnes — Empires of Light: Edison, Tesla, Westinghouse, and the Race to Electrify the World",
-        "url": "https://www.penguinrandomhouse.com"
+        "label": "Wikipedia: War of the currents",
+        "url": "https://en.wikipedia.org/wiki/War_of_the_currents"
       }
     ]
   },
@@ -1302,8 +1262,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Dava Sobel — Longitude: The True Story of a Lone Genius Who Solved the Greatest Scientific Problem of His Time",
-        "url": "https://www.bloomsbury.com"
+        "label": "Wikipedia: John Harrison",
+        "url": "https://en.wikipedia.org/wiki/John_Harrison"
       }
     ]
   },
@@ -1359,8 +1319,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "The British Library — Magna Carta: An Introduction",
-        "url": "https://www.bl.uk/magna-carta"
+        "label": "Wikipedia: Magna Carta",
+        "url": "https://en.wikipedia.org/wiki/Magna_Carta"
       }
     ]
   },
@@ -1378,8 +1338,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "The British Museum — Everything You Ever Wanted to Know About the Rosetta Stone",
-        "url": "https://www.britishmuseum.org"
+        "label": "Wikipedia: Rosetta Stone",
+        "url": "https://en.wikipedia.org/wiki/Rosetta_Stone"
       }
     ]
   },
@@ -1397,8 +1357,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Leo Gross — The Peace of Westphalia, 1648–1948 (American Journal of International Law)",
-        "url": "https://www.jstor.org"
+        "label": "Wikipedia: Peace of Westphalia",
+        "url": "https://en.wikipedia.org/wiki/Peace_of_Westphalia"
       }
     ]
   },
@@ -1454,8 +1414,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Vitruvius — De architectura (Ten Books on Architecture)",
-        "url": "https://en.wikipedia.org/wiki/De_architectura"
+        "label": "Wikipedia: List of aqueducts in the Roman Empire",
+        "url": "https://en.wikipedia.org/wiki/List_of_aqueducts_in_the_Roman_Empire"
       }
     ]
   },
@@ -1473,8 +1433,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "David S. Landes — Revolution in Time: Clocks and the Making of the Modern World (Harvard)",
-        "url": "https://www.hup.harvard.edu"
+        "label": "Wikipedia: Verge escapement",
+        "url": "https://en.wikipedia.org/wiki/Verge_escapement"
       }
     ]
   },
@@ -1492,8 +1452,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Richard Rhodes — The Making of the Atomic Bomb (Simon & Schuster)",
-        "url": "https://www.simonandschuster.com"
+        "label": "Wikipedia: Manhattan Project",
+        "url": "https://en.wikipedia.org/wiki/Manhattan_Project"
       }
     ]
   },
@@ -1511,8 +1471,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "David M. Oshinsky — Polio: An American Story (Oxford University Press)",
-        "url": "https://global.oup.com"
+        "label": "Wikipedia: Jonas Salk",
+        "url": "https://en.wikipedia.org/wiki/Jonas_Salk"
       }
     ]
   },
@@ -1549,8 +1509,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Charles K. Kao & G. A. Hockham — Dielectric-fibre surface waveguides for optical frequencies (1966)",
-        "url": "https://digital-library.theiet.org"
+        "label": "Wikipedia: Fiber-optic cable",
+        "url": "https://en.wikipedia.org/wiki/Fiber-optic_cable"
       }
     ]
   },
@@ -1568,8 +1528,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Denis Twitchett & Michael Loewe — The Cambridge History of China: Volume 1",
-        "url": "https://www.cambridge.org"
+        "label": "Wikipedia: Cai Lun",
+        "url": "https://en.wikipedia.org/wiki/Cai_Lun"
       }
     ]
   },
@@ -1585,12 +1545,7 @@ export const topics = [
       "maritime",
       "exploration"
     ],
-    "resources": [
-      {
-        "label": "Joseph Needham — Science and Civilisation in China (Volume 4)",
-        "url": "https://www.cambridge.org"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "torricelli-barometer-vacuum",
@@ -1644,8 +1599,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "International Meridian Conference (Washington 1884 Proceedings)",
-        "url": "https://www.gutenberg.org"
+        "label": "Wikipedia: Sandford Fleming",
+        "url": "https://en.wikipedia.org/wiki/Sandford_Fleming"
       }
     ]
   },
@@ -1663,8 +1618,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Neil Ashby — Relativity in the Global Positioning System (Living Reviews in Relativity)",
-        "url": "https://link.springer.com"
+        "label": "Wikipedia: Global Positioning System",
+        "url": "https://en.wikipedia.org/wiki/Global_Positioning_System"
       }
     ]
   },
@@ -1682,8 +1637,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "David Haward Bain — Empire Express: Building the First Transcontinental Railroad",
-        "url": "https://www.penguinrandomhouse.com"
+        "label": "Wikipedia: First transcontinental railroad",
+        "url": "https://en.wikipedia.org/wiki/First_transcontinental_railroad"
       }
     ]
   },
@@ -1701,8 +1656,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Louis Pasteur — Studies on Fermentation (1876)",
-        "url": "https://archive.org"
+        "label": "Wikipedia: Louis Pasteur",
+        "url": "https://en.wikipedia.org/wiki/Louis_Pasteur"
       }
     ]
   },
@@ -1720,8 +1675,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Michael Robbins — The Railway Age in Britain (Penguin)",
-        "url": "https://www.penguin.co.uk"
+        "label": "Wikipedia: Stephenson's Rocket",
+        "url": "https://en.wikipedia.org/wiki/Stephenson's_Rocket"
       }
     ]
   }
