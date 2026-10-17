@@ -955,8 +955,10 @@ function isBoilerplateMetadata(line) {
 /**
  * Detects cover / title / metadata slides that should not become learning cards.
  */
-export function isCoverSlide(lines) {
+export function isCoverSlide(lines, slideNumber = 1) {
   if (!lines || lines.length === 0) return false;
+  // Cover slides only appear at the beginning of a document (slide 1 or 2)
+  if (slideNumber > 2) return false;
   const text = lines.join(' ').toLowerCase();
   const academicTerms = [
     'technical seminar', 'guide:', 'academic year', 'semester', 'department of',
@@ -1709,9 +1711,20 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     cleaned: cleanText(line)
   }));
 
+  // If rawSections was not passed or empty, but fullText contains form feeds \f, split into sections by \f
+  let effectiveRawSections = rawSections;
+  if ((!effectiveRawSections || effectiveRawSections.length === 0) && fullText && fullText.includes('\f')) {
+    effectiveRawSections = fullText.split(/\f/).map((s, idx) => ({
+      text: s.trim(),
+      slideNumber: idx + 1,
+      startLine: 1,
+      endLine: 1
+    })).filter(s => s.text.length > 0);
+  }
+
   // Normalize sections and attach structural title metadata if provided
   const slideMetadata = options.slideMetadata || [];
-  const normalizedSections = (Array.isArray(rawSections) && rawSections.length > 0 ? rawSections : []).map((sec, idx) => {
+  const normalizedSections = (Array.isArray(effectiveRawSections) && effectiveRawSections.length > 0 ? effectiveRawSections : []).map((sec, idx) => {
     if (typeof sec === 'string') {
       const meta = slideMetadata[idx] || {};
       return {
@@ -1761,7 +1774,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       recordPageOutcome(pageNum, 'skipped', 'empty or unreadable');
       return;
     }
-    if (isCoverSlide(rawLines) || isCoverSlide(lines)) {
+    if (isCoverSlide(rawLines, pageNum) || isCoverSlide(lines, pageNum)) {
       recordPageOutcome(pageNum, 'skipped', 'cover filter');
       return;
     }
@@ -1802,13 +1815,13 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     let secStartLine = 1;
 
     allDocLines.forEach(({ lineNum, raw, cleaned }) => {
-      const isHeaderBreak = /^#{1,6}\s+/.test(raw.trim()) || /^---+$/.test(raw.trim());
+      const isHeaderBreak = /^#{1,6}\s+/.test(raw.trim()) || /^---+$/.test(raw.trim()) || raw.includes('\f');
       if (isHeaderBreak && currentSectionLines.length > 0) {
         const secText = currentSectionLines.map(l => l.cleaned).join('\n');
         const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
         const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
         const isContentSec = (secText.trim().length >= CONTENT_PAGE_MIN_CHARS);
-        if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && !isOutlineLikePage(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
+        if (rawLines.length > 0 && !isCoverSlide(rawLines, validSections.length + 1) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && !isOutlineLikePage(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
           validSections.push({
             index: validSections.length,
             lines: rawLines,
@@ -1835,7 +1848,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
       const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
       const isContentSec = (secText.trim().length >= CONTENT_PAGE_MIN_CHARS);
-      if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && !isOutlineLikePage(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
+      if (rawLines.length > 0 && !isCoverSlide(rawLines, validSections.length + 1) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && !isOutlineLikePage(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
         validSections.push({
           index: validSections.length,
           lines: rawLines,
@@ -2497,7 +2510,8 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   // For longer documents with at least 2 structured topics, keep structured result.
   const isImageOrMedia = /\.(png|jpe?g|webp|bmp|gif)$/i.test(sourceFileName || '');
   const isShort = cleaned.length < 600 || (isImageOrMedia && cleaned.length < 1200);
-  const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60);
+  const isSingleTopicLowCoverage = structuredTopics.length === 1 && cleaned.length >= 2000 && structuredCoverage < 0.15;
+  const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60) || isSingleTopicLowCoverage;
 
   if (!shouldFallback) {
     return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);

@@ -366,7 +366,7 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
   const allWarnings = [cancelWarning, ocrCapWarning, emptyWarning].filter(Boolean);
   const warning = allWarnings.length > 0 ? allWarnings.join(' ') : null;
 
-  const combinedText = pages.map(p => p.text).filter(Boolean).join('\n\n').trim();
+  const combinedText = pages.map(p => p.text).filter(Boolean).join('\n\n\f\n\n').trim();
 
   if (!combinedText || combinedText.length < 20) {
     if (cancelled) {
