@@ -353,12 +353,7 @@ export const topics = [
       "communication",
       "professional-development"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Situation-Behavior-Impact",
-        "url": "https://en.wikipedia.org/wiki/Situation-Behavior-Impact"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "radical-candor-care-personally-challenge-directly",
@@ -848,12 +843,7 @@ export const topics = [
       "conflict",
       "cognitive-bias"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Hawkes' ladder of inference",
-        "url": "https://en.wikipedia.org/wiki/Hawkes'_ladder_of_inference"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "high-context-vs-low-context-communication-hall",
@@ -2322,7 +2312,12 @@ export const topics = [
       "numerical-cognition",
       "psychology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Anchoring effect",
+        "url": "https://en.wikipedia.org/wiki/Anchoring_and_adjustment_heuristic"
+      }
+    ]
   },
   {
     "id": "dunning-kruger-effect-metacognitive-calibration",
@@ -2589,12 +2584,7 @@ export const topics = [
       "ethics",
       "agentic-state"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Milgram experiment",
-        "url": "https://en.wikipedia.org/wiki/Milgram_experiment"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "bystander-effect-and-diffusion-of-responsibility",
@@ -2719,7 +2709,12 @@ export const topics = [
       "cognitive-bias",
       "ethics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Just-world fallacy",
+        "url": "https://en.wikipedia.org/wiki/Just-World_Hypothesis"
+      }
+    ]
   },
   {
     "id": "false-consensus-effect-and-egocentric-projection",
@@ -2757,12 +2752,7 @@ export const topics = [
       "self-perception",
       "persuasion"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Foot-in-the-door technique",
-        "url": "https://en.wikipedia.org/wiki/Foot-in-the-door_technique"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "ebbinghaus-forgetting-curve-and-spaced-repetition",
@@ -2799,12 +2789,7 @@ export const topics = [
       "learning",
       "memory"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Testing effect",
-        "url": "https://en.wikipedia.org/wiki/Testing_effect"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "working-memory-and-baddeley-multicomponent-model",
@@ -2862,12 +2847,7 @@ export const topics = [
       "eyewitness-testimony",
       "memory"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Misinformation effect",
-        "url": "https://en.wikipedia.org/wiki/Misinformation_effect"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "dual-coding-theory-paivio",
@@ -2946,12 +2926,7 @@ export const topics = [
       "war-of-the-ghosts",
       "cognitive-psychology"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Constructive set theory",
-        "url": "https://en.wikipedia.org/wiki/Constructive_set_theory"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "dual-process-theory-system-1-vs-system-2",
@@ -3093,12 +3068,7 @@ export const topics = [
       "delay-of-gratification",
       "behavioral-economics"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Hyperbolic discounting",
-        "url": "https://en.wikipedia.org/wiki/Hyperbolic_discounting"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "expectancy-value-theory-vroom-work-motivation",
@@ -3135,12 +3105,7 @@ export const topics = [
       "psychometrics",
       "costa-mccrae"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Big Five personality traits",
-        "url": "https://en.wikipedia.org/wiki/Big_Five_personality_traits"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "psychometric-critiques-of-the-mbti",
@@ -3156,12 +3121,7 @@ export const topics = [
       "bimodal-distribution",
       "personality"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Myers–Briggs Type Indicator",
-        "url": "https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "personality-trait-stability-and-the-maturity-principle",
@@ -3552,12 +3512,7 @@ export const topics = [
       "group-dynamics",
       "crowd-psychology"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Social loafing",
-        "url": "https://en.wikipedia.org/wiki/Social_loafing"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "social-facilitation-vs-inhibition-zajonc-drive-theory",
@@ -3709,8 +3664,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Anti-Hebbian learning",
-        "url": "https://en.wikipedia.org/wiki/Anti-Hebbian_learning"
+        "label": "Wikipedia: Hebbian theory",
+        "url": "https://en.wikipedia.org/wiki/Hebbian_theory"
       }
     ]
   },
@@ -3812,12 +3767,7 @@ export const topics = [
       "intrinsic-motivation",
       "focus"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Flow (psychology)",
-        "url": "https://en.wikipedia.org/wiki/Flow_(psychology)"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "learned-helplessness-and-explanatory-styles-seligman",
@@ -3875,12 +3825,7 @@ export const topics = [
       "cognitive-flexibility",
       "resilience"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Broaden-and-build",
-        "url": "https://en.wikipedia.org/wiki/Broaden-and-build"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "perma-model-of-human-flourishing-seligman",

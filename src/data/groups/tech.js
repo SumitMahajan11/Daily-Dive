@@ -3248,12 +3248,7 @@ export const topics = [
       "hardware",
       "cloud-infra"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Block-level storage",
-        "url": "https://en.wikipedia.org/wiki/Block-level_storage"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "bloom-filter-probabilistic-membership",
@@ -3270,8 +3265,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Bloom filters in bioinformatics",
-        "url": "https://en.wikipedia.org/wiki/Bloom_filters_in_bioinformatics"
+        "label": "Wikipedia: Bloom filter",
+        "url": "https://en.wikipedia.org/wiki/Bloom_filter"
       }
     ]
   },
@@ -3369,12 +3364,7 @@ export const topics = [
       "databases",
       "indexing"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: B-tree",
-        "url": "https://en.wikipedia.org/wiki/B-tree"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "lsm-tree-write-optimized-storage",
@@ -3449,12 +3439,7 @@ export const topics = [
       "radix-tree",
       "strings"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Trie",
-        "url": "https://en.wikipedia.org/wiki/Trie"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "skip-list-probabilistic-alternative",
@@ -3489,12 +3474,7 @@ export const topics = [
       "avl-tree",
       "balanced-trees"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Red–black tree",
-        "url": "https://en.wikipedia.org/wiki/Red%E2%80%93black_tree"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "splay-tree-self-adjusting-search",
@@ -3689,12 +3669,7 @@ export const topics = [
       "dynamic-programming",
       "bellman-ford"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Bellman–Ford algorithm",
-        "url": "https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "lowest-common-ancestor-binary-lifting",
@@ -3750,12 +3725,7 @@ export const topics = [
       "flow",
       "algorithms"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Maximum-cardinality matching",
-        "url": "https://en.wikipedia.org/wiki/Maximum-cardinality_matching"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "raft-consensus-algorithm",
@@ -3770,12 +3740,7 @@ export const topics = [
       "raft",
       "replication"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Raft (algorithm)",
-        "url": "https://en.wikipedia.org/wiki/Raft_(algorithm)"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "paxos-consensus-protocol",
@@ -3790,12 +3755,7 @@ export const topics = [
       "paxos",
       "fault-tolerance"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Paxos (computer science)",
-        "url": "https://en.wikipedia.org/wiki/Paxos_(computer_science)"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "lamport-timestamps-and-vector-clocks",
@@ -3890,12 +3850,7 @@ export const topics = [
       "consensus",
       "pbft"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Byzantine fault",
-        "url": "https://en.wikipedia.org/wiki/Byzantine_fault"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "chandy-lamport-distributed-snapshots",
@@ -3990,12 +3945,7 @@ export const topics = [
       "automata",
       "pattern-matching"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Aho–Corasick algorithm",
-        "url": "https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_algorithm"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "levenshtein-edit-distance-wagner-fischer",
@@ -4091,12 +4041,7 @@ export const topics = [
       "quickselect",
       "median-of-medians"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Median of medians",
-        "url": "https://en.wikipedia.org/wiki/Median_of_medians"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "external-merge-sort-out-of-memory",
@@ -4211,12 +4156,7 @@ export const topics = [
       "fks",
       "data-structures"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Dynamic perfect hashing",
-        "url": "https://en.wikipedia.org/wiki/Dynamic_perfect_hashing"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "robin-hood-and-cuckoo-hashing",
@@ -4231,12 +4171,7 @@ export const topics = [
       "cuckoo-hashing",
       "open-addressing"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Open addressing",
-        "url": "https://en.wikipedia.org/wiki/Open_addressing"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "siphash-and-hashdos-defense",
@@ -4271,12 +4206,7 @@ export const topics = [
       "memoization",
       "tabulation"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Dynamic programming",
-        "url": "https://en.wikipedia.org/wiki/Dynamic_programming"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "longest-common-subsequence-diff-algorithms",
@@ -4411,12 +4341,7 @@ export const topics = [
       "potential-method",
       "algorithms"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Amortized analysis",
-        "url": "https://en.wikipedia.org/wiki/Amortized_analysis"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "p-vs-np-and-np-completeness-reductions",
@@ -4431,12 +4356,7 @@ export const topics = [
       "np-complete",
       "cook-levin"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: P versus NP problem",
-        "url": "https://en.wikipedia.org/wiki/P_versus_NP_problem"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "competitive-analysis-online-algorithms",
@@ -4531,12 +4451,7 @@ export const topics = [
       "union-find",
       "amortized"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Disjoint-set data structure",
-        "url": "https://en.wikipedia.org/wiki/Disjoint-set_data_structure"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "lock-free-queue-michael-scott",
@@ -4566,12 +4481,7 @@ export const topics = [
       "hazard-pointers",
       "memory-reclamation"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: ABA problem",
-        "url": "https://en.wikipedia.org/wiki/ABA_problem"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "read-copy-update-rcu-synchronization",
@@ -4626,12 +4536,7 @@ export const topics = [
       "deque",
       "schedulers"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Work stealing",
-        "url": "https://en.wikipedia.org/wiki/Work_stealing"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "spatial-indices-r-tree-and-kd-tree",
@@ -4647,12 +4552,7 @@ export const topics = [
       "kd-tree",
       "geometry"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: R-tree",
-        "url": "https://en.wikipedia.org/wiki/R-tree"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "persistent-data-structures-fat-nodes-node-copying",
@@ -4707,12 +4607,7 @@ export const topics = [
       "fibonacci-heap",
       "pairing-heap"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Fibonacci heap",
-        "url": "https://en.wikipedia.org/wiki/Fibonacci_heap"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "sequential-consistency-lamport",
@@ -4812,12 +4707,7 @@ export const topics = [
       "x86",
       "arm"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Memory model (programming)",
-        "url": "https://en.wikipedia.org/wiki/Memory_model_(programming)"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "release-consistency-and-acquire-release-semantics",
@@ -4894,8 +4784,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Non-uniform memory access",
-        "url": "https://en.wikipedia.org/wiki/Non-uniform_memory_access"
+        "label": "Wikipedia: Directory-based cache coherence",
+        "url": "https://en.wikipedia.org/wiki/Directory-based_cache_coherence"
       }
     ]
   },

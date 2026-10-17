@@ -17,12 +17,7 @@ export const topics = [
       "thermodynamics",
       "entropy"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Second law of thermodynamics",
-        "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
-      }
-    ],
+    "resources": [],
     "lesson": {
       "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system consistently increases over time.",
       "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in a forward direction.",
@@ -79,12 +74,7 @@ export const topics = [
       "crispr",
       "genetics"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: CRISPR",
-        "url": "https://en.wikipedia.org/wiki/CRISPR"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "central-dogma-molecular-biology",
@@ -122,12 +112,7 @@ export const topics = [
       "biology",
       "genetics"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Genetic drift",
-        "url": "https://en.wikipedia.org/wiki/Genetic_drift"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "neuroplasticity-synaptic-pruning",
@@ -314,8 +299,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Cosmic background radiation",
-        "url": "https://en.wikipedia.org/wiki/Cosmic_background_radiation"
+        "label": "Wikipedia: Cosmic microwave background",
+        "url": "https://en.wikipedia.org/wiki/Cosmic_microwave_background"
       }
     ]
   },
@@ -333,8 +318,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Dark matter halo",
-        "url": "https://en.wikipedia.org/wiki/Dark_matter_halo"
+        "label": "Wikipedia: Dark matter",
+        "url": "https://en.wikipedia.org/wiki/Dark_matter"
       }
     ]
   },
@@ -409,8 +394,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Butterfly effect",
-        "url": "https://en.wikipedia.org/wiki/Butterfly_effect"
+        "label": "Wikipedia: Chaos theory",
+        "url": "https://en.wikipedia.org/wiki/Chaos_theory"
       }
     ]
   },
@@ -426,12 +411,7 @@ export const topics = [
       "cellular-automata",
       "emergence"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Cellular automaton",
-        "url": "https://en.wikipedia.org/wiki/Cellular_automaton"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "epigenetics-dna-methylation",
@@ -466,8 +446,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Hayflick limit",
-        "url": "https://en.wikipedia.org/wiki/Hayflick_limit"
+        "label": "Wikipedia: Telomere",
+        "url": "https://en.wikipedia.org/wiki/Telomere"
       }
     ]
   },
@@ -535,12 +515,7 @@ export const topics = [
       "exoplanets",
       "kepler"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Methods of detecting exoplanets",
-        "url": "https://en.wikipedia.org/wiki/Methods_of_detecting_exoplanets"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "stellar-nucleosynthesis-fusion",
@@ -573,12 +548,7 @@ export const topics = [
       "elements",
       "kilonova"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Neutron star merger",
-        "url": "https://en.wikipedia.org/wiki/Neutron_star_merger"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "great-oxidation-event-cyanobacteria",
@@ -649,12 +619,7 @@ export const topics = [
       "population-genetics",
       "biology"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Hardy–Weinberg principle",
-        "url": "https://en.wikipedia.org/wiki/Hardy%E2%80%93Weinberg_principle"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "quantum-chromodynamics-gluons",
@@ -687,12 +652,7 @@ export const topics = [
       "superconductivity",
       "physics"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: BCS theory",
-        "url": "https://en.wikipedia.org/wiki/BCS_theory"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "photovoltaic-effect-bandgaps",
@@ -744,12 +704,7 @@ export const topics = [
       "thermodynamics",
       "origin-of-life"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Negentropy",
-        "url": "https://en.wikipedia.org/wiki/Negentropy"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "miller-urey-abiogenesis",
@@ -782,12 +737,7 @@ export const topics = [
       "biology",
       "mendel"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Mendelian inheritance",
-        "url": "https://en.wikipedia.org/wiki/Mendelian_inheritance"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "drake-equation-seti",
@@ -820,12 +770,7 @@ export const topics = [
       "astronomy",
       "big-bang"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Hubble's law",
-        "url": "https://en.wikipedia.org/wiki/Hubble's_law"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "cno-cycle-nucleosynthesis",
@@ -839,12 +784,7 @@ export const topics = [
       "nuclear-physics",
       "stars"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: CNO cycle",
-        "url": "https://en.wikipedia.org/wiki/CNO_cycle"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "mitochondrial-eve-coalescence",
@@ -879,8 +819,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Movable type",
-        "url": "https://en.wikipedia.org/wiki/Movable_type"
+        "label": "Wikipedia: Printing press",
+        "url": "https://en.wikipedia.org/wiki/Printing_press"
       }
     ]
   },
@@ -898,8 +838,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: James Watt",
-        "url": "https://en.wikipedia.org/wiki/James_Watt"
+        "label": "Wikipedia: Watt steam engine",
+        "url": "https://en.wikipedia.org/wiki/Watt_steam_engine"
       }
     ]
   },
@@ -934,12 +874,7 @@ export const topics = [
       "computing",
       "bell-labs"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Point-contact transistor",
-        "url": "https://en.wikipedia.org/wiki/Point-contact_transistor"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "haber-bosch-nitrogen-fixation",
@@ -974,8 +909,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Electric Telegraph Company",
-        "url": "https://en.wikipedia.org/wiki/Electric_Telegraph_Company"
+        "label": "Wikipedia: Electrical telegraph",
+        "url": "https://en.wikipedia.org/wiki/Electrical_telegraph"
       }
     ]
   },
@@ -1010,12 +945,7 @@ export const topics = [
       "monetary-policy",
       "history"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Bretton Woods system",
-        "url": "https://en.wikipedia.org/wiki/Bretton_Woods_system"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "silk-road-economic-diffusion",
@@ -1067,12 +997,7 @@ export const topics = [
       "public-health",
       "microbiology"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Germ theory of disease",
-        "url": "https://en.wikipedia.org/wiki/Germ_theory_of_disease"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "james-lind-scurvy-trials",
@@ -1086,12 +1011,7 @@ export const topics = [
       "evidence-based-medicine",
       "history"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: James Lind",
-        "url": "https://en.wikipedia.org/wiki/James_Lind"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "brahmagupta-zero-decimal-system",
@@ -1126,8 +1046,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Alan Turing",
-        "url": "https://en.wikipedia.org/wiki/Alan_Turing"
+        "label": "Wikipedia: Bombe",
+        "url": "https://en.wikipedia.org/wiki/Bombe"
       }
     ]
   },
@@ -1145,8 +1065,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Packet switching",
-        "url": "https://en.wikipedia.org/wiki/Packet_switching"
+        "label": "Wikipedia: ARPANET",
+        "url": "https://en.wikipedia.org/wiki/ARPANET"
       }
     ]
   },
@@ -1181,12 +1101,7 @@ export const topics = [
       "economics",
       "fordism"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Assembly line",
-        "url": "https://en.wikipedia.org/wiki/Assembly_line"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "norman-borlaug-green-revolution",
@@ -1221,8 +1136,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Malcolm McLean",
-        "url": "https://en.wikipedia.org/wiki/Malcolm_McLean"
+        "label": "Wikipedia: Intermodal container",
+        "url": "https://en.wikipedia.org/wiki/Intermodal_container"
       }
     ]
   },
@@ -1297,8 +1212,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: John Harrison",
-        "url": "https://en.wikipedia.org/wiki/John_Harrison"
+        "label": "Wikipedia: Marine chronometer",
+        "url": "https://en.wikipedia.org/wiki/Marine_chronometer"
       }
     ]
   },
@@ -1449,8 +1364,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: List of aqueducts in the Roman Empire",
-        "url": "https://en.wikipedia.org/wiki/List_of_aqueducts_in_the_Roman_Empire"
+        "label": "Wikipedia: Roman aqueduct",
+        "url": "https://en.wikipedia.org/wiki/Roman_aqueduct"
       }
     ]
   },
@@ -1544,8 +1459,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Fiber-optic cable",
-        "url": "https://en.wikipedia.org/wiki/Fiber-optic_cable"
+        "label": "Wikipedia: Optical fiber",
+        "url": "https://en.wikipedia.org/wiki/Optical_fiber"
       }
     ]
   },
@@ -1563,8 +1478,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Cai Lun",
-        "url": "https://en.wikipedia.org/wiki/Cai_Lun"
+        "label": "Wikipedia: History of paper",
+        "url": "https://en.wikipedia.org/wiki/History_of_paper"
       }
     ]
   },
@@ -1634,8 +1549,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Sandford Fleming",
-        "url": "https://en.wikipedia.org/wiki/Sandford_Fleming"
+        "label": "Wikipedia: Standard time",
+        "url": "https://en.wikipedia.org/wiki/Standard_time"
       }
     ]
   },
@@ -1691,8 +1606,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Louis Pasteur",
-        "url": "https://en.wikipedia.org/wiki/Louis_Pasteur"
+        "label": "Wikipedia: Pasteurization",
+        "url": "https://en.wikipedia.org/wiki/Pasteurization"
       }
     ]
   },
@@ -1708,12 +1623,7 @@ export const topics = [
       "steam",
       "transportation"
     ],
-    "resources": [
-      {
-        "label": "Wikipedia: Stephenson's Rocket",
-        "url": "https://en.wikipedia.org/wiki/Stephenson's_Rocket"
-      }
-    ]
+    "resources": []
   }
 ];
 
