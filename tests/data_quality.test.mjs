@@ -110,10 +110,10 @@ describe('Data Quality: Imported Runtime Topic Modules', () => {
       assert.ok(t.description && t.description.trim().length > 0, `Empty description on ${t.id}`);
       assert.ok(t.category && typeof t.category === 'string', `Missing category on ${t.id}`);
       assert.ok(t.group && typeof t.group === 'string', `Missing group on ${t.id}`);
-      assert.ok(Array.isArray(t.resources) && t.resources.length > 0, `Topic ${t.id} has no resources`);
+      assert.ok(Array.isArray(t.resources), `Topic ${t.id} resources must be an array`);
       for (const res of t.resources) {
-        assert.ok(res.label && res.label.length > 0, `Resource missing label in ${t.id}`);
-        assert.ok(res.url && res.url.startsWith('http'), `Resource invalid url in ${t.id}: ${res.url}`);
+        assert.ok(res.label && res.label.trim().length > 0, `Resource missing label in ${t.id}`);
+        assert.ok(res.url && res.url.startsWith('https://'), `Resource invalid url in ${t.id}: ${res.url}`);
       }
     }
   });

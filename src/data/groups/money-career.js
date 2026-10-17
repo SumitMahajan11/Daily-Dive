@@ -21,16 +21,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Aswath Damodaran: Discounted Cash Flow Valuation (NYU Stern Lecture Notes)",
-        "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/valn2ed/ch12.pdf"
-      },
-      {
         "label": "CFA Institute: Free Cash Flow Valuation Refresher Reading",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/free-cash-flow-valuation"
-      },
-      {
-        "label": "Corporate Finance Institute: DCF Model Training & Formula Guide",
-        "url": "https://corporatefinanceinstitute.com/resources/valuation/dcf-formula-discounted-cash-flow/"
       }
     ]
   },
@@ -49,14 +41,6 @@ export const topics = [
       "valuation"
     ],
     "resources": [
-      {
-        "label": "Aswath Damodaran: Estimating Hurdle Rates and Cost of Capital (NYU Stern)",
-        "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/country/wacc.pdf"
-      },
-      {
-        "label": "CFA Institute: Cost of Capital and Capital Structure Analysis",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/cost-of-capital"
-      },
       {
         "label": "Harvard Business Review: A Refresher on Cost of Capital",
         "url": "https://hbr.org/2015/04/a-refresher-on-cost-of-capital"
@@ -78,14 +62,6 @@ export const topics = [
       "leverage"
     ],
     "resources": [
-      {
-        "label": "Franco Modigliani & Merton H. Miller: The Cost of Capital, Corporation Finance and the Theory of Investment (AER 1958)",
-        "url": "https://www.jstor.org/stable/1809766"
-      },
-      {
-        "label": "Stewart C. Myers: The Capital Structure Puzzle (Journal of Finance 1984)",
-        "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1984.tb03646.x"
-      },
       {
         "label": "CFA Institute: Capital Structure Decisions and Leverage Theory",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/capital-structure"
@@ -113,16 +89,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Harvard Business Review: The Art of M&A Due Diligence",
-        "url": "https://hbr.org/2010/06/the-art-of-ma-due-diligence"
-      },
-      {
-        "label": "Corporate Finance Institute: Accretion Dilution Model Guide",
-        "url": "https://corporatefinanceinstitute.com/resources/valuation/accretion-dilution-analysis/"
-      },
-      {
-        "label": "Aswath Damodaran: The Value of Synergy in Mergers & Acquisitions",
-        "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/synergy.pdf"
+        "label": "Wikipedia: Accretion/dilution analysis",
+        "url": "https://en.wikipedia.org/wiki/Accretion%2Fdilution_analysis"
       }
     ],
     "lesson": {
@@ -146,16 +114,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "SEC Office of Investor Education: Share Repurchases and Equity Capital Allocation",
-        "url": "https://www.sec.gov/investor/pubs/repurchases.htm"
-      },
-      {
-        "label": "Gustavo Grullon & David L. Ikenberry: What Do We Know About Stock Repurchases? (Journal of Applied Corporate Finance)",
-        "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1745-6622.2000.tb00040.x"
-      },
-      {
-        "label": "Michael Mauboussin: Capital Allocation: Returns, Reinvestment, and Shareholder Value",
-        "url": "https://www.morganstanley.com/im/publication/insights/articles/article_capitalallocation_us.pdf"
+        "label": "Wikipedia: Dividend policy",
+        "url": "https://en.wikipedia.org/wiki/Dividend_policy"
       }
     ],
     "lesson": {
@@ -180,16 +140,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "CFA Institute: Working Capital Management & Operating Cycle Analysis",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/working-capital-management"
-      },
-      {
         "label": "Harvard Business Review: How Fast Can Your Company Afford to Grow?",
         "url": "https://hbr.org/2001/05/how-fast-can-your-company-afford-to-grow"
-      },
-      {
-        "label": "Corporate Finance Institute: Cash Conversion Cycle Guide",
-        "url": "https://corporatefinanceinstitute.com/resources/commercial-lending/cash-conversion-cycle-ccc/"
       }
     ]
   },
@@ -210,16 +162,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Michael Mauboussin: Calculating Return on Invested Capital (ROIC)",
-        "url": "https://www.morganstanley.com/im/publication/insights/articles/article_calculatingreturnoninvestedcapital.pdf"
-      },
-      {
-        "label": "McKinsey & Company: Valuation: Measuring and Managing the Value of Companies (Chapter 2)",
-        "url": "https://www.mckinsey.com/capabilities/strategy-and-corporate-finance/our-insights/valuation-measuring-and-managing-the-value-of-companies"
-      },
-      {
-        "label": "CFA Institute: Measures of Value Added (EVA and MVA)",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/economic-value-added"
+        "label": "Wikipedia: Economic value added",
+        "url": "https://en.wikipedia.org/wiki/Economic_value_added"
       }
     ]
   },
@@ -238,10 +182,6 @@ export const topics = [
       "net-debt"
     ],
     "resources": [
-      {
-        "label": "Aswath Damodaran: Enterprise Value and Equity Value: Bridges and Traps (NYU Stern)",
-        "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/country/EVvsEquity.pdf"
-      },
       {
         "label": "CFA Institute: Equity Valuation Multiples and Enterprise Value Definitions",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/equity-valuation-concepts-basic-tools"
@@ -267,10 +207,6 @@ export const topics = [
       "debt"
     ],
     "resources": [
-      {
-        "label": "Harvard Business Review: What Every Leader Should Know About Private Equity LBOs",
-        "url": "https://hbr.org/2012/03/what-every-leader-should-know-about-private-equity"
-      },
       {
         "label": "Corporate Finance Institute: Leveraged Buyout (LBO) Model Structure & Mechanics",
         "url": "https://corporatefinanceinstitute.com/resources/valuation/leveraged-buyout-lbo/"
@@ -328,14 +264,6 @@ export const topics = [
       {
         "label": "SEC Investor.gov: Compound Interest Calculator and Mathematical Guide",
         "url": "https://www.investor.gov/financial-tools-calculators/calculators/compound-interest-calculator"
-      },
-      {
-        "label": "Federal Reserve Bank of St. Louis: The Power of Compound Interest",
-        "url": "https://www.stlouisfed.org/education/page-one-economics-classroom-edition/power-of-compound-interest"
-      },
-      {
-        "label": "FINRA: Smart Investing: Time Value of Money Fundamentals",
-        "url": "https://www.finra.org/investors/investing/investing-basics/time-value-money"
       }
     ]
   },
@@ -358,10 +286,6 @@ export const topics = [
       {
         "label": "IRS Publication 590-A: Contributions to Individual Retirement Arrangements (IRAs)",
         "url": "https://www.irs.gov/publications/p590a"
-      },
-      {
-        "label": "IRS Retirement Plans FAQs regarding 401(k) and Roth Contributions",
-        "url": "https://www.irs.gov/retirement-plans/401k-plans-deferrals-and-matching"
       },
       {
         "label": "Consumer Financial Protection Bureau: Choosing a Retirement Account",
@@ -387,14 +311,6 @@ export const topics = [
       {
         "label": "IRS Form 8606 Instructions: Nondeductible IRAs and Pro-Rata Calculations",
         "url": "https://www.irs.gov/forms-pubs/about-form-8606"
-      },
-      {
-        "label": "Bogleheads Guide to Backdoor Roth IRA Conversions and Pitfalls",
-        "url": "https://www.bogleheads.org/wiki/Backdoor_Roth"
-      },
-      {
-        "label": "Journal of Accountancy: Navigating Backdoor Roth IRAs and Tax Rules",
-        "url": "https://www.journalofaccountancy.com/issues/2014/sep/roth-ira-conversions.html"
       }
     ]
   },
@@ -418,10 +334,6 @@ export const topics = [
         "url": "https://www.irs.gov/publications/p969"
       },
       {
-        "label": "US Department of the Treasury: Health Savings Accounts (HSA) Overview",
-        "url": "https://home.treasury.gov/policy-issues/consumer-policy/health-savings-accounts"
-      },
-      {
         "label": "Consumer Financial Protection Bureau: Understanding High-Deductible Plans and HSAs",
         "url": "https://www.consumerfinance.gov/"
       }
@@ -443,16 +355,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Consumer Financial Protection Bureau: Debt Management Strategies & Tools",
-        "url": "https://www.consumerfinance.gov/ask-cfpb/what-is-the-best-way-to-pay-off-my-debts-en-1473/"
-      },
-      {
-        "label": "Federal Reserve Bank of Dallas: Building Wealth: Managing and Eliminating Debt",
-        "url": "https://www.dallasfed.org/cd/wealth/manage"
-      },
-      {
-        "label": "Harvard Business Review: Research: The Best Strategy for Paying Off Debt",
-        "url": "https://hbr.org/2016/10/research-the-best-strategy-for-paying-off-debt"
+        "label": "Wikipedia (Related): Debt snowball method",
+        "url": "https://en.wikipedia.org/wiki/Debt_snowball_method"
       }
     ]
   },
@@ -472,16 +376,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "FINRA: Establishing an Emergency Savings Fund",
-        "url": "https://www.finra.org/investors/military/smart-saving-basics/emergency-fund"
-      },
-      {
         "label": "Consumer Financial Protection Bureau: An Essential Guide to Building an Emergency Fund",
         "url": "https://www.consumerfinance.gov/an-essential-guide-to-building-an-emergency-fund/"
-      },
-      {
-        "label": "Vanguard Research: Emergency Savings: How Much Is Enough?",
-        "url": "https://corporate.vanguard.com/content/dam/corp/research/pdf/emergency-savings-how-much-is-enough.pdf"
       }
     ]
   },
@@ -500,20 +396,7 @@ export const topics = [
       "umbrella-policy",
       "personal-finance"
     ],
-    "resources": [
-      {
-        "label": "National Association of Insurance Commissioners (NAIC): Life and Disability Insurance Buyer's Guide",
-        "url": "https://content.naic.org/consumer/life-insurance.htm"
-      },
-      {
-        "label": "Consumer Reports: Guide to Life and Umbrella Insurance Policies",
-        "url": "https://www.consumerreports.org/cro/life-insurance/buying-guide/index.htm"
-      },
-      {
-        "label": "Social Security Administration: The Importance of Disability Coverage",
-        "url": "https://www.ssa.gov/disability/"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "estate-planning-wills-trusts-and-beneficiaries",
@@ -532,16 +415,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "American Bar Association: Guidelines to Estate Planning, Wills and Trusts",
-        "url": "https://www.americanbar.org/groups/real_property_trust_estate/resources/estate_planning/"
-      },
-      {
         "label": "IRS Estate and Gift Taxes Overview & Applicable Exclusion Limits",
         "url": "https://www.irs.gov/businesses/small-businesses-self-employed/estate-and-gift-taxes"
-      },
-      {
-        "label": "FINRA: Estate Planning Checklist and Asset Titling",
-        "url": "https://www.finra.org/investors/learn-to-invest/types-investments/estate-planning"
       }
     ]
   },
@@ -568,10 +443,6 @@ export const topics = [
       {
         "label": "Federal Reserve Bank of New York: Understanding Treasury Yields and Duration",
         "url": "https://www.newyorkfed.org/research/educational_resources/yield_curve"
-      },
-      {
-        "label": "SEC: What Are Corporate Bonds and How Do Yields Work?",
-        "url": "https://www.sec.gov/investor/alerts/ib_corporatebonds.pdf"
       }
     ]
   },
@@ -593,14 +464,6 @@ export const topics = [
       {
         "label": "US Department of the Treasury: Daily Treasury Par Yield Curve Rates",
         "url": "https://home.treasury.gov/resource-center/data-chart-center/interest-rates/TextView?type=daily_treasury_yield_curve"
-      },
-      {
-        "label": "Federal Reserve Bank of St. Louis: Explaining the Yield Curve",
-        "url": "https://www.stlouisfed.org/education/page-one-economics-classroom-edition/yield-curve"
-      },
-      {
-        "label": "CFA Institute: The Term Structure and Interest Rate Dynamics",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/term-structure-interest-rate-dynamics"
       }
     ]
   },
@@ -620,16 +483,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Fischer Black & Myron Scholes: The Pricing of Options and Corporate Liabilities (Journal of Political Economy 1973)",
-        "url": "https://www.jstor.org/stable/1831029"
-      },
-      {
-        "label": "Chicago Board Options Exchange (CBOE): Options Fundamentals and Greeks Guide",
-        "url": "https://www.cboe.com/tradable_products/equity_indices/options_product_specs/"
-      },
-      {
-        "label": "Options Clearing Corporation (OCC): Understanding The Greeks and Option Valuation",
-        "url": "https://www.optionseducation.org/advancedconcepts/the-greeks"
+        "label": "Wikipedia: Black–Scholes model",
+        "url": "https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model"
       }
     ]
   },
@@ -648,14 +503,6 @@ export const topics = [
       "derivatives"
     ],
     "resources": [
-      {
-        "label": "CBOE VIX Whitepaper: The CBOE Volatility Index Methodology and Calculation",
-        "url": "https://www.cboe.com/micro/vix/vixwhite.pdf"
-      },
-      {
-        "label": "Emanuel Derman & Iraj Kani: The Volatility Smile and Its Implied Tree (Quantitative Finance Classics)",
-        "url": "https://www.ederman.com/pdf/smile.pdf"
-      },
       {
         "label": "CFA Institute: Option Valuation Concepts and Implied Volatility Analysis",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/valuation-contingent-claims"
@@ -681,14 +528,6 @@ export const topics = [
       {
         "label": "CME Group Education: Introduction to Futures Contracts and Margining",
         "url": "https://www.cmegroup.com/education/courses/introduction-to-futures.html"
-      },
-      {
-        "label": "Commodity Futures Trading Commission (CFTC): Futures Fundamentals & Contract Specifications",
-        "url": "https://www.cftc.gov/LearnAndProtect/EducationCenter/futures.html"
-      },
-      {
-        "label": "CFA Institute: Principles of Forward and Futures Pricing",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/principles-forward-futures-pricing"
       }
     ]
   },
@@ -708,16 +547,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "SEC: Investor Bulletin: Exchange-Traded Funds (ETFs) and Creation Units",
-        "url": "https://www.sec.gov/investor/alerts/etfs.pdf"
-      },
-      {
-        "label": "Investment Company Institute (ICI): Understanding Exchange-Traded Funds and Creation/Redemption",
-        "url": "https://www.ici.org/etf-resources"
-      },
-      {
-        "label": "Vanguard Research: The Mechanics of ETF Creation and Redemption",
-        "url": "https://corporate.vanguard.com/content/dam/corp/research/pdf/understanding-etf-creation-and-redemption-mechanism.pdf"
+        "label": "Wikipedia: Exchange-traded fund",
+        "url": "https://en.wikipedia.org/wiki/Exchange-traded_fund"
       }
     ]
   },
@@ -738,16 +569,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "FINRA Rule 4210: Margin Requirements and Maintenance Calculations",
-        "url": "https://www.finra.org/rules-guidance/rulebooks/finra-rules/4210"
-      },
-      {
         "label": "SEC: Margin Rules and Understanding Margin Accounts",
         "url": "https://www.sec.gov/reportspubs/investor-publications/investorpubsmarginhtm.html"
-      },
-      {
-        "label": "Federal Reserve Board: Regulation T (Credit by Brokers and Dealers)",
-        "url": "https://www.federalreserve.gov/supervisionreg/regt.htm"
       }
     ]
   },
@@ -767,16 +590,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Harry Markowitz: Portfolio Selection (The Journal of Finance 1952)",
-        "url": "https://www.jstor.org/stable/2975974"
-      },
-      {
-        "label": "CFA Institute: Portfolio Management and Modern Portfolio Theory Refresher",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/portfolio-management-an-overview"
-      },
-      {
-        "label": "William F. Sharpe: Capital Asset Prices: A Theory of Market Equilibrium under Conditions of Risk (Journal of Finance 1964)",
-        "url": "https://www.jstor.org/stable/2977928"
+        "label": "Wikipedia: Modern portfolio theory",
+        "url": "https://en.wikipedia.org/wiki/Modern_portfolio_theory"
       }
     ]
   },
@@ -797,16 +612,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "William F. Sharpe: Capital Asset Prices (The Journal of Finance 1964)",
-        "url": "https://www.jstor.org/stable/2977928"
-      },
-      {
         "label": "Eugene F. Fama & Kenneth R. French: The Capital Asset Pricing Model: Theory and Evidence (Journal of Economic Perspectives 2004)",
         "url": "https://www.aeaweb.org/articles?id=10.1257/0895330042162430"
-      },
-      {
-        "label": "CFA Institute: Capital Market Theory and the Capital Asset Pricing Model",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/capital-market-theory"
       }
     ]
   },
@@ -825,14 +632,6 @@ export const topics = [
       "size-premium"
     ],
     "resources": [
-      {
-        "label": "Eugene F. Fama & Kenneth R. French: Common Risk Factors in the Returns on Stocks and Bonds (JFE 1993)",
-        "url": "https://www.sciencedirect.com/science/article/pii/0304405X93900235"
-      },
-      {
-        "label": "Eugene F. Fama & Kenneth R. French: A Five-Factor Asset Pricing Model (JFE 2015)",
-        "url": "https://www.sciencedirect.com/science/article/pii/S0304405X1400234X"
-      },
       {
         "label": "Kenneth French Data Library: Factor Returns and Historical Benchmark Series",
         "url": "https://mba.tuck.dartmouth.edu/pages/faculty/ken.french/data_library.html"
@@ -855,16 +654,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Vanguard Research: Getting Back on Track: Analyzing Alternative Rebalancing Strategies",
-        "url": "https://corporate.vanguard.com/content/dam/corp/research/pdf/analyzing-alternative-rebalancing-strategies.pdf"
-      },
-      {
         "label": "IRS Publication 550: Investment Income and Expenses (Wash-Sale Rule)",
         "url": "https://www.irs.gov/publications/p550#en_US_2022_publink100010601"
-      },
-      {
-        "label": "MIT Sloan: An Analysis of the Tax-Loss Harvesting Alpha in Equity Portfolios",
-        "url": "https://mitsloan.mit.edu/shared/ods/documents?publicationDocumentID=5878"
       }
     ]
   },
@@ -884,16 +675,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "CFA Institute: Portfolio Risk and Return: Part I (Covariance and Correlation)",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/portfolio-risk-return-part-i"
-      },
-      {
         "label": "Yale School of Management: Diversification and the Limits of Arbitrage",
         "url": "https://som.yale.edu/"
-      },
-      {
-        "label": "Ray Dalio (Bridgewater Associates): The Holy Grail of Investing (Uncorrelated Return Streams)",
-        "url": "https://www.bridgewater.com/research-and-insights/ray-dalio-on-the-holy-grail-of-investing"
       }
     ]
   },
@@ -915,14 +698,6 @@ export const topics = [
       {
         "label": "Bridgewater Associates: The All Weather Story and Risk Parity Philosophy",
         "url": "https://www.bridgewater.com/research-and-insights/the-all-weather-story"
-      },
-      {
-        "label": "Edward Qian: On the Financial Interpretation of Risk Contribution (PanAgora Asset Management)",
-        "url": "https://www.panagora.com/assets/PanAgora-Risk-Contribution.pdf"
-      },
-      {
-        "label": "CFA Institute: Risk Budgeting and Risk Parity in Multi-Asset Portfolios",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/risk-budgeting"
       }
     ]
   },
@@ -944,10 +719,6 @@ export const topics = [
       {
         "label": "Federal Reserve: The Fed Explained: What the Central Bank Does",
         "url": "https://www.federalreserve.gov/aboutthefed/the-fed-explained.htm"
-      },
-      {
-        "label": "Ben S. Bernanke & Alan S. Blinder: The Federal Funds Rate and the Channels of Monetary Transmission (AER 1992)",
-        "url": "https://www.jstor.org/stable/2117929"
       },
       {
         "label": "Federal Reserve Bank of New York: Monetary Policy Implementation Framework",
@@ -973,15 +744,7 @@ export const topics = [
     "resources": [
       {
         "label": "U.S. Bureau of Labor Statistics: Consumer Price Index Overview & Methodology",
-        "url": "https://www.bls.gov/cpi/"
-      },
-      {
-        "label": "U.S. Bureau of Economic Analysis (BEA): PCE Price Index Overview",
-        "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index"
-      },
-      {
-        "label": "Federal Reserve Bank of San Francisco: Comparing CPI and PCE Inflation Metrics",
-        "url": "https://www.frbsf.org/research-and-insights/publications/economic-letter/2013/february/cpi-pce-inflation-comparison/"
+        "url": "https://www.bls.gov/cpi/questions-and-answers.htm"
       }
     ]
   },
@@ -1007,10 +770,6 @@ export const topics = [
       {
         "label": "Federal Reserve Bank of St. Louis: 10-Year Treasury Constant Maturity Minus 2-Year Treasury Constant Maturity (FRED Data)",
         "url": "https://fred.stlouisfed.org/series/T10Y2Y"
-      },
-      {
-        "label": "Federal Reserve Bank of San Francisco: Economic Letter: Which Yield Curve Inversion Best Predicts Recessions?",
-        "url": "https://www.frbsf.org/research-and-insights/publications/economic-letter/2018/august/economic-forecasts-with-yield-curve/"
       }
     ]
   },
@@ -1036,10 +795,6 @@ export const topics = [
       {
         "label": "Ben S. Bernanke: What Tools Does the Fed Have Left? Part 1: Negative Interest Rates and QE",
         "url": "https://www.brookings.edu/articles/what-tools-does-the-fed-have-left-part-1-negative-interest-rates/"
-      },
-      {
-        "label": "Bank for International Settlements (BIS): Unconventional Monetary Policy Tools and Central Bank Reserves",
-        "url": "https://www.bis.org/publ/bppdf/bispap73.htm"
       }
     ]
   },
@@ -1063,10 +818,6 @@ export const topics = [
         "url": "https://www.bis.org/statistics/rpfx22.htm"
       },
       {
-        "label": "International Monetary Fund (IMF): Purchasing Power Parity: Weights and Country Comparisons",
-        "url": "https://www.imf.org/en/Publications/fandd/issues/Series/Back-to-Basics/Purchasing-Power-Parity"
-      },
-      {
         "label": "CFA Institute: Currency Exchange Rates and Covered/Uncovered Interest Rate Parity",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/currency-exchange-rates"
       }
@@ -1088,16 +839,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Congressional Budget Office (CBO): The Budget and Economic Outlook Report",
-        "url": "https://www.cbo.gov/publication/59710"
-      },
-      {
         "label": "Olivier Blanchard: Public Debt and Low Interest Rates (American Economic Review 2019)",
         "url": "https://www.aeaweb.org/articles?id=10.1257/aer.109.4.1197"
-      },
-      {
-        "label": "International Monetary Fund (IMF): Fiscal Monitor: Policies to Guide Public Debt",
-        "url": "https://www.imf.org/en/Publications/FM"
       }
     ]
   },
@@ -1116,14 +859,6 @@ export const topics = [
       "shareholders-equity"
     ],
     "resources": [
-      {
-        "label": "SEC: Beginners' Guide to Financial Statement Analysis (Balance Sheet)",
-        "url": "https://www.sec.gov/oiea/investor-alerts-and-bulletins/ib_begfinanal"
-      },
-      {
-        "label": "FASB: Accounting Standards Codification (ASC 210: Balance Sheet)",
-        "url": "https://asc.fasb.org/"
-      },
       {
         "label": "CFA Institute: Understanding the Balance Sheet",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/understanding-balance-sheets"
@@ -1146,14 +881,6 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "FASB ASC 606: Revenue from Contracts with Customers Overview",
-        "url": "https://asc.fasb.org/topics/606"
-      },
-      {
-        "label": "SEC: Guide to Reading Corporate Income Statements and 10-K Filings",
-        "url": "https://www.sec.gov/fast-answers/answers-reada10khtm.html"
-      },
-      {
         "label": "CFA Institute: Understanding the Income Statement and Operating Leverage",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/understanding-income-statements"
       }
@@ -1174,10 +901,6 @@ export const topics = [
       "free-cash-flow"
     ],
     "resources": [
-      {
-        "label": "SEC: Statement of Cash Flows: Direct vs Indirect Method Guide",
-        "url": "https://www.sec.gov/oiea/investor-alerts-and-bulletins/ib_statementcashflows"
-      },
       {
         "label": "CFA Institute: Understanding the Statement of Cash Flows",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/understanding-cash-flow-statements"
@@ -1210,10 +933,6 @@ export const topics = [
       {
         "label": "Corporate Finance Institute: DuPont Analysis Formula and 3-Step / 5-Step Models",
         "url": "https://corporatefinanceinstitute.com/resources/accounting/dupont-analysis/"
-      },
-      {
-        "label": "Investopedia Academic / Financial Review: Deconstructing Return on Equity",
-        "url": "https://www.investopedia.com/terms/d/dupontanalysis.asp"
       }
     ]
   },
@@ -1232,14 +951,6 @@ export const topics = [
       "fraud"
     ],
     "resources": [
-      {
-        "label": "Richard G. Sloan: Do Stock Prices Fully Reflect Information in Accruals and Cash Flows About Future Earnings? (The Accounting Review 1996)",
-        "url": "https://www.jstor.org/stable/248290"
-      },
-      {
-        "label": "Messod D. Beneish: The Detection of Earnings Manipulation (Financial Analysts Journal 1999)",
-        "url": "https://www.jstor.org/stable/4480199"
-      },
       {
         "label": "CFA Institute: Financial Reporting Quality and Red Flags",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/financial-reporting-quality"
@@ -1261,10 +972,6 @@ export const topics = [
       "accounting-standards"
     ],
     "resources": [
-      {
-        "label": "FASB ASC 330: Inventory Accounting Standards",
-        "url": "https://asc.fasb.org/topics/330"
-      },
       {
         "label": "CFA Institute: Inventories: Cost Formulas and Valuation Methods",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/inventories"
@@ -1322,14 +1029,6 @@ export const topics = [
       {
         "label": "Consumer Financial Protection Bureau: Exploring Mortgage Loan Options & Amortization Tables",
         "url": "https://www.consumerfinance.gov/owning-a-home/loan-options/"
-      },
-      {
-        "label": "Federal Reserve Board: Consumer Handbook on Adjustable-Rate Mortgages (CHARM)",
-        "url": "https://www.federalreserve.gov/pubs/arms/arms_english.htm"
-      },
-      {
-        "label": "Freddie Mac: Mortgage Refinance Calculator and Break-Even Rules",
-        "url": "https://myhome.freddiemac.com/resources/calculators/refinance"
       }
     ]
   },
@@ -1349,16 +1048,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "SEC: Investor Bulletin: Real Estate Investment Trusts (REITs)",
-        "url": "https://www.sec.gov/investor/alerts/reits.pdf"
-      },
-      {
-        "label": "Nareit (National Association of REITs): Guide to FFO, AFFO, and REIT Valuation",
-        "url": "https://www.reit.com/reit-basics/reit-terms-definitions"
-      },
-      {
-        "label": "IRS Section 856: Definition of Real Estate Investment Trusts",
-        "url": "https://www.irs.gov/pub/irs-drop/rr-03-86.pdf"
+        "label": "Wikipedia: Real estate investment trust",
+        "url": "https://en.wikipedia.org/wiki/Real_estate_investment_trust"
       }
     ]
   },
@@ -1378,16 +1069,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Fannie Mae Multifamily Underwriting Guidelines: DSCR and LTV Standards",
-        "url": "https://multifamily.fanniemae.com/originating-underwriting"
-      },
-      {
-        "label": "Federal Deposit Insurance Corporation (FDIC): Commercial Real Estate Lending Guidance",
-        "url": "https://www.fdic.gov/resources/bankers/commercial-real-estate/"
-      },
-      {
-        "label": "Corporate Finance Institute: Debt Service Coverage Ratio (DSCR) Calculation",
-        "url": "https://corporatefinanceinstitute.com/resources/commercial-lending/dscr-debt-service-coverage-ratio/"
+        "label": "Wikipedia: Debt service coverage ratio",
+        "url": "https://en.wikipedia.org/wiki/Debt_service_coverage_ratio"
       }
     ]
   },
@@ -1406,14 +1089,6 @@ export const topics = [
       "taxes"
     ],
     "resources": [
-      {
-        "label": "IRS: Like-Kind Exchanges Under IRC Section 1031 (Fact Sheet FS-2008-18)",
-        "url": "https://www.irs.gov/newsroom/like-kind-exchanges-under-irc-section-1031"
-      },
-      {
-        "label": "National Association of Realtors: Section 1031 Like-Kind Exchange Rules & Regulations",
-        "url": "https://www.nar.realtor/1031-like-kind-exchange"
-      },
       {
         "label": "IRS Publication 544: Sales and Other Dispositions of Assets (Depreciation Recapture)",
         "url": "https://www.irs.gov/publications/p544"
@@ -1437,16 +1112,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Urban Land Institute (ULI): Real Estate Capital Markets & Waterfall Structuring",
-        "url": "https://knowledge.uli.org/"
-      },
-      {
         "label": "MIT Center for Real Estate: Real Estate Private Equity Financial Modeling",
         "url": "https://cre.mit.edu/"
-      },
-      {
-        "label": "Corporate Finance Institute: Real Estate Waterfall Distribution Framework",
-        "url": "https://corporatefinanceinstitute.com/resources/commercial-real-estate/real-estate-waterfall-distribution/"
       }
     ]
   },
@@ -1466,16 +1133,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "National Venture Capital Association (NVCA): Model Legal Documents & Cap Table Frameworks",
-        "url": "https://nvca.org/model-legal-documents/"
-      },
-      {
-        "label": "Brad Feld & Jason Mendelson: Venture Deals: Be Smarter Than Your Lawyer and Venture Capitalist (Wiley)",
-        "url": "https://www.venturedeals.com/"
-      },
-      {
-        "label": "Cooley GO: Understanding Pre-Money and Post-Money Valuation Dilution",
-        "url": "https://www.cooleygo.com/pre-money-post-money-valuation/"
+        "label": "Wikipedia: Capitalization table",
+        "url": "https://en.wikipedia.org/wiki/Capitalization_table"
       }
     ]
   },
@@ -1501,10 +1160,6 @@ export const topics = [
       {
         "label": "SEC: Investor Bulletin: Be Careful with SAFE (Simple Agreement for Future Equity) Securities",
         "url": "https://www.sec.gov/oiea/investor-alerts-and-bulletins/ib_safes"
-      },
-      {
-        "label": "Cooley GO: SAFE vs Convertible Note: Key Structural Differences",
-        "url": "https://www.cooleygo.com/safe-vs-convertible-note/"
       }
     ]
   },
@@ -1525,16 +1180,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "IRS Internal Revenue Code Section 83(b) Election Rules & Filing Requirements",
-        "url": "https://www.irs.gov/businesses/small-businesses-self-employed/statutory-stock-options"
-      },
-      {
-        "label": "National Center for Employee Ownership (NCEO): Employee Stock Options & Vesting Overview",
-        "url": "https://www.nceo.org/articles/stock-options-restricted-stock"
-      },
-      {
-        "label": "Cooley GO: What is an 83(b) Election and Why Should You File One?",
-        "url": "https://www.cooleygo.com/what-is-an-83b-election/"
+        "label": "Wikipedia (Related): Vesting",
+        "url": "https://en.wikipedia.org/wiki/Vesting"
       }
     ]
   },
@@ -1557,14 +1204,6 @@ export const topics = [
       {
         "label": "IRS Topic No. 427: Stock Options (ISOs and Nonstatutory Stock Options)",
         "url": "https://www.irs.gov/taxtopics/tc427"
-      },
-      {
-        "label": "National Center for Employee Ownership (NCEO): Understanding ISOs, NSOs, and AMT Calculations",
-        "url": "https://www.nceo.org/articles/incentive-stock-options-iso-taxation"
-      },
-      {
-        "label": "SEC: Employee Stock Option Plans and Shareholder Rights",
-        "url": "https://www.sec.gov/reportspubs/investor-publications/investorpubsoptionsplanshtm.html"
       }
     ]
   },
@@ -1584,16 +1223,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Brad Feld & Jason Mendelson: Term Sheets: Liquidation Preferences (Venture Deals)",
-        "url": "https://www.venturedeals.com/"
-      },
-      {
-        "label": "NVCA Model Term Sheet: Liquidation Preference Clauses & Participation Caps",
-        "url": "https://nvca.org/model-legal-documents/"
-      },
-      {
-        "label": "Cooley GO: Liquidation Preferences: What Are They and How Do They Work?",
-        "url": "https://www.cooleygo.com/liquidation-preferences/"
+        "label": "Wikipedia: Liquidation preference",
+        "url": "https://en.wikipedia.org/wiki/Liquidation_preference"
       }
     ]
   },
@@ -1613,16 +1244,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "IRS Section 1202: Qualified Small Business Stock Exemption Guidance",
-        "url": "https://www.irs.gov/businesses/small-businesses-self-employed"
-      },
-      {
-        "label": "National Venture Capital Association (NVCA): QSBS Policy Overview & Tax Impact",
-        "url": "https://nvca.org/policy/tax/"
-      },
-      {
-        "label": "Cooley GO: Qualified Small Business Stock (QSBS): What Founders and Investors Need to Know",
-        "url": "https://www.cooleygo.com/qualified-small-business-stock-qsbs/"
+        "label": "Wikipedia: Qualified Small Business Stock",
+        "url": "https://en.wikipedia.org/wiki/Qualified_Small_Business_Stock"
       }
     ]
   },
@@ -1641,14 +1264,6 @@ export const topics = [
       "financial-risk"
     ],
     "resources": [
-      {
-        "label": "Basel Committee on Banking Supervision (BIS): Fundamental Review of the Trading Book (FRTB: VaR to Expected Shortfall)",
-        "url": "https://www.bis.org/bcbs/publ/d352.htm"
-      },
-      {
-        "label": "Philippe Jorion: Value at Risk: The New Benchmark for Managing Financial Risk (McGraw-Hill)",
-        "url": "https://www.mheducation.com/highered/product/value-risk-new-benchmark-managing-financial-risk-jorion/9780071464956.html"
-      },
       {
         "label": "CFA Institute: Measuring and Managing Market Risk with VaR and CVaR",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/measuring-managing-market-risk"
@@ -1671,16 +1286,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "CBOE: Options Strategies: Protective Put and Collar Construction",
-        "url": "https://www.cboe.com/education/tools_and_resources/strategies/"
-      },
-      {
-        "label": "Options Clearing Corporation (OCC): Hedging Long Stock Positions with Options",
-        "url": "https://www.optionseducation.org/strategies/all-strategies"
-      },
-      {
-        "label": "CFA Institute: Option Strategies and Risk Profile Modification",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/option-strategies"
+        "label": "Wikipedia: Hedge (finance)",
+        "url": "https://en.wikipedia.org/wiki/Hedge_(finance)"
       }
     ]
   },
@@ -1700,16 +1307,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "J. L. Kelly Jr.: A New Interpretation of Information Rate (Bell System Technical Journal 1956)",
-        "url": "https://www.princeton.edu/~wbialek/rome/refs/kelly_56.pdf"
-      },
-      {
-        "label": "Edward O. Thorp: The Kelly Criterion in Investing and Gambling (Handbook of Asset and Liability Management)",
-        "url": "https://www.edwardothorp.com/wp-content/uploads/2016/11/TheKellyCriterion2007.pdf"
-      },
-      {
-        "label": "William Poundstone: Fortune's Formula: The Untold Story of the Scientific Betting System (Hill and Wang)",
-        "url": "https://us.macmillan.com/books/9780865477506/fortunesformula"
+        "label": "Wikipedia: Kelly criterion",
+        "url": "https://en.wikipedia.org/wiki/Kelly_criterion"
       }
     ]
   },
@@ -1729,16 +1328,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Maureen O'Hara: Market Microstructure Theory (Blackwell Publishers)",
-        "url": "https://onlinelibrary.wiley.com/doi/book/10.1002/9781444307689"
-      },
-      {
         "label": "CFA Institute: Market Microstructure, Order Types and Execution Costs",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/market-organization-structure"
-      },
-      {
-        "label": "SEC: Equity Market Structure Literature Review: Execution Quality and Spreads",
-        "url": "https://www.sec.gov/marketresearch/research-reports"
       }
     ]
   },
@@ -1760,10 +1351,6 @@ export const topics = [
       {
         "label": "International Swaps and Derivatives Association (ISDA): Over-the-Counter Derivatives & Master Agreement",
         "url": "https://www.isda.org/category/margin/"
-      },
-      {
-        "label": "Bank for International Settlements (BIS): Credit Default Swaps and Systemic Risk",
-        "url": "https://www.bis.org/publ/qtrpdf/r_qt1012e.htm"
       },
       {
         "label": "CFA Institute: Credit Default Swaps and Counterparty Risk Management",
@@ -1793,10 +1380,6 @@ export const topics = [
       {
         "label": "Bank for International Settlements (BIS): Principles for Sound Stress Testing Practices and Supervision",
         "url": "https://www.bis.org/publ/bcbs155.htm"
-      },
-      {
-        "label": "CFA Institute: Risk Management Applications: Stress Testing and Scenario Modeling",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/risk-management-applications"
       }
     ]
   },
@@ -1816,16 +1399,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Hayden Adams: Uniswap v2 Core Whitepaper (Constant Product Formula)",
-        "url": "https://uniswap.org/whitepaper.pdf"
-      },
-      {
         "label": "Vitalik Buterin: Improving Front Running Resistance of x*y=k Market Makers",
         "url": "https://ethresear.ch/t/improving-front-running-resistance-of-x-y-k-market-makers/1281"
-      },
-      {
-        "label": "Bank for International Settlements (BIS): Decentralised Finance (DeFi) Automated Market Making Overview",
-        "url": "https://www.bis.org/publ/bppdf/bispap123.htm"
       }
     ]
   },
@@ -1845,16 +1420,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Pintail: Uniswap: A Good Deal on Liquidity? (Mathematical Analysis of Impermanent Loss)",
-        "url": "https://pintail.medium.com/uniswap-a-good-deal-on-liquidity-7c2e0e4a36ac"
-      },
-      {
-        "label": "Uniswap Documentation: Understanding Returns and Impermanent Loss",
-        "url": "https://docs.uniswap.org/contracts/v2/concepts/core-concepts/pools"
-      },
-      {
-        "label": "Dan Robinson: Concentrated Liquidity and Capital Efficiency in Uniswap v3",
-        "url": "https://uniswap.org/whitepaper-v3.pdf"
+        "label": "Loesch et al. (2021): Impermanent Loss in Uniswap v3 (arXiv:2111.09192)",
+        "url": "https://arxiv.org/abs/2111.09192"
       }
     ]
   },
@@ -1873,14 +1440,6 @@ export const topics = [
       "collateral"
     ],
     "resources": [
-      {
-        "label": "MakerDAO: The Maker Protocol Whitepaper (Multi-Collateral Dai Architecture)",
-        "url": "https://makerdao.com/en/whitepaper"
-      },
-      {
-        "label": "Federal Reserve Board: Stablecoins: Growth Potential and Impact on Financial Stability",
-        "url": "https://www.federalreserve.gov/econres/notes/feds-notes/stablecoins-growth-potential-and-impact-on-financial-stability-20220916.html"
-      },
       {
         "label": "Bank for International Settlements: Stablecoins: Risks, Potential and Regulation",
         "url": "https://www.bis.org/publ/work905.htm"
@@ -1910,10 +1469,6 @@ export const topics = [
       {
         "label": "Vitalik Buterin: Proof of Stake FAQ & Economic Security Bounds",
         "url": "https://vitalik.eth.limo/general/2017/12/31/pos_faq.html"
-      },
-      {
-        "label": "Coinbase Institutional: Staking as a Financial Asset Class & Yield Mechanics",
-        "url": "https://www.coinbase.com/institutional/research-insights/research/market-intelligence/guide-to-staking"
       }
     ]
   },
@@ -1934,16 +1489,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Aave Protocol Whitepaper v2 & v3: Risk Parameters, Health Factor, and Liquidation Engine",
-        "url": "https://aave.com/whitepaper.pdf"
-      },
-      {
-        "label": "Robert Leshner & Geoffrey Hayes: Compound: The Money Market Protocol",
-        "url": "https://compound.finance/documents/Compound.Whitepaper.pdf"
-      },
-      {
-        "label": "Bank for International Settlements (BIS): Decentralised Lending and Financial Stability",
-        "url": "https://www.bis.org/publ/work936.htm"
+        "label": "Wikipedia (Related): Decentralized finance",
+        "url": "https://en.wikipedia.org/wiki/Decentralized_finance"
       }
     ]
   },
@@ -1963,16 +1510,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Aave Documentation: Flash Loans Technical Specification and Use Cases",
-        "url": "https://docs.aave.com/developers/guides/flash-loans"
-      },
-      {
         "label": "Philip Daian et al.: Flash Boys 2.0: Frontrunning, Transaction Reordering, and Consensus Instability in Decentralized Exchanges",
         "url": "https://arxiv.org/abs/1904.05234"
-      },
-      {
-        "label": "Bank for International Settlements: Flash Loans and Financial Stability Implications",
-        "url": "https://www.bis.org/publ/work936.htm"
       }
     ]
   },
@@ -1990,20 +1529,7 @@ export const topics = [
       "defi",
       "capital-markets"
     ],
-    "resources": [
-      {
-        "label": "Federal Reserve Board: Tokenization: Overview and Financial Stability Considerations",
-        "url": "https://www.federalreserve.gov/econres/notes/feds-notes/tokenization-overview-and-financial-stability-considerations-20230908.html"
-      },
-      {
-        "label": "Bank for International Settlements (BIS): The Tokenisation of Assets and Financial Market Infrastructure",
-        "url": "https://www.bis.org/cpmi/publ/d186.htm"
-      },
-      {
-        "label": "BlackRock: Institutional Tokenization and Digital Liquidity Funds (BUIDL Whitepaper)",
-        "url": "https://www.blackrock.com/us/individual/education/digital-assets"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "two-track-career-ladder",
@@ -2019,8 +1545,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Camille Fournier — The Manager's Path (O'Reilly)",
-        "url": "https://www.oreilly.com/library/view/the-managers-path/9781491973882/"
+        "label": "Wikipedia (Related): Career ladder",
+        "url": "https://en.wikipedia.org/wiki/Career_ladder"
       }
     ]
   },
@@ -2038,7 +1564,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Andy Grove — High Output Management (Vintage)",
+        "label": "Goodreads: High Output Management by Andrew S. Grove",
         "url": "https://www.goodreads.com/book/show/324750.High_Output_Management"
       }
     ]
@@ -2076,8 +1602,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Paul Graham — Maker's Schedule, Manager's Schedule (2009)",
-        "url": "http://www.paulgraham.com/makersschedule.html"
+        "label": "Maker's Schedule, Manager's Schedule",
+        "url": "https://www.paulgraham.com/makersschedule.html"
       }
     ]
   },
@@ -2112,12 +1638,7 @@ export const topics = [
       "persuasion",
       "storytelling"
     ],
-    "resources": [
-      {
-        "label": "Barbara Minto — The Pyramid Principle in Strategic Problem Solving",
-        "url": "https://www.mckinsey.com"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "first-90-days-transitions",
@@ -2133,8 +1654,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Michael D. Watkins — The First 90 Days (Harvard Business Review Press)",
-        "url": "https://hbr.org/books"
+        "label": "Wikipedia (About the author): Michael D. Watkins",
+        "url": "https://en.wikipedia.org/wiki/Michael_D._Watkins"
       }
     ]
   },
@@ -2190,8 +1711,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Melvin E. Conway — How Do Committees Invent? (Datamation 1968)",
-        "url": "http://www.melconway.com/Home/Committees_Paper.html"
+        "label": "Wikipedia: Conway's law",
+        "url": "https://en.wikipedia.org/wiki/Conway's_law"
       }
     ]
   },
@@ -2266,8 +1787,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Clayton M. Christensen — The Innovator's Dilemma (Harvard Business Review)",
-        "url": "https://hbr.org/books"
+        "label": "Wikipedia: The Innovator's Dilemma",
+        "url": "https://en.wikipedia.org/wiki/The_Innovator's_Dilemma"
       }
     ]
   },
@@ -2285,8 +1806,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Clayton Christensen — Competing Against Luck: The Story of Innovation and Customer Choice",
-        "url": "https://hbr.org"
+        "label": "Wikipedia (About the author): Clayton Christensen",
+        "url": "https://en.wikipedia.org/wiki/Clayton_Christensen"
       }
     ]
   },
@@ -2304,8 +1825,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "John Doerr — Measure What Matters (Penguin)",
-        "url": "https://www.whatmatters.com/"
+        "label": "Wikipedia: Objectives and key results",
+        "url": "https://en.wikipedia.org/wiki/Objectives_and_key_results"
       }
     ]
   },
@@ -2342,7 +1863,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Noriaki Kano — Attractive Quality and Must-Be Quality (1984)",
+        "label": "Wikipedia: Kano model",
         "url": "https://en.wikipedia.org/wiki/Kano_model"
       }
     ]
@@ -2361,8 +1882,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Geoffrey A. Moore — Crossing the Chasm (HarperBusiness)",
-        "url": "https://www.harpercollins.com"
+        "label": "Wikipedia: Crossing the Chasm",
+        "url": "https://en.wikipedia.org/wiki/Crossing_the_Chasm"
       }
     ]
   },
@@ -2399,8 +1920,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Brian Balfour — Why Retention Is The King of Growth Strategy",
-        "url": "https://brianbalfour.com"
+        "label": "Wikipedia (Related): Cohort analysis",
+        "url": "https://en.wikipedia.org/wiki/Cohort_analysis"
       }
     ]
   },
@@ -2418,8 +1939,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Stephen R. Covey — The 7 Habits of Highly Effective People",
-        "url": "https://www.franklincovey.com"
+        "label": "Wikipedia (Related): Time management",
+        "url": "https://en.wikipedia.org/wiki/Time_management"
       }
     ]
   },
@@ -2456,8 +1977,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Barbara Minto — The Minto Pyramid Principle: Logic in Writing and Thinking",
-        "url": "https://minto.com"
+        "label": "Wikipedia (About the author): Barbara Minto",
+        "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
       }
     ]
   },
@@ -2475,8 +1996,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "John Gall — Systemantics: How Systems Work and Especially How They Fail (1975)",
-        "url": "https://en.wikipedia.org/wiki/John_Gall_(author)"
+        "label": "Wikipedia (Related): Systemantics",
+        "url": "https://en.wikipedia.org/wiki/Systemantics"
       }
     ]
   },
@@ -2494,8 +2015,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "C. Northcote Parkinson — Parkinson's Law (1955)",
-        "url": "https://www.economist.com"
+        "label": "Wikipedia: Parkinson's Law",
+        "url": "https://en.wikipedia.org/wiki/Parkinson's_Law"
       }
     ]
   },
@@ -2513,8 +2034,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Jim Collins — Good to Great: Why Some Companies Make the Leap... and Others Don't",
-        "url": "https://www.jimcollins.com"
+        "label": "Jim Collins: Concepts - The Flywheel Effect",
+        "url": "https://www.jimcollins.com/concepts/the-flywheel.html"
       }
     ]
   },
@@ -2532,8 +2053,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Richard Rumelt — Good Strategy/Bad Strategy: The Difference and Why It Matters",
-        "url": "https://goodstrategybadstrategy.com"
+        "label": "Wikipedia (About the author): Richard Rumelt",
+        "url": "https://en.wikipedia.org/wiki/Richard_Rumelt"
       }
     ]
   },
@@ -2551,8 +2072,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Project Management Institute — Roles & Responsibilities Matrix",
-        "url": "https://www.pmi.org"
+        "label": "Wikipedia: Responsibility assignment matrix",
+        "url": "https://en.wikipedia.org/wiki/Responsibility_assignment_matrix"
       }
     ]
   },
@@ -2587,12 +2108,7 @@ export const topics = [
       "power-law",
       "investing"
     ],
-    "resources": [
-      {
-        "label": "Sebastian Mallaby — The Power Law: Venture Capital and the Making of the New Future",
-        "url": "https://www.penguinrandomhouse.com"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "delegation-levels-authority",
@@ -2606,12 +2122,7 @@ export const topics = [
       "delegation",
       "management"
     ],
-    "resources": [
-      {
-        "label": "Jurgen Appelo — Management 3.0: Leading Agile Developers",
-        "url": "https://management30.com"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "career-moats-specific-knowledge",
@@ -2627,8 +2138,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Naval Ravikant — How to Get Rich (Without Getting Lucky)",
-        "url": "https://nav.al"
+        "label": "Wikipedia (Related): Economic moat",
+        "url": "https://en.wikipedia.org/wiki/Economic_moat"
       }
     ]
   },
@@ -2646,8 +2157,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "DSDM Consortium — Agile Project Framework: MoSCoW Prioritisation",
-        "url": "https://www.agilebusiness.org"
+        "label": "Wikipedia: MoSCoW method",
+        "url": "https://en.wikipedia.org/wiki/MoSCoW_method"
       }
     ]
   },
@@ -2665,8 +2176,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Alexander Osterwalder — Value Proposition Design (Wiley)",
-        "url": "https://www.strategyzer.com"
+        "label": "Strategyzer: Value Proposition Canvas",
+        "url": "https://www.strategyzer.com/library/the-value-proposition-canvas"
       }
     ]
   },
@@ -2684,8 +2195,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Dave McClure — Startup Metrics for Pirates: AARRR! (500 Startups)",
-        "url": "https://500.co"
+        "label": "Wikipedia (About the author): Dave McClure",
+        "url": "https://en.wikipedia.org/wiki/Dave_McClure"
       }
     ]
   },
@@ -2703,8 +2214,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Daniel Kahneman — Thinking, Fast and Slow (Farrar, Straus and Giroux)",
-        "url": "https://us.macmillan.com"
+        "label": "Wikipedia: Framing effect (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Framing_effect_(psychology)"
       }
     ]
   },
@@ -2722,8 +2233,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Sylvia Ann Hewlett — Forget a Mentor, Find a Sponsor (HBR)",
-        "url": "https://hbr.org"
+        "label": "Wikipedia: Mentorship",
+        "url": "https://en.wikipedia.org/wiki/Mentorship"
       }
     ]
   },
@@ -2760,8 +2271,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Project Management Institute — PMBOK Guide",
-        "url": "https://www.pmi.org"
+        "label": "Wikipedia: Project management triangle",
+        "url": "https://en.wikipedia.org/wiki/Project_management_triangle"
       }
     ]
   },
@@ -2779,8 +2290,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Jeff Bezos — 2016 Letter to Shareholders",
-        "url": "https://www.aboutamazon.com"
+        "label": "Wikipedia: Disagree and commit",
+        "url": "https://en.wikipedia.org/wiki/Disagree_and_commit"
       }
     ]
   },
@@ -2796,12 +2307,7 @@ export const topics = [
       "1-on-1",
       "retention"
     ],
-    "resources": [
-      {
-        "label": "Ben Horowitz — The Hard Thing About Hard Things (HarperBusiness)",
-        "url": "https://a16z.com"
-      }
-    ]
+    "resources": []
   },
   {
     "id": "comparative-advantage-specialization",
@@ -2817,7 +2323,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "David Ricardo — On the Principles of Political Economy and Taxation (1817)",
+        "label": "Wikipedia: Comparative advantage",
         "url": "https://en.wikipedia.org/wiki/Comparative_advantage"
       }
     ]
@@ -2836,8 +2342,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Donald Davidson — Inquiries into Truth and Interpretation (Oxford)",
-        "url": "https://global.oup.com"
+        "label": "Wikipedia: Principle of charity",
+        "url": "https://en.wikipedia.org/wiki/Principle_of_charity"
       }
     ]
   },
@@ -2855,8 +2361,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Henry Hazlitt — Economics in One Lesson",
-        "url": "https://mises.org"
+        "label": "Wikipedia: Opportunity cost",
+        "url": "https://en.wikipedia.org/wiki/Opportunity_cost"
       }
     ]
   }

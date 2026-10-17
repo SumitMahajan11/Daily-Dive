@@ -10,6 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --import ./tests/_setup.mjs --test tests/",
+    "check:links": "node scripts/tools/check_links.mjs",
     "test:e2e": "node scripts/e2e/run_all_e2e.mjs",
     "pre-commit": "node scripts/tools/check_no_console_log.mjs"
   },
@@ -17,6 +18,7 @@
     "@supabase/supabase-js": "^2.117.3",
     "canvas-confetti": "^1.9.4",
     "framer-motion": "^13.2.0",
+    "heic2any": "^0.0.4",
     "jszip": "^3.10.2",
     "lucide-react": "^0.475.0",
     "pdfjs-dist": "^6.3.289",
