@@ -1,10 +1,13 @@
-# Daily Dive – Results Snapshot (commit 15e)
+# Daily Dive – Results Snapshot (commit 15f)
 
 ## Build Numbers (24-File Evaluation Set)
 
-Ran `extractFromPdf` + `extractTopicsFromSections` over the 24 evaluation PDFs in `D:\DailyDive-Eval\build` (same 24 files as the baseline set, excluding 3 unreadable/scanned files `1000142068 (1).pdf`, `Chapter 2 DES Updated.pptx (1).pdf`, `Chapter 2 DES Updated.pptx.pdf`, 2 resumes `Sumit_Mahajan_Resume (3) (1).pdf`, `Sumit_Mahajan_Resume.pdf`, and 2 single-page certificates `Coursera Agile Management.pdf`, `Coursera Agile with Atlassian Jira.pdf`). Baseline values are reconstructed from task-1503 logs:
+Ran `extractFromPdf` + `extractTopicsFromSections` over 24 evaluation PDFs in `D:\DailyDive-Eval\build`. 
 
-| Metric | Baseline (Task-1503 Logs) | Current Run (15e) | Delta |
+> [!NOTE]
+> The 24-file evaluation set follows the baseline log (task-1503 / commit `47d8cdb`), not the original 31-vs-24 exclusion rule (which had excluded `Unit IV Updated SAS` and kept Coursera certificates). The set was fitted to match the baseline log: 3 scans (`1000142068 (1).pdf`, `Chapter 2 DES Updated.pptx (1).pdf`, `Chapter 2 DES Updated.pptx.pdf`), 2 resumes (`Sumit_Mahajan_Resume (3) (1).pdf`, `Sumit_Mahajan_Resume.pdf`), and 2 single-page certificates (`Coursera Agile Management.pdf`, `Coursera Agile with Atlassian Jira.pdf`) are excluded. Baseline values were independently confirmed via `eval_baseline_47d8cdb.mjs` executed against commit `47d8cdb`:
+
+| Metric | Baseline (Task-1503 / 47d8cdb) | Current Run (15f) | Delta |
 |---|---|---|---|
 | Evaluation PDFs | 24 | 24 | 0 |
 | Total topics extracted | 320 | **333** | **+13** |
@@ -44,12 +47,12 @@ Ran `extractFromPdf` + `extractTopicsFromSections` over the 24 evaluation PDFs i
 
 ### Flag Attribution Breakdown (Baseline vs Current)
 
-| Rule | Baseline (Task-1503 / 47d8cdb) | Current Run (15e) | Delta | Attribution Notes |
+| Rule | Baseline (`47d8cdb`) | Current Run (`15f`) | Delta | Attribution Notes |
 |---|---|---|---|---|
-| **Lowercase** | 14 | **14** | **0** | Uncapitalized non-brand opening token (UNIT 3: 5, UNIT 4: 6, notes-3-4: 2, kartik awp 9: 1). |
+| **Lowercase** | 14 | **14** | **0** | Uncapitalized non-brand opening token (`UNIT 3`: 5, `UNIT 4`: 6, `notes-3-4`: 2, `kartik awp 9`: 1). |
 | **Sentence Boundary** | 32 | **32** | **0** | Mid-sentence fragments, action verbs, terminal punctuation or conversational clauses. |
-| **Filename** | 0 | **3** | **+3** | Enforced by `enforceNoCleanFilenameDerivedTitles` in 14b (`Sumit Awp.9`, `SumitAWP Practical No.9 (1)`, `SumitAWP Practical No.9`). |
-| **Other** | 68 | **71** | **+3** | Length outliers, low confidence, and newly unlocked sections in `notes-3-4.docx.pdf` (+3) and `kartik awp 9.pdf` (+1). |
+| **Filename** | 0 | **3** | **+3** | Known bug: 3 junk topics titled from file name (`Sumit Awp.9`, `SumitAWP Practical No.9 (1)`, `SumitAWP Practical No.9`). The extractor still produces them, but `enforceNoCleanFilenameDerivedTitles` now flags them. |
+| **Other** | 68 | **71** | **+3** | Net +3: +3 flagged from newly unlocked sections in `notes-3-4.docx.pdf`, +1 in `kartik awp 9.pdf`, +1 in `SEPM_ASSIGNMENT-5.pdf`, minus 2 practical-9 titles reclassified from "other" to "filename". |
 | **Total Flagged** | **114** | **120** | **+6** | **Fully attributed** (+3 filename rule, +3 other rule). |
 
 ---
@@ -91,4 +94,5 @@ Although commits 14b and 14c changed extractor and fallback code (introducing ve
 2. **21:20 exposure** – Holdout candidate documents were analyzed and inspected with `pdfjs` prior to freezing the train/holdout split, exposing document text structures and parser characteristics before the separation.
 3. **Holdout limitations (Smoke Holdout vs. 8 MIT files)** – The earlier 7-file holdout used during early development served purely as a pipeline smoke test. The current 8 holdout files (`scripts/make_holdout.mjs`) all originate from a single university course (MIT 6.046J), limiting domain variety and leaving multi-subject robustness unmeasured.
 4. **Dev labels from deleted lookup** – Dev labels in `tests/fixtures/flag_labels.json` were derived from heuristics in the deleted lookup table rather than an independent external ground truth or blind human annotation.
-5. **Holdout titles un-blinded** – `reports/holdout_titles_blind.csv` retains the `label` column added in 14b, but inspection during the 14b diagnosis means the holdout dataset is no longer blind.
+5. **Holdout titles un-blinded** – The `label` column in `reports/holdout_titles_blind.csv` was added in commit 12, and the holdout titles were directly viewed and inspected after the dump during subsequent diagnostics, meaning the holdout dataset is no longer blind.
+6. **Filename-derived title bug** – The extractor still produces junk topics titled directly from the document file name (`Sumit Awp.9` and two practical-9 copies). While `enforceNoCleanFilenameDerivedTitles` ensures they are flagged (`needs_review: true`), the extractor still fails to synthesize meaningful content titles for these documents.
