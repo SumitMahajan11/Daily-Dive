@@ -2,7 +2,7 @@ import React, { useState, useRef, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useData } from '../../context/DataContext';
 import { CATEGORY_TREE, isTopicEligible, STARTER_ENABLED_CATEGORIES } from '../../lib/roulette';
-import { extractTopicsLocally, extractTopicsFromSections, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD, buildExtractionWarning } from '../../lib/topicExtractor';
+import { extractTopicsLocally, extractTopicsFromSections, extractTopicsWithGemini, scoreCandidateTitle, CONFIDENCE_THRESHOLD, buildExtractionWarning, formatCancelToast } from '../../lib/topicExtractor';
 import {
   Terminal,
   TrendingUp,
@@ -427,6 +427,35 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       } else if (['png', 'jpg', 'jpeg', 'webp'].includes(ext)) {
         const { extractFromImage } = await import('../../lib/extractors/imageExtractor');
         extractedData = await extractFromImage(file, (p) => setProgress(p));
+      } else if (['heic', 'heif'].includes(ext)) {
+        setProgress({ stage: 'Converting image', percent: 20, detail: 'Converting HEIC to JPEG...' });
+        let convertedBlob;
+        try {
+          const heic2anyModule = await import('heic2any');
+          const heic2any = heic2anyModule.default || heic2anyModule;
+          const result = await heic2any({
+            blob: file,
+            toType: 'image/jpeg',
+            quality: 0.9
+          });
+          convertedBlob = Array.isArray(result) ? result[0] : result;
+        } catch (convErr) {
+          console.warn('HEIC conversion error:', convErr);
+          if (typeof showToast === 'function') {
+            showToast('This HEIC photo could not be converted. Export it as JPEG and try again.', 'error');
+          }
+          setProcessingState('idle');
+          setSelectedFile(null);
+          if (fileInputRef.current) fileInputRef.current.value = '';
+          return;
+        }
+        const convertedFile = new File(
+          [convertedBlob],
+          file.name.replace(/\.(heic|heif)$/i, '.jpg'),
+          { type: 'image/jpeg' }
+        );
+        const { extractFromImage } = await import('../../lib/extractors/imageExtractor');
+        extractedData = await extractFromImage(convertedFile, (p) => setProgress(p));
       } else if (['mp4', 'webm', 'mov'].includes(ext)) {
         const { extractFromVideo } = await import('../../lib/extractors/videoExtractor');
         extractedData = await extractFromVideo(file, (p) => setProgress(p));
@@ -498,9 +527,9 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
       if (controller.signal.aborted) {
         const pagesCount = extractedData?.pageStats
           ? ((extractedData.pageStats.textLayer || 0) + (extractedData.pageStats.ocr || 0))
-          : (extractedData?.pages ? extractedData.pages.filter(p => p.text && p.text.trim().length > 0).length : 0);
+          : (extractedData?.pages ? extractedData.pages.filter(p => p.text && p.text.trim().length > 0).length : (extractedData?.rawPages ? extractedData.rawPages.filter(p => typeof p === 'string' && p.trim().length > 0).length : 0));
         if (typeof showToast === 'function') {
-          showToast(`Cancelled, showing ${pagesCount} pages`, 'info');
+          showToast(formatCancelToast(pagesCount), 'info');
         }
       }
     } catch (err) {
@@ -1000,7 +1029,7 @@ export const LibraryScreen = ({ onSpinActivePool }) => {
               type="file"
               ref={fileInputRef}
               onChange={handleFileSelect}
-              accept=".pdf,.pptx,.png,.jpg,.jpeg,.webp,.mp4,.webm,.mov,.txt,.md"
+              accept=".pdf,.pptx,.png,.jpg,.jpeg,.webp,.heic,.heif,.mp4,.webm,.mov,.txt,.md"
               className="hidden"
             />
             <div className="w-12 h-12 rounded-2xl bg-surface-container flex items-center justify-center text-primary mb-3">

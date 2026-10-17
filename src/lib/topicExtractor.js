@@ -2705,6 +2705,51 @@ export async function extractTopicsFromSections(extractedData, fileName = '') {
 }
 
 /**
+ * Formats an array of page numbers into consecutive ranges string.
+ * Example: [2, 3, 4, 5, 9, 11, 12] -> "2-5, 9, 11-12"
+ * 
+ * @param {number[]} pages
+ * @returns {string}
+ */
+export function formatPageRanges(pages) {
+  if (!Array.isArray(pages) || pages.length === 0) return '';
+  const valid = pages
+    .map(p => Number(p))
+    .filter(p => !Number.isNaN(p) && Number.isFinite(p));
+  if (valid.length === 0) return '';
+
+  const uniqueSorted = Array.from(new Set(valid)).sort((a, b) => a - b);
+  const ranges = [];
+  let rangeStart = uniqueSorted[0];
+  let rangeEnd = rangeStart;
+
+  for (let i = 1; i < uniqueSorted.length; i++) {
+    const current = uniqueSorted[i];
+    if (current === rangeEnd + 1) {
+      rangeEnd = current;
+    } else {
+      ranges.push(rangeStart === rangeEnd ? `${rangeStart}` : `${rangeStart}-${rangeEnd}`);
+      rangeStart = current;
+      rangeEnd = current;
+    }
+  }
+  ranges.push(rangeStart === rangeEnd ? `${rangeStart}` : `${rangeStart}-${rangeEnd}`);
+
+  return ranges.join(', ');
+}
+
+/**
+ * Formats the cancellation toast message with singular/plural page count.
+ * 
+ * @param {number} count 
+ * @returns {string}
+ */
+export function formatCancelToast(count) {
+  const n = Number(count) || 0;
+  return `Cancelled, showing ${n} ${n === 1 ? 'page' : 'pages'}`;
+}
+
+/**
  * Formats an extraction warning message from pageOutcomes.
  * Returns null if no pages were skipped.
  * 
@@ -2726,8 +2771,9 @@ export function buildExtractionWarning(pageOutcomes) {
 
   const parts = [];
   byReason.forEach((pages, reason) => {
-    const sorted = [...pages].sort((a, b) => a - b);
-    const label = sorted.length === 1 ? `Page ${sorted[0]} was` : `Pages ${sorted.join(', ')} were`;
+    const rangeText = formatPageRanges(pages);
+    const unique = Array.from(new Set(pages.map(Number).filter(p => !Number.isNaN(p))));
+    const label = unique.length === 1 ? `Page ${rangeText} was` : `Pages ${rangeText} were`;
     parts.push(`${label} skipped: ${reason}`);
   });
 

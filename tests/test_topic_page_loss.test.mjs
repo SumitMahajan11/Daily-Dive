@@ -3,7 +3,9 @@ import assert from 'node:assert/strict';
 import {
   extractTopicsLocally,
   extractTopicsFromSections,
-  buildExtractionWarning
+  buildExtractionWarning,
+  formatPageRanges,
+  formatCancelToast
 } from '../src/lib/topicExtractor.js';
 
 test('8a. 20 sections, each at least 300 characters: old code returns 15 topics, new code returns 20', async () => {
@@ -92,6 +94,51 @@ test('8d. buildExtractionWarning lists skipped page numbers and returns null whe
   const warning = buildExtractionWarning(someSkipped);
   assert.ok(typeof warning === 'string', 'Warning should be a string');
   assert.ok(warning.includes('8') && warning.includes('9'), `Warning should list pages 8 and 9: "${warning}"`);
+});
+
+test('8d-1. formatPageRanges pure function unit tests: empty list, single page, consecutive run, mixed, unsorted input, duplicates', () => {
+  assert.equal(typeof formatPageRanges, 'function', 'formatPageRanges must be exported');
+
+  // empty list
+  assert.equal(formatPageRanges([]), '');
+
+  // single page
+  assert.equal(formatPageRanges([5]), '5');
+
+  // consecutive run
+  assert.equal(formatPageRanges([1, 2, 3, 4]), '1-4');
+
+  // mixed
+  assert.equal(formatPageRanges([2, 3, 4, 5, 9, 11, 12]), '2-5, 9, 11-12');
+
+  // unsorted input
+  assert.equal(formatPageRanges([12, 5, 2, 11, 4, 9, 3]), '2-5, 9, 11-12');
+
+  // duplicates
+  assert.equal(formatPageRanges([2, 3, 3, 4, 5, 5, 9, 11, 12, 12]), '2-5, 9, 11-12');
+});
+
+test('8d-2. buildExtractionWarning formats consecutive skipped pages as ranges', () => {
+  const skippedRun = [
+    { page: 1, outcome: 'topic', reason: null },
+    { page: 2, outcome: 'skipped', reason: 'low text' },
+    { page: 3, outcome: 'skipped', reason: 'low text' },
+    { page: 4, outcome: 'skipped', reason: 'low text' },
+    { page: 5, outcome: 'skipped', reason: 'low text' },
+    { page: 9, outcome: 'skipped', reason: 'low text' },
+    { page: 11, outcome: 'skipped', reason: 'low text' },
+    { page: 12, outcome: 'skipped', reason: 'low text' }
+  ];
+  const warning = buildExtractionWarning(skippedRun);
+  assert.equal(warning, 'Pages 2-5, 9, 11-12 were skipped: low text');
+});
+
+test('8d-3. Cancel toast: "Cancelled, showing N page(s)" with correct singular/plural for N=1 and N=2', () => {
+  assert.equal(typeof formatCancelToast, 'function', 'formatCancelToast must be exported');
+  assert.equal(formatCancelToast(1), 'Cancelled, showing 1 page');
+  assert.equal(formatCancelToast(2), 'Cancelled, showing 2 pages');
+  assert.equal(formatCancelToast(0), 'Cancelled, showing 0 pages');
+  assert.equal(formatCancelToast(42), 'Cancelled, showing 42 pages');
 });
 
 test('8e. A cover slide with 300+ characters (title, names, academic year) is skipped as cover', async () => {
