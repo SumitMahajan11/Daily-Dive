@@ -269,6 +269,9 @@ function cleanText(text) {
  * or a lowercase-start token has a capital in the middle AND the token is not
  * in a small allow-list pattern (leading lowercase+Capital like iPhone/macOS/gRPC).
  */
+export const BRAND_CASING = /^(?:i[A-Z][a-zA-Z0-9]*|mac[A-Z][a-zA-Z0-9]*|g[A-Z]+|PostgreSQL|e[A-Z][a-z0-9]+)$/;
+const isDebugTraceEnabled = () => typeof process !== 'undefined' && Boolean(process.env?.DEBUG_TRACE === '1' || process.env?.DEBUG_TRACE === 'true');
+
 export function hasBadCasingAnomaly(str) {
   if (!str || typeof str !== 'string') return false;
   const words = str.trim().split(/\s+/);
@@ -278,9 +281,8 @@ export function hasBadCasingAnomaly(str) {
     // Generic OCR rule: a token with lowercase letters containing [A-Z]I[A-Z][a-z] is bad (catches EIGamal)
     if (/[a-z]/.test(w) && /[A-Z]I[A-Z][a-z]/.test(w)) return true;
 
-    // Allow-list pattern: leading lowercase + capital(s) like iPhone, macOS, gRPC, or PostgreSQL
-    const isAllowListed = /^(?:i[A-Z][a-zA-Z]+|mac[A-Z]+|g[A-Z]+|PostgreSQL)$/.test(w);
-    if (isAllowListed) continue;
+    // Allow-list pattern: leading lowercase + capital(s) like iPhone, macOS, gRPC, eBay, or PostgreSQL
+    if (BRAND_CASING.test(w)) continue;
 
     // Flag if lowercase letter directly followed by 2+ capitals (e.g. eIGamal)
     if (/[a-z][A-Z]{2,}/.test(w)) return true;
@@ -463,7 +465,7 @@ export function isOutlineLikePage(lines) {
 export function isCleanHeading(heading) {
   if (!heading || typeof heading !== 'string') return false;
   const s = heading.trim();
-  if (s.length < 4 || s.length > 70) return false;
+  if ((s.length < 4 && !BRAND_CASING.test(s)) || s.length > 70) return false;
 
   // 1. Balanced brackets: (), [], {}
   const stack = [];
@@ -483,6 +485,8 @@ export function isCleanHeading(heading) {
   if (/\[\d+\]/.test(s)) return false;
   if (/\b[a-zA-Z]+\d+[a-zA-Z]+\b/.test(s)) return false;
   if (hasBadCasingAnomaly(s)) return false;
+  const firstWord = s.split(/\s+/)[0].replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
+  if (/^[a-z]/.test(firstWord) && !BRAND_CASING.test(firstWord)) return false;
   if (/\b\d+[\.\)]\s+[A-Z]/.test(s)) return false;
 
   // 3. No trailing connector
@@ -1557,7 +1561,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
     description_source_lines: [startLine]
   };
 
-  if (process.env.DEBUG_TRACE === '1' || process.env.DEBUG_TRACE === 'true') {
+  if (isDebugTraceEnabled()) {
     topicObj._path = 'list_sequence';
     topicObj._flagInput = 'resolvedTitle';
   }
@@ -1661,7 +1665,7 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
     description_source_lines: [1]
   };
 
-  if (process.env.DEBUG_TRACE === '1' || process.env.DEBUG_TRACE === 'true') {
+  if (isDebugTraceEnabled()) {
     topicObj._path = 'raw_text';
     topicObj._flagInput = 'resolvedTitle';
   }
@@ -2371,7 +2375,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       description_source_lines: descLineNumbers.length > 0 ? descLineNumbers : [unit.startLine + 1]
     };
 
-    if (process.env.DEBUG_TRACE === '1' || process.env.DEBUG_TRACE === 'true') {
+    if (isDebugTraceEnabled()) {
       topicObj._path = _path;
       topicObj._flagInput = _flagInput;
     }
@@ -2607,7 +2611,7 @@ ${truncatedText}
       resources: []
     };
 
-    if (process.env.DEBUG_TRACE === '1' || process.env.DEBUG_TRACE === 'true') {
+    if (isDebugTraceEnabled()) {
       topicObj._path = 'gemini_byok';
       topicObj._flagInput = 'resolvedTitle';
     }

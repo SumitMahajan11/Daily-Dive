@@ -4,6 +4,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import {
   isCleanHeading,
+  BRAND_CASING,
   DESCRIPTION_ONLY_REASONS,
   isTitleOrContentReason,
   scoreCandidateTitle,
@@ -12,7 +13,7 @@ import {
 } from '../src/lib/topicExtractor.js';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 
-test('isCleanHeading unit tests: 4 criteria', async (t) => {
+test('isCleanHeading unit tests: 5 criteria', async (t) => {
   await t.test('criterion 1: balanced brackets', () => {
     assert.equal(isCleanHeading('Introduction to Cryptography (Part 1)'), true);
     assert.equal(isCleanHeading('Network Protocol Hierarchy [Analysis]'), true);
@@ -55,6 +56,40 @@ test('isCleanHeading unit tests: 4 criteria', async (t) => {
     assert.equal(isCleanHeading('Untitled slide 11'), false);
     assert.equal(isCleanHeading('Question'), false);
     assert.equal(isCleanHeading('Wera - 8 X'), false);
+  });
+
+  await t.test('criterion 5: lowercase fragments vs brand casing allowlist', () => {
+    // 8 positive cases (lowercase fragments, synthetic strings, not clean => false)
+    const positiveCases = [
+      'synthetic lowercase fragment',
+      'temporary buffer allocation',
+      'processing incoming data',
+      'linear algebra matrix',
+      'experimental simulation test',
+      'randomized sampling unit',
+      'distributed consensus node',
+      'quantum circuit step'
+    ];
+    for (const s of positiveCases) {
+      assert.equal(isCleanHeading(s), false, `positive case "${s}" must be rejected as not clean`);
+    }
+
+    // 8 negative cases (allowlisted brand casing => clean => true)
+    const negativeCases = [
+      'iOS',
+      'macOS',
+      'gRPC',
+      'PostgreSQL',
+      'eBay',
+      'iPhone',
+      'iPad',
+      'eCommerce'
+    ];
+    for (const s of negativeCases) {
+      assert.equal(isCleanHeading(s), true, `negative case "${s}" must be accepted as clean`);
+      assert.equal(BRAND_CASING.test(s), true, `negative case "${s}" must match BRAND_CASING`);
+      assert.equal(isCleanHeading(`${s} Overview Architecture`), true, `title starting with "${s}" must be clean`);
+    }
   });
 });
 
