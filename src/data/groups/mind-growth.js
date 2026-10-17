@@ -198,6 +198,10 @@ export const topics = [
       {
         "label": "William Ury: Getting Past No: Negotiating in Difficult Situations",
         "url": "https://www.williamury.com/books/getting-past-no/"
+      },
+      {
+        "label": "Roger Fisher & William Ury: Getting to Yes: Negotiating Agreement Without Giving In (Penguin)",
+        "url": "https://www.pon.harvard.edu/shop/getting-to-yes-negotiating-agreement-without-giving-in/"
       }
     ]
   },
@@ -349,7 +353,12 @@ export const topics = [
       "communication",
       "professional-development"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Situation-Behavior-Impact",
+        "url": "https://en.wikipedia.org/wiki/Situation-Behavior-Impact"
+      }
+    ]
   },
   {
     "id": "radical-candor-care-personally-challenge-directly",
@@ -523,7 +532,12 @@ export const topics = [
       "body-language",
       "rapport"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Kinesics",
+        "url": "https://en.wikipedia.org/wiki/Kinesics"
+      }
+    ]
   },
   {
     "id": "emblematic-gestures-and-cross-cultural-traps",
@@ -597,7 +611,12 @@ export const topics = [
       "performance-anxiety",
       "physiological-regulation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Yerkes–Dodson law",
+        "url": "https://en.wikipedia.org/wiki/Yerkes%E2%80%93Dodson_law"
+      }
+    ]
   },
   {
     "id": "signposting-and-cognitive-scaffolding-in-technical-talks",
@@ -2570,7 +2589,12 @@ export const topics = [
       "ethics",
       "agentic-state"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Milgram experiment",
+        "url": "https://en.wikipedia.org/wiki/Milgram_experiment"
+      }
+    ]
   },
   {
     "id": "bystander-effect-and-diffusion-of-responsibility",
@@ -2733,7 +2757,12 @@ export const topics = [
       "self-perception",
       "persuasion"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Foot-in-the-door technique",
+        "url": "https://en.wikipedia.org/wiki/Foot-in-the-door_technique"
+      }
+    ]
   },
   {
     "id": "ebbinghaus-forgetting-curve-and-spaced-repetition",
@@ -2770,7 +2799,12 @@ export const topics = [
       "learning",
       "memory"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Testing effect",
+        "url": "https://en.wikipedia.org/wiki/Testing_effect"
+      }
+    ]
   },
   {
     "id": "working-memory-and-baddeley-multicomponent-model",
@@ -2828,7 +2862,12 @@ export const topics = [
       "eyewitness-testimony",
       "memory"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Misinformation effect",
+        "url": "https://en.wikipedia.org/wiki/Misinformation_effect"
+      }
+    ]
   },
   {
     "id": "dual-coding-theory-paivio",
@@ -3054,7 +3093,12 @@ export const topics = [
       "delay-of-gratification",
       "behavioral-economics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hyperbolic discounting",
+        "url": "https://en.wikipedia.org/wiki/Hyperbolic_discounting"
+      }
+    ]
   },
   {
     "id": "expectancy-value-theory-vroom-work-motivation",
@@ -3112,7 +3156,12 @@ export const topics = [
       "bimodal-distribution",
       "personality"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Myers–Briggs Type Indicator",
+        "url": "https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator"
+      }
+    ]
   },
   {
     "id": "personality-trait-stability-and-the-maturity-principle",
@@ -3503,7 +3552,12 @@ export const topics = [
       "group-dynamics",
       "crowd-psychology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Social loafing",
+        "url": "https://en.wikipedia.org/wiki/Social_loafing"
+      }
+    ]
   },
   {
     "id": "social-facilitation-vs-inhibition-zajonc-drive-theory",
@@ -3674,7 +3728,12 @@ export const topics = [
       "cbt",
       "cognitive-psychology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Cognitive distortion",
+        "url": "https://en.wikipedia.org/wiki/Cognitive_distortion"
+      }
+    ]
   },
   {
     "id": "behavioral-activation-mechanisms-and-reinforcement-deprivation",
@@ -3689,7 +3748,12 @@ export const topics = [
       "reinforcement-deprivation",
       "clinical-psychology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Behavioral activation",
+        "url": "https://en.wikipedia.org/wiki/Behavioral_activation"
+      }
+    ]
   },
   {
     "id": "biopsychosocial-model-of-health-george-engel",
@@ -3748,7 +3812,12 @@ export const topics = [
       "intrinsic-motivation",
       "focus"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Flow (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Flow_(psychology)"
+      }
+    ]
   },
   {
     "id": "learned-helplessness-and-explanatory-styles-seligman",

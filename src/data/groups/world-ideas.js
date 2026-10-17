@@ -79,7 +79,12 @@ export const topics = [
       "crispr",
       "genetics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CRISPR",
+        "url": "https://en.wikipedia.org/wiki/CRISPR"
+      }
+    ]
   },
   {
     "id": "central-dogma-molecular-biology",
@@ -421,7 +426,12 @@ export const topics = [
       "cellular-automata",
       "emergence"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Cellular automaton",
+        "url": "https://en.wikipedia.org/wiki/Cellular_automaton"
+      }
+    ]
   },
   {
     "id": "epigenetics-dna-methylation",
@@ -487,7 +497,12 @@ export const topics = [
       "pathology",
       "prions"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Prion",
+        "url": "https://en.wikipedia.org/wiki/Prion"
+      }
+    ]
   },
   {
     "id": "anthropocene-sixth-extinction",
@@ -520,7 +535,12 @@ export const topics = [
       "exoplanets",
       "kepler"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Methods of detecting exoplanets",
+        "url": "https://en.wikipedia.org/wiki/Methods_of_detecting_exoplanets"
+      }
+    ]
   },
   {
     "id": "stellar-nucleosynthesis-fusion",
@@ -724,7 +744,12 @@ export const topics = [
       "thermodynamics",
       "origin-of-life"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Negentropy",
+        "url": "https://en.wikipedia.org/wiki/Negentropy"
+      }
+    ]
   },
   {
     "id": "miller-urey-abiogenesis",
@@ -757,7 +782,12 @@ export const topics = [
       "biology",
       "mendel"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Mendelian inheritance",
+        "url": "https://en.wikipedia.org/wiki/Mendelian_inheritance"
+      }
+    ]
   },
   {
     "id": "drake-equation-seti",
@@ -1075,7 +1105,12 @@ export const topics = [
       "history-of-science",
       "india"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Brahmagupta",
+        "url": "https://en.wikipedia.org/wiki/Brahmagupta"
+      }
+    ]
   },
   {
     "id": "turing-enigma-bletchley-cryptanalysis",

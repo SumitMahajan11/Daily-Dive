@@ -87,7 +87,12 @@ export const topics = [
       "synergies",
       "investment-banking"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Wikipedia: Accretion/dilution analysis",
+        "url": "https://en.wikipedia.org/wiki/Accretion%2Fdilution_analysis"
+      }
+    ],
     "lesson": {
       "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
       "why": "Shareholders track deal mechanics and earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
@@ -155,7 +160,12 @@ export const topics = [
       "corporate-finance",
       "moats"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Economic value added",
+        "url": "https://en.wikipedia.org/wiki/Economic_value_added"
+      }
+    ]
   },
   {
     "id": "enterprise-value-vs-equity-value-bridge",
@@ -343,7 +353,12 @@ export const topics = [
       "debt-avalanche",
       "interest-minimization"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Debt snowball method",
+        "url": "https://en.wikipedia.org/wiki/Debt_snowball_method"
+      }
+    ]
   },
   {
     "id": "emergency-fund-sizing-and-liquidity-tiers",
@@ -381,7 +396,12 @@ export const topics = [
       "umbrella-policy",
       "personal-finance"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Insurance",
+        "url": "https://en.wikipedia.org/wiki/Insurance"
+      }
+    ]
   },
   {
     "id": "estate-planning-wills-trusts-and-beneficiaries",
@@ -466,7 +486,12 @@ export const topics = [
       "the-greeks",
       "volatility"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Black–Scholes model",
+        "url": "https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model"
+      }
+    ]
   },
   {
     "id": "implied-volatility-surface-and-vix-index",
@@ -525,7 +550,12 @@ export const topics = [
       "creation-redemption",
       "tax-efficiency"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Exchange-traded fund",
+        "url": "https://en.wikipedia.org/wiki/Exchange-traded_fund"
+      }
+    ]
   },
   {
     "id": "margin-trading-leverage-and-liquidation-mechanics",
@@ -1110,7 +1140,12 @@ export const topics = [
       "venture-capital",
       "equity-modeling"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Capitalization table",
+        "url": "https://en.wikipedia.org/wiki/Capitalization_table"
+      }
+    ]
   },
   {
     "id": "safe-notes-vs-convertible-debt",
@@ -1152,7 +1187,12 @@ export const topics = [
       "nso",
       "startup-compensation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Vesting",
+        "url": "https://en.wikipedia.org/wiki/Vesting"
+      }
+    ]
   },
   {
     "id": "incentive-stock-options-vs-non-qualified-options",
@@ -1190,7 +1230,12 @@ export const topics = [
       "preferred-stock",
       "waterfall"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Liquidation preference",
+        "url": "https://en.wikipedia.org/wiki/Liquidation_preference"
+      }
+    ]
   },
   {
     "id": "section-1202-qsbs-tax-exemption",
@@ -1248,7 +1293,12 @@ export const topics = [
       "collar",
       "downside-protection"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hedge (finance)",
+        "url": "https://en.wikipedia.org/wiki/Hedge_(finance)"
+      }
+    ]
   },
   {
     "id": "position-sizing-and-the-kelly-criterion",
@@ -1264,7 +1314,12 @@ export const topics = [
       "portfolio-allocation",
       "bankroll"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Kelly criterion",
+        "url": "https://en.wikipedia.org/wiki/Kelly_criterion"
+      }
+    ]
   },
   {
     "id": "liquidity-risk-and-bid-ask-spread-slippage",
@@ -1757,7 +1812,12 @@ export const topics = [
       "alignment",
       "goal-setting"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Objectives and key results",
+        "url": "https://en.wikipedia.org/wiki/Objectives_and_key_results"
+      }
+    ]
   },
   {
     "id": "north-star-metric-architecture",
@@ -2017,7 +2077,12 @@ export const topics = [
       "power-law",
       "investing"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Power law",
+        "url": "https://en.wikipedia.org/wiki/Power_law"
+      }
+    ]
   },
   {
     "id": "delegation-levels-authority",
@@ -2031,7 +2096,12 @@ export const topics = [
       "delegation",
       "management"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Delegation",
+        "url": "https://en.wikipedia.org/wiki/Delegation"
+      }
+    ]
   },
   {
     "id": "career-moats-specific-knowledge",
@@ -2244,7 +2314,12 @@ export const topics = [
       "debates",
       "collaboration"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Principle of charity",
+        "url": "https://en.wikipedia.org/wiki/Principle_of_charity"
+      }
+    ]
   },
   {
     "id": "opportunity-cost-capital-allocation",

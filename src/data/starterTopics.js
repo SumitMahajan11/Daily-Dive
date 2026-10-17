@@ -202,7 +202,12 @@ export const starterTopics = [
       "synergies",
       "investment-banking"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Wikipedia: Accretion/dilution analysis",
+        "url": "https://en.wikipedia.org/wiki/Accretion%2Fdilution_analysis"
+      }
+    ],
     "lesson": {
       "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
       "why": "Shareholders track deal mechanics and earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
@@ -381,6 +386,11 @@ export const starterTopics = [
       "crispr",
       "genetics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CRISPR",
+        "url": "https://en.wikipedia.org/wiki/CRISPR"
+      }
+    ]
   }
 ];

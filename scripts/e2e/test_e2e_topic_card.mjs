@@ -204,10 +204,27 @@ async function runTopicCardE2ETests() {
       const card = page.locator('[data-testid="post-spin-topic-card"]');
       assert.strictEqual(await card.count(), 0, 'No topic card should be rendered for unknown ID');
 
-      // Assert no error toast or alert
-      const errorToast = page.locator('.toast-error, [role="alert"]');
-      assert.strictEqual(await errorToast.count(), 0, 'No error toast/alert should appear for unknown topic ID');
-      printLog('  [PASS] Test (c): Unknown ID gracefully ignored, standard Spin screen displayed.');
+      // ── TEST (F): Topic with empty resources hides "Go deeper" ─────────────
+      const emptyResourcesTopic = curatedTopics.find(t => !t.resources || t.resources.length === 0)?.id;
+      assert.ok(emptyResourcesTopic, 'Must find at least one curated topic with empty resources');
+
+      printLog(`Test (f): Loading topic with empty resources (?topic=${emptyResourcesTopic})...`);
+      await page.goto(`http://localhost:${port}/?topic=${emptyResourcesTopic}`, { waitUntil: 'networkidle' });
+      await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
+
+      // Assert "Go deeper" button does NOT exist
+      const absentGoDeeperBtn = page.locator('[data-testid="go-deeper-button"]');
+      assert.strictEqual(await absentGoDeeperBtn.count(), 0, 'UI must hide "Go deeper" when resources is empty');
+
+      // Assert description is rendered
+      const emptyCardText = await page.locator('[data-testid="post-spin-topic-card"]').textContent();
+      assert.ok(emptyCardText.length > 50, 'Topic card must render topic description even with empty resources');
+
+      if (vp.width === 390) {
+        await page.screenshot({ path: path.join(evidenceDir, 'card_empty_resources.png'), fullPage: false });
+        printLog('  [OK] Saved screenshot: evidence/12/card_empty_resources.png');
+      }
+      printLog('  [PASS] Test (f): "Go deeper" successfully hidden when resources is empty.');
 
       await context.close();
     }

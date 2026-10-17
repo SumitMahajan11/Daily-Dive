@@ -2008,7 +2008,12 @@ export const topics = [
       "cilium",
       "kernel"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: EBPF",
+        "url": "https://en.wikipedia.org/wiki/EBPF"
+      }
+    ]
   },
   {
     "id": "kubernetes-cni-overlay-vs-flat-routing",
@@ -3283,7 +3288,12 @@ export const topics = [
       "hashing",
       "data-structures"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Cuckoo filter",
+        "url": "https://en.wikipedia.org/wiki/Cuckoo_filter"
+      }
+    ]
   },
   {
     "id": "hyperloglog-cardinality-estimation",
@@ -3339,7 +3349,12 @@ export const topics = [
       "lsh",
       "similarity"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: MinHash",
+        "url": "https://en.wikipedia.org/wiki/MinHash"
+      }
+    ]
   },
   {
     "id": "b-tree-and-b-plus-tree-indexing",
@@ -3354,7 +3369,12 @@ export const topics = [
       "databases",
       "indexing"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: B-tree",
+        "url": "https://en.wikipedia.org/wiki/B-tree"
+      }
+    ]
   },
   {
     "id": "lsm-tree-write-optimized-storage",
@@ -3429,7 +3449,12 @@ export const topics = [
       "radix-tree",
       "strings"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Trie",
+        "url": "https://en.wikipedia.org/wiki/Trie"
+      }
+    ]
   },
   {
     "id": "skip-list-probabilistic-alternative",
@@ -3444,7 +3469,12 @@ export const topics = [
       "search",
       "concurrency"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Skip list",
+        "url": "https://en.wikipedia.org/wiki/Skip_list"
+      }
+    ]
   },
   {
     "id": "red-black-and-avl-trees",
@@ -3479,7 +3509,12 @@ export const topics = [
       "amortized",
       "self-adjusting"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Splay tree",
+        "url": "https://en.wikipedia.org/wiki/Splay_tree"
+      }
+    ]
   },
   {
     "id": "treap-randomized-search-tree",
@@ -3654,7 +3689,12 @@ export const topics = [
       "dynamic-programming",
       "bellman-ford"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Bellman–Ford algorithm",
+        "url": "https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm"
+      }
+    ]
   },
   {
     "id": "lowest-common-ancestor-binary-lifting",
@@ -3730,7 +3770,12 @@ export const topics = [
       "raft",
       "replication"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Raft (algorithm)",
+        "url": "https://en.wikipedia.org/wiki/Raft_(algorithm)"
+      }
+    ]
   },
   {
     "id": "paxos-consensus-protocol",
@@ -3745,7 +3790,12 @@ export const topics = [
       "paxos",
       "fault-tolerance"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Paxos (computer science)",
+        "url": "https://en.wikipedia.org/wiki/Paxos_(computer_science)"
+      }
+    ]
   },
   {
     "id": "lamport-timestamps-and-vector-clocks",
@@ -3760,7 +3810,12 @@ export const topics = [
       "vector-clocks",
       "causality"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Lamport timestamp",
+        "url": "https://en.wikipedia.org/wiki/Lamport_timestamp"
+      }
+    ]
   },
   {
     "id": "crdt-conflict-free-replicated-data-types",
@@ -3815,7 +3870,12 @@ export const topics = [
       "epidemic",
       "membership"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Gossip protocol",
+        "url": "https://en.wikipedia.org/wiki/Gossip_protocol"
+      }
+    ]
   },
   {
     "id": "byzantine-fault-tolerance-pbft",
@@ -3910,7 +3970,12 @@ export const topics = [
       "lcp",
       "algorithms"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Suffix array",
+        "url": "https://en.wikipedia.org/wiki/Suffix_array"
+      }
+    ]
   },
   {
     "id": "aho-corasick-automaton",
@@ -3965,7 +4030,12 @@ export const topics = [
       "ukkonen",
       "data-structures"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Suffix tree",
+        "url": "https://en.wikipedia.org/wiki/Suffix_tree"
+      }
+    ]
   },
   {
     "id": "boyer-moore-string-search",
@@ -4181,7 +4251,12 @@ export const topics = [
       "security",
       "hashdos"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: SipHash",
+        "url": "https://en.wikipedia.org/wiki/SipHash"
+      }
+    ]
   },
   {
     "id": "optimal-substructure-and-memoization",
@@ -4356,7 +4431,12 @@ export const topics = [
       "np-complete",
       "cook-levin"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: P versus NP problem",
+        "url": "https://en.wikipedia.org/wiki/P_versus_NP_problem"
+      }
+    ]
   },
   {
     "id": "competitive-analysis-online-algorithms",
@@ -4371,7 +4451,12 @@ export const topics = [
       "competitive-analysis",
       "paging"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Online algorithm",
+        "url": "https://en.wikipedia.org/wiki/Online_algorithm"
+      }
+    ]
   },
   {
     "id": "master-theorem-for-divide-and-conquer",
@@ -4481,7 +4566,12 @@ export const topics = [
       "hazard-pointers",
       "memory-reclamation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: ABA problem",
+        "url": "https://en.wikipedia.org/wiki/ABA_problem"
+      }
+    ]
   },
   {
     "id": "read-copy-update-rcu-synchronization",
@@ -4557,7 +4647,12 @@ export const topics = [
       "kd-tree",
       "geometry"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: R-tree",
+        "url": "https://en.wikipedia.org/wiki/R-tree"
+      }
+    ]
   },
   {
     "id": "persistent-data-structures-fat-nodes-node-copying",
@@ -4612,7 +4707,12 @@ export const topics = [
       "fibonacci-heap",
       "pairing-heap"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Fibonacci heap",
+        "url": "https://en.wikipedia.org/wiki/Fibonacci_heap"
+      }
+    ]
   },
   {
     "id": "sequential-consistency-lamport",
@@ -4712,7 +4812,12 @@ export const topics = [
       "x86",
       "arm"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Memory model (programming)",
+        "url": "https://en.wikipedia.org/wiki/Memory_model_(programming)"
+      }
+    ]
   },
   {
     "id": "release-consistency-and-acquire-release-semantics",
