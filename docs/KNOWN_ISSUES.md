@@ -18,9 +18,11 @@ These are recorded strictly as observed factual behaviors on novel, unseen publi
   - Example title: `"come to taste later. OK?"`
 
 ### 2. `mit18_05_s22_lec01.pdf` (Statistics: Introduction to Probability and Statistics)
-- **Math font symbol encoding artifacts causing provenance violations (5 violations)**:
-  - Example title: `"Permutations of ≡¥æÿ from a set of ≡¥æ¢"`
-  - Example title: `"Combinations of ≡¥æÿ from a set of ≡¥æ¢"`
+- **Math font symbol encoding artifacts (terminal mojibake for Unicode mathematical italic symbols 𝑘 \u{1D458} and 𝑛 \u{1D45B})**:
+  - Example title: `"Permutations of 𝑘 from a set of 𝑛"` (flagged for review; previously recorded with terminal mojibake as Permutations of ≡¥æÿ from a set of ≡¥æ¢)
+  - Example title: `"Combinations of 𝑘 from a set of 𝑛"` (flagged for review; previously recorded with terminal mojibake as Combinations of ≡¥æÿ from a set of ≡¥æ¢)
+- **Fallback untitled slide titles (5 provenance violations)**:
+  - Example titles: `"Untitled slide 23"`, `"Untitled slide 24"`, `"Untitled slide 28"`, `"Untitled slide 32"`, `"Untitled slide 33"` (all 5 are flagged for review)
 - **Course administration & low-salience slide titles**:
   - Example title: `"Welcome"`
   - Example title: `"Websites"`
@@ -44,15 +46,17 @@ These are recorded strictly as observed factual behaviors on novel, unseen publi
   - Example title: `"Atgccgatcgtacgacacatatcgtcatcgtactgactgtctagtctaaacacatccatcgtactgactgcatcgatccat"` (82 chars)
 - **Slide disclaimer text extracted as title**:
   - Example title: `"Photograph of Eric Davidson removed due to copyright restrictions"`
-- **Provenance violations on font-encoded characters (4 violations)**:
-  - Example title: `"Idea ΓÇô Use DNA Sequencing to Measure Diverse"`
+- **Font-encoded punctuation (en-dash rendered as mojibake ΓÇô in non-UTF-8 terminals)**:
+  - Example title: `"Idea – Use DNA Sequencing to Measure Diverse"` (unflagged silent failure; previously recorded with terminal mojibake as Idea ΓÇô Use DNA Sequencing to Measure Diverse)
+- **Fallback untitled slide titles (4 provenance violations)**:
+  - Example titles: `"Untitled slide 15"`, `"Untitled slide 21"`, `"Untitled slide 41"`, `"Untitled slide 49"` (all 4 are flagged for review)
 
 ### 6. `mit7_91js14_lecture2.pdf` (Biology: Computational and Systems Biology, Lecture 2)
-- **Fallback untitled slide title emitted**:
-  - Example title: `"Untitled slide 15"`
+- **Fallback untitled slide title emitted (1 provenance violation)**:
+  - Example title: `"Untitled slide 15"` (flagged for review)
 - **Logistics header extracted as title**:
   - Example title: `"For Those Reg’d for Grad Versions of Course"`
-- **Provenance violation (1 violation)**:
+- **Quotes in slide headings**:
   - Example title: `"‘Next Generation’ Sequencing Technologies"`
 
 ### 7. `mit8_04s16_lecnotes1.pdf` (Physics: Quantum Physics I)
@@ -65,9 +69,9 @@ These are recorded strictly as observed factual behaviors on novel, unseen publi
   - Example title: `"Equation (3.6) is another example"`
 
 ### 8. `mit9_00scf11_lec01.pdf` (Psychology: Introduction to Psychology)
-- **High frequency of fallback "Untitled slide" titles (8 occurrences)**:
-  - Example titles: `"Untitled slide 18"`, `"Untitled slide 21"`, `"Untitled slide 27"`, `"Untitled slide 46"`, `"Untitled slide 47"`, `"Untitled slide 50"`, `"Untitled slide 52"`, `"Untitled slide 53"`
-- **Truncated / incomplete slide phrases (8 provenance violations)**:
+- **High frequency of fallback "Untitled slide" titles (8 provenance violations)**:
+  - Example titles: `"Untitled slide 18"`, `"Untitled slide 21"`, `"Untitled slide 27"`, `"Untitled slide 46"`, `"Untitled slide 47"`, `"Untitled slide 50"`, `"Untitled slide 52"`, `"Untitled slide 53"` (all 8 are flagged for review)
+- **Truncated / incomplete slide phrases (silent unflagged failures)**:
   - Example title: `"Finished Files ARE the RE"`
   - Example title: `"In the Picture Was There"`
   - Example title: `"Mispredicting Affective"`

@@ -80,7 +80,8 @@ async function runTopicCardE2ETests() {
         description: 'This is a synthetic test topic designed specifically to verify that topics with zero resources hide the Go deeper button gracefully.',
         group: 'tech',
         category: 'Algorithms',
-        resources: []
+        resources: [],
+        is_custom: true
       };
 
       // Override navigator.share to null to test clipboard fallback cleanly & seed synthetic topic fixture
@@ -216,6 +217,7 @@ async function runTopicCardE2ETests() {
       const fixturePage = await context.newPage();
       printLog(`Test (f): Loading synthetic topic with empty resources (?topic=${syntheticTopic.id})...`);
       await fixturePage.goto(`http://localhost:${port}/?topic=${syntheticTopic.id}`, { waitUntil: 'networkidle' });
+      await fixturePage.waitForSelector('#spin');
       await fixturePage.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
 
       // Assert topic card is visible before asserting go-deeper-button is absent
