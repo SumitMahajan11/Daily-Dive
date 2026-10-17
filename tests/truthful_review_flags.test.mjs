@@ -188,20 +188,25 @@ test('Precision and recall evaluation against flag_labels.json', () => {
   console.log(`Good topics (total)                 ${goodTotal.toString().padEnd(27)}${goodTotal}`);
   console.log(`Junk flagged (True Positives)       ${beforeTP.toString().padEnd(27)}${afterTP}`);
   console.log(`Junk missed  (False Negatives)      ${beforeFN.toString().padEnd(27)}${afterFN}`);
-  console.log(`Good flagged (False Positives)      ${`${beforeFP} (${beforeGoodFlaggedPct.toFixed(1)}%)`.padEnd(27)}${`${afterFP} (${afterGoodFlaggedPct.toFixed(1)}%)`}`);
+  console.log(`Good flagged (False Positives)      ${`${beforeFP}/${goodTotal} (${beforeGoodFlaggedPct.toFixed(1)}%)`.padEnd(27)}${`${afterFP}/${goodTotal} (${afterGoodFlaggedPct.toFixed(1)}%)`}`);
   console.log(`Good accepted (True Negatives)      ${`${beforeTN} (${(100 - beforeGoodFlaggedPct).toFixed(1)}%)`.padEnd(27)}${`${afterTN} (${(100 - afterGoodFlaggedPct).toFixed(1)}%)`}`);
   console.log(`Recall (Junk flagged)               ${`${beforeRecall.toFixed(1)}%`.padEnd(27)}${`${afterRecall.toFixed(1)}%`}`);
   console.log(`Precision                           ${`${beforePrecision.toFixed(1)}%`.padEnd(27)}${`${afterPrecision.toFixed(1)}%`}`);
   console.log('========================================================================================\n');
 
+  // Positive class: "junk" (needs_review = true is a positive detection of a junk/flawed topic)
+  // Negative class: "good" (needs_review = false is an accepted clean topic)
   // Assertions per prompt:
   // 1. Every junk topic is flagged (recall 100%)
   assert.equal(afterRecall, 100, 'Recall on junk topics must be 100% (all junk topics flagged)');
   assert.equal(afterTP, junkTotal, `All ${junkTotal} junk topics must be flagged`);
   assert.equal(afterFN, 0, 'No junk topics may be missed');
 
-  // 2. Flagged-good count is at most 20% of good topics
-  assert.ok(afterGoodFlaggedPct <= 20, `Flagged good topics (${afterFP}/${goodTotal} = ${afterGoodFlaggedPct.toFixed(1)}%) must be at most 20%`);
+  // 2. Flagged-good count is at most 20% of good topics (positive class: junk, FP = good topics flagged)
+  assert.ok(
+    afterGoodFlaggedPct <= 20,
+    `Flagged good topics (${afterFP}/${goodTotal} = ${afterGoodFlaggedPct.toFixed(1)}%) must be at most 20%`
+  );
 });
 
 test('Invariant: flag decision uses the same string that becomes the emitted title on every topic in build', async () => {
