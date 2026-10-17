@@ -1,0 +1,14 @@
+# RULE: Candidate documents are sorted ascending by raw SHA-256 hash. Rejection of build files, dev-labels, heldout-labels, fixtures, non-PDFs, banned patterns, duplicate hashes, build-family matches, and family duplicates enforced.
+# SCRIPT_GIT_HASH: 7d57c1938ff0aa82c0a00dff8dcdd0d08e2043c7
+path,name,extension,size_bytes,sha256,family,split
+"D:\DailyDive-Eval\build\awp 10 kartik.pdf","awp 10 kartik.pdf",".pdf",219268,"052E9DEEE9E6E3B56C3B9F7517242C0848F7D3CD8EFEE69E1B2CC52EF9362462","awp kartik","SMOKE_ONLY"
+"D:\DailyDive-Eval\build\CC_Unit-3.pdf","CC_Unit-3.pdf",".pdf",1035562,"48D2892DD216B4151110E9D5C0C1DFBA03E707F61B4FD50D6A8062ABB94035E4","cc unit","SMOKE_ONLY"
+"D:\DailyDive-Eval\build\Sumit AWP 10.docx","Sumit AWP 10.docx",".docx",643525,"9F8220585E59B7270601DF3C6B295A12D785455B417C64818C2C667991846117","sumit awp","SMOKE_ONLY"
+"D:\DailyDive-Eval\build\Sumit AWP 10.pdf","Sumit AWP 10.pdf",".pdf",337712,"D6CA193D4F1ED4D57B93B7F2F8577A25D3DAA7974E2D1B5B7240BFEBAB7320D0","sumit awp","SMOKE_ONLY"
+"D:\DailyDive-Eval\build\SumitAWP practical no.10.docx","SumitAWP practical no.10.docx",".docx",269264,"DC4517B81F4F211B24ECB87303268F7B491622A317160275E13B8A667946E72F","sumitawp practical no","SMOKE_ONLY"
+"D:\DailyDive-Eval\build\SumitAWP practical no.10.pdf","SumitAWP practical no.10.pdf",".pdf",468864,"BE33911D88AABE7968512637E4648F9045E2AE04E0B1C797B2F6BA3A389CF78C","sumitawp practical no","SMOKE_ONLY"
+"D:\DailyDive-Eval\build\Unit-4.pdf","Unit-4.pdf",".pdf",1608207,"15061683F5B4116D61CD27F66C10CCDCD6C1B126C94F2B486DF6697A246A93FE","unit","SMOKE_ONLY"
+"D:\DailyDive-Candidates\Coursera Communicating your best self.pdf","Coursera Communicating your best self.pdf",".pdf",337567,"208361479AFAF1DB2847B3AB5D142CFB8A26996140C3619530B7ABC1C86FE040","coursera communicating your best self","holdout"
+"D:\DailyDive-Candidates\e921a690079369751bcce3e34da6c6ee_MIT6_0001F16_Lec1.pdf","e921a690079369751bcce3e34da6c6ee_MIT6_0001F16_Lec1.pdf",".pdf",823569,"26D1BD5F1C42489DC0FFE8B3610BC245F1278D7035F368013E5A58C7CD8A890C","mit f lec","holdout"
+"D:\DailyDive-Candidates\Assignment 4_CCA_Students_1.pdf","Assignment 4_CCA_Students_1.pdf",".pdf",253167,"722A40ED1E4020F9652B7E448B2892F9A6BF4282E5E5F5EDA2CADD578DFF3DF5","assignment cca students","holdout"
+"D:\DailyDive-Candidates\Please Read First - ICE Database Educational V5.0.pdf","Please Read First - ICE Database Educational V5.0.pdf",".pdf",84482,"955CC8B3B588515177B0B4CE146DDA3E80D9BD1E1AE885C056E85289B223B241","please read first ice database educational v","holdout"
