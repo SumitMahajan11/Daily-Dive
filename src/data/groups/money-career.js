@@ -87,7 +87,12 @@ export const topics = [
       "synergies",
       "investment-banking"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Wikipedia: Accretion/dilution analysis",
+        "url": "https://en.wikipedia.org/wiki/Accretion%2Fdilution_analysis"
+      }
+    ],
     "lesson": {
       "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
       "why": "Shareholders track deal mechanics and earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
@@ -107,7 +112,12 @@ export const topics = [
       "share-repurchases",
       "corporate-finance"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Wikipedia: Dividend policy",
+        "url": "https://en.wikipedia.org/wiki/Dividend_policy"
+      }
+    ],
     "lesson": {
       "idea": "Companies return surplus earnings to owners either through regular cash dividends or by buying back and retiring company shares in the open market.",
       "why": "Dividends provide predictable cash flow to income investors, whereas share buybacks offer capital allocation flexibility and increase remaining owners' percentage stake.",
@@ -150,7 +160,12 @@ export const topics = [
       "corporate-finance",
       "moats"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Economic value added",
+        "url": "https://en.wikipedia.org/wiki/Economic_value_added"
+      }
+    ]
   },
   {
     "id": "enterprise-value-vs-equity-value-bridge",
@@ -338,7 +353,12 @@ export const topics = [
       "debt-avalanche",
       "interest-minimization"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Debt snowball method",
+        "url": "https://en.wikipedia.org/wiki/Debt_snowball_method"
+      }
+    ]
   },
   {
     "id": "emergency-fund-sizing-and-liquidity-tiers",
@@ -461,7 +481,12 @@ export const topics = [
       "the-greeks",
       "volatility"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Black–Scholes model",
+        "url": "https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model"
+      }
+    ]
   },
   {
     "id": "implied-volatility-surface-and-vix-index",
@@ -520,7 +545,12 @@ export const topics = [
       "creation-redemption",
       "tax-efficiency"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Exchange-traded fund",
+        "url": "https://en.wikipedia.org/wiki/Exchange-traded_fund"
+      }
+    ]
   },
   {
     "id": "margin-trading-leverage-and-liquidation-mechanics",
@@ -1041,7 +1071,12 @@ export const topics = [
       "loan-to-value",
       "banking"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Debt service coverage ratio",
+        "url": "https://en.wikipedia.org/wiki/Debt_service_coverage_ratio"
+      }
+    ]
   },
   {
     "id": "section-1031-exchanges-and-depreciation-recapture",
@@ -1147,7 +1182,12 @@ export const topics = [
       "nso",
       "startup-compensation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Vesting",
+        "url": "https://en.wikipedia.org/wiki/Vesting"
+      }
+    ]
   },
   {
     "id": "incentive-stock-options-vs-non-qualified-options",
@@ -1185,7 +1225,12 @@ export const topics = [
       "preferred-stock",
       "waterfall"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Liquidation preference",
+        "url": "https://en.wikipedia.org/wiki/Liquidation_preference"
+      }
+    ]
   },
   {
     "id": "section-1202-qsbs-tax-exemption",
@@ -1243,7 +1288,12 @@ export const topics = [
       "collar",
       "downside-protection"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hedge (finance)",
+        "url": "https://en.wikipedia.org/wiki/Hedge_(finance)"
+      }
+    ]
   },
   {
     "id": "position-sizing-and-the-kelly-criterion",
@@ -1259,7 +1309,12 @@ export const topics = [
       "portfolio-allocation",
       "bankroll"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Kelly criterion",
+        "url": "https://en.wikipedia.org/wiki/Kelly_criterion"
+      }
+    ]
   },
   {
     "id": "liquidity-risk-and-bid-ask-spread-slippage",
@@ -1431,7 +1486,12 @@ export const topics = [
       "liquidation-threshold",
       "interest-rate-models"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Decentralized finance",
+        "url": "https://en.wikipedia.org/wiki/Decentralized_finance"
+      }
+    ]
   },
   {
     "id": "flash-loans-and-uncollateralized-arbitrage",
@@ -1482,7 +1542,12 @@ export const topics = [
       "staff-engineering",
       "org-design"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Career ladder",
+        "url": "https://en.wikipedia.org/wiki/Career_ladder"
+      }
+    ]
   },
   {
     "id": "high-leverage-activities",
@@ -1586,7 +1651,12 @@ export const topics = [
       "onboarding",
       "leadership"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Michael D. Watkins",
+        "url": "https://en.wikipedia.org/wiki/Michael_D._Watkins"
+      }
+    ]
   },
   {
     "id": "single-threaded-ownership",
@@ -1714,7 +1784,12 @@ export const topics = [
       "strategy",
       "business"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: The Innovator's Dilemma",
+        "url": "https://en.wikipedia.org/wiki/The_Innovator's_Dilemma"
+      }
+    ]
   },
   {
     "id": "jobs-to-be-done-theory",
@@ -1728,7 +1803,12 @@ export const topics = [
       "jtbd",
       "customer-research"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Clayton Christensen",
+        "url": "https://en.wikipedia.org/wiki/Clayton_Christensen"
+      }
+    ]
   },
   {
     "id": "okr-framework-execution",
@@ -1742,7 +1822,12 @@ export const topics = [
       "alignment",
       "goal-setting"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Objectives and key results",
+        "url": "https://en.wikipedia.org/wiki/Objectives_and_key_results"
+      }
+    ]
   },
   {
     "id": "north-star-metric-architecture",
@@ -1775,7 +1860,12 @@ export const topics = [
       "prioritization",
       "kano"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Kano model",
+        "url": "https://en.wikipedia.org/wiki/Kano_model"
+      }
+    ]
   },
   {
     "id": "crossing-the-chasm-tech",
@@ -1879,7 +1969,12 @@ export const topics = [
       "clarity",
       "executive-communication"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Barbara Minto",
+        "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
+      }
+    ]
   },
   {
     "id": "galls-law-systems",
@@ -1893,7 +1988,12 @@ export const topics = [
       "engineering",
       "evolution"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Systemantics",
+        "url": "https://en.wikipedia.org/wiki/Systemantics"
+      }
+    ]
   },
   {
     "id": "parkinsons-law-time",
@@ -1945,7 +2045,12 @@ export const topics = [
       "focus",
       "leadership"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Richard Rumelt",
+        "url": "https://en.wikipedia.org/wiki/Richard_Rumelt"
+      }
+    ]
   },
   {
     "id": "raci-matrix-governance",
@@ -1959,7 +2064,12 @@ export const topics = [
       "project-management",
       "raci"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Responsibility assignment matrix",
+        "url": "https://en.wikipedia.org/wiki/Responsibility_assignment_matrix"
+      }
+    ]
   },
   {
     "id": "peter-principle-ceilings",
@@ -2020,7 +2130,12 @@ export const topics = [
       "leverage",
       "personal-growth"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Economic moat",
+        "url": "https://en.wikipedia.org/wiki/Economic_moat"
+      }
+    ]
   },
   {
     "id": "moscow-prioritization-method",
@@ -2067,7 +2182,12 @@ export const topics = [
       "funnel",
       "metrics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dave McClure",
+        "url": "https://en.wikipedia.org/wiki/Dave_McClure"
+      }
+    ]
   },
   {
     "id": "framing-effect-persuasion",
@@ -2081,7 +2201,12 @@ export const topics = [
       "executive-influence",
       "framing"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Framing effect (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Framing_effect_(psychology)"
+      }
+    ]
   },
   {
     "id": "sponsorship-vs-mentorship",
@@ -2095,7 +2220,12 @@ export const topics = [
       "sponsorship",
       "leadership"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Mentorship",
+        "url": "https://en.wikipedia.org/wiki/Mentorship"
+      }
+    ]
   },
   {
     "id": "lean-startup-bml-loop",
@@ -2147,7 +2277,12 @@ export const topics = [
       "culture",
       "alignment"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Disagree and commit",
+        "url": "https://en.wikipedia.org/wiki/Disagree_and_commit"
+      }
+    ]
   },
   {
     "id": "one-on-one-meeting-architecture",
@@ -2175,7 +2310,12 @@ export const topics = [
       "delegation",
       "leverage"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Comparative advantage",
+        "url": "https://en.wikipedia.org/wiki/Comparative_advantage"
+      }
+    ]
   },
   {
     "id": "principle-of-charity-discourse",
@@ -2189,7 +2329,12 @@ export const topics = [
       "debates",
       "collaboration"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Principle of charity",
+        "url": "https://en.wikipedia.org/wiki/Principle_of_charity"
+      }
+    ]
   },
   {
     "id": "opportunity-cost-capital-allocation",
@@ -2203,7 +2348,12 @@ export const topics = [
       "opportunity-cost",
       "product-management"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Opportunity cost",
+        "url": "https://en.wikipedia.org/wiki/Opportunity_cost"
+      }
+    ]
   }
 ];
 

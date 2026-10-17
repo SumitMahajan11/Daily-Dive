@@ -3248,7 +3248,12 @@ export const topics = [
       "hardware",
       "cloud-infra"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Block-level storage",
+        "url": "https://en.wikipedia.org/wiki/Block-level_storage"
+      }
+    ]
   },
   {
     "id": "bloom-filter-probabilistic-membership",
@@ -3364,7 +3369,12 @@ export const topics = [
       "databases",
       "indexing"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: B-tree",
+        "url": "https://en.wikipedia.org/wiki/B-tree"
+      }
+    ]
   },
   {
     "id": "lsm-tree-write-optimized-storage",
@@ -3439,7 +3449,12 @@ export const topics = [
       "radix-tree",
       "strings"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Trie",
+        "url": "https://en.wikipedia.org/wiki/Trie"
+      }
+    ]
   },
   {
     "id": "skip-list-probabilistic-alternative",
@@ -3474,7 +3489,12 @@ export const topics = [
       "avl-tree",
       "balanced-trees"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Red–black tree",
+        "url": "https://en.wikipedia.org/wiki/Red%E2%80%93black_tree"
+      }
+    ]
   },
   {
     "id": "splay-tree-self-adjusting-search",
@@ -3669,7 +3689,12 @@ export const topics = [
       "dynamic-programming",
       "bellman-ford"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Bellman–Ford algorithm",
+        "url": "https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm"
+      }
+    ]
   },
   {
     "id": "lowest-common-ancestor-binary-lifting",
@@ -3725,7 +3750,12 @@ export const topics = [
       "flow",
       "algorithms"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hopcroft–Karp algorithm",
+        "url": "https://en.wikipedia.org/wiki/Hopcroft%E2%80%93Karp_algorithm"
+      }
+    ]
   },
   {
     "id": "raft-consensus-algorithm",
@@ -3740,7 +3770,12 @@ export const topics = [
       "raft",
       "replication"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Raft (algorithm)",
+        "url": "https://en.wikipedia.org/wiki/Raft_(algorithm)"
+      }
+    ]
   },
   {
     "id": "paxos-consensus-protocol",
@@ -3755,7 +3790,12 @@ export const topics = [
       "paxos",
       "fault-tolerance"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Paxos (computer science)",
+        "url": "https://en.wikipedia.org/wiki/Paxos_(computer_science)"
+      }
+    ]
   },
   {
     "id": "lamport-timestamps-and-vector-clocks",
@@ -3850,7 +3890,12 @@ export const topics = [
       "consensus",
       "pbft"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Byzantine fault",
+        "url": "https://en.wikipedia.org/wiki/Byzantine_fault"
+      }
+    ]
   },
   {
     "id": "chandy-lamport-distributed-snapshots",
@@ -3945,7 +3990,12 @@ export const topics = [
       "automata",
       "pattern-matching"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Aho–Corasick algorithm",
+        "url": "https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_algorithm"
+      }
+    ]
   },
   {
     "id": "levenshtein-edit-distance-wagner-fischer",
@@ -4041,7 +4091,12 @@ export const topics = [
       "quickselect",
       "median-of-medians"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Median of medians",
+        "url": "https://en.wikipedia.org/wiki/Median_of_medians"
+      }
+    ]
   },
   {
     "id": "external-merge-sort-out-of-memory",
@@ -4156,7 +4211,12 @@ export const topics = [
       "fks",
       "data-structures"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dynamic perfect hashing",
+        "url": "https://en.wikipedia.org/wiki/Dynamic_perfect_hashing"
+      }
+    ]
   },
   {
     "id": "robin-hood-and-cuckoo-hashing",
@@ -4171,7 +4231,12 @@ export const topics = [
       "cuckoo-hashing",
       "open-addressing"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Open addressing",
+        "url": "https://en.wikipedia.org/wiki/Open_addressing"
+      }
+    ]
   },
   {
     "id": "siphash-and-hashdos-defense",
@@ -4206,7 +4271,12 @@ export const topics = [
       "memoization",
       "tabulation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dynamic programming",
+        "url": "https://en.wikipedia.org/wiki/Dynamic_programming"
+      }
+    ]
   },
   {
     "id": "longest-common-subsequence-diff-algorithms",
@@ -4341,7 +4411,12 @@ export const topics = [
       "potential-method",
       "algorithms"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Amortized analysis",
+        "url": "https://en.wikipedia.org/wiki/Amortized_analysis"
+      }
+    ]
   },
   {
     "id": "p-vs-np-and-np-completeness-reductions",
@@ -4356,7 +4431,12 @@ export const topics = [
       "np-complete",
       "cook-levin"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: P versus NP problem",
+        "url": "https://en.wikipedia.org/wiki/P_versus_NP_problem"
+      }
+    ]
   },
   {
     "id": "competitive-analysis-online-algorithms",
@@ -4451,7 +4531,12 @@ export const topics = [
       "union-find",
       "amortized"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Disjoint-set data structure",
+        "url": "https://en.wikipedia.org/wiki/Disjoint-set_data_structure"
+      }
+    ]
   },
   {
     "id": "lock-free-queue-michael-scott",
@@ -4466,7 +4551,12 @@ export const topics = [
       "queues",
       "cas"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Non-blocking algorithm",
+        "url": "https://en.wikipedia.org/wiki/Non-blocking_algorithm"
+      }
+    ]
   },
   {
     "id": "aba-problem-hazard-pointers-epoch-reclamation",
@@ -4481,7 +4571,12 @@ export const topics = [
       "hazard-pointers",
       "memory-reclamation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: ABA problem",
+        "url": "https://en.wikipedia.org/wiki/ABA_problem"
+      }
+    ]
   },
   {
     "id": "read-copy-update-rcu-synchronization",
@@ -4536,7 +4631,12 @@ export const topics = [
       "deque",
       "schedulers"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Work stealing",
+        "url": "https://en.wikipedia.org/wiki/Work_stealing"
+      }
+    ]
   },
   {
     "id": "spatial-indices-r-tree-and-kd-tree",
@@ -4552,7 +4652,12 @@ export const topics = [
       "kd-tree",
       "geometry"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: R-tree",
+        "url": "https://en.wikipedia.org/wiki/R-tree"
+      }
+    ]
   },
   {
     "id": "persistent-data-structures-fat-nodes-node-copying",
@@ -4607,7 +4712,12 @@ export const topics = [
       "fibonacci-heap",
       "pairing-heap"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Fibonacci heap",
+        "url": "https://en.wikipedia.org/wiki/Fibonacci_heap"
+      }
+    ]
   },
   {
     "id": "sequential-consistency-lamport",
@@ -4707,7 +4817,12 @@ export const topics = [
       "x86",
       "arm"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Memory model (programming)",
+        "url": "https://en.wikipedia.org/wiki/Memory_model_(programming)"
+      }
+    ]
   },
   {
     "id": "release-consistency-and-acquire-release-semantics",
@@ -5096,7 +5211,12 @@ export const topics = [
       "high-availability",
       "fault-tolerance"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dynamo (storage system)",
+        "url": "https://en.wikipedia.org/wiki/Dynamo_(storage_system)"
+      }
+    ]
   },
   {
     "id": "read-repair-vs-anti-entropy-merkle-trees",
@@ -5111,7 +5231,12 @@ export const topics = [
       "merkle-trees",
       "data-synchronization"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Merkle tree",
+        "url": "https://en.wikipedia.org/wiki/Merkle_tree"
+      }
+    ]
   },
   {
     "id": "consistent-hashing-virtual-nodes",
@@ -5480,7 +5605,12 @@ export const topics = [
       "causality",
       "time"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CockroachDB",
+        "url": "https://en.wikipedia.org/wiki/CockroachDB"
+      }
+    ]
   },
   {
     "id": "vector-clock-concurrency-tradeoffs",
@@ -5660,7 +5790,12 @@ export const topics = [
       "distributed-tradeoffs",
       "system-architecture"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: PACELC design principle",
+        "url": "https://en.wikipedia.org/wiki/PACELC_theorem"
+      }
+    ]
   },
   {
     "id": "strict-vs-partial-quorums-tradeoffs",
@@ -6944,7 +7079,12 @@ export const topics = [
       "esbuild",
       "rspack"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Module bundler",
+        "url": "https://en.wikipedia.org/wiki/Module_bundler"
+      }
+    ]
   },
   {
     "id": "dom-mutation-observers-vs-polling",
@@ -6983,7 +7123,12 @@ export const topics = [
       "observers",
       "layout-thrashing"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "MDN Web Docs: Intersection Observer API",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API"
+      }
+    ]
   },
   {
     "id": "shadow-dom-and-web-components-encapsulation",

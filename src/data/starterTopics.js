@@ -202,7 +202,12 @@ export const starterTopics = [
       "synergies",
       "investment-banking"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Wikipedia: Accretion/dilution analysis",
+        "url": "https://en.wikipedia.org/wiki/Accretion%2Fdilution_analysis"
+      }
+    ],
     "lesson": {
       "idea": "An accretion-dilution analysis tests whether buying another company will increase or decrease the combined company's earnings per share after the deal closes.",
       "why": "Shareholders track deal mechanics and earnings per share closely to evaluate corporate leadership. A deal that shrinks earnings per share can trigger immediate investor skepticism.",
@@ -279,7 +284,12 @@ export const starterTopics = [
       "persuasion",
       "decision-making"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Framing effect (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Framing_effect_(psychology)"
+      }
+    ]
   },
   {
     "id": "elaboration-likelihood-model-central-vs-peripheral",
@@ -319,7 +329,12 @@ export const starterTopics = [
       "thermodynamics",
       "entropy"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Wikipedia: Second law of thermodynamics",
+        "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
+      }
+    ],
     "lesson": {
       "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system consistently increases over time.",
       "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in a forward direction.",
@@ -376,6 +391,11 @@ export const starterTopics = [
       "crispr",
       "genetics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CRISPR",
+        "url": "https://en.wikipedia.org/wiki/CRISPR"
+      }
+    ]
   }
 ];

@@ -17,7 +17,12 @@ export const topics = [
       "thermodynamics",
       "entropy"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Wikipedia: Second law of thermodynamics",
+        "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
+      }
+    ],
     "lesson": {
       "idea": "Entropy measures the degree of disorder in a physical system. The second law of thermodynamics states that total entropy in an isolated system consistently increases over time.",
       "why": "This universal law explains why heat flows from hot objects to cold ones and why time moves in a forward direction.",
@@ -74,7 +79,12 @@ export const topics = [
       "crispr",
       "genetics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CRISPR",
+        "url": "https://en.wikipedia.org/wiki/CRISPR"
+      }
+    ]
   },
   {
     "id": "central-dogma-molecular-biology",
@@ -112,7 +122,12 @@ export const topics = [
       "biology",
       "genetics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Genetic drift",
+        "url": "https://en.wikipedia.org/wiki/Genetic_drift"
+      }
+    ]
   },
   {
     "id": "neuroplasticity-synaptic-pruning",
@@ -411,7 +426,12 @@ export const topics = [
       "cellular-automata",
       "emergence"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Cellular automaton",
+        "url": "https://en.wikipedia.org/wiki/Cellular_automaton"
+      }
+    ]
   },
   {
     "id": "epigenetics-dna-methylation",
@@ -463,7 +483,12 @@ export const topics = [
       "medicine",
       "biology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Innate immune system",
+        "url": "https://en.wikipedia.org/wiki/Innate_immune_system"
+      }
+    ]
   },
   {
     "id": "prions-protein-misfolding",
@@ -515,7 +540,12 @@ export const topics = [
       "exoplanets",
       "kepler"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Methods of detecting exoplanets",
+        "url": "https://en.wikipedia.org/wiki/Methods_of_detecting_exoplanets"
+      }
+    ]
   },
   {
     "id": "stellar-nucleosynthesis-fusion",
@@ -548,7 +578,12 @@ export const topics = [
       "elements",
       "kilonova"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Neutron star merger",
+        "url": "https://en.wikipedia.org/wiki/Neutron_star_merger"
+      }
+    ]
   },
   {
     "id": "great-oxidation-event-cyanobacteria",
@@ -619,7 +654,12 @@ export const topics = [
       "population-genetics",
       "biology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hardy–Weinberg principle",
+        "url": "https://en.wikipedia.org/wiki/Hardy%E2%80%93Weinberg_principle"
+      }
+    ]
   },
   {
     "id": "quantum-chromodynamics-gluons",
@@ -652,7 +692,12 @@ export const topics = [
       "superconductivity",
       "physics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: BCS theory",
+        "url": "https://en.wikipedia.org/wiki/BCS_theory"
+      }
+    ]
   },
   {
     "id": "photovoltaic-effect-bandgaps",
@@ -704,7 +749,12 @@ export const topics = [
       "thermodynamics",
       "origin-of-life"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Negentropy",
+        "url": "https://en.wikipedia.org/wiki/Negentropy"
+      }
+    ]
   },
   {
     "id": "miller-urey-abiogenesis",
@@ -737,7 +787,12 @@ export const topics = [
       "biology",
       "mendel"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Mendelian inheritance",
+        "url": "https://en.wikipedia.org/wiki/Mendelian_inheritance"
+      }
+    ]
   },
   {
     "id": "drake-equation-seti",
@@ -770,7 +825,12 @@ export const topics = [
       "astronomy",
       "big-bang"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hubble's law",
+        "url": "https://en.wikipedia.org/wiki/Hubble's_law"
+      }
+    ]
   },
   {
     "id": "cno-cycle-nucleosynthesis",
@@ -784,7 +844,12 @@ export const topics = [
       "nuclear-physics",
       "stars"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CNO cycle",
+        "url": "https://en.wikipedia.org/wiki/CNO_cycle"
+      }
+    ]
   },
   {
     "id": "mitochondrial-eve-coalescence",
@@ -874,7 +939,12 @@ export const topics = [
       "computing",
       "bell-labs"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Point-contact transistor",
+        "url": "https://en.wikipedia.org/wiki/Point-contact_transistor"
+      }
+    ]
   },
   {
     "id": "haber-bosch-nitrogen-fixation",
@@ -945,7 +1015,12 @@ export const topics = [
       "monetary-policy",
       "history"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Bretton Woods system",
+        "url": "https://en.wikipedia.org/wiki/Bretton_Woods_system"
+      }
+    ]
   },
   {
     "id": "silk-road-economic-diffusion",
@@ -997,7 +1072,12 @@ export const topics = [
       "public-health",
       "microbiology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Germ theory of disease",
+        "url": "https://en.wikipedia.org/wiki/Germ_theory_of_disease"
+      }
+    ]
   },
   {
     "id": "james-lind-scurvy-trials",
@@ -1011,7 +1091,12 @@ export const topics = [
       "evidence-based-medicine",
       "history"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: James Lind",
+        "url": "https://en.wikipedia.org/wiki/James_Lind"
+      }
+    ]
   },
   {
     "id": "brahmagupta-zero-decimal-system",
@@ -1101,7 +1186,12 @@ export const topics = [
       "economics",
       "fordism"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Assembly line",
+        "url": "https://en.wikipedia.org/wiki/Assembly_line"
+      }
+    ]
   },
   {
     "id": "norman-borlaug-green-revolution",
@@ -1136,8 +1226,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Intermodal container",
-        "url": "https://en.wikipedia.org/wiki/Intermodal_container"
+        "label": "Wikipedia: Malcolm McLean",
+        "url": "https://en.wikipedia.org/wiki/Malcolm_McLean"
       }
     ]
   },
@@ -1623,7 +1713,12 @@ export const topics = [
       "steam",
       "transportation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Stephenson's Rocket",
+        "url": "https://en.wikipedia.org/wiki/Stephenson's_Rocket"
+      }
+    ]
   }
 ];
 

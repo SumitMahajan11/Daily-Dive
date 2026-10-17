@@ -56,7 +56,12 @@
     ],
     "title": "Framing Effects",
     "description": "Identical choices produce different decisions based on framing: emphasizing loss activates far greater urgency than highlighting equivalent gain.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Framing effect (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Framing_effect_(psychology)"
+      }
+    ]
   },
   {
     "id": "elaboration-likelihood-model-central-vs-peripheral",
@@ -307,7 +312,12 @@
     ],
     "title": "The SBI Feedback Model",
     "description": "The SBI model eliminates defensive reactions by grounding feedback in objective reality.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Situation-Behavior-Impact",
+        "url": "https://en.wikipedia.org/wiki/Situation-Behavior-Impact"
+      }
+    ]
   },
   {
     "id": "radical-candor-care-personally-challenge-directly",
@@ -431,12 +441,8 @@
     "description": "Paralinguistic cues—including vocal pitch variation, tempo, resonant timbre, and strategic pausing—account for a massive share of emotional and status.",
     "resources": [
       {
-        "label": "\"Silent Messages\" -- Description and Ordering Information",
-        "url": "https://www.kaaj.com/psych/smorder.html"
-      },
-      {
-        "label": "Alex Pentland: Honest Signals: How They Shape Our World (MIT Press)",
-        "url": "https://mitpress.mit.edu/9780262515122/honest-signals/"
+        "label": "Wikipedia: Prosody (linguistics)",
+        "url": "https://en.wikipedia.org/wiki/Prosody_(linguistics)"
       }
     ]
   },
@@ -623,7 +629,12 @@
     ],
     "title": "The SCQA Narrative Architecture",
     "description": "Barbara Minto's SCQA framework structures problem-solving narratives: Situation establishes shared undisputed context.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Barbara Minto",
+        "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
+      }
+    ]
   },
   {
     "id": "email-tone-calibration-and-egocentrism-bias",
@@ -638,7 +649,12 @@
     ],
     "title": "Email Tone Calibration",
     "description": "Justin Kruger's research on egocentrism in communication revealed that email senders believe recipients correctly interpret their sarcastic, humorous.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Egocentric bias",
+        "url": "https://en.wikipedia.org/wiki/Egocentric_bias"
+      }
+    ]
   },
   {
     "id": "flesch-kincaid-readability-and-cognitive-fluency",
@@ -773,7 +789,12 @@
     ],
     "title": "The Ladder of Inference",
     "description": "Chris Argyris' Ladder of Inference maps how individuals leap from observable data, through selected reality, attributed meanings, and unverified assumptions.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Chris Argyris",
+        "url": "https://en.wikipedia.org/wiki/Chris_Argyris"
+      }
+    ]
   },
   {
     "id": "high-context-vs-low-context-communication-hall",
@@ -1023,7 +1044,12 @@
     ],
     "title": "Async-First Operating Models",
     "description": "Asynchronous-first organizations replace low-density synchronous status meetings with high-fidelity long-form Request for Comments (RFC) written proposals.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Request for Comments",
+        "url": "https://en.wikipedia.org/wiki/Request_for_Comments"
+      }
+    ]
   },
   {
     "id": "online-disinhibition-effect-and-digital-incivility",
@@ -2440,7 +2466,12 @@
     ],
     "title": "The Milgram Obedience Experiments",
     "description": "65% of ordinary participants complied with instructions to administer lethal 450-volt electric shocks to a screaming learner when commanded by an authoritative.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Milgram experiment",
+        "url": "https://en.wikipedia.org/wiki/Milgram_experiment"
+      }
+    ]
   },
   {
     "id": "bystander-effect-and-diffusion-of-responsibility",
@@ -2600,7 +2631,12 @@
     ],
     "title": "Sequential Compliance",
     "description": "Sequential request strategies exploit distinct cognitive mechanisms to maximize behavioral compliance.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Foot-in-the-door technique",
+        "url": "https://en.wikipedia.org/wiki/Foot-in-the-door_technique"
+      }
+    ]
   },
   {
     "id": "ebbinghaus-forgetting-curve-and-spaced-repetition",
@@ -2635,7 +2671,12 @@
     ],
     "title": "Retrieval Practice",
     "description": "Henry Roediger and Jeffrey Karpicke proved that actively retrieving information from memory via self-testing produces substantially greater long-term retention.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Testing effect",
+        "url": "https://en.wikipedia.org/wiki/Testing_effect"
+      }
+    ]
   },
   {
     "id": "working-memory-and-baddeley-multicomponent-model",
@@ -2690,7 +2731,12 @@
     ],
     "title": "Memory Malleability",
     "description": "Human memory does not function like a video recording; instead, memories are reconstructed dynamically during recall.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Misinformation effect",
+        "url": "https://en.wikipedia.org/wiki/Misinformation_effect"
+      }
+    ]
   },
   {
     "id": "dual-coding-theory-paivio",
@@ -2765,7 +2811,12 @@
     ],
     "title": "Schema Theory & Constructive Memory",
     "description": "Human memory retrieval is inherently constructive rather than reproductive.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Schema (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Schema_(psychology)"
+      }
+    ]
   },
   {
     "id": "dual-process-theory-system-1-vs-system-2",
@@ -2900,7 +2951,12 @@
     ],
     "title": "Temporal Discounting",
     "description": "Temporal discounting describes how the subjective value of a reward decreases as the delay until its receipt increases.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hyperbolic discounting",
+        "url": "https://en.wikipedia.org/wiki/Hyperbolic_discounting"
+      }
+    ]
   },
   {
     "id": "expectancy-value-theory-vroom-work-motivation",
@@ -2935,7 +2991,12 @@
     ],
     "title": "The Big Five Personality Architecture",
     "description": "The Five-Factor Model (Big Five) is the gold standard of contemporary psychometrics, identifying five broad.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Big Five personality traits",
+        "url": "https://en.wikipedia.org/wiki/Big_Five_personality_traits"
+      }
+    ]
   },
   {
     "id": "psychometric-critiques-of-the-mbti",
@@ -2950,7 +3011,12 @@
     ],
     "title": "Psychometric Critiques of the MBTI",
     "description": "Academic personality psychology largely rejects the Myers-Briggs Type Indicator (MBTI) due to three severe psychometric deficiencies.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Myers–Briggs Type Indicator",
+        "url": "https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator"
+      }
+    ]
   },
   {
     "id": "personality-trait-stability-and-the-maturity-principle",
@@ -2964,7 +3030,12 @@
     ],
     "title": "Personality Across the Lifespan",
     "description": "Longitudinal personality studies reveal high rank-order stability alongside mean-level change known as the 'Maturity Principle'.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Personality development",
+        "url": "https://en.wikipedia.org/wiki/Personality_development"
+      }
+    ]
   },
   {
     "id": "person-situation-debate-walter-mischel",
@@ -3322,7 +3393,12 @@
     ],
     "title": "Collective Inaction",
     "description": "Max Ringelmann's rope-pulling experiments established Social Loafing: individual effort decreases systematically as group size increases due to obscured.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Social loafing",
+        "url": "https://en.wikipedia.org/wiki/Social_loafing"
+      }
+    ]
   },
   {
     "id": "social-facilitation-vs-inhibition-zajonc-drive-theory",
@@ -3565,7 +3641,12 @@
     ],
     "title": "Flow State Architecture",
     "description": "Mihaly Csikszentmihalyi defined 'Flow' as an optimal psychological state of deep absorption where action and awareness merge, loss of self-consciousness occurs.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Flow (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Flow_(psychology)"
+      }
+    ]
   },
   {
     "id": "learned-helplessness-and-explanatory-styles-seligman",
@@ -3620,7 +3701,12 @@
     ],
     "title": "The Broaden-and-Build Theory of Positive Emotions",
     "description": "Barbara Fredrickson's Broaden-and-Build theory demonstrates that while negative emotions narrow attentional focus to immediate survival actions.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Broaden-and-build",
+        "url": "https://en.wikipedia.org/wiki/Broaden-and-build"
+      }
+    ]
   },
   {
     "id": "perma-model-of-human-flourishing-seligman",
@@ -3736,7 +3822,12 @@
     ],
     "title": "M&A Mechanics",
     "description": "Accretion/dilution analysis evaluates whether a merger or acquisition increases or decreases the acquirer's post-transaction Earnings Per Share (EPS).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Accretion/dilution analysis",
+        "url": "https://en.wikipedia.org/wiki/Accretion%2Fdilution_analysis"
+      }
+    ]
   },
   {
     "id": "dividend-policy-vs-share-buybacks",
@@ -3750,7 +3841,12 @@
     ],
     "title": "Capital Allocation",
     "description": "Companies return excess cash to shareholders through either regular cash dividends or open-market share buybacks.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dividend policy",
+        "url": "https://en.wikipedia.org/wiki/Dividend_policy"
+      }
+    ]
   },
   {
     "id": "working-capital-management-cash-conversion-cycle",
@@ -3786,7 +3882,12 @@
     ],
     "title": "ROIC vs WACC",
     "description": "A business creates genuine economic value only when its Return on Invested Capital (ROIC) exceeds its Weighted Average Cost of Capital (WACC).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Economic value added",
+        "url": "https://en.wikipedia.org/wiki/Economic_value_added"
+      }
+    ]
   },
   {
     "id": "enterprise-value-vs-equity-value-bridge",
@@ -3966,7 +4067,12 @@
     ],
     "title": "Debt Payoff Frameworks",
     "description": "The Debt Avalanche strategy mathematically minimizes total interest paid by directing surplus payments to the highest-interest debt first.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Debt snowball method",
+        "url": "https://en.wikipedia.org/wiki/Debt_snowball_method"
+      }
+    ]
   },
   {
     "id": "emergency-fund-sizing-and-liquidity-tiers",
@@ -4083,7 +4189,12 @@
     ],
     "title": "Options Pricing & The Greeks",
     "description": "Options derivative contracts confer the right, but not the obligation, to buy (Call) or sell (Put) an underlying asset at a strike price before expiration.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Black–Scholes model",
+        "url": "https://en.wikipedia.org/wiki/Black%E2%80%93Scholes_model"
+      }
+    ]
   },
   {
     "id": "implied-volatility-surface-and-vix-index",
@@ -4139,7 +4250,12 @@
     ],
     "title": "ETFs vs Mutual Funds",
     "description": "Unlike mutual funds that settle once daily at Net Asset Value (NAV), Exchange-Traded Funds (ETFs) trade continuously on secondary exchanges.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Exchange-traded fund",
+        "url": "https://en.wikipedia.org/wiki/Exchange-traded_fund"
+      }
+    ]
   },
   {
     "id": "margin-trading-leverage-and-liquidation-mechanics",
@@ -4637,7 +4753,12 @@
     ],
     "title": "Commercial Real Estate Underwriting",
     "description": "Commercial lenders underwrite property loans primarily through the Debt Service Coverage Ratio (DSCR = NOI / Annual Debt Service).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Debt service coverage ratio",
+        "url": "https://en.wikipedia.org/wiki/Debt_service_coverage_ratio"
+      }
+    ]
   },
   {
     "id": "section-1031-exchanges-and-depreciation-recapture",
@@ -4738,7 +4859,12 @@
     ],
     "title": "Startup Equity Compensation",
     "description": "Startup equity typically vests over 4 years with a 1-year cliff, where 25% vests after 12 months and 1/48th monthly thereafter.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Vesting",
+        "url": "https://en.wikipedia.org/wiki/Vesting"
+      }
+    ]
   },
   {
     "id": "incentive-stock-options-vs-non-qualified-options",
@@ -4774,7 +4900,12 @@
     ],
     "title": "Venture Term Sheets",
     "description": "Liquidation preferences determine payout order when a company is acquired or liquidated.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Liquidation preference",
+        "url": "https://en.wikipedia.org/wiki/Liquidation_preference"
+      }
+    ]
   },
   {
     "id": "section-1202-qsbs-tax-exemption",
@@ -4829,7 +4960,12 @@
     ],
     "title": "Downside Risk Hedging",
     "description": "Portfolio hedging mitigates equity drawdowns without triggering outright stock sales.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hedge (finance)",
+        "url": "https://en.wikipedia.org/wiki/Hedge_(finance)"
+      }
+    ]
   },
   {
     "id": "position-sizing-and-the-kelly-criterion",
@@ -4844,7 +4980,12 @@
     ],
     "title": "Position Sizing Mathematics",
     "description": "A mathematical formula that determines the optimal fraction of capital to risk per bet to maximize long-term wealth growth.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Kelly criterion",
+        "url": "https://en.wikipedia.org/wiki/Kelly_criterion"
+      }
+    ]
   },
   {
     "id": "liquidity-risk-and-bid-ask-spread-slippage",
@@ -5008,7 +5149,12 @@
     ],
     "title": "DeFi Money Markets",
     "description": "Decentralized lending protocols (Aave, Compound) manage liquidity pools where borrowing interest rates float dynamically based on capital utilization curves (U =.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Decentralized finance",
+        "url": "https://en.wikipedia.org/wiki/Decentralized_finance"
+      }
+    ]
   },
   {
     "id": "flash-loans-and-uncollateralized-arbitrage",
@@ -7891,7 +8037,12 @@
     ],
     "title": "Cloud Block Storage Virtualization",
     "description": "AWS io2 Block Express decouples storage instances by routing block commands over a custom SR-IOV virtual network device to scalable NVMe storage pools.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Block-level storage",
+        "url": "https://en.wikipedia.org/wiki/Block-level_storage"
+      }
+    ]
   },
   {
     "id": "bloom-filter-probabilistic-membership",
@@ -8001,7 +8152,12 @@
     ],
     "title": "B-Trees & B+ Trees",
     "description": "B-trees maintain balanced multi-way tree hierarchies where each node matches disk page boundaries to minimize I/O seek latency during disk-based lookups.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: B-tree",
+        "url": "https://en.wikipedia.org/wiki/B-tree"
+      }
+    ]
   },
   {
     "id": "lsm-tree-write-optimized-storage",
@@ -8072,7 +8228,12 @@
     ],
     "title": "Tries, Radix Trees & Crit-Bit Trees",
     "description": "Tries structure string or bit sequences into positional key trees where edges represent character transitions.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Trie",
+        "url": "https://en.wikipedia.org/wiki/Trie"
+      }
+    ]
   },
   {
     "id": "skip-list-probabilistic-alternative",
@@ -8105,7 +8266,12 @@
     ],
     "title": "Red-Black Trees vs. AVL Trees",
     "description": "AVL trees maintain strict balance by ensuring child subtree heights differ by at most one.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Red–black tree",
+        "url": "https://en.wikipedia.org/wiki/Red%E2%80%93black_tree"
+      }
+    ]
   },
   {
     "id": "splay-tree-self-adjusting-search",
@@ -8290,7 +8456,12 @@
     ],
     "title": "Negative Cycles",
     "description": "The Bellman-Ford algorithm calculates single-source shortest paths in $O(VE)$ time across graphs with negative edge weights.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Bellman–Ford algorithm",
+        "url": "https://en.wikipedia.org/wiki/Bellman%E2%80%93Ford_algorithm"
+      }
+    ]
   },
   {
     "id": "lowest-common-ancestor-binary-lifting",
@@ -8343,7 +8514,12 @@
     ],
     "title": "Bipartite Maximum Matching",
     "description": "Finds the maximum cardinality matching in bipartite graphs in optimal O(E * sqrt(V)) time by discovering shortest augmenting paths.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hopcroft–Karp algorithm",
+        "url": "https://en.wikipedia.org/wiki/Hopcroft%E2%80%93Karp_algorithm"
+      }
+    ]
   },
   {
     "id": "raft-consensus-algorithm",
@@ -8357,7 +8533,12 @@
     ],
     "title": "Raft Consensus Algorithm",
     "description": "Raft decomposes distributed state machine consensus into three independent sub-problems.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Raft (algorithm)",
+        "url": "https://en.wikipedia.org/wiki/Raft_(algorithm)"
+      }
+    ]
   },
   {
     "id": "paxos-consensus-protocol",
@@ -8371,7 +8552,12 @@
     ],
     "title": "Paxos Consensus Protocol",
     "description": "Paxos establishes agreement on a single value in asynchronous distributed networks prone to message loss and delays.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Paxos (computer science)",
+        "url": "https://en.wikipedia.org/wiki/Paxos_(computer_science)"
+      }
+    ]
   },
   {
     "id": "lamport-timestamps-and-vector-clocks",
@@ -8461,7 +8647,12 @@
     ],
     "title": "Practical Byzantine Fault Tolerance (PBFT)",
     "description": "PBFT achieves state machine replication in asynchronous networks withstanding up to $f$ arbitrary or malicious node failures across $3f + 1$ total cluster.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Byzantine fault",
+        "url": "https://en.wikipedia.org/wiki/Byzantine_fault"
+      }
+    ]
   },
   {
     "id": "chandy-lamport-distributed-snapshots",
@@ -8551,7 +8742,12 @@
     ],
     "title": "Aho-Corasick Automaton",
     "description": "The Aho-Corasick algorithm builds a deterministic finite automaton from a dictionary of keywords by linking trie nodes with suffix fallback failure transitions.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Aho–Corasick algorithm",
+        "url": "https://en.wikipedia.org/wiki/Aho%E2%80%93Corasick_algorithm"
+      }
+    ]
   },
   {
     "id": "levenshtein-edit-distance-wagner-fischer",
@@ -8642,7 +8838,12 @@
     ],
     "title": "Quickselect & Median of Medians",
     "description": "Quickselect discovers the $k$-th smallest element in an unordered array with average $O(N)$ time by recursively partitioning only the side containing target.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Median of medians",
+        "url": "https://en.wikipedia.org/wiki/Median_of_medians"
+      }
+    ]
   },
   {
     "id": "external-merge-sort-out-of-memory",
@@ -8751,7 +8952,12 @@
     ],
     "title": "Perfect Hashing",
     "description": "Perfect hashing constructs collision-free lookup tables for static key sets, guaranteeing strictly deterministic $O(1)$ worst-case search time in linear space.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dynamic perfect hashing",
+        "url": "https://en.wikipedia.org/wiki/Dynamic_perfect_hashing"
+      }
+    ]
   },
   {
     "id": "robin-hood-and-cuckoo-hashing",
@@ -8765,7 +8971,12 @@
     ],
     "title": "Open Addressing Collision Strategies",
     "description": "Collision resolution techniques that minimize probe variances by stealing slots from rich items or using dual candidate locations.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Open addressing",
+        "url": "https://en.wikipedia.org/wiki/Open_addressing"
+      }
+    ]
   },
   {
     "id": "siphash-and-hashdos-defense",
@@ -8798,7 +9009,12 @@
     ],
     "title": "Dynamic Programming Foundations",
     "description": "Dynamic Programming solves complex optimization problems by decomposing them into overlapping subproblems whose optimal solutions combine to yield the global.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dynamic programming",
+        "url": "https://en.wikipedia.org/wiki/Dynamic_programming"
+      }
+    ]
   },
   {
     "id": "longest-common-subsequence-diff-algorithms",
@@ -8926,7 +9142,12 @@
     ],
     "title": "Amortized Complexity Analysis",
     "description": "Amortized analysis bounds the average runtime of an operation sequence without probabilistic assumptions.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Amortized analysis",
+        "url": "https://en.wikipedia.org/wiki/Amortized_analysis"
+      }
+    ]
   },
   {
     "id": "p-vs-np-and-np-completeness-reductions",
@@ -8940,7 +9161,12 @@
     ],
     "title": "P vs. NP, Cook-Levin Theorem",
     "description": "Complexity class P contains decision problems solvable in deterministic polynomial time, while NP contains problems verifiable in polynomial time.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: P versus NP problem",
+        "url": "https://en.wikipedia.org/wiki/P_versus_NP_problem"
+      }
+    ]
   },
   {
     "id": "competitive-analysis-online-algorithms",
@@ -9030,7 +9256,12 @@
     ],
     "title": "Disjoint Set Union (DSU)",
     "description": "Disjoint Set Union manages partitions of an equivalence set across dynamic disjoint groups supporting near-constant time union and find operations.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Disjoint-set data structure",
+        "url": "https://en.wikipedia.org/wiki/Disjoint-set_data_structure"
+      }
+    ]
   },
   {
     "id": "lock-free-queue-michael-scott",
@@ -9044,7 +9275,12 @@
     ],
     "title": "Lock-Free Queues",
     "description": "The Michael & Scott lock-free queue implements a concurrent FIFO queue using atomic Compare-And-Swap (CAS) primitives over a singly-linked list with a dummy head.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Non-blocking algorithm",
+        "url": "https://en.wikipedia.org/wiki/Non-blocking_algorithm"
+      }
+    ]
   },
   {
     "id": "aba-problem-hazard-pointers-epoch-reclamation",
@@ -9058,7 +9294,12 @@
     ],
     "title": "Memory Reclamation in Lock-Free Structures",
     "description": "In lock-free algorithms, the ABA problem occurs when a memory pointer is freed and reallocated with identical address values.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: ABA problem",
+        "url": "https://en.wikipedia.org/wiki/ABA_problem"
+      }
+    ]
   },
   {
     "id": "read-copy-update-rcu-synchronization",
@@ -9110,7 +9351,12 @@
     ],
     "title": "Work-Stealing Deques",
     "description": "The Chase-Lev work-stealing deque enables work-stealing thread schedulers (used in Go runtime) to balance task loads across CPU cores.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Work stealing",
+        "url": "https://en.wikipedia.org/wiki/Work_stealing"
+      }
+    ]
   },
   {
     "id": "spatial-indices-r-tree-and-kd-tree",
@@ -9125,7 +9371,12 @@
     ],
     "title": "Spatial Partitioning",
     "description": "$k$-d Trees partition $k$-dimensional points by alternating orthogonal splitting planes across coordinate dimensions.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: R-tree",
+        "url": "https://en.wikipedia.org/wiki/R-tree"
+      }
+    ]
   },
   {
     "id": "persistent-data-structures-fat-nodes-node-copying",
@@ -9177,7 +9428,12 @@
     ],
     "title": "Mergeable Heaps",
     "description": "Fibonacci heaps delay tree consolidation until extraction operations, achieving optimal $O(1)$ amortized insertion, decrease-key.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Fibonacci heap",
+        "url": "https://en.wikipedia.org/wiki/Fibonacci_heap"
+      }
+    ]
   },
   {
     "id": "sequential-consistency-lamport",
@@ -9272,7 +9528,12 @@
     ],
     "title": "Hardware Memory Models",
     "description": "Hardware architectures enforce differing memory models; x86 employs Total Store Order (TSO).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Memory model (programming)",
+        "url": "https://en.wikipedia.org/wiki/Memory_model_(programming)"
+      }
+    ]
   },
   {
     "id": "release-consistency-and-acquire-release-semantics",
@@ -9644,7 +9905,12 @@
     ],
     "title": "Sloppy Quorums & Hinted Handoff",
     "description": "During network partitions or node failures where a strict quorum cannot be reached among designated home replicas.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dynamo (storage system)",
+        "url": "https://en.wikipedia.org/wiki/Dynamo_(storage_system)"
+      }
+    ]
   },
   {
     "id": "read-repair-vs-anti-entropy-merkle-trees",
@@ -9658,7 +9924,12 @@
     ],
     "title": "Anti-Entropy Systems",
     "description": "Leaderless datastores maintain long-term replica convergence through two complementary mechanisms: opportunistic read repair and active background anti-entropy.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Merkle tree",
+        "url": "https://en.wikipedia.org/wiki/Merkle_tree"
+      }
+    ]
   },
   {
     "id": "consistent-hashing-virtual-nodes",
@@ -10011,7 +10282,12 @@
     ],
     "title": "Hybrid Logical Clocks (HLC)",
     "description": "Hybrid Logical Clocks (HLC) merge physical timestamps with Lamport logical counters into a single 64-bit coordinate that tracks causal dependencies while staying.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CockroachDB",
+        "url": "https://en.wikipedia.org/wiki/CockroachDB"
+      }
+    ]
   },
   {
     "id": "vector-clock-concurrency-tradeoffs",
@@ -10183,7 +10459,12 @@
     ],
     "title": "PACELC Theorem",
     "description": "Daniel Abadi's PACELC theorem expands the CAP theorem by stating that IF there is a Partition (P).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: PACELC design principle",
+        "url": "https://en.wikipedia.org/wiki/PACELC_theorem"
+      }
+    ]
   },
   {
     "id": "strict-vs-partial-quorums-tradeoffs",
@@ -11410,7 +11691,12 @@
     ],
     "title": "Next-Gen Bundler Architecture",
     "description": "Modern bundlers replace JavaScript-based compilers with compiled languages (Go in esbuild).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Module bundler",
+        "url": "https://en.wikipedia.org/wiki/Module_bundler"
+      }
+    ]
   },
   {
     "id": "dom-mutation-observers-vs-polling",
@@ -11447,7 +11733,12 @@
     ],
     "title": "IntersectionObserver",
     "description": "Traditional scroll listeners querying `getBoundingClientRect` force the browser to execute synchronous layout passes (layout thrashing) on the main thread.",
-    "resources": []
+    "resources": [
+      {
+        "label": "MDN Web Docs: Intersection Observer API",
+        "url": "https://developer.mozilla.org/en-US/docs/Web/API/Intersection_Observer_API"
+      }
+    ]
   },
   {
     "id": "shadow-dom-and-web-components-encapsulation",
@@ -11601,7 +11892,12 @@
     ],
     "title": "The Dual-Track Career Ladder",
     "description": "Distinguishes technical leadership (Individual Contributor Track) from organizational orchestration (Management Track).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Career ladder",
+        "url": "https://en.wikipedia.org/wiki/Career_ladder"
+      }
+    ]
   },
   {
     "id": "high-leverage-activities",
@@ -11699,7 +11995,12 @@
     ],
     "title": "The First 90 Days",
     "description": "Michael Watkins demonstrates that professional credibility is established during initial onboarding by building alliances.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Michael D. Watkins",
+        "url": "https://en.wikipedia.org/wiki/Michael_D._Watkins"
+      }
+    ]
   },
   {
     "id": "single-threaded-ownership",
@@ -11820,7 +12121,12 @@
     ],
     "title": "The Innovator's Dilemma",
     "description": "Market-leading incumbents fail not from poor management, but by listening rationally to their most profitable customers.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: The Innovator's Dilemma",
+        "url": "https://en.wikipedia.org/wiki/The_Innovator's_Dilemma"
+      }
+    ]
   },
   {
     "id": "jobs-to-be-done-theory",
@@ -11833,7 +12139,12 @@
     ],
     "title": "Jobs to Be Done (JTBD) Theory of Customer Choice",
     "description": "Customers do not buy products; they 'hire' them to make progress in specific life situations.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Clayton Christensen",
+        "url": "https://en.wikipedia.org/wiki/Clayton_Christensen"
+      }
+    ]
   },
   {
     "id": "okr-framework-execution",
@@ -11846,7 +12157,12 @@
     ],
     "title": "OKRs: Objectives and Key Results for Alignment",
     "description": "Andy Grove created and John Doerr popularized OKRs to connect high-level strategic ambitions with measurable, quantitative deliverables.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Objectives and key results",
+        "url": "https://en.wikipedia.org/wiki/Objectives_and_key_results"
+      }
+    ]
   },
   {
     "id": "north-star-metric-architecture",
@@ -11877,7 +12193,12 @@
     ],
     "title": "The Kano Model of Customer Satisfaction",
     "description": "Categorizes product features into Must-Be , One-Dimensional , and Attractive Delighters .",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Kano model",
+        "url": "https://en.wikipedia.org/wiki/Kano_model"
+      }
+    ]
   },
   {
     "id": "crossing-the-chasm-tech",
@@ -11975,7 +12296,12 @@
     ],
     "title": "The Minto Pyramid Principle for Structured Thought",
     "description": "This communication method requires stating the executive conclusion or recommendation first, followed by mutually exclusive.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Barbara Minto",
+        "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
+      }
+    ]
   },
   {
     "id": "galls-law-systems",
@@ -11988,7 +12314,12 @@
     ],
     "title": "Gall's Law & Iterative System Evolution",
     "description": "John Gall's rule of systems engineering states: 'A complex system that works is invariably found to have evolved from a simple system that worked.' Complex.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Systemantics",
+        "url": "https://en.wikipedia.org/wiki/Systemantics"
+      }
+    ]
   },
   {
     "id": "parkinsons-law-time",
@@ -12037,7 +12368,12 @@
     ],
     "title": "The Kernel of Good Strategy (Rumelt)",
     "description": "Richard Rumelt demystifies strategy by defining its essential three-part kernel.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Richard Rumelt",
+        "url": "https://en.wikipedia.org/wiki/Richard_Rumelt"
+      }
+    ]
   },
   {
     "id": "raci-matrix-governance",
@@ -12050,7 +12386,12 @@
     ],
     "title": "RACI Matrix for Cross-Functional Governance",
     "description": "Clarifies organizational roles across four dimensions: Responsible (doing the work), Accountable , Consulted (two-way input).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Responsibility assignment matrix",
+        "url": "https://en.wikipedia.org/wiki/Responsibility_assignment_matrix"
+      }
+    ]
   },
   {
     "id": "peter-principle-ceilings",
@@ -12107,7 +12448,12 @@
     ],
     "title": "Building Career Moats via Specific Knowledge",
     "description": "Naval Ravikant defines specific knowledge as rare, highly contextual domain expertise that cannot be taught in a standard course or outsourced.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Economic moat",
+        "url": "https://en.wikipedia.org/wiki/Economic_moat"
+      }
+    ]
   },
   {
     "id": "moscow-prioritization-method",
@@ -12151,7 +12497,12 @@
     ],
     "title": "Dave McClure's Pirate Metrics (AARRR Funnel)",
     "description": "Deconstructs user lifecycle economics into five measurable conversion milestones.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Dave McClure",
+        "url": "https://en.wikipedia.org/wiki/Dave_McClure"
+      }
+    ]
   },
   {
     "id": "framing-effect-persuasion",
@@ -12164,7 +12515,12 @@
     ],
     "title": "The Framing Effect in Executive Alignment",
     "description": "Kahneman & Tversky demonstrated that people react differently to choices depending on whether they are framed as losses or gains.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Framing effect (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Framing_effect_(psychology)"
+      }
+    ]
   },
   {
     "id": "sponsorship-vs-mentorship",
@@ -12177,7 +12533,12 @@
     ],
     "title": "Mentorship vs. Sponsorship in Leadership",
     "description": "Sylvia Ann Hewlett clarifies that while mentors give guidance, sponsors use their social capital and influence to advocate for you behind closed doors where.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Mentorship",
+        "url": "https://en.wikipedia.org/wiki/Mentorship"
+      }
+    ]
   },
   {
     "id": "lean-startup-bml-loop",
@@ -12226,7 +12587,12 @@
     ],
     "title": "Disagree and Commit Leadership Principle",
     "description": "Amazon and Intel principle requiring leaders to vigorously debate decisions while they are open, but once a decision is made.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Disagree and commit",
+        "url": "https://en.wikipedia.org/wiki/Disagree_and_commit"
+      }
+    ]
   },
   {
     "id": "one-on-one-meeting-architecture",
@@ -12252,7 +12618,12 @@
     ],
     "title": "David Ricardo's Comparative Advantage in Team Roles",
     "description": "Even if a senior executive is faster at drafting documentation than an intern, their comparative advantage is in executive negotiation.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Comparative advantage",
+        "url": "https://en.wikipedia.org/wiki/Comparative_advantage"
+      }
+    ]
   },
   {
     "id": "principle-of-charity-discourse",
@@ -12265,7 +12636,12 @@
     ],
     "title": "The Principle of Charity in Technical Debates",
     "description": "Methodological principle of philosophy: when critiquing an opponent's design proposal, interpret it in its strongest.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Principle of charity",
+        "url": "https://en.wikipedia.org/wiki/Principle_of_charity"
+      }
+    ]
   },
   {
     "id": "opportunity-cost-capital-allocation",
@@ -12278,7 +12654,12 @@
     ],
     "title": "Opportunity Cost in Engineering Roadmap Allocation",
     "description": "The true cost of building any engineering feature is not the developer salaries, but the value of the next-best initiative that could not be built simultaneously.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Opportunity cost",
+        "url": "https://en.wikipedia.org/wiki/Opportunity_cost"
+      }
+    ]
   },
   {
     "id": "entropy-second-law-thermodynamics",
@@ -12291,7 +12672,12 @@
     ],
     "title": "Entropy & The Second Law of Thermodynamics",
     "description": "In any isolated system, total entropy must increase over time, defining the thermodynamic arrow of time.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Second law of thermodynamics",
+        "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
+      }
+    ]
   },
   {
     "id": "wave-particle-duality-double-slit",
@@ -12340,7 +12726,12 @@
     ],
     "title": "CRISPR-Cas9 & Bacterial Adaptive Immunity",
     "description": "Discovered by Jennifer Doudna and Emmanuelle Charpentier as an ancient bacterial immune mechanism against phages.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CRISPR",
+        "url": "https://en.wikipedia.org/wiki/CRISPR"
+      }
+    ]
   },
   {
     "id": "central-dogma-molecular-biology",
@@ -12371,7 +12762,12 @@
     ],
     "title": "Natural Selection vs. Sewall Wright's Genetic Drift",
     "description": "While natural selection preserves adaptive phenotypic variations that improve reproductive fitness.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Genetic drift",
+        "url": "https://en.wikipedia.org/wiki/Genetic_drift"
+      }
+    ]
   },
   {
     "id": "neuroplasticity-synaptic-pruning",
@@ -12654,7 +13050,12 @@
     ],
     "title": "Cellular Automata",
     "description": "John Conway proved that a simple two-dimensional grid governed by four elementary local neighbor rules can produce complex emergent behaviors.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Cellular automaton",
+        "url": "https://en.wikipedia.org/wiki/Cellular_automaton"
+      }
+    ]
   },
   {
     "id": "epigenetics-dna-methylation",
@@ -12703,7 +13104,12 @@
     ],
     "title": "The Dual Immune Architecture",
     "description": "Innate immunity provides rapid, non-specific anatomical barriers, phagocytes, and complement cascades.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Innate immune system",
+        "url": "https://en.wikipedia.org/wiki/Innate_immune_system"
+      }
+    ]
   },
   {
     "id": "prions-protein-misfolding",
@@ -12752,7 +13158,12 @@
     ],
     "title": "Exoplanet Detection",
     "description": "Astronomers discover planets orbiting distant stars via Transit Photometry and Radial Velocity .",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Methods of detecting exoplanets",
+        "url": "https://en.wikipedia.org/wiki/Methods_of_detecting_exoplanets"
+      }
+    ]
   },
   {
     "id": "stellar-nucleosynthesis-fusion",
@@ -12783,7 +13194,12 @@
     ],
     "title": "Supernovae, Neutron Star Mergers",
     "description": "Elements heavier than iron (gold, platinum, uranium) cannot form through standard stellar fusion.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Neutron star merger",
+        "url": "https://en.wikipedia.org/wiki/Neutron_star_merger"
+      }
+    ]
   },
   {
     "id": "great-oxidation-event-cyanobacteria",
@@ -12850,7 +13266,12 @@
     ],
     "title": "The Hardy-Weinberg Principle of Population Genetics",
     "description": "States that allele and genotype frequencies in a population remain constant across generations in the absence of evolutionary influences (no mutation).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hardy–Weinberg principle",
+        "url": "https://en.wikipedia.org/wiki/Hardy%E2%80%93Weinberg_principle"
+      }
+    ]
   },
   {
     "id": "quantum-chromodynamics-gluons",
@@ -12881,7 +13302,12 @@
     ],
     "title": "BCS Theory of Superconductivity",
     "description": "John Bardeen, Leon Cooper, and John Robert Schrieffer explained that at near-absolute zero temperatures.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: BCS theory",
+        "url": "https://en.wikipedia.org/wiki/BCS_theory"
+      }
+    ]
   },
   {
     "id": "photovoltaic-effect-bandgaps",
@@ -12930,7 +13356,12 @@
     ],
     "title": "Negative Entropy",
     "description": "Schrödinger's insight that living systems avoid thermal decay by absorbing negative entropy from their external environment.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Negentropy",
+        "url": "https://en.wikipedia.org/wiki/Negentropy"
+      }
+    ]
   },
   {
     "id": "miller-urey-abiogenesis",
@@ -12961,7 +13392,12 @@
     ],
     "title": "Mendelian Genetics",
     "description": "Gregor Mendel's hybridization experiments with pea plants established particulate inheritance.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Mendelian inheritance",
+        "url": "https://en.wikipedia.org/wiki/Mendelian_inheritance"
+      }
+    ]
   },
   {
     "id": "drake-equation-seti",
@@ -12992,7 +13428,12 @@
     ],
     "title": "Hubble-Lemaître Law",
     "description": "Edwin Hubble and Georges Lemaître demonstrated that the recessional velocity of distant galaxies is directly proportional to their distance from Earth.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hubble's law",
+        "url": "https://en.wikipedia.org/wiki/Hubble's_law"
+      }
+    ]
   },
   {
     "id": "cno-cycle-nucleosynthesis",
@@ -13005,7 +13446,12 @@
     ],
     "title": "The Carbon-Nitrogen-Oxygen (CNO) Fusion Cycle",
     "description": "The CNO cycle is the dominant catalytic nuclear fusion mechanism in stars heavier than 1.3 solar masses, converting hydrogen into helium using carbon, nitrogen.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: CNO cycle",
+        "url": "https://en.wikipedia.org/wiki/CNO_cycle"
+      }
+    ]
   },
   {
     "id": "mitochondrial-eve-coalescence",
@@ -13090,7 +13536,12 @@
     ],
     "title": "The Point-Contact Transistor at Bell Labs (1947)",
     "description": "John Bardeen, Walter Brattain, and William Shockley invented the solid-state semiconductor amplifier, replacing fragile.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Point-contact transistor",
+        "url": "https://en.wikipedia.org/wiki/Point-contact_transistor"
+      }
+    ]
   },
   {
     "id": "haber-bosch-nitrogen-fixation",
@@ -13157,7 +13608,12 @@
     ],
     "title": "The Bretton Woods Agreement",
     "description": "In 1944, delegates from 44 Allied nations met in New Hampshire to establish the post-WWII economic architecture.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Bretton Woods system",
+        "url": "https://en.wikipedia.org/wiki/Bretton_Woods_system"
+      }
+    ]
   },
   {
     "id": "silk-road-economic-diffusion",
@@ -13206,7 +13662,12 @@
     ],
     "title": "The Germ Theory of Disease (Pasteur",
     "description": "Louis Pasteur and Robert Koch definitively overthrew the ancient miasma theory of foul air by demonstrating that specific microscopic pathogens cause specific.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Germ theory of disease",
+        "url": "https://en.wikipedia.org/wiki/Germ_theory_of_disease"
+      }
+    ]
   },
   {
     "id": "james-lind-scurvy-trials",
@@ -13219,7 +13680,12 @@
     ],
     "title": "James Lind, Scurvy",
     "description": "Royal Navy physician James Lind conducted the first documented controlled prospective clinical trial on HMS Salisbury.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: James Lind",
+        "url": "https://en.wikipedia.org/wiki/James_Lind"
+      }
+    ]
   },
   {
     "id": "brahmagupta-zero-decimal-system",
@@ -13304,7 +13770,12 @@
     ],
     "title": "Henry Ford's Moving Assembly Line (1913)",
     "description": "By moving car chassis past specialized workstations via automated conveyor belts, Ford reduced Model T assembly time from 12 hours to 93 minutes.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Assembly line",
+        "url": "https://en.wikipedia.org/wiki/Assembly_line"
+      }
+    ]
   },
   {
     "id": "norman-borlaug-green-revolution",
@@ -13337,8 +13808,8 @@
     "description": "Malcolm McLean's 1956 introduction of the standardized intermodal steel shipping container collapsed cargo dock-loading costs from $5.86/ton to $0.16/ton.",
     "resources": [
       {
-        "label": "Wikipedia: Intermodal container",
-        "url": "https://en.wikipedia.org/wiki/Intermodal_container"
+        "label": "Wikipedia: Malcolm McLean",
+        "url": "https://en.wikipedia.org/wiki/Malcolm_McLean"
       }
     ]
   },
@@ -13798,6 +14269,11 @@
     ],
     "title": "George Stephenson's Rocket",
     "description": "Stephenson's multi-tubular boiler Rocket won the Rainhill Trials and opened the Liverpool and Manchester Railway.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Stephenson's Rocket",
+        "url": "https://en.wikipedia.org/wiki/Stephenson's_Rocket"
+      }
+    ]
   }
 ]

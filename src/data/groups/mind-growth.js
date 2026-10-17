@@ -75,7 +75,12 @@ export const topics = [
       "persuasion",
       "decision-making"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Framing effect (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Framing_effect_(psychology)"
+      }
+    ]
   },
   {
     "id": "elaboration-likelihood-model-central-vs-peripheral",
@@ -353,7 +358,12 @@ export const topics = [
       "communication",
       "professional-development"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Situation-Behavior-Impact",
+        "url": "https://en.wikipedia.org/wiki/Situation-Behavior-Impact"
+      }
+    ]
   },
   {
     "id": "radical-candor-care-personally-challenge-directly",
@@ -483,12 +493,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "\"Silent Messages\" -- Description and Ordering Information",
-        "url": "https://www.kaaj.com/psych/smorder.html"
-      },
-      {
-        "label": "Alex Pentland: Honest Signals: How They Shape Our World (MIT Press)",
-        "url": "https://mitpress.mit.edu/9780262515122/honest-signals/"
+        "label": "Wikipedia: Prosody (linguistics)",
+        "url": "https://en.wikipedia.org/wiki/Prosody_(linguistics)"
       }
     ]
   },
@@ -685,7 +691,12 @@ export const topics = [
       "narrative-structure",
       "minto"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Barbara Minto",
+        "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
+      }
+    ]
   },
   {
     "id": "email-tone-calibration-and-egocentrism-bias",
@@ -701,7 +712,12 @@ export const topics = [
       "digital-communication",
       "written-clarity"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Egocentric bias",
+        "url": "https://en.wikipedia.org/wiki/Egocentric_bias"
+      }
+    ]
   },
   {
     "id": "flesch-kincaid-readability-and-cognitive-fluency",
@@ -843,7 +859,12 @@ export const topics = [
       "conflict",
       "cognitive-bias"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Chris Argyris",
+        "url": "https://en.wikipedia.org/wiki/Chris_Argyris"
+      }
+    ]
   },
   {
     "id": "high-context-vs-low-context-communication-hall",
@@ -1105,7 +1126,12 @@ export const topics = [
       "distributed-teams",
       "documentation"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Request for Comments",
+        "url": "https://en.wikipedia.org/wiki/Request_for_Comments"
+      }
+    ]
   },
   {
     "id": "online-disinhibition-effect-and-digital-incivility",
@@ -2584,7 +2610,12 @@ export const topics = [
       "ethics",
       "agentic-state"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Milgram experiment",
+        "url": "https://en.wikipedia.org/wiki/Milgram_experiment"
+      }
+    ]
   },
   {
     "id": "bystander-effect-and-diffusion-of-responsibility",
@@ -2752,7 +2783,12 @@ export const topics = [
       "self-perception",
       "persuasion"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Foot-in-the-door technique",
+        "url": "https://en.wikipedia.org/wiki/Foot-in-the-door_technique"
+      }
+    ]
   },
   {
     "id": "ebbinghaus-forgetting-curve-and-spaced-repetition",
@@ -2789,7 +2825,12 @@ export const topics = [
       "learning",
       "memory"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Testing effect",
+        "url": "https://en.wikipedia.org/wiki/Testing_effect"
+      }
+    ]
   },
   {
     "id": "working-memory-and-baddeley-multicomponent-model",
@@ -2847,7 +2888,12 @@ export const topics = [
       "eyewitness-testimony",
       "memory"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Misinformation effect",
+        "url": "https://en.wikipedia.org/wiki/Misinformation_effect"
+      }
+    ]
   },
   {
     "id": "dual-coding-theory-paivio",
@@ -2926,7 +2972,12 @@ export const topics = [
       "war-of-the-ghosts",
       "cognitive-psychology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Schema (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Schema_(psychology)"
+      }
+    ]
   },
   {
     "id": "dual-process-theory-system-1-vs-system-2",
@@ -3068,7 +3119,12 @@ export const topics = [
       "delay-of-gratification",
       "behavioral-economics"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Hyperbolic discounting",
+        "url": "https://en.wikipedia.org/wiki/Hyperbolic_discounting"
+      }
+    ]
   },
   {
     "id": "expectancy-value-theory-vroom-work-motivation",
@@ -3105,7 +3161,12 @@ export const topics = [
       "psychometrics",
       "costa-mccrae"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Big Five personality traits",
+        "url": "https://en.wikipedia.org/wiki/Big_Five_personality_traits"
+      }
+    ]
   },
   {
     "id": "psychometric-critiques-of-the-mbti",
@@ -3121,7 +3182,12 @@ export const topics = [
       "bimodal-distribution",
       "personality"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Myers–Briggs Type Indicator",
+        "url": "https://en.wikipedia.org/wiki/Myers%E2%80%93Briggs_Type_Indicator"
+      }
+    ]
   },
   {
     "id": "personality-trait-stability-and-the-maturity-principle",
@@ -3136,7 +3202,12 @@ export const topics = [
       "lifespan-psychology",
       "trait-stability"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Personality development",
+        "url": "https://en.wikipedia.org/wiki/Personality_development"
+      }
+    ]
   },
   {
     "id": "person-situation-debate-walter-mischel",
@@ -3512,7 +3583,12 @@ export const topics = [
       "group-dynamics",
       "crowd-psychology"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Social loafing",
+        "url": "https://en.wikipedia.org/wiki/Social_loafing"
+      }
+    ]
   },
   {
     "id": "social-facilitation-vs-inhibition-zajonc-drive-theory",
@@ -3767,7 +3843,12 @@ export const topics = [
       "intrinsic-motivation",
       "focus"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Flow (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Flow_(psychology)"
+      }
+    ]
   },
   {
     "id": "learned-helplessness-and-explanatory-styles-seligman",
@@ -3825,7 +3906,12 @@ export const topics = [
       "cognitive-flexibility",
       "resilience"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: Broaden-and-build",
+        "url": "https://en.wikipedia.org/wiki/Broaden-and-build"
+      }
+    ]
   },
   {
     "id": "perma-model-of-human-flourishing-seligman",
