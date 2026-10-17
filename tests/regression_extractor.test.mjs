@@ -8,9 +8,6 @@ import {
   truncateTitle
 } from '../src/lib/topicExtractor.js';
 
-console.log('================================================================');
-console.log('       DAILY DIVE — PERMANENT REGRESSION & CONFIDENCE SUITE      ');
-console.log('================================================================\n');
 
 let totalTests = 0;
 let passedTests = 0;
@@ -19,7 +16,6 @@ function assert(condition, message) {
   totalTests++;
   if (condition) {
     passedTests++;
-    console.log(`  ✓ PASS: ${message}`);
   } else {
     console.error(`  ✗ FAIL: ${message}`);
     throw new Error(`Assertion failed: ${message}`);
@@ -27,7 +23,6 @@ function assert(condition, message) {
 }
 
 // ── PART 1: BAD TITLE REGRESSION FIXTURES (Round 1 + Round 2 + Historic) ──
-console.log('[1/4] Running Bad Title Confidence Scoring Regression Fixtures...');
 
 const badTitleCases = [
   {
@@ -104,7 +99,6 @@ badTitleCases.forEach(tc => {
 });
 
 // ── PART 2: CLEAN HIGH-CONFIDENCE TITLE FIXTURES ──
-console.log('\n[2/4] Running Clean High-Confidence Title Fixtures...');
 
 const cleanTitleCases = [
   'Thermal Comfort Benchmarks',
@@ -134,7 +128,6 @@ cleanTitleCases.forEach(title => {
 });
 
 // ── PART 3: ALL 6 HISTORIC FIXTURES REGRESSION RUN ──
-console.log('\n[3/4] Running All 6 Historic Document Fixtures...');
 
 const fixtureFiles = [
   { file: 'tests/fixtures/exp2_pages.json', name: 'Experiment no 2 cn.pdf' },
@@ -162,7 +155,6 @@ fixtureFiles.forEach(({ file, name }) => {
 });
 
 // ── PART 4: VERIFICATION ON DOCUMENT 6 & NEW DOCUMENT TYPE ──
-console.log('\n[4/4] Verification: Document 6 & New Document Type Breakdown\n');
 
 function displayDocumentAudit(title, fileName, sections, isMarkdown = false) {
   const fullText = isMarkdown ? sections : sections.join('\n\n');
@@ -172,45 +164,25 @@ function displayDocumentAudit(title, fileName, sections, isMarkdown = false) {
 
   const topics = extractTopicsLocally(fullText, rawSections, fileName);
 
-  console.log(`================================================================`);
-  console.log(`DOCUMENT: ${title}`);
-  console.log(`SOURCE: ${fileName} | Yield: ${topics.length} topics`);
-  console.log(`CONFIDENCE THRESHOLD: ${CONFIDENCE_THRESHOLD}%`);
-  console.log(`================================================================`);
 
   const autoAccepted = topics.filter(t => !t.needs_review && t.confidence >= CONFIDENCE_THRESHOLD);
   const flaggedForReview = topics.filter(t => t.needs_review || t.confidence < CONFIDENCE_THRESHOLD);
 
-  console.log(`\n--- [A] AUTO-ACCEPTED (HIGH CONFIDENCE >= ${CONFIDENCE_THRESHOLD}%) [${autoAccepted.length} topics] ---`);
   if (autoAccepted.length === 0) {
-    console.log('  (None)');
   } else {
     autoAccepted.forEach((t, i) => {
-      console.log(`  [${i + 1}] "${t.title}"`);
-      console.log(`      Confidence: ${t.confidence}% (${t.confidence_rating}) | Structural: ${t.is_structural_title ? 'Yes (Slide XML)' : 'No'}`);
-      console.log(`      Category: ${t.category} | Tags: [${t.tags.join(', ')}]`);
-      console.log(`      Description: "${t.description}"`);
     });
   }
 
-  console.log(`\n--- [B] FLAGGED FOR REVIEW (LOW CONFIDENCE < ${CONFIDENCE_THRESHOLD}%) [${flaggedForReview.length} topics] ---`);
   if (flaggedForReview.length === 0) {
-    console.log('  (None - All topics met high confidence criteria)');
   } else {
     flaggedForReview.forEach((t, i) => {
-      console.log(`  [${i + 1}] "${t.title}"`);
       const displayRawHeading = t.raw_heading !== undefined
         ? (t.raw_heading.trim() ? `"${t.raw_heading}"` : '"" (empty)')
         : `"${t.title}"`;
-      console.log(`      Confidence: ${t.confidence}% (${t.confidence_rating}) | Raw Heading: ${displayRawHeading}`);
-      console.log(`      Review Reasons: ${t.review_reasons.join(' · ') || 'Low structural score'}`);
-      console.log(`      Description: "${t.description}"`);
     });
   }
 
-  console.log('\n----------------------------------------------------------------');
-  console.log(`SUMMARY: ${autoAccepted.length} Auto-Accepted | ${flaggedForReview.length} Flagged for Review`);
-  console.log('----------------------------------------------------------------\n');
 
   return { autoAccepted, flaggedForReview };
 }
@@ -368,7 +340,6 @@ assert(
 );
 
 // ── PART 4: TITLE TRUNCATION UNIT TESTS (70 Chars, Word Boundary, Ellipsis) ──
-console.log('\n[4/4] Running Title Truncation Unit Tests (3 Cases)...');
 
 // Case 1: Short title unchanged (<= 70 characters)
 const shortTitle = 'Thermal Comfort Fundamentals';
@@ -392,6 +363,3 @@ assert(
   `Case 3: Single very long word with no spaces uncut: "${truncateTitle(longWord)}"`
 );
 
-console.log('================================================================');
-console.log(`ALL TESTS PASSED! (${passedTests}/${totalTests} assertions verified)`);
-console.log('================================================================');

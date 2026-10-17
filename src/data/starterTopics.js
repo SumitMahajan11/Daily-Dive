@@ -1,7 +1,7 @@
 /**
  * Curated first-spin starter topic set (16 topics across all 4 groups).
  * Hydrates instant spin with zero chunk delay on initial load.
- * Generated automatically by scripts/split_topics_by_group.mjs
+ * Generated automatically by scripts/tools/split_topics_by_group.mjs
  */
 export const starterTopics = [
   {
@@ -24,10 +24,6 @@ export const starterTopics = [
       {
         "label": "The Illustrated Transformer (Jay Alammar)",
         "url": "https://jalammar.github.io/illustrated-transformer/"
-      },
-      {
-        "label": "PyTorch MultiheadAttention Docs",
-        "url": "https://pytorch.org/docs/stable/generated/torch.nn.MultiheadAttention.html"
       }
     ],
     "lesson": {
@@ -86,10 +82,6 @@ export const starterTopics = [
         "url": "https://arxiv.org/abs/2312.00752"
       },
       {
-        "label": "State Space Models Annotated (Albert Gu & Tri Dao)",
-        "url": "https://srush.github.io/annotated-s4/"
-      },
-      {
         "label": "Mamba GitHub Repository",
         "url": "https://github.com/state-spaces/mamba"
       }
@@ -120,10 +112,6 @@ export const starterTopics = [
       {
         "label": "EleutherAI: Rotary Embeddings Explanation",
         "url": "https://blog.eleuther.ai/rotary-embeddings/"
-      },
-      {
-        "label": "Hugging Face RoPE Implementation in Llama",
-        "url": "https://github.com/huggingface/transformers/blob/main/src/transformers/models/llama/modeling_llama.py"
       }
     ],
     "lesson": {
@@ -148,16 +136,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Aswath Damodaran: Discounted Cash Flow Valuation (NYU Stern Lecture Notes)",
-        "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/valn2ed/ch12.pdf"
-      },
-      {
         "label": "CFA Institute: Free Cash Flow Valuation Refresher Reading",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/free-cash-flow-valuation"
-      },
-      {
-        "label": "Corporate Finance Institute: DCF Model Training & Formula Guide",
-        "url": "https://corporatefinanceinstitute.com/resources/valuation/dcf-formula-discounted-cash-flow/"
       }
     ]
   },
@@ -176,14 +156,6 @@ export const starterTopics = [
       "valuation"
     ],
     "resources": [
-      {
-        "label": "Aswath Damodaran: Estimating Hurdle Rates and Cost of Capital (NYU Stern)",
-        "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/country/wacc.pdf"
-      },
-      {
-        "label": "CFA Institute: Cost of Capital and Capital Structure Analysis",
-        "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/cost-of-capital"
-      },
       {
         "label": "Harvard Business Review: A Refresher on Cost of Capital",
         "url": "https://hbr.org/2015/04/a-refresher-on-cost-of-capital"
@@ -205,14 +177,6 @@ export const starterTopics = [
       "leverage"
     ],
     "resources": [
-      {
-        "label": "Franco Modigliani & Merton H. Miller: The Cost of Capital, Corporation Finance and the Theory of Investment (AER 1958)",
-        "url": "https://www.jstor.org/stable/1809766"
-      },
-      {
-        "label": "Stewart C. Myers: The Capital Structure Puzzle (Journal of Finance 1984)",
-        "url": "https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1540-6261.1984.tb03646.x"
-      },
       {
         "label": "CFA Institute: Capital Structure Decisions and Leverage Theory",
         "url": "https://www.cfainstitute.org/en/membership/professional-development/refresher-readings/capital-structure"
@@ -240,16 +204,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Harvard Business Review: The Art of M&A Due Diligence",
-        "url": "https://hbr.org/2010/06/the-art-of-ma-due-diligence"
-      },
-      {
-        "label": "Corporate Finance Institute: Accretion Dilution Model Guide",
-        "url": "https://corporatefinanceinstitute.com/resources/valuation/accretion-dilution-analysis/"
-      },
-      {
-        "label": "Aswath Damodaran: The Value of Synergy in Mergers & Acquisitions",
-        "url": "https://pages.stern.nyu.edu/~adamodar/pdfiles/papers/synergy.pdf"
+        "label": "Wikipedia: Accretion/dilution analysis",
+        "url": "https://en.wikipedia.org/wiki/Accretion%2Fdilution_analysis"
       }
     ],
     "lesson": {
@@ -273,10 +229,6 @@ export const starterTopics = [
       "philosophy"
     ],
     "resources": [
-      {
-        "label": "Aristotle: Rhetoric (Translated by W. Rhys Roberts, MIT Classics)",
-        "url": "http://classics.mit.edu/Aristotle/rhetoric.html"
-      },
       {
         "label": "Stanford Encyclopedia of Philosophy: Aristotle's Rhetoric",
         "url": "https://plato.stanford.edu/entries/aristotle-rhetoric/"
@@ -308,14 +260,6 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Robert B. Cialdini: Influence: The Psychology of Persuasion (Harper Business)",
-        "url": "https://www.influenceatwork.com/our-founder/robert-cialdini-phd/"
-      },
-      {
-        "label": "Association for Psychological Science: The Science of Social Influence",
-        "url": "https://www.psychologicalscience.org/observer/the-science-of-influence"
-      },
-      {
         "label": "Harvard Business Review: Harnessing the Science of Persuasion",
         "url": "https://hbr.org/2001/10/harnessing-the-science-of-persuasion"
       }
@@ -342,16 +286,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Amos Tversky & Daniel Kahneman: The Framing of Decisions and the Psychology of Choice (Science 1981)",
-        "url": "https://www.science.org/doi/10.1126/science.7455683"
-      },
-      {
-        "label": "Daniel Kahneman: Thinking, Fast and Slow (Farrar, Straus and Giroux)",
-        "url": "https://us.macmillan.com/books/9780374533557/thinkingfastandslow"
-      },
-      {
-        "label": "American Psychological Association: Decision Framing and Behavioral Economics",
-        "url": "https://www.apa.org/pubs/journals/xge"
+        "label": "Wikipedia: Framing effect (psychology)",
+        "url": "https://en.wikipedia.org/wiki/Framing_effect_(psychology)"
       }
     ]
   },
@@ -371,16 +307,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Richard E. Petty & John T. Cacioppo: The Elaboration Likelihood Model of Persuasion (Advances in Experimental Social Psychology 1986)",
-        "url": "https://www.sciencedirect.com/science/article/pii/S0065260108602142"
-      },
-      {
-        "label": "American Psychological Association: Cognitive Elaboration and Attitude Change",
-        "url": "https://www.apa.org/pubs/journals/psp"
-      },
-      {
-        "label": "Journal of Consumer Research: Testing the Central and Peripheral Routes to Persuasion",
-        "url": "https://academic.oup.com/jcr"
+        "label": "Wikipedia: Elaboration likelihood model",
+        "url": "https://en.wikipedia.org/wiki/Elaboration_likelihood_model"
       }
     ],
     "lesson": {
@@ -403,7 +331,7 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Rudolf Clausius — The Mechanical Theory of Heat (1867)",
+        "label": "Wikipedia: Second law of thermodynamics",
         "url": "https://en.wikipedia.org/wiki/Second_law_of_thermodynamics"
       }
     ],
@@ -427,8 +355,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Richard Feynman — The Character of Physical Law (MIT Press)",
-        "url": "https://mitpress.mit.edu"
+        "label": "Wikipedia: The Character of Physical Law",
+        "url": "https://en.wikipedia.org/wiki/The_Character_of_Physical_Law"
       }
     ]
   },
@@ -446,8 +374,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "John S. Bell — Speakable and Unspeakable in Quantum Mechanics (Cambridge)",
-        "url": "https://www.cambridge.org"
+        "label": "Wikipedia: Quantum entanglement",
+        "url": "https://en.wikipedia.org/wiki/Quantum_entanglement"
       }
     ]
   },
@@ -465,8 +393,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Doudna & Charpentier — A Programmable Dual-RNA-Guided DNA Endonuclease in Adaptive Bacterial Immunity (Science 2012)",
-        "url": "https://www.science.org/doi/10.1126/science.1225829"
+        "label": "Wikipedia: CRISPR",
+        "url": "https://en.wikipedia.org/wiki/CRISPR"
       }
     ]
   }

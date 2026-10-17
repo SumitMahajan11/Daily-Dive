@@ -1,0 +1,392 @@
+[
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 1,
+    "title": "Why Do We Need Hybrid Encryption?",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 2,
+    "title": "What is Hybrid Encryption?",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 3,
+    "title": "What is KEM/DEM? 5. Key Encapsulation",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 4,
+    "title": "Data Encapsulation Mechanism (DEM)",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 5,
+    "title": "Example: Hybrid Encryption using KEM/DEM",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 6,
+    "title": "What is ElGamal Encryption?",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 7,
+    "title": "Public Parameters 4. Key Generation",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 8,
+    "title": "Elgamal Decryption Process",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 9,
+    "title": "Working Example of E1igamal Encryption",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 10,
+    "title": "EIGamal Decryption (Example)",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 11,
+    "title": "Question",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 12,
+    "title": "ElGamal Encryption — Question 1 (Solved)",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 13,
+    "title": "Cs P=",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 14,
+    "title": "ElGamal Encryption — Question 2 (Solved)",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 15,
+    "title": "Bob chooses private key",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 16,
+    "title": "ElGamal Encryption — Question 3 (Solved)",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 17,
+    "title": "Using Elgamal Encryption",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 18,
+    "title": "ElGamal Encryption — Question 4 (Solved)",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 19,
+    "title": "For the Elgamal Cryptosystem",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 20,
+    "title": "ElGamal Encryption — Question 5 (Advanced)",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 21,
+    "title": "RSA (Textbook Encryption) — Points 1, 2",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 22,
+    "title": "& RSA Encryption Flow (6 Textbook RSA",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 23,
+    "title": "€3 Why Textbook RSA is Not Used Today [9]",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 24,
+    "title": "Dictionary Attack on Textbook RSA",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 25,
+    "title": "Deterministic Encryption Attack on Textbook",
+    "label": "junk"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 26,
+    "title": "Multiplicative Attack on Textbook RSA",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 27,
+    "title": "Chosen Plaintext Attack on Textbook RSA",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 28,
+    "title": "Low Exponent Attack on Textbook RSA",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 29,
+    "title": "Common Modulus Attack on Textbook RSA",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 30,
+    "title": "Chosen Ciphertext Attack on Textbook RSA",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 31,
+    "title": "How to Prevent Attacks on Textbook RSA?",
+    "label": "good"
+  },
+  {
+    "file": "Unit IV Updated SAS.pptx.pdf",
+    "page": 32,
+    "title": "CCA Secure RSA-KEM",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 2,
+    "title": "Integrated Shelter Architecture",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 3,
+    "title": "Thermal Comfort Fundamentals",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 4,
+    "title": "Cross-Climate Prediction Gaps",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 5,
+    "title": "Thermal Comfort ML Objectives",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 6,
+    "title": "Thermal Comfort Benchmarks",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 9,
+    "title": "Cross-Climate Design Gaps",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 10,
+    "title": "Feature Engineering",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 11,
+    "title": "Untitled slide 11",
+    "label": "junk"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 12,
+    "title": "Decision-Support Framework",
+    "label": "good"
+  },
+  {
+    "file": "AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx",
+    "page": 13,
+    "title": "Climate-Adaptive Shelter Outcomes",
+    "label": "good"
+  },
+  {
+    "file": "kartik_ccl_1.pdf",
+    "page": 2,
+    "title": "Horizontal vs Vertical Scaling",
+    "label": "good"
+  },
+  {
+    "file": "kartik_ccl_1.pdf",
+    "page": 3,
+    "title": "Cloud Load Balancing Strategy",
+    "label": "good"
+  },
+  {
+    "file": "kartik_ccl_1.pdf",
+    "page": 4,
+    "title": "Downtime may occur during upgrades",
+    "label": "junk"
+  },
+  {
+    "file": "kartik_ccl_1.pdf",
+    "page": 5,
+    "title": "Vertical Scaling",
+    "label": "good"
+  },
+  {
+    "file": "kartik_ccl_1.pdf",
+    "page": 6,
+    "title": "Multithreading Scaling Simulation",
+    "label": "good"
+  },
+  {
+    "file": "kartik_ccl_1.pdf",
+    "page": 7,
+    "title": "The program successfully simulates Horizontal Scaling and Vertical…",
+    "label": "junk"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 1,
+    "title": "What Is Wireshark?",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 2,
+    "title": "Packet Capture Workflow",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 3,
+    "title": "Stopping the packet capture",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 5,
+    "title": "Understanding the Interface",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 6,
+    "title": "Wireshark Packet Filtering",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 7,
+    "title": "Untitled slide 7",
+    "label": "junk"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 8,
+    "title": "Analyzing Captured Traffic",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 9,
+    "title": "Refining your view with display filters",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 10,
+    "title": "Network Protocol Hierarchy",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 11,
+    "title": "Untitled slide 11",
+    "label": "junk"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 12,
+    "title": "To follow a TCP stream in Wireshark, right-click on a packet whose…",
+    "label": "junk"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 13,
+    "title": "Transport Layer Protocol Analysis",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 14,
+    "title": "Extracting Files",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 16,
+    "title": "Identifying Attacks",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 17,
+    "title": "TCP Stream & Handshake Analysis",
+    "label": "good"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 18,
+    "title": "Wera - 8 X",
+    "label": "junk"
+  },
+  {
+    "file": "Experiment no 2 cn.pdf",
+    "page": 19,
+    "title": "Untitled slide 19",
+    "label": "junk"
+  }
+]

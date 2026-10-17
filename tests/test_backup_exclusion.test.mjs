@@ -66,7 +66,6 @@ describe('D.10: Backup Security - Gemini API Key Exclusion', () => {
     assert.strictEqual(parsed.user_settings.geminiApiKey, undefined);
     assert.strictEqual(parsed.user_settings.gemini_api_key, undefined);
 
-    console.log('[PASS]: Backup JSON export securely omits BYOK Gemini API key.');
   });
 
   it('proves Reset All Data deletes the Gemini API key from localStorage', () => {
@@ -103,6 +102,5 @@ describe('D.10: Backup Security - Gemini API Key Exclusion', () => {
     assert.strictEqual(mockStorage.getItem('daily_dive_guest_progress'), null, 'Guest progress must be deleted on Reset All Data');
     assert.strictEqual(mockStorage.getItem('daily_dive_custom_topics'), null, 'Custom topics must be deleted on Reset All Data');
 
-    console.log('[PASS]: Reset All Data correctly deletes daily_dive_gemini_key and all guest records.');
   });
 });

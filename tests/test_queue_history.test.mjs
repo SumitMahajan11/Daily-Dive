@@ -769,7 +769,6 @@ describe('Round 11: Review Queue vs History Invariants', () => {
 
   test('Real Data: Import evidence/real-backup.json and verify repair on import / load', () => {
     if (!fs.existsSync('evidence/real-backup.json')) {
-      console.log('NOT RUN: no real backup');
       return;
     }
 
@@ -801,16 +800,6 @@ describe('Round 11: Review Queue vs History Invariants', () => {
     const historyTopicIdSet = new Set(validHistory.map(h => h.topic_id));
     const queueIdsWithNoHistory = queueIds.filter(id => !historyTopicIdSet.has(id));
 
-    console.log('\n--- REAL BACKUP IMPORT AUDIT METRICS ---');
-    console.log(`explored count:                       ${exploredCount}`);
-    console.log(`history length:                       ${historyLength}`);
-    console.log(`queue ids:                            ${JSON.stringify(queueIds)}`);
-    console.log(`total dives:                          ${totalDives}`);
-    console.log(`history ids with no progress record:  ${JSON.stringify(historyIdsWithNoProgressAfter)}`);
-    console.log(`queue ids with no history entry:      ${JSON.stringify(queueIdsWithNoHistory)}`);
-    console.log(`repaired count from history:          ${repairedCount}`);
-    console.log(`dropped history count:                ${droppedHistoryCount}`);
-    console.log('----------------------------------------\n');
 
     assert.strictEqual(historyIdsWithNoProgressAfter.length, 0, 'All valid history entries must have a progress record after repair');
     assert.ok(exploredCount >= 1, 'Explored count must reflect all explored topics');

@@ -10,9 +10,6 @@ import {
 } from '../src/lib/selectors.js';
 import { appendHistoryEntry } from '../src/lib/roulette.js';
 
-console.log('================================================================');
-console.log('       TEST: HISTORY PRUNING RESILIENCE & SPICED REPETITION      ');
-console.log('================================================================\n');
 
 let totalTests = 0;
 let passedTests = 0;
@@ -21,7 +18,6 @@ function assert(condition, message) {
   totalTests++;
   if (condition) {
     passedTests++;
-    console.log(`  ✓ PASS: ${message}`);
   } else {
     console.error(`  ✗ FAIL: ${message}`);
     throw new Error(`Assertion failed: ${message}`);
@@ -106,6 +102,3 @@ assert(
   'topic_0 (last seen 70 days ago) is at the front of the review queue despite being pruned from history'
 );
 
-console.log('\n================================================================');
-console.log(`PRUNE AND SELECTORS TEST PASSED! (${passedTests}/${totalTests} assertions verified)`);
-console.log('================================================================\n');

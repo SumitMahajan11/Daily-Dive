@@ -1,0 +1,971 @@
+{
+  "awp 10 kartik.pdf": [
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "4.Transport Layer and Its services.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 28,
+      "holdout_item_total": 511,
+      "build_item_total": 188,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated (1).pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 3,
+      "holdout_item_total": 511,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 3,
+      "holdout_item_total": 511,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "awp kartik 5 (1).pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 7,
+      "holdout_item_total": 511,
+      "build_item_total": 408,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "awp kartik 5.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 5,
+      "holdout_item_total": 511,
+      "build_item_total": 393,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Coursera Agile Management.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 1,
+      "holdout_item_total": 511,
+      "build_item_total": 20,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Coursera Agile with Atlassian Jira.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 1,
+      "holdout_item_total": 511,
+      "build_item_total": 17,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Coursera Introduction to Docker.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 1,
+      "holdout_item_total": 511,
+      "build_item_total": 87,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "kartik awp 9.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 8,
+      "holdout_item_total": 511,
+      "build_item_total": 679,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "notes-3-4.docx.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 35,
+      "holdout_item_total": 511,
+      "build_item_total": 2976,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "SEPM-unit 3.pptx.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 29,
+      "holdout_item_total": 511,
+      "build_item_total": 787,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "SEPM-unit 4.pptx.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 31,
+      "holdout_item_total": 511,
+      "build_item_total": 601,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "SEPM_ASSIGNMENT-5.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 2,
+      "holdout_item_total": 511,
+      "build_item_total": 319,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Sumit awp 5 (1).pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 7,
+      "holdout_item_total": 511,
+      "build_item_total": 387,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Sumit awp 5.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 7,
+      "holdout_item_total": 511,
+      "build_item_total": 387,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "Sumit AWP.9.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 4,
+      "holdout_item_total": 511,
+      "build_item_total": 123,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "SumitAWP practical no.8.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 3,
+      "holdout_item_total": 511,
+      "build_item_total": 101,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "SumitAWP practical no.9 (1).pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 3,
+      "holdout_item_total": 511,
+      "build_item_total": 129,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "SumitAWP practical no.9.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 3,
+      "holdout_item_total": 511,
+      "build_item_total": 129,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "UNIT 3.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 57,
+      "holdout_item_total": 511,
+      "build_item_total": 2450,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "UNIT 4.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 63,
+      "holdout_item_total": 511,
+      "build_item_total": 2476,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "UNIT III Number Theory SAS.pptx.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 56,
+      "holdout_item_total": 511,
+      "build_item_total": 681,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "unit-III  front end framework (5).pptx.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 30,
+      "holdout_item_total": 511,
+      "build_item_total": 679,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "awp 10 kartik.pdf",
+      "build_file": "unit-IV Back End Technology -2 (1).pptx.pdf",
+      "holdout_page_count": 7,
+      "build_page_count": 27,
+      "holdout_item_total": 511,
+      "build_item_total": 451,
+      "metadata_equal": false,
+      "match": false
+    }
+  ],
+  "CC_Unit-3.pdf": [
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "4.Transport Layer and Its services.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 28,
+      "holdout_item_total": 2461,
+      "build_item_total": 188,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated (1).pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 3,
+      "holdout_item_total": 2461,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 3,
+      "holdout_item_total": 2461,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "awp kartik 5 (1).pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 7,
+      "holdout_item_total": 2461,
+      "build_item_total": 408,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "awp kartik 5.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 5,
+      "holdout_item_total": 2461,
+      "build_item_total": 393,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Coursera Agile Management.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 1,
+      "holdout_item_total": 2461,
+      "build_item_total": 20,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Coursera Agile with Atlassian Jira.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 1,
+      "holdout_item_total": 2461,
+      "build_item_total": 17,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Coursera Introduction to Docker.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 1,
+      "holdout_item_total": 2461,
+      "build_item_total": 87,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "kartik awp 9.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 8,
+      "holdout_item_total": 2461,
+      "build_item_total": 679,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "notes-3-4.docx.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 35,
+      "holdout_item_total": 2461,
+      "build_item_total": 2976,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "SEPM-unit 3.pptx.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 29,
+      "holdout_item_total": 2461,
+      "build_item_total": 787,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "SEPM-unit 4.pptx.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 31,
+      "holdout_item_total": 2461,
+      "build_item_total": 601,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "SEPM_ASSIGNMENT-5.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 2,
+      "holdout_item_total": 2461,
+      "build_item_total": 319,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Sumit awp 5 (1).pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 7,
+      "holdout_item_total": 2461,
+      "build_item_total": 387,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Sumit awp 5.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 7,
+      "holdout_item_total": 2461,
+      "build_item_total": 387,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "Sumit AWP.9.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 4,
+      "holdout_item_total": 2461,
+      "build_item_total": 123,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "SumitAWP practical no.8.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 3,
+      "holdout_item_total": 2461,
+      "build_item_total": 101,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "SumitAWP practical no.9 (1).pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 3,
+      "holdout_item_total": 2461,
+      "build_item_total": 129,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "SumitAWP practical no.9.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 3,
+      "holdout_item_total": 2461,
+      "build_item_total": 129,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "UNIT 3.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 57,
+      "holdout_item_total": 2461,
+      "build_item_total": 2450,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "UNIT 4.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 63,
+      "holdout_item_total": 2461,
+      "build_item_total": 2476,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "UNIT III Number Theory SAS.pptx.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 56,
+      "holdout_item_total": 2461,
+      "build_item_total": 681,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "unit-III  front end framework (5).pptx.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 30,
+      "holdout_item_total": 2461,
+      "build_item_total": 679,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "CC_Unit-3.pdf",
+      "build_file": "unit-IV Back End Technology -2 (1).pptx.pdf",
+      "holdout_page_count": 108,
+      "build_page_count": 27,
+      "holdout_item_total": 2461,
+      "build_item_total": 451,
+      "metadata_equal": false,
+      "match": false
+    }
+  ],
+  "Sumit AWP 10.pdf": [
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "4.Transport Layer and Its services.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 28,
+      "holdout_item_total": 111,
+      "build_item_total": 188,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated (1).pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 3,
+      "holdout_item_total": 111,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 3,
+      "holdout_item_total": 111,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "awp kartik 5 (1).pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 7,
+      "holdout_item_total": 111,
+      "build_item_total": 408,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "awp kartik 5.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 5,
+      "holdout_item_total": 111,
+      "build_item_total": 393,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Coursera Agile Management.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 1,
+      "holdout_item_total": 111,
+      "build_item_total": 20,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Coursera Agile with Atlassian Jira.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 1,
+      "holdout_item_total": 111,
+      "build_item_total": 17,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Coursera Introduction to Docker.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 1,
+      "holdout_item_total": 111,
+      "build_item_total": 87,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "kartik awp 9.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 8,
+      "holdout_item_total": 111,
+      "build_item_total": 679,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "notes-3-4.docx.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 35,
+      "holdout_item_total": 111,
+      "build_item_total": 2976,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "SEPM-unit 3.pptx.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 29,
+      "holdout_item_total": 111,
+      "build_item_total": 787,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "SEPM-unit 4.pptx.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 31,
+      "holdout_item_total": 111,
+      "build_item_total": 601,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "SEPM_ASSIGNMENT-5.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 2,
+      "holdout_item_total": 111,
+      "build_item_total": 319,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Sumit awp 5 (1).pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 7,
+      "holdout_item_total": 111,
+      "build_item_total": 387,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Sumit awp 5.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 7,
+      "holdout_item_total": 111,
+      "build_item_total": 387,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "Sumit AWP.9.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 4,
+      "holdout_item_total": 111,
+      "build_item_total": 123,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "SumitAWP practical no.8.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 3,
+      "holdout_item_total": 111,
+      "build_item_total": 101,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "SumitAWP practical no.9 (1).pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 3,
+      "holdout_item_total": 111,
+      "build_item_total": 129,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "SumitAWP practical no.9.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 3,
+      "holdout_item_total": 111,
+      "build_item_total": 129,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "UNIT 3.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 57,
+      "holdout_item_total": 111,
+      "build_item_total": 2450,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "UNIT 4.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 63,
+      "holdout_item_total": 111,
+      "build_item_total": 2476,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "UNIT III Number Theory SAS.pptx.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 56,
+      "holdout_item_total": 111,
+      "build_item_total": 681,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "unit-III  front end framework (5).pptx.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 30,
+      "holdout_item_total": 111,
+      "build_item_total": 679,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "Sumit AWP 10.pdf",
+      "build_file": "unit-IV Back End Technology -2 (1).pptx.pdf",
+      "holdout_page_count": 5,
+      "build_page_count": 27,
+      "holdout_item_total": 111,
+      "build_item_total": 451,
+      "metadata_equal": false,
+      "match": false
+    }
+  ],
+  "SumitAWP practical no.10.pdf": [
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "4.Transport Layer and Its services.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 28,
+      "holdout_item_total": 112,
+      "build_item_total": 188,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated (1).pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 3,
+      "holdout_item_total": 112,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Assignment No. 05 _2026 _Updated.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 3,
+      "holdout_item_total": 112,
+      "build_item_total": 497,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "awp kartik 5 (1).pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 7,
+      "holdout_item_total": 112,
+      "build_item_total": 408,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "awp kartik 5.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 5,
+      "holdout_item_total": 112,
+      "build_item_total": 393,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Coursera Agile Management.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 1,
+      "holdout_item_total": 112,
+      "build_item_total": 20,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Coursera Agile with Atlassian Jira.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 1,
+      "holdout_item_total": 112,
+      "build_item_total": 17,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Coursera Introduction to Docker.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 1,
+      "holdout_item_total": 112,
+      "build_item_total": 87,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "kartik awp 9.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 8,
+      "holdout_item_total": 112,
+      "build_item_total": 679,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "notes-3-4.docx.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 35,
+      "holdout_item_total": 112,
+      "build_item_total": 2976,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "SEPM-unit 3.pptx.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 29,
+      "holdout_item_total": 112,
+      "build_item_total": 787,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "SEPM-unit 4.pptx.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 31,
+      "holdout_item_total": 112,
+      "build_item_total": 601,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "SEPM_ASSIGNMENT-5.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 2,
+      "holdout_item_total": 112,
+      "build_item_total": 319,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Sumit awp 5 (1).pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 7,
+      "holdout_item_total": 112,
+      "build_item_total": 387,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Sumit awp 5.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 7,
+      "holdout_item_total": 112,
+      "build_item_total": 387,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "Sumit AWP.9.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 4,
+      "holdout_item_total": 112,
+      "build_item_total": 123,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "SumitAWP practical no.8.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 3,
+      "holdout_item_total": 112,
+      "build_item_total": 101,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "SumitAWP practical no.9 (1).pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 3,
+      "holdout_item_total": 112,
+      "build_item_total": 129,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "SumitAWP practical no.9.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 3,
+      "holdout_item_total": 112,
+      "build_item_total": 129,
+      "metadata_equal": true,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "UNIT 3.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 57,
+      "holdout_item_total": 112,
+      "build_item_total": 2450,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "UNIT 4.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 63,
+      "holdout_item_total": 112,
+      "build_item_total": 2476,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "UNIT III Number Theory SAS.pptx.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 56,
+      "holdout_item_total": 112,
+      "build_item_total": 681,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "unit-III  front end framework (5).pptx.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 30,
+      "holdout_item_total": 112,
+      "build_item_total": 679,
+      "metadata_equal": false,
+      "match": false
+    },
+    {
+      "holdout_file": "SumitAWP practical no.10.pdf",
+      "build_file": "unit-IV Back End Technology -2 (1).pptx.pdf",
+      "holdout_page_count": 6,
+      "build_page_count": 27,
+      "holdout_item_total": 112,
+      "build_item_total": 451,
+      "metadata_equal": false,
+      "match": false
+    }
+  ],
+  "Unit-4.pdf": "UNDECIDABLE by this method"
+}

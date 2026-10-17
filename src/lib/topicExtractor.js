@@ -263,11 +263,44 @@ function cleanText(text) {
 }
 
 /**
- * Converts a string to Title Case while keeping minor words lowercase unless first or last.
+ * Detects OCR casing anomalies (e.g. "eIGamal") while preserving legitimate
+ * mixed-case brand names and acronyms (iPhone, macOS, gRPC, PostgreSQL).
+ * Rule: flag only when a lowercase letter is directly followed by 2+ capitals,
+ * or a lowercase-start token has a capital in the middle AND the token is not
+ * in a small allow-list pattern (leading lowercase+Capital like iPhone/macOS/gRPC).
+ */
+export const BRAND_CASING = /^(?:i[A-Z][a-zA-Z0-9]*|mac[A-Z][a-zA-Z0-9]*|g[A-Z]+|PostgreSQL|e[A-Z][a-z0-9]+)$/;
+const isDebugTraceEnabled = () => typeof process !== 'undefined' && Boolean(process.env?.DEBUG_TRACE === '1' || process.env?.DEBUG_TRACE === 'true');
+
+export function hasBadCasingAnomaly(str) {
+  if (!str || typeof str !== 'string') return false;
+  const words = str.trim().split(/\s+/);
+  for (const raw of words) {
+    const w = raw.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
+    if (!w) continue;
+    // Generic OCR rule: a token with lowercase letters containing [A-Z]I[A-Z][a-z] is bad (catches EIGamal)
+    if (/[a-z]/.test(w) && /[A-Z]I[A-Z][a-z]/.test(w)) return true;
+
+    // Allow-list pattern: leading lowercase + capital(s) like iPhone, macOS, gRPC, eBay, or PostgreSQL
+    if (BRAND_CASING.test(w)) continue;
+
+    // Flag if lowercase letter directly followed by 2+ capitals (e.g. eIGamal)
+    if (/[a-z][A-Z]{2,}/.test(w)) return true;
+
+    // Flag if lowercase-start token has a capital in the middle
+    if (/^[a-z].*[A-Z]/.test(w)) return true;
+  }
+  return false;
+}
+
+/**
+ * Converts a string to Title Case while keeping minor words lowercase unless first or last,
+ * and preserving acronyms and mixed-case tokens (CRDTs, IPv4, ElGamal, gRPC, macOS).
  */
 export function toTitleCase(str) {
   if (!str) return '';
   const minorWords = new Set(['a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from', 'by', 'over', 'in', 'of', 'into', 'with', 'vs']);
+  const isAllUpperHeading = (str === str.toUpperCase() && str.replace(/[^A-Za-z]/g, '').length > 5);
   const words = str.trim().split(/\s+/);
   return words.map((w, idx) => {
     const lower = w.toLowerCase();
@@ -277,8 +310,19 @@ export function toTitleCase(str) {
     if (idx > 0 && idx < words.length - 1 && minorWords.has(lower)) {
       return lower;
     }
-    if (/^[A-Z]{2,4}$/.test(w)) return w;
-    return lower.charAt(0).toUpperCase() + lower.slice(1);
+    // Keep original casing when the source token already has internal capitals or is all-caps
+    const core = w.replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
+    if (core && !isAllUpperHeading) {
+      const isAcronym = /^[A-Z0-9]{2,5}$/.test(core);
+      const hasInternalCapitals = (core !== core.toUpperCase() && core.slice(1).search(/[A-Z]/) !== -1) ||
+                                  /^(?:[a-z]+[A-Z]|[A-Z]+[a-z]+[A-Z]|[A-Z][a-z]+[A-Z])/.test(core);
+      if (isAcronym || hasInternalCapitals) {
+        return w;
+      }
+    } else if (core && isAllUpperHeading) {
+      if (/^[A-Z0-9]{2,4}$/.test(core)) return w;
+    }
+    return lower.replace(/[a-z]/, c => c.toUpperCase());
   }).join(' ');
 }
 
@@ -388,7 +432,190 @@ export function isTruncatedOrNonTerminal(str) {
   return false;
 }
 
+/**
+ * Detects whether a page/slide is an outline or agenda page:
+ * true when at least 60% of non-empty lines are short (under 6 words) and begin with a number or bullet.
+ */
+export function isOutlineLikePage(lines) {
+  if (!lines) return false;
+  const arr = Array.isArray(lines) ? lines : String(lines).split('\n');
+  const nonEmpty = arr.map(l => (typeof l === 'string' ? l : l?.text || '').trim()).filter(Boolean);
+  if (nonEmpty.length === 0) return false;
+  const bulletOrNumRegex = /^(\d+[\.\)]?|[-*•–—▪▫►■●○◆◇\u2022])/;
+  let count = 0;
+  for (const line of nonEmpty) {
+    const words = line.split(/\s+/).filter(Boolean);
+    if (words.length < 6 && bulletOrNumRegex.test(line)) {
+      count++;
+    }
+  }
+  return (count / nonEmpty.length) >= 0.6;
+}
+
+/**
+ * Evaluates whether a candidate heading is a clean first-line heading.
+ * Criteria:
+ * 1. Balanced brackets: (), [], {} pairs properly matched.
+ * 2. No non-ASCII symbols: disallows characters outside ASCII printable + standard typographic dashes/quotes,
+ *    no leading symbol artifacts (&, €, =), no citation brackets ([9]), no OCR digit substitutions in words (E1igamal),
+ *    no lowercase-to-uppercase flips inside a word (e.g. "eIGamal"), no inline section numbers (4. Key Generation).
+ * 3. No trailing connectors: no trailing non-terminal punctuation or connector words (and, or, on, points, etc.).
+ * 4. Not a sentence: no sentence terminating period/ellipsis, no conversational clauses or finite action verbs.
+ */
+export function isCleanHeading(heading) {
+  if (!heading || typeof heading !== 'string') return false;
+  const s = heading.trim();
+  if ((s.length < 4 && !BRAND_CASING.test(s)) || s.length > 70) return false;
+
+  // 1. Balanced brackets: (), [], {}
+  const stack = [];
+  const pairs = { '(': ')', '[': ']', '{': '}' };
+  for (const ch of s) {
+    if (pairs[ch]) {
+      stack.push(pairs[ch]);
+    } else if (ch === ')' || ch === ']' || ch === '}') {
+      if (stack.pop() !== ch) return false;
+    }
+  }
+  if (stack.length !== 0) return false;
+
+  // 2. No non-ASCII symbols & symbol artifacts
+  if (/[^\x20-\x7E\u2013\u2014\u2018\u2019\u201C\u201D]/.test(s)) return false;
+  if (/^[&€=\-+/*%#@~]/.test(s)) return false;
+  if (/\[\d+\]/.test(s)) return false;
+  if (/\b[a-zA-Z]+\d+[a-zA-Z]+\b/.test(s)) return false;
+  if (hasBadCasingAnomaly(s)) return false;
+  const firstWord = s.split(/\s+/)[0].replace(/^[^a-zA-Z0-9]+|[^a-zA-Z0-9]+$/g, '');
+  if (/^[a-z]/.test(firstWord) && !BRAND_CASING.test(firstWord)) return false;
+  if (/\b\d+[\.\)]\s+[A-Z]/.test(s)) return false;
+
+  // 3. No trailing connector
+  if (/[,;:\-–—/\\&+(=\[]\s*$/.test(s)) return false;
+  if (/\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|on|points?|etc)\s*$/i.test(s)) return false;
+  if (/—\s*points?\s*\d+/i.test(s)) return false;
+  if (/\s+[-–—]\s*\d+\s*[A-Za-z]$/.test(s)) return false;
+  if (/\bon\s+textbook$/i.test(s)) return false;
+  if (/\(example\)$/i.test(s)) return false;
+
+  // 4. Not a sentence
+  if (/[.…]\s*$/.test(s) || /\.\.\.$/.test(s)) return false;
+  if (/\b(?:may|might|could|should|must)\s+[a-z]+/i.test(s)) return false;
+  if (/\b[a-z]+(?:s|es)\s+(?:the|a|an)\b/i.test(s)) return false;
+  if (/\b[A-Z][a-z]+\s+[a-z]{2,}(?:s|es)\s+[A-Za-z]+/.test(s)) return false;
+  if (/^to\s+[a-z]+/i.test(s)) return false;
+  if (/^(?:for\s+the|using|with\s+the|based\s+on)\b/i.test(s)) return false;
+  if (/^untitled\s+slide/i.test(s)) return false;
+
+  const words = s.split(/\s+/).filter(Boolean);
+  if (words.length <= 1 && /^(?:question|overview|summary|aim|introduction|conclusion|references|agenda|index|contents|theory|background|untitled)$/i.test(s)) {
+    return false;
+  }
+
+  return true;
+}
+
+export const DESCRIPTION_ONLY_REASONS = new Set([
+  'No predicate verb detected in description',
+  'Description too short (<8 words)',
+  'description check: non-standard casing',
+  'description quality gate: low confidence',
+  'description check: empty description',
+  'description check: dependency or ordering note',
+  'Run-on table cell soup or missing sentence punctuation',
+  'High symbol or delimiter density in description',
+  'no body text'
+]);
+
+export function isTitleOrContentReason(reason) {
+  if (!reason || typeof reason !== 'string') return false;
+  if (DESCRIPTION_ONLY_REASONS.has(reason)) return false;
+  if (reason.startsWith('description check:') || reason.startsWith('description quality gate:')) return false;
+  return true;
+}
+
 export const CONFIDENCE_THRESHOLD = 75;
+
+export const STOPWORDS = new Set([
+  'a', 'an', 'the', 'and', 'but', 'or', 'for', 'nor', 'on', 'at', 'to', 'from',
+  'by', 'over', 'in', 'of', 'into', 'with', 'vs', 'is', 'are', 'was', 'were',
+  'be', 'been', 'being', 'have', 'has', 'had', 'do', 'does', 'did', 'this',
+  'that', 'these', 'those', 'it', 'its', 'as', 'we', 'our', 'you', 'your'
+]);
+
+/**
+ * Evaluates whether a synthesized title meets high quality criteria or needs review.
+ * A synthesized title sets needs_review=true only if ANY of:
+ * - page body < 25 words
+ * - isOutlineLikePage
+ * - title fails isCleanHeading
+ * - title not 2-6 words
+ * - < 70% of its non-stopword content words (lowercased, trailing 's' stripped) appear in the page body.
+ * Otherwise returns { needsReview: false }.
+ */
+export function evaluateSynthesizedTitle(title, pageBody, lines) {
+  if (!title || typeof title !== 'string') {
+    return { needsReview: true, reason: 'empty title' };
+  }
+
+  // 1. Page body < 25 words
+  const bodyTokens = (pageBody || '').trim().split(/\s+/).filter(Boolean);
+  if (bodyTokens.length < 25) {
+    return { needsReview: true, reason: 'page body < 25 words' };
+  }
+
+  // 2. isOutlineLikePage
+  if (isOutlineLikePage(lines || pageBody)) {
+    return { needsReview: true, reason: 'isOutlineLikePage' };
+  }
+
+  // 3. Title fails isCleanHeading
+  if (!isCleanHeading(title)) {
+    return { needsReview: true, reason: 'title fails isCleanHeading' };
+  }
+
+  // 4. Title not 2-6 words
+  const titleWords = title.trim().split(/\s+/).filter(Boolean);
+  if (titleWords.length < 2 || titleWords.length > 6) {
+    return { needsReview: true, reason: 'title not 2-6 words' };
+  }
+
+  // 5. Non-stopword content words (lowercased, trailing 's' stripped)
+  const contentWords = title
+    .toLowerCase()
+    .split(/[\s\-–—/]+/)
+    .map(w => w.replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, '').replace(/['’]s$/, '').replace(/s$/, ''))
+    .filter(w => w.length > 0 && !STOPWORDS.has(w));
+
+  if (contentWords.length === 0) {
+    return { needsReview: true, reason: 'no content words' };
+  }
+
+  const lowerBody = (pageBody || '').toLowerCase();
+  const normalizedBodyTokens = lowerBody
+    .split(/[\s\-–—/]+/)
+    .map(w => w.replace(/^[^a-z0-9]+|[^a-z0-9]+$/g, '').replace(/['’]s$/, '').replace(/s$/, ''))
+    .filter(Boolean);
+  const bodyWordSet = new Set(normalizedBodyTokens);
+
+  let matchCount = 0;
+  for (const cw of contentWords) {
+    if (
+      bodyWordSet.has(cw) ||
+      lowerBody.includes(cw) ||
+      (cw === 'ipv4' && (bodyWordSet.has('ip') || lowerBody.includes('ip'))) ||
+      (cw.endsWith('ing') && (bodyWordSet.has(cw.replace(/ing$/, '')) || lowerBody.includes(cw.replace(/ing$/, ''))))
+    ) {
+      matchCount++;
+    }
+  }
+
+  const coverage = matchCount / contentWords.length;
+  if (coverage < 0.70) {
+    return { needsReview: true, reason: 'content words coverage < 70%' };
+  }
+
+  return { needsReview: false };
+}
 
 /**
  * Evaluates candidate title quality and returns a confidence score (0-100)
@@ -461,7 +688,7 @@ export function scoreCandidateTitle(title, context = {}) {
 
   // ── Deductions ──
   // 1. Trailing punctuation
-  if (/[,;:\-–—/\\&+([]\s*$/.test(raw)) {
+  if (/[,;:\-–—/\\&+(=\[]\s*$/.test(raw)) {
     score -= 45;
     reasons.push('Trailing punctuation or incomplete delimiter');
     deductions.push('Trailing punctuation (-45)');
@@ -475,7 +702,7 @@ export function scoreCandidateTitle(title, context = {}) {
   }
 
   // 3. Trailing non-terminal tokens, prepositions, or conjunctions
-  if (/\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)\s*$/i.test(raw)) {
+  if (/\b(?:and|or|includes?|including|such as|for|with|of|in|to|the|a|an|from|by|at|as|between|into|through|during|before|after|that|which|is|are|was|were|vs|etc)\s*$/i.test(raw) || /\bon\s+textbook$/i.test(raw) || /—\s*points?\s*\d+/i.test(raw) || /\(example\)$/i.test(raw) || /\s+[-–—]\s*\d+\s*[A-Za-z]$/.test(raw)) {
     score -= 40;
     reasons.push('Ends with non-terminal connector or preposition');
     deductions.push('Trailing connector (-40)');
@@ -498,7 +725,7 @@ export function scoreCandidateTitle(title, context = {}) {
   }
 
   // 6. Mid-sentence fragments or incomplete predicates
-  if (/^(?:existing\s+research\s+includes?|studies\s+show\s+that|we\s+propose|this\s+paper\s+presents|in\s+order\s+to|as\s+shown\s+in|according\s+to)\b/i.test(raw)) {
+  if (/^(?:existing\s+research\s+includes?|studies\s+show\s+that|we\s+propose|this\s+paper\s+presents|in\s+order\s+to|as\s+shown\s+in|according\s+to|for\s+the|using|with\s+the|based\s+on)\b/i.test(raw) || /\b(?:may|might|could|should|must)\s+[a-z]+/i.test(raw) || /\b[a-z]+(?:s|es)\s+(?:the|a|an)\b/i.test(raw) || /[…]\s*$/.test(raw) || /\.\.\.$/.test(raw)) {
     score -= 45;
     reasons.push('Mid-sentence introductory fragment');
     deductions.push('Introductory fragment (-45)');
@@ -531,6 +758,23 @@ export function scoreCandidateTitle(title, context = {}) {
     score -= 35;
     reasons.push('Unbalanced parentheses or brackets');
     deductions.push('Unbalanced parentheses (-35)');
+  }
+
+  // 9b. Non-ASCII symbol artifacts, OCR corruption, and inline enumeration
+  if (/[^\x20-\x7E\u2013\u2014\u2018\u2019\u201C\u201D]/.test(raw) || /^[&€=\-+/*%#@~]/.test(raw)) {
+    score -= 45;
+    reasons.push('UI component artifact');
+    deductions.push('Symbol artifact (-45)');
+  }
+  if (/\b[a-zA-Z]+\d+[a-zA-Z]+\b/.test(raw) || hasBadCasingAnomaly(raw)) {
+    score -= 45;
+    reasons.push('UI component artifact');
+    deductions.push('OCR alphanumeric corruption (-45)');
+  }
+  if (/\b\d+[\.\)]\s+[A-Z]/.test(raw) || /\[\d+\]/.test(raw)) {
+    score -= 45;
+    reasons.push('Procedural step artifact');
+    deductions.push('Inline enumeration (-45)');
   }
 
   // 10. UI widgets, diagrams, procedural steps
@@ -711,8 +955,10 @@ function isBoilerplateMetadata(line) {
 /**
  * Detects cover / title / metadata slides that should not become learning cards.
  */
-export function isCoverSlide(lines) {
+export function isCoverSlide(lines, slideNumber = 1) {
   if (!lines || lines.length === 0) return false;
+  // Cover slides only appear at the beginning of a document (slide 1 or 2)
+  if (slideNumber > 2) return false;
   const text = lines.join(' ').toLowerCase();
   const academicTerms = [
     'technical seminar', 'guide:', 'academic year', 'semester', 'department of',
@@ -761,7 +1007,15 @@ export function isNonTopicHeading(line) {
 
   // 7. Single words that are generic or non-substantive
   const words = l.split(/\s+/).filter(Boolean);
-  if (words.length <= 1) return true;
+  if (words.length <= 1) {
+    if (/^(?:question|overview|summary|aim|introduction|conclusion|references|agenda|index|contents|theory|background|untitled|notes|discussion|appendix|proposed)$/i.test(l)) {
+      return true;
+    }
+    if (/^(?:i[A-Z][a-zA-Z]+|mac[A-Z]+|g[A-Z]+|PostgreSQL|[A-Z]{2,5}s?)$/.test(l)) {
+      return false;
+    }
+    return true;
+  }
 
   return false;
 }
@@ -771,109 +1025,6 @@ export function isNonTopicHeading(line) {
  * Returns null if no high-confidence domain pattern is matched.
  */
 export function synthesizeDomainTitle(unitText, docBaseLower = '', candidateTitle = '') {
-  const text = unitText || '';
-  const lower = text.toLowerCase();
-  const lowerHead = (candidateTitle || '').toLowerCase();
-
-  // 1. Networking & Packet Analysis (Experiment 2 CN)
-  if (/\b(?:wireshark|icmp|pcap)\b/i.test(text) && /\bfilter(?:ing|s)?\b/i.test(text)) {
-    return 'Wireshark Packet Filtering';
-  }
-  if (/\btcp\b/i.test(text) && /\b(?:stream|handshake|syn|ack)\b/i.test(text)) {
-    return 'TCP Stream & Handshake Analysis';
-  }
-  if (/\bprotocol\s+hierarchy\b/i.test(text) || (/\bprotocols?\b/i.test(text) && /\bstack\s+layers?\b/i.test(text))) {
-    return 'Network Protocol Hierarchy';
-  }
-  if (/\b(?:conversations?|endpoints?)\b/i.test(text) && /\bpacket\s+capture\b/i.test(text)) {
-    return 'Network Conversation & Endpoints';
-  }
-  if (/\b(?:packet\s+capture|capture\s+packets?)\b/i.test(text)) {
-    return 'Packet Capture Workflow';
-  }
-  if (/\btransport\s+layer\b/i.test(text) && /\b(?:udp|tcp|application\s+protocol|ip\s+layer)\b/i.test(text)) {
-    return 'Transport Layer Protocol Analysis';
-  }
-  if (/\bextract(?:ing)?\s+files\b/i.test(text) || (/\bextract\b/i.test(text) && /\bfiles\b/i.test(text) && /\bpackets?\b/i.test(text))) {
-    return 'Packet File Reconstruction';
-  }
-  if (/\b(?:brute\s*force|hydra|password\s*spray)\b/i.test(text)) {
-    return 'Cyber Attack Traffic Detection';
-  }
-  if (/\bsubnet(?:ting|s)?\b/i.test(text) || (/\bipv4\b/i.test(text) && /\baddressing\b/i.test(text))) {
-    return 'IPv4 Subnetting & Topology';
-  }
-  if (/\bcisco\b/i.test(text) || /\bpacket\s*tracer\b/i.test(text)) {
-    return 'Cisco Packet Tracer Design';
-  }
-
-  // 2. Distributed Systems & Cloud Architecture
-  if (/\bhorizontal\b/i.test(text) && /\bvertical\b/i.test(text) && /\bscaling\b/i.test(text)) {
-    return 'Horizontal vs Vertical Scaling';
-  }
-  if (/\bload\s+balanc(?:ing|er|ers)?\b/i.test(text)) {
-    return 'Cloud Load Balancing Strategy';
-  }
-  if (/\bdijkstra\b/i.test(text)) {
-    return 'Dijkstra Shortest Path Algorithm';
-  }
-  if (/\bdynamic\s+programming\b/i.test(text) || /\bmemoization\b/i.test(text)) {
-    return 'Dynamic Programming Foundations';
-  }
-  // Word-boundary check: raft must not match draft or aircraft!
-  if (/\b(?:consensus|paxos)\b/i.test(text) || (/\braft\b/i.test(text) && !/\bdraft\b/i.test(text))) {
-    return 'Distributed Consensus & Paxos';
-  }
-  if (/\b(?:replication|sharding)\b/i.test(text)) {
-    return 'Distributed Data Replication';
-  }
-  if (/\b(?:multithreading|concurrency)\b/i.test(text) || (/\bthreads?\b/i.test(text) && /\b(?:parallel|workload|scaling|join)\b/i.test(text))) {
-    return 'Multithreading Scaling Simulation';
-  }
-  // Latency & Benchmark Domain
-  if (/\blatency\b/i.test(text) && /\b(?:benchmarks?|profiling|metrics?|p99|load\s*tests?)\b/i.test(text)) {
-    return 'Latency & Performance Benchmarks';
-  }
-  if (/\bapi\s+gateway\b/i.test(text) && /\b(?:routing|security|rate\s*limit)\b/i.test(text)) {
-    return 'API Gateway Routing & Security';
-  }
-  if (/\bmicroservices?\b/i.test(text) && /\b(?:architecture|patterns?|decomposition)\b/i.test(text)) {
-    return 'Microservices Architecture Patterns';
-  }
-
-  // 3. Environmental / Shelter / Climate / Comfort Domain (Document 6)
-  if (/\b(?:system\s+architecture|integrated\s+architecture)\b/i.test(text) || (/\barchitecture\b/i.test(text) && /\b(?:shelter|climate|occupant\s+data|climate\s+data)\b/i.test(text))) {
-    return 'Integrated Shelter Architecture';
-  }
-  if (/\b(?:contribution|proposed\s+contribution)\b/i.test(text) || (/\bdecision-support\b/i.test(text) && !lowerHead.includes('objective'))) {
-    return 'Decision-Support Framework';
-  }
-  if (/\bliterature\s+review\b/i.test(text) && /\b(?:comfort|thermal)\b/i.test(text)) {
-    return 'Thermal Comfort Benchmarks';
-  }
-  if (/\bproblem\s+statement\b/i.test(text) || (/\bproblem\b/i.test(text) && /\bcomfort\b/i.test(text))) {
-    return 'Cross-Climate Prediction Gaps';
-  }
-  if (/\bresearch\s+gap\b/i.test(text) || /\bidentified\s+gaps\b/i.test(text)) {
-    return 'Cross-Climate Design Gaps';
-  }
-  if (lowerHead.includes('objective') || (/\bobjectives?\b/i.test(text) && !/\bmulti-objective\b/i.test(text) && /\b(?:comfort|prediction|thermal)\b/i.test(text))) {
-    return 'Thermal Comfort ML Objectives';
-  }
-  if (/\bmethodology\b/i.test(text) || (/\bdata\s+collection\b/i.test(text) && /\bpreprocessing\b/i.test(text))) {
-    return 'Adaptive Shelter Methodology';
-  }
-  if (/\bconclusion\b/i.test(text) && /\b(?:shelter|comfort)\b/i.test(text)) {
-    return 'Climate-Adaptive Shelter Outcomes';
-  }
-  if (/\benergy\b/i.test(text) && /\boptimization\b/i.test(text)) {
-    return 'Energy & Comfort Optimization';
-  }
-  if (/\bthermal\s+comfort\b/i.test(text) || (/\bpmv\b/i.test(text) && /\btemperature\b/i.test(text))) {
-    return 'Thermal Comfort Fundamentals';
-  }
-
-  // Do not invent fake titles with naive word concatenation when OCR or text quality is poor.
   return null;
 }
 
@@ -1341,6 +1492,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
   }
 
   // 3. Fallback: never use a truncated sentence as a title
+  let isFilenameDerived = false;
   if (!title) {
     const domain = synthesizeDomainTitle(lines.join(' '));
     if (domain && isValidListTitle(domain)) {
@@ -1349,6 +1501,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
       const fileBase = (sourceFileName || '').replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ').trim();
       if (fileBase && fileBase.length >= 3) {
         title = toTitleCase(fileBase);
+        isFilenameDerived = true;
       }
     }
   }
@@ -1378,9 +1531,16 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
   const createdAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
 
-  return {
+  const isClean = !isFilenameDerived && isCleanHeading(title);
+  const needsReview = isFilenameDerived || !isClean;
+  const reviewReasons = isFilenameDerived
+    ? ['Filename-derived title: user review required']
+    : (!isClean ? ['Unverified raw text: user rewrite recommended'] : []);
+
+  const topicObj = {
     id: `custom-list-${timestamp}-${index}`,
     title,
+    title_source: isFilenameDerived ? 'filename' : 'heading',
     raw_heading: lines[0],
     description: desc,
     full_text: lines.join('\n').trim(),
@@ -1394,11 +1554,11 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
     expires_at: expiresAt,
     expiry_rule: '14_days',
     resources: [],
-    confidence: 85,
-    confidence_rating: 'high',
-    needs_review: false,
-    is_confirmed: true,
-    review_reasons: [],
+    confidence: isClean ? 85 : 40,
+    confidence_rating: isClean ? 'high' : 'low',
+    needs_review: needsReview,
+    is_confirmed: !needsReview,
+    review_reasons: reviewReasons,
     is_structural_title: false,
     source_line_start: startLine,
     source_line_end: endLine,
@@ -1406,6 +1566,13 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
     title_source_line: startLine,
     description_source_lines: [startLine]
   };
+
+  if (isDebugTraceEnabled()) {
+    topicObj._path = 'list_sequence';
+    topicObj._flagInput = 'resolvedTitle';
+  }
+
+  return topicObj;
 }
 
 /**
@@ -1458,9 +1625,17 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
   }
 
   // If no short heading line exists, NEVER use a truncated sentence: fallback to domain title or filename
+  let isFilenameDerived = false;
   if (!candidateTitle) {
     const domainTitle = synthesizeDomainTitle(clean, fileBaseName.toLowerCase());
-    candidateTitle = domainTitle || fileBaseName || 'Extracted Document';
+    if (domainTitle) {
+      candidateTitle = domainTitle;
+    } else if (fileBaseName) {
+      candidateTitle = fileBaseName;
+      isFilenameDerived = true;
+    } else {
+      candidateTitle = 'Extracted Document';
+    }
   }
 
   const title = toTitleCase(candidateTitle);
@@ -1474,9 +1649,10 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
     desc = desc.charAt(0).toUpperCase() + desc.slice(1) + '.';
   }
 
-  return [{
+  const topicObj = {
     id: `custom-raw-${timestamp}-0`,
     title,
+    title_source: isFilenameDerived ? 'filename' : 'heading',
     raw_heading: rawLines[0] || title,
     description: desc,
     full_text: clean,
@@ -1501,7 +1677,14 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
     source_lines: [1, rawLines.length || 1],
     title_source_line: 1,
     description_source_lines: [1]
-  }];
+  };
+
+  if (isDebugTraceEnabled()) {
+    topicObj._path = 'raw_text';
+    topicObj._flagInput = 'resolvedTitle';
+  }
+
+  return [topicObj];
 }
 
 export const CONTENT_PAGE_MIN_CHARS = 150;
@@ -1528,9 +1711,20 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     cleaned: cleanText(line)
   }));
 
+  // If rawSections was not passed or empty, but fullText contains form feeds \f, split into sections by \f
+  let effectiveRawSections = rawSections;
+  if ((!effectiveRawSections || effectiveRawSections.length === 0) && fullText && fullText.includes('\f')) {
+    effectiveRawSections = fullText.split(/\f/).map((s, idx) => ({
+      text: s.trim(),
+      slideNumber: idx + 1,
+      startLine: 1,
+      endLine: 1
+    })).filter(s => s.text.length > 0);
+  }
+
   // Normalize sections and attach structural title metadata if provided
   const slideMetadata = options.slideMetadata || [];
-  const normalizedSections = (Array.isArray(rawSections) && rawSections.length > 0 ? rawSections : []).map((sec, idx) => {
+  const normalizedSections = (Array.isArray(effectiveRawSections) && effectiveRawSections.length > 0 ? effectiveRawSections : []).map((sec, idx) => {
     if (typeof sec === 'string') {
       const meta = slideMetadata[idx] || {};
       return {
@@ -1546,6 +1740,9 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         structuralTitle: sec.structuralTitle || null,
         slideNumber: sec.page || sec.pageNumber || sec.slideNumber || (idx + 1),
         status: sec.status || null,
+        hasDrawingOps: Boolean(sec.hasDrawingOps),
+        neededOcr: Boolean(sec.neededOcr),
+        noOcrResult: Boolean(sec.noOcrResult),
         startLine: sec.startLine || 1,
         endLine: sec.endLine || 1
       };
@@ -1576,11 +1773,11 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       recordPageOutcome(pageNum, 'skipped', 'not processed (cancelled or limit)');
       return;
     }
-    if (origSec?.status === 'empty' || lines.length === 0) {
+    if (origSec?.status === 'empty' && lines.length === 0 && !origSec.hasDrawingOps && !origSec.neededOcr) {
       recordPageOutcome(pageNum, 'skipped', 'empty or unreadable');
       return;
     }
-    if (isCoverSlide(rawLines) || isCoverSlide(lines)) {
+    if (isCoverSlide(rawLines, pageNum) || isCoverSlide(lines, pageNum)) {
       recordPageOutcome(pageNum, 'skipped', 'cover filter');
       return;
     }
@@ -1592,8 +1789,21 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       recordPageOutcome(pageNum, 'skipped', 'closing filter');
       return;
     }
+    if (isOutlineLikePage(rawLines) || isOutlineLikePage(lines)) {
+      recordPageOutcome(pageNum, 'skipped', 'outline');
+      return;
+    }
     if (!isContentPage && (isOutlineSlide(rawLines) || isOutlineSlide(lines))) {
       recordPageOutcome(pageNum, 'skipped', 'outline filter');
+      return;
+    }
+    const isNoTextFound = (origSec?.hasDrawingOps || origSec?.neededOcr || rawText.trim().length < 20 || lines.length === 0) && origSec?.status !== 'ocr';
+    if (isNoTextFound) {
+      recordPageOutcome(pageNum, 'skipped', 'no text found');
+      return;
+    }
+    if (origSec?.status === 'empty' || lines.length === 0) {
+      recordPageOutcome(pageNum, 'skipped', 'empty or unreadable');
       return;
     }
 
@@ -1617,13 +1827,13 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     let secStartLine = 1;
 
     allDocLines.forEach(({ lineNum, raw, cleaned }) => {
-      const isHeaderBreak = /^#{1,6}\s+/.test(raw.trim()) || /^---+$/.test(raw.trim());
+      const isHeaderBreak = /^#{1,6}\s+/.test(raw.trim()) || /^---+$/.test(raw.trim()) || raw.includes('\f');
       if (isHeaderBreak && currentSectionLines.length > 0) {
         const secText = currentSectionLines.map(l => l.cleaned).join('\n');
         const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
         const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
         const isContentSec = (secText.trim().length >= CONTENT_PAGE_MIN_CHARS);
-        if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
+        if (rawLines.length > 0 && !isCoverSlide(rawLines, validSections.length + 1) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && !isOutlineLikePage(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
           validSections.push({
             index: validSections.length,
             lines: rawLines,
@@ -1650,7 +1860,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       const rawLines = currentSectionLines.map(l => l.cleaned).filter(Boolean);
       const secEndLine = currentSectionLines[currentSectionLines.length - 1].lineNum;
       const isContentSec = (secText.trim().length >= CONTENT_PAGE_MIN_CHARS);
-      if (rawLines.length > 0 && !isCoverSlide(rawLines) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
+      if (rawLines.length > 0 && !isCoverSlide(rawLines, validSections.length + 1) && !isReferencesSlide(rawLines) && !isClosingSlide(rawLines) && !isOutlineLikePage(rawLines) && (isContentSec || !isOutlineSlide(rawLines))) {
         validSections.push({
           index: validSections.length,
           lines: rawLines,
@@ -1741,11 +1951,18 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       isStructural = true;
     } else {
       // Fallback: heading-detection heuristics from first non-bullet lines
+      let prevTextLine = '';
       for (let i = 0; i < Math.min(4, lines.length); i++) {
         const l = cleanTitle(lines[i]);
         const rawLine = lineObjs[i]?.raw || lines[i];
         if (/^[•\-*·]\s*/.test(lines[i].trim())) continue;
         if (/^\d+[\.\)]?$/.test(l)) continue;
+        const isBrandCasing = /^[a-z][A-Z]/.test(l);
+        if (prevTextLine && /^[a-z]/.test(l) && !isBrandCasing) {
+          prevTextLine = l;
+          continue;
+        }
+        prevTextLine = l;
         if (
           l.length >= 4 &&
           l.length <= 60 &&
@@ -1761,7 +1978,11 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         }
       }
       if (!candidateTitle && lines.length > 0) {
-        const rawFirst = cleanTitle(lines[0]);
+        const firstCandidate = lines.find(line => {
+          const c = cleanTitle(line);
+          return c.length >= 4 && !/^\d+[\.\)]?$/.test(c);
+        }) || lines[0];
+        const rawFirst = cleanTitle(firstCandidate);
         if (rawFirst.length >= 4 && !/^\d+[\.\)]?$/.test(rawFirst)) {
           candidateTitle = rawFirst;
           rawHeadingCandidate = lineObjs[0]?.raw || lines[0];
@@ -1820,16 +2041,30 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     });
 
     let finalTitle = '';
+    let titleSource = 'heading';
     let needsReview = scoreResult.needsReview || forceAsTopic;
     let confidence = scoreResult.confidence;
     let confidenceRating = scoreResult.confidence_rating;
     let reviewReasons = [...scoreResult.reviewReasons, ...unitReviewReasons];
+    let _path = 'raw_text_fallback';
+    let _flagInput = 'resolvedTitle';
 
     if (!forceAsTopic && scoreResult.isHighConfidence && !isDocTitleRepeat && !isNonTopicHeading(candidateTitle)) {
       finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(candidateTitle)), 45);
-      needsReview = false;
-      confidence = Math.max(75, scoreResult.confidence);
-      confidenceRating = 'high';
+      titleSource = 'heading';
+      if (isCleanHeading(finalTitle) && !isNonTopicHeading(finalTitle)) {
+        needsReview = false;
+        confidence = Math.max(75, scoreResult.confidence);
+        confidenceRating = 'high';
+        reviewReasons = [...unitReviewReasons];
+      } else {
+        needsReview = true;
+        confidence = Math.min(scoreResult.confidence, 40);
+        confidenceRating = 'low';
+        reviewReasons = [...scoreResult.reviewReasons, ...unitReviewReasons];
+      }
+      _path = 'high_confidence_heading';
+      _flagInput = 'resolvedTitle';
     } else {
       // Low confidence or flawed raw title: synthesize domain recommendation
       const domainSynthesized = synthesizeDomainTitle(unitText, docBaseLower, candidateTitle);
@@ -1839,17 +2074,37 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
 
       if (domainSynthesized && synthScore && synthScore.isHighConfidence) {
         finalTitle = truncateAtWord(toTitleCase(cleanCandidateTitle(domainSynthesized)), 45);
+        titleSource = 'suggested';
+        _path = 'domain_synthesized';
+        _flagInput = 'resolvedTitle';
         if (isStructuralOrAllCaps(candidateTitle) || isStructural) {
+          // Tier 1: Generic structural heading replaced by domain recommendation
+          needsReview = false;
           confidence = synthScore.confidence;
           confidenceRating = synthScore.confidence_rating;
-          needsReview = false;
-        } else {
-          needsReview = true;
-          confidence = Math.min(synthScore.confidence, 65);
-          confidenceRating = 'medium';
-          reviewReasons = [...scoreResult.reviewReasons, ...unitReviewReasons];
-          if (reviewReasons.length === 0) {
+          reviewReasons = [...synthScore.reviewReasons, ...unitReviewReasons];
+          if (!reviewReasons.includes('Draft heading: title suggested from body')) {
             reviewReasons.push('Draft heading: title suggested from body');
+          }
+        } else {
+          // Tier 2: Synthesized title evaluated by quality criteria
+          const evalResult = evaluateSynthesizedTitle(finalTitle, unitText, lines);
+          if (evalResult.needsReview) {
+            needsReview = true;
+            confidence = Math.min(synthScore.confidence, 65);
+            confidenceRating = 'medium';
+            reviewReasons = [...synthScore.reviewReasons, ...unitReviewReasons];
+            if (!reviewReasons.includes('Draft heading: title suggested from body')) {
+              reviewReasons.push('Draft heading: title suggested from body');
+            }
+          } else {
+            needsReview = false;
+            confidence = synthScore.confidence;
+            confidenceRating = synthScore.confidence_rating;
+            reviewReasons = [...synthScore.reviewReasons, ...unitReviewReasons];
+            if (!reviewReasons.includes('Draft heading: title suggested from body')) {
+              reviewReasons.push('Draft heading: title suggested from body');
+            }
           }
         }
       } else {
@@ -1861,11 +2116,26 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
             .replace(/^(?:wait for|click on|select the|open the|close the)\s*/i, '');
         }
         finalTitle = truncateAtWord(cleanCandidateTitle(fallback || candidateTitle), 45);
-        needsReview = true;
-        confidence = Math.min(scoreResult.confidence, 40);
-        confidenceRating = 'low';
-        if (!reviewReasons.includes('Unverified raw text: user rewrite recommended')) {
-          reviewReasons.push('Unverified raw text: user rewrite recommended');
+        titleSource = 'heading';
+        // Invariant: evaluate the exact resolved string that becomes emitted title!
+        if (isCleanHeading(finalTitle) && !isNonTopicHeading(finalTitle)) {
+          finalTitle = toTitleCase(finalTitle);
+          needsReview = false;
+          confidence = Math.max(75, scoreResult.confidence);
+          confidenceRating = 'high';
+          reviewReasons = [...unitReviewReasons];
+          _path = 'clean_heading_fallback';
+          _flagInput = 'resolvedTitle';
+        } else {
+          needsReview = true;
+          confidence = Math.min(scoreResult.confidence, 40);
+          confidenceRating = 'low';
+          reviewReasons = [...scoreResult.reviewReasons, ...unitReviewReasons];
+          if (!reviewReasons.includes('Unverified raw text: user rewrite recommended')) {
+            reviewReasons.push('Unverified raw text: user rewrite recommended');
+          }
+          _path = 'raw_text_fallback';
+          _flagInput = 'resolvedTitle';
         }
       }
     }
@@ -1885,11 +2155,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         });
         return;
       }
-      needsReview = true;
-      const failedReason = seenTitles.has(finalTitle.toLowerCase()) ? 'title dedup: duplicate title' : 'title check: title too short';
-      if (!reviewReasons.includes(failedReason)) {
-        reviewReasons.push(failedReason);
-      }
+
       let fallback = cleanCandidateTitle(unit.allLines[0] || '');
       const slideNum = unit.sections[0]?.slideNumber || 1;
       if (!fallback || fallback.length < 4 || isNonTopicHeading(fallback) || /^Page(?:\s+\d+)?$/i.test(fallback)) {
@@ -1898,11 +2164,47 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       if (seenTitles.has(fallback.toLowerCase())) {
         fallback = `Untitled slide ${slideNum}`;
       }
-      finalTitle = truncateTitle(fallback, 70);
+      const resolvedTitle = truncateTitle(fallback, 70);
+
+      if (seenTitles.has(resolvedTitle.toLowerCase()) || /^Untitled slide/i.test(resolvedTitle)) {
+        const failedReason = seenTitles.has(finalTitle.toLowerCase()) ? 'title dedup: duplicate title' : 'title check: title too short';
+        if (!reviewReasons.includes(failedReason)) {
+          reviewReasons.push(failedReason);
+        }
+        needsReview = true;
+        titleSource = 'heading';
+        _path = /^Untitled slide/i.test(resolvedTitle) ? 'untitled_slide' : 'dedup_fallback';
+        _flagInput = 'resolvedTitle';
+      } else if (isCleanHeading(resolvedTitle)) {
+        // Fallback is clean and unique: fix dedup false positive
+        needsReview = false;
+        confidence = Math.max(75, confidence);
+        confidenceRating = 'high';
+        reviewReasons = reviewReasons.filter(r => r !== 'title dedup: duplicate title' && r !== 'title check: title too short' && r !== 'Draft heading: title suggested from body');
+        titleSource = 'heading';
+        _path = 'dedup_fallback';
+        _flagInput = 'resolvedTitle';
+      } else {
+        if (!reviewReasons.includes('Unverified raw text: user rewrite recommended')) {
+          reviewReasons.push('Unverified raw text: user rewrite recommended');
+        }
+        needsReview = true;
+        titleSource = 'heading';
+        _path = 'dedup_fallback';
+        _flagInput = 'resolvedTitle';
+      }
+      finalTitle = resolvedTitle;
     }
     if (/^Page(?:\s+\d+)?$/i.test(finalTitle.trim())) {
       const slideNum = unit.sections[0]?.slideNumber || 1;
       finalTitle = `Untitled slide ${slideNum}`;
+      needsReview = true;
+      _path = 'untitled_slide';
+      _flagInput = 'resolvedTitle';
+    }
+
+    if (!isCleanHeading(finalTitle)) {
+      needsReview = true;
     }
     seenTitles.add(finalTitle.toLowerCase());
 
@@ -1910,17 +2212,8 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     let desc = '';
     const descLineNumbers = [];
 
-    if (lowerHead.includes('literature review')) {
-      desc = 'Meta-reviews show ML algorithms (SVM, RF, ANN, and Ensembles) consistently outperform traditional PMV models, achieving 70% to 96% accuracy across personal comfort datasets.';
-    } else if (lowerHead.includes('methodology')) {
-      desc = 'Integrates climate and shelter data with ML models (RF, XGBoost, SVM, ANN), cross-climate validation, and multi-objective optimization to determine optimal shelter parameters.';
-    } else if (lowerHead.includes('architecture') || lowerHead.includes('proposed system')) {
-      desc = 'Ingests climate, occupant, and shelter data into an integrated pipeline linking ML thermal comfort predictions to multi-objective energy optimization and SHAP explainability.';
-    } else if (lowerHead.includes('contribution')) {
-      desc = 'Transitions beyond standalone prediction into an integrated decision-support framework that recommends climate-adaptive shelter design parameters with cross-climate validation.';
-    } else {
-      const sentences = [];
-      lines.forEach((l, lIdx) => {
+    const sentences = [];
+    lines.forEach((l, lIdx) => {
         if (isMetaOrAsideLine(l)) return;
         const rawTrim = l.trim();
         if (rawTrim.startsWith('|') || /^\|.*\|$/.test(rawTrim) || /^[|\s\-:]+$/.test(rawTrim)) return;
@@ -1980,7 +2273,6 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
           .trim();
         desc = fallbackSubstantive || '';
       }
-    }
 
     // Require descriptions to start with a capital letter (capitalize or reject)
     if (desc) {
@@ -1995,7 +2287,6 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
           });
           return;
         }
-        needsReview = true;
         if (!reviewReasons.includes('description check: non-standard casing')) {
           reviewReasons.push('description check: non-standard casing');
         }
@@ -2008,7 +2299,6 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         });
         return;
       }
-      needsReview = true;
       if (!reviewReasons.includes('description check: empty description')) {
         reviewReasons.push('description check: empty description');
       }
@@ -2029,7 +2319,6 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         });
         return;
       }
-      needsReview = true;
       if (!reviewReasons.includes('description check: dependency or ordering note')) {
         reviewReasons.push('description check: dependency or ordering note');
       }
@@ -2051,7 +2340,6 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         });
         return;
       }
-      needsReview = true;
       if (!reviewReasons.includes('description quality gate: low confidence')) {
         reviewReasons.push('description quality gate: low confidence');
       }
@@ -2061,7 +2349,6 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     }
 
     if (descScore.needsReview) {
-      needsReview = true;
       confidence = Math.min(confidence, descScore.confidence);
       confidenceRating = descScore.confidence_rating;
       descScore.reviewReasons.forEach(r => {
@@ -2081,14 +2368,26 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     const fullTextOfUnit = unit.sections.map(s => s.rawText || s.text).join('\n\n').trim();
     const primarySection = unit.sections[0];
 
-    candidateTopics.push({
+    // Requirement 3(d): needs_review must strictly equal "has at least one title/content reason".
+    // Description-only reasons (verb, <8 words, casing, description quality gate) must not set needs_review.
+    // Otherwise keep reason "Draft heading: title suggested from body" as an informational reason that does NOT set needs_review.
+    const titleOrContentReasons = reviewReasons.filter(r => {
+      if (!needsReview && r === 'Draft heading: title suggested from body') {
+        return false;
+      }
+      return isTitleOrContentReason(r);
+    });
+    const finalNeedsReview = needsReview || titleOrContentReasons.length > 0;
+
+    const topicObj = {
       id: `custom-${timestamp}-${uIdx}`,
       title: finalTitle,
+      title_source: titleSource,
       raw_heading: candidateTitle,
       confidence,
       confidence_rating: confidenceRating,
-      needs_review: needsReview,
-      is_confirmed: !needsReview,
+      needs_review: finalNeedsReview,
+      is_confirmed: !finalNeedsReview,
       review_reasons: reviewReasons,
       is_structural_title: isStructural,
       description: desc,
@@ -2111,7 +2410,14 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       source_lines: [unit.startLine, unit.endLine],
       title_source_line: titleLineNumber,
       description_source_lines: descLineNumbers.length > 0 ? descLineNumbers : [unit.startLine + 1]
-    });
+    };
+
+    if (isDebugTraceEnabled()) {
+      topicObj._path = _path;
+      topicObj._flagInput = _flagInput;
+    }
+
+    candidateTopics.push(topicObj);
 
     recordPageOutcome(primarySection.slideNumber, 'topic', null);
     unit.sections.slice(1).forEach(s => {
@@ -2130,6 +2436,34 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
   const pageOutcomes = Array.from(pageOutcomesMap.values()).sort((a, b) => a.page - b.page);
   candidateTopics.pageOutcomes = pageOutcomes;
   return candidateTopics;
+}
+
+export function enforceNoCleanFilenameDerivedTitles(topics, sourceFileName) {
+  if (!Array.isArray(topics) || topics.length === 0) return topics;
+  const docBaseClean = (sourceFileName || '')
+    .replace(/\.[^/.]+$/, '')
+    .replace(/[_\-]+/g, ' ')
+    .trim()
+    .toLowerCase();
+
+  for (const t of topics) {
+    if (!t.needs_review) {
+      const isFilenameTitle = t.title_source === 'filename' ||
+        (docBaseClean && docBaseClean.length >= 3 && t.title.toLowerCase() === docBaseClean);
+      if (isFilenameTitle) {
+        t.needs_review = true;
+        t.is_confirmed = false;
+        t.confidence = Math.min(t.confidence || 40, 40);
+        t.confidence_rating = 'low';
+        t.title_source = 'filename';
+        if (!t.review_reasons) t.review_reasons = [];
+        if (!t.review_reasons.includes('Filename-derived title: user review required')) {
+          t.review_reasons.push('Filename-derived title: user review required');
+        }
+      }
+    }
+  }
+  return topics;
 }
 
 /**
@@ -2175,12 +2509,12 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   extractTopicsLocally.lastPageOutcomes = structuredTopics.pageOutcomes || [];
 
   if (options.forcePath === 'structured') {
-    return structuredTopics;
+    return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   }
 
   // Preserve structured path for multi-section documents/decks with explicit sections that structured already handles well
   if (Array.isArray(rawSections) && rawSections.length >= 2 && structuredTopics.length >= 2) {
-    return structuredTopics;
+    return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   }
 
   // Requirement 1: Only fall back from structured path when structured returns 0 topics,
@@ -2188,10 +2522,11 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   // For longer documents with at least 2 structured topics, keep structured result.
   const isImageOrMedia = /\.(png|jpe?g|webp|bmp|gif)$/i.test(sourceFileName || '');
   const isShort = cleaned.length < 600 || (isImageOrMedia && cleaned.length < 1200);
-  const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60);
+  const isSingleTopicLowCoverage = structuredTopics.length === 1 && cleaned.length >= 2000 && structuredCoverage < 0.15;
+  const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60) || isSingleTopicLowCoverage;
 
   if (!shouldFallback) {
-    return structuredTopics;
+    return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   }
 
   // Path 2: List / Sequence
@@ -2202,7 +2537,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   if (listTopics.length > 0 && (listCoverage >= 0.50 || listCoverage >= structuredCoverage)) {
     listTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
     extractTopicsLocally.lastPageOutcomes = listTopics.pageOutcomes;
-    return listTopics;
+    return enforceNoCleanFilenameDerivedTitles(listTopics, sourceFileName);
   }
 
   // Path 3: Raw Text
@@ -2213,16 +2548,16 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   if (rawTopics.length > 0) {
     rawTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
     extractTopicsLocally.lastPageOutcomes = rawTopics.pageOutcomes;
-    return rawTopics;
+    return enforceNoCleanFilenameDerivedTitles(rawTopics, sourceFileName);
   }
 
   // Return highest non-empty fallback if under 60%
   if (listTopics.length > 0 && listCoverage >= structuredCoverage) {
     listTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
     extractTopicsLocally.lastPageOutcomes = listTopics.pageOutcomes;
-    return listTopics;
+    return enforceNoCleanFilenameDerivedTitles(listTopics, sourceFileName);
   }
-  if (structuredTopics.length > 0) return structuredTopics;
+  if (structuredTopics.length > 0) return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   return [];
 }
 
@@ -2324,9 +2659,10 @@ ${truncatedText}
     const cleanDesc = truncateAtWord((item.description || '').trim(), 175).replace(/[,\s;:–—\-.]+$/, '');
     const finalDesc = cleanDesc ? `${cleanDesc}.` : '';
 
-    return {
+    const topicObj = {
       id: `custom-gemini-${timestamp}-${idx}`,
       title: truncateTitle(item.title || 'Untitled Topic', 70),
+      title_source: 'suggested',
       description: finalDesc,
       full_text: item.full_text || item.description || '',
       group_name: 'custom',
@@ -2340,6 +2676,13 @@ ${truncatedText}
       expiry_rule: '14_days',
       resources: []
     };
+
+    if (isDebugTraceEnabled()) {
+      topicObj._path = 'gemini_byok';
+      topicObj._flagInput = 'resolvedTitle';
+    }
+
+    return topicObj;
   });
 }
 
@@ -2370,13 +2713,13 @@ export async function extractTopicsFromSections(extractedData, fileName = '') {
  */
 export function buildExtractionWarning(pageOutcomes) {
   if (!Array.isArray(pageOutcomes) || pageOutcomes.length === 0) return null;
-  const skipped = pageOutcomes.filter(p => p && p.outcome === 'skipped');
+  const skipped = pageOutcomes.filter(p => p && (p.outcome === 'skipped' || p.outcome === 'no text found' || p.reason === 'no text found'));
   if (skipped.length === 0) return null;
 
   // Group skipped pages by reason
   const byReason = new Map();
-  skipped.forEach(({ page, reason }) => {
-    const r = (reason || 'non-content').trim();
+  skipped.forEach(({ page, reason, outcome }) => {
+    const r = (reason || outcome || 'non-content').trim();
     if (!byReason.has(r)) byReason.set(r, []);
     byReason.get(r).push(page);
   });

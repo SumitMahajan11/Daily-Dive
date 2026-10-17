@@ -164,7 +164,6 @@ for (const fixture of fixtures) {
     assert(topics.length > 0, `Expected topics > 0 for ${fixture.name}, got ${topics.length}`);
 
     const coverage = computeExtractionCoverage(text, topics);
-    console.log(`[REGRESSION] ${fixture.name}: ${topics.length} topics, ${(coverage * 100).toFixed(1)}% coverage`);
 
     // Requirement: Coverage of 60% or more on all image & PDF fixtures
     if (fixture.type === 'image' || fixture.type === 'pdf') {

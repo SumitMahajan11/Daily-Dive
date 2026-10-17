@@ -4,9 +4,20 @@ node_modules/
 .pnp.js
 
 # Production build
-dist/
+dist*
 dist-ssr/
 *.local
+
+# Temporary files & worktrees
+temp_*
+tmp_*
+*.tmp
+*.temp
+temp/
+tmp/
+.worktree*
+worktree*
+*.worktree
 
 # Environment variables (NEVER COMMIT)
 .env
