@@ -701,10 +701,6 @@ export const topics = [
       {
         "label": "Hugging Face How to Generate Text: Using Different Decoding Methods",
         "url": "https://huggingface.co/blog/how-to-generate"
-      },
-      {
-        "label": "Stanford CS224N: Text Generation Strategies",
-        "url": "https://web.stanford.edu/class/cs224n/"
       }
     ],
     "lesson": {
@@ -2716,7 +2712,7 @@ export const topics = [
         "url": "https://martinfowler.com/articles/evodb.html"
       },
       {
-        "label": "Stripe Engineering: How we manage zero-downtime database migrations",
+        "label": "Stripe Engineering: Online migrations at scale",
         "url": "https://stripe.com/blog/online-migrations"
       }
     ]
@@ -4952,7 +4948,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Intel 64 Architecture Memory Ordering & Barrier Instructions Reference",
+        "label": "Intel: Combined Manuals for Intel 64 and IA-32 Architectures",
         "url": "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
       }
     ]
@@ -5238,7 +5234,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Merkle tree",
+        "label": "Wikipedia (Related): Merkle tree",
         "url": "https://en.wikipedia.org/wiki/Merkle_tree"
       }
     ]

@@ -43,8 +43,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Richard Feynman — The Character of Physical Law (MIT Press)",
-        "url": "https://mitpress.mit.edu"
+        "label": "Wikipedia: The Character of Physical Law",
+        "url": "https://en.wikipedia.org/wiki/The_Character_of_Physical_Law"
       }
     ]
   },
@@ -181,8 +181,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Peter Mitchell — Chemiosmotic Hypothesis (Nobel Prize in Chemistry 1978)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: The Nobel Prize in Chemistry 1978 (Peter Mitchell)",
+        "url": "https://www.nobelprize.org/prizes/chemistry/1978/summary/"
       }
     ]
   },
@@ -200,8 +200,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Melvin Calvin — The Path of Carbon in Photosynthesis (Nobel Lecture 1961)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: Melvin Calvin Nobel Lecture (1961)",
+        "url": "https://www.nobelprize.org/prizes/chemistry/1961/calvin/lecture/"
       }
     ]
   },
@@ -352,8 +352,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Perlmutter, Schmidt & Riess — Discovery of Accelerating Universe (Nobel Prize in Physics 2011)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: The Nobel Prize in Physics 2011 (Accelerating Universe)",
+        "url": "https://www.nobelprize.org/prizes/physics/2011/summary/"
       }
     ]
   },
@@ -618,8 +618,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Lynn Margulis — Origin of Eukaryotic Cells (Yale University Press 1970)",
-        "url": "https://yalebooks.yale.edu"
+        "label": "Wikipedia: Symbiogenesis",
+        "url": "https://en.wikipedia.org/wiki/Symbiogenesis"
       }
     ]
   },
@@ -960,8 +960,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Vaclav Smil — Enriching the Earth: Fritz Haber, Carl Bosch, and the Transformation of World Food Production (MIT Press)",
-        "url": "https://mitpress.mit.edu"
+        "label": "Vaclav Smil: Enriching the Earth (MIT Press)",
+        "url": "https://mitpress.mit.edu/9780262693134/enriching-the-earth/"
       }
     ]
   },
@@ -1207,8 +1207,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Norman Borlaug — Nobel Peace Prize Lecture (1970)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: Norman Borlaug Nobel Lecture (1970)",
+        "url": "https://www.nobelprize.org/prizes/peace/1970/borlaug/lecture/"
       }
     ]
   },
@@ -1245,8 +1245,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "World Health Organization — The Global Eradication of Smallpox (1980)",
-        "url": "https://www.who.int"
+        "label": "Wikipedia: Donald Henderson",
+        "url": "https://en.wikipedia.org/wiki/Donald_Henderson"
       }
     ]
   },
@@ -1341,7 +1341,7 @@ export const topics = [
     "resources": [
       {
         "label": "The Code of Hammurabi (Translated by L. W. King, Yale Avalon Project)",
-        "url": "https://avalon.law.yale.edu"
+        "url": "https://avalon.law.yale.edu/ancient/hamframe.asp"
       }
     ]
   },
@@ -1416,8 +1416,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "US National Archives — The Marshall Plan (1948)",
-        "url": "https://www.archives.gov"
+        "label": "National Archives: Marshall Plan (1948)",
+        "url": "https://www.archives.gov/milestone-documents/marshall-plan"
       }
     ]
   },
@@ -1435,8 +1435,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "James C. Scott — Against the Grain: A Deep History of the Earliest States (Yale)",
-        "url": "https://yalebooks.yale.edu"
+        "label": "Wikipedia: Against the Grain: A Deep History of the Earliest States",
+        "url": "https://en.wikipedia.org/wiki/Against_the_Grain:_A_Deep_History_of_the_Earliest_States"
       }
     ]
   },
@@ -1530,8 +1530,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Nobel Prize in Chemistry 2019 — Development of Lithium-Ion Batteries",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: The Nobel Prize in Chemistry 2019 (Lithium-Ion Batteries)",
+        "url": "https://www.nobelprize.org/prizes/chemistry/2019/summary/"
       }
     ]
   },
@@ -1625,8 +1625,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "The Royal Society — History of the Royal Society",
-        "url": "https://royalsociety.org"
+        "label": "Royal Society: History of the Royal Society",
+        "url": "https://royalsociety.org/about-us/history/"
       }
     ]
   },

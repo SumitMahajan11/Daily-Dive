@@ -118,8 +118,8 @@
     "description": "Exposing people to weakened counter-arguments with refutations builds mental resilience, protecting their beliefs against subsequent persuasive attacks.",
     "resources": [
       {
-        "label": "Cambridge University Department of Psychology: Inoculation Theory Research Lab",
-        "url": "https://www.psychol.cam.ac.uk/"
+        "label": "Wikipedia: Inoculation theory",
+        "url": "https://en.wikipedia.org/wiki/Inoculation_theory"
       }
     ]
   },
@@ -294,8 +294,8 @@
     "description": "Marshall Rosenberg's Nonviolent Communication framework restructures interpersonal dialogue through four concrete steps.",
     "resources": [
       {
-        "label": "Stanford Medicine: Nonviolent Communication in Healthcare and Difficult Dialogues",
-        "url": "https://med.stanford.edu/"
+        "label": "Wikipedia: Nonviolent Communication",
+        "url": "https://en.wikipedia.org/wiki/Nonviolent_Communication"
       }
     ]
   },
@@ -358,12 +358,8 @@
     "description": "Effective listening progresses through three distinct depths: Level 1 Internal Listening , Level 2 Focused Listening.",
     "resources": [
       {
-        "label": "Carl R. Rogers & Richard E. Farson: Active Listening (Industrial Relations Center, University of Chicago 1957)",
-        "url": "https://www.chicagobooth.edu/"
-      },
-      {
-        "label": "Harvard Business Review: What Great Listeners Actually Do (Jack Zenger & Joseph Folkman)",
-        "url": "https://hbr.org/2016/07/what-great-listeners-actually-do"
+        "label": "Wikipedia: Active listening",
+        "url": "https://en.wikipedia.org/wiki/Active_listening"
       }
     ]
   },
@@ -807,7 +803,7 @@
     "description": "Differentiates communication where meaning is explicit in words (low-context) versus embedded in shared cultural norms and subtle cues (high-context).",
     "resources": [
       {
-        "label": "Harvard Business Review: Communicating Across Cultures",
+        "label": "Harvard Business Review: Navigating the Cultural Minefield (Erin Meyer)",
         "url": "https://hbr.org/2014/05/navigating-the-cultural-minefield"
       }
     ]
@@ -1372,10 +1368,6 @@
     "title": "Ad Hominem & Tu Quoque",
     "description": "An Ad Hominem fallacy attacks the personal character, background, or motives of the arguer rather than evaluating the substantive validity of their claim.",
     "resources": [
-      {
-        "label": "Douglas Walton: Ad Hominem Arguments (University of Alabama Press)",
-        "url": "https://www.uapress.ua.edu/9780817309220/ad-hominem-arguments/"
-      },
       {
         "label": "Stanford Encyclopedia of Philosophy: Fallacies and Genetic Arguments",
         "url": "https://plato.stanford.edu/entries/fallacies/"
@@ -3024,7 +3016,7 @@
     "description": "Longitudinal personality studies reveal high rank-order stability alongside mean-level change known as the 'Maturity Principle'.",
     "resources": [
       {
-        "label": "Wikipedia: Personality development",
+        "label": "Wikipedia (Related): Personality development",
         "url": "https://en.wikipedia.org/wiki/Personality_development"
       }
     ]
@@ -3387,7 +3379,7 @@
     "description": "Max Ringelmann's rope-pulling experiments established Social Loafing: individual effort decreases systematically as group size increases due to obscured.",
     "resources": [
       {
-        "label": "Wikipedia: Social loafing",
+        "label": "Wikipedia (Related): Social loafing",
         "url": "https://en.wikipedia.org/wiki/Social_loafing"
       }
     ]
@@ -4061,7 +4053,7 @@
     "description": "The Debt Avalanche strategy mathematically minimizes total interest paid by directing surplus payments to the highest-interest debt first.",
     "resources": [
       {
-        "label": "Wikipedia: Debt snowball method",
+        "label": "Wikipedia (Related): Debt snowball method",
         "url": "https://en.wikipedia.org/wiki/Debt_snowball_method"
       }
     ]
@@ -4432,11 +4424,7 @@
     "resources": [
       {
         "label": "U.S. Bureau of Labor Statistics: Consumer Price Index Overview & Methodology",
-        "url": "https://www.bls.gov/cpi/"
-      },
-      {
-        "label": "U.S. Bureau of Economic Analysis (BEA): PCE Price Index Overview",
-        "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index"
+        "url": "https://www.bls.gov/cpi/questions-and-answers.htm"
       }
     ]
   },
@@ -4853,7 +4841,7 @@
     "description": "Startup equity typically vests over 4 years with a 1-year cliff, where 25% vests after 12 months and 1/48th monthly thereafter.",
     "resources": [
       {
-        "label": "Wikipedia: Vesting",
+        "label": "Wikipedia (Related): Vesting",
         "url": "https://en.wikipedia.org/wiki/Vesting"
       }
     ]
@@ -5148,7 +5136,7 @@
     "description": "Decentralized lending protocols (Aave, Compound) manage liquidity pools where borrowing interest rates float dynamically based on capital utilization curves (U =.",
     "resources": [
       {
-        "label": "Wikipedia: Decentralized finance",
+        "label": "Wikipedia (Related): Decentralized finance",
         "url": "https://en.wikipedia.org/wiki/Decentralized_finance"
       }
     ]
@@ -5745,10 +5733,6 @@
       {
         "label": "Hugging Face How to Generate Text: Using Different Decoding Methods",
         "url": "https://huggingface.co/blog/how-to-generate"
-      },
-      {
-        "label": "Stanford CS224N: Text Generation Strategies",
-        "url": "https://web.stanford.edu/class/cs224n/"
       }
     ]
   },
@@ -7526,7 +7510,7 @@
         "url": "https://martinfowler.com/articles/evodb.html"
       },
       {
-        "label": "Stripe Engineering: How we manage zero-downtime database migrations",
+        "label": "Stripe Engineering: Online migrations at scale",
         "url": "https://stripe.com/blog/online-migrations"
       }
     ]
@@ -9654,7 +9638,7 @@
     "description": "Processors use store buffers to let execution continue immediately after write operations while cache line ownership is resolved over the bus.",
     "resources": [
       {
-        "label": "Intel 64 Architecture Memory Ordering & Barrier Instructions Reference",
+        "label": "Intel: Combined Manuals for Intel 64 and IA-32 Architectures",
         "url": "https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html"
       }
     ]
@@ -9928,7 +9912,7 @@
     "description": "Leaderless datastores maintain long-term replica convergence through two complementary mechanisms: opportunistic read repair and active background anti-entropy.",
     "resources": [
       {
-        "label": "Wikipedia: Merkle tree",
+        "label": "Wikipedia (Related): Merkle tree",
         "url": "https://en.wikipedia.org/wiki/Merkle_tree"
       }
     ]
@@ -11919,7 +11903,7 @@
     "description": "A manager's output as the output of the organization plus the output of neighboring teams influenced.",
     "resources": [
       {
-        "label": "Andy Grove — High Output Management (Vintage)",
+        "label": "Goodreads: High Output Management by Andrew S. Grove",
         "url": "https://www.goodreads.com/book/show/324750.High_Output_Management"
       }
     ]
@@ -12256,8 +12240,8 @@
     "description": "Tracking customer cohorts over time reveals whether product engagement flattens parallel to the x-axis or decays to zero .",
     "resources": [
       {
-        "label": "Brian Balfour — Why Retention Is The King of Growth Strategy",
-        "url": "https://brianbalfour.com"
+        "label": "Wikipedia (Related): Cohort analysis",
+        "url": "https://en.wikipedia.org/wiki/Cohort_analysis"
       }
     ]
   },
@@ -12364,8 +12348,8 @@
     "description": "Sustainable business success does not result from a single breakthrough or miraculous launch, but from pushing a giant, heavy flywheel turn upon turn.",
     "resources": [
       {
-        "label": "Jim Collins — Good to Great: Why Some Companies Make the Leap... and Others Don't",
-        "url": "https://www.jimcollins.com"
+        "label": "Jim Collins: Concepts - The Flywheel Effect",
+        "url": "https://www.jimcollins.com/concepts/the-flywheel.html"
       }
     ]
   },
@@ -12480,8 +12464,8 @@
     "description": "Categorizes scope for releases into Must have , Should have , Could have (nice-to-have if time permits), and Won't have (explicitly deferred for this cycle).",
     "resources": [
       {
-        "label": "DSDM Consortium — Agile Project Framework: MoSCoW Prioritisation",
-        "url": "https://www.agilebusiness.org"
+        "label": "Wikipedia: MoSCoW method",
+        "url": "https://en.wikipedia.org/wiki/MoSCoW_method"
       }
     ]
   },
@@ -12709,8 +12693,8 @@
     "description": "Particles like electrons exhibit wave interference patterns when unobserved, yet collapse to localized point impacts upon detector measurement.",
     "resources": [
       {
-        "label": "Richard Feynman — The Character of Physical Law (MIT Press)",
-        "url": "https://mitpress.mit.edu"
+        "label": "Wikipedia: The Character of Physical Law",
+        "url": "https://en.wikipedia.org/wiki/The_Character_of_Physical_Law"
       }
     ]
   },
@@ -12835,8 +12819,8 @@
     "description": "Through glycolysis, the Krebs cycle, and the mitochondrial electron transport chain.",
     "resources": [
       {
-        "label": "Peter Mitchell — Chemiosmotic Hypothesis (Nobel Prize in Chemistry 1978)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: The Nobel Prize in Chemistry 1978 (Peter Mitchell)",
+        "url": "https://www.nobelprize.org/prizes/chemistry/1978/summary/"
       }
     ]
   },
@@ -12853,8 +12837,8 @@
     "description": "Chloroplasts capture photons via chlorophyll pigments to split water molecules (photolysis) and produce ATP and NADPH.",
     "resources": [
       {
-        "label": "Melvin Calvin — The Path of Carbon in Photosynthesis (Nobel Lecture 1961)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: Melvin Calvin Nobel Lecture (1961)",
+        "url": "https://www.nobelprize.org/prizes/chemistry/1961/calvin/lecture/"
       }
     ]
   },
@@ -12997,8 +12981,8 @@
     "description": "Observations of Type Ia supernovae in 1998 showed that cosmic expansion is accelerating rather than decelerating under gravity.",
     "resources": [
       {
-        "label": "Perlmutter, Schmidt & Riess — Discovery of Accelerating Universe (Nobel Prize in Physics 2011)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: The Nobel Prize in Physics 2011 (Accelerating Universe)",
+        "url": "https://www.nobelprize.org/prizes/physics/2011/summary/"
       }
     ]
   },
@@ -13249,8 +13233,8 @@
     "description": "Lynn Margulis proved that mitochondria and chloroplasts originated as free-living prokaryotic bacteria that were engulfed by ancestral host cells.",
     "resources": [
       {
-        "label": "Lynn Margulis — Origin of Eukaryotic Cells (Yale University Press 1970)",
-        "url": "https://yalebooks.yale.edu"
+        "label": "Wikipedia: Symbiogenesis",
+        "url": "https://en.wikipedia.org/wiki/Symbiogenesis"
       }
     ]
   },
@@ -13573,8 +13557,8 @@
     "description": "Fritz Haber and Carl Bosch developed high-pressure catalytic synthesis to fix atmospheric dinitrogen (N2) into ammonia (NH3).",
     "resources": [
       {
-        "label": "Vaclav Smil — Enriching the Earth: Fritz Haber, Carl Bosch, and the Transformation of World Food Production (MIT Press)",
-        "url": "https://mitpress.mit.edu"
+        "label": "Vaclav Smil: Enriching the Earth (MIT Press)",
+        "url": "https://mitpress.mit.edu/9780262693134/enriching-the-earth/"
       }
     ]
   },
@@ -13807,8 +13791,8 @@
     "description": "Nobel Laureate Norman Borlaug bred semi-dwarf, disease-resistant, high-yield wheat varieties in Mexico, Pakistan, and India.",
     "resources": [
       {
-        "label": "Norman Borlaug — Nobel Peace Prize Lecture (1970)",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: Norman Borlaug Nobel Lecture (1970)",
+        "url": "https://www.nobelprize.org/prizes/peace/1970/borlaug/lecture/"
       }
     ]
   },
@@ -13843,8 +13827,8 @@
     "description": "A landmark global public health campaign using targeted surveillance and containment vaccination to eradicate smallpox in 1980.",
     "resources": [
       {
-        "label": "World Health Organization — The Global Eradication of Smallpox (1980)",
-        "url": "https://www.who.int"
+        "label": "Wikipedia: Donald Henderson",
+        "url": "https://en.wikipedia.org/wiki/Donald_Henderson"
       }
     ]
   },
@@ -13934,7 +13918,7 @@
     "resources": [
       {
         "label": "The Code of Hammurabi (Translated by L. W. King, Yale Avalon Project)",
-        "url": "https://avalon.law.yale.edu"
+        "url": "https://avalon.law.yale.edu/ancient/hamframe.asp"
       }
     ]
   },
@@ -14005,8 +13989,8 @@
     "description": "The US European Recovery Program (1948) transferred over $13 billion to rebuild war-devastated Western European industry, lowering interstate trade barriers.",
     "resources": [
       {
-        "label": "US National Archives — The Marshall Plan (1948)",
-        "url": "https://www.archives.gov"
+        "label": "National Archives: Marshall Plan (1948)",
+        "url": "https://www.archives.gov/milestone-documents/marshall-plan"
       }
     ]
   },
@@ -14023,8 +14007,8 @@
     "description": "Beginning ~10,000 BCE in the Fertile Crescent, humanity transitioned from nomadic foraging to settled cereal crop cultivation (wheat.",
     "resources": [
       {
-        "label": "James C. Scott — Against the Grain: A Deep History of the Earliest States (Yale)",
-        "url": "https://yalebooks.yale.edu"
+        "label": "Wikipedia: Against the Grain: A Deep History of the Earliest States",
+        "url": "https://en.wikipedia.org/wiki/Against_the_Grain:_A_Deep_History_of_the_Earliest_States"
       }
     ]
   },
@@ -14113,8 +14097,8 @@
     "description": "John Goodenough, Stanley Whittingham, and Akira Yoshino commercialized rechargeable lithium-ion intercalation batteries with lightweight cobalt oxide cathodes.",
     "resources": [
       {
-        "label": "Nobel Prize in Chemistry 2019 — Development of Lithium-Ion Batteries",
-        "url": "https://www.nobelprize.org"
+        "label": "NobelPrize.org: The Nobel Prize in Chemistry 2019 (Lithium-Ion Batteries)",
+        "url": "https://www.nobelprize.org/prizes/chemistry/2019/summary/"
       }
     ]
   },
@@ -14203,8 +14187,8 @@
     "description": "Founded in London with the motto 'Nullius in Verba' (Take nobody's word for it), the Royal Society established modern peer review.",
     "resources": [
       {
-        "label": "The Royal Society — History of the Royal Society",
-        "url": "https://royalsociety.org"
+        "label": "Royal Society: History of the Royal Society",
+        "url": "https://royalsociety.org/about-us/history/"
       }
     ]
   },

@@ -355,8 +355,8 @@ export const starterTopics = [
     ],
     "resources": [
       {
-        "label": "Richard Feynman — The Character of Physical Law (MIT Press)",
-        "url": "https://mitpress.mit.edu"
+        "label": "Wikipedia: The Character of Physical Law",
+        "url": "https://en.wikipedia.org/wiki/The_Character_of_Physical_Law"
       }
     ]
   },

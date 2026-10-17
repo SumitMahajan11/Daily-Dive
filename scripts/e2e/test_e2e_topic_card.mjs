@@ -74,16 +74,6 @@ async function runTopicCardE2ETests() {
         permissions: ['clipboard-read', 'clipboard-write']
       });
 
-      // Override navigator.share to null to test clipboard fallback cleanly
-      await context.addInitScript(() => {
-        // @ts-ignore
-        delete window.navigator.share;
-        // @ts-ignore
-        delete window.navigator.canShare;
-      });
-
-      const page = await context.newPage();
-
       const syntheticTopic = {
         id: 'synthetic-empty-topic',
         title: 'Synthetic Topic With Empty Resources',
@@ -93,12 +83,18 @@ async function runTopicCardE2ETests() {
         resources: []
       };
 
-      // Clear local storage and seed synthetic custom topic fixture for empty-resources test
-      await page.goto(`http://localhost:${port}/`);
-      await page.evaluate((fixture) => {
-        localStorage.clear();
-        localStorage.setItem('daily_dive_custom_topics', JSON.stringify([fixture]));
+      // Override navigator.share to null to test clipboard fallback cleanly & seed synthetic topic fixture
+      await context.addInitScript((fixture) => {
+        // @ts-ignore
+        delete window.navigator.share;
+        // @ts-ignore
+        delete window.navigator.canShare;
+        try {
+          localStorage.setItem('daily_dive_custom_topics', JSON.stringify([fixture]));
+        } catch (e) {}
       }, syntheticTopic);
+
+      const page = await context.newPage();
 
       // ── TEST (A): Topic with lesson ──────────────────────────────────────────
       printLog('Test (a): Loading topic with lesson (?topic=multi-head-self-attention)...');

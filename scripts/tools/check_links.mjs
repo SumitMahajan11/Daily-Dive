@@ -25,7 +25,9 @@ const STOP_WORDS = new Set([
   'these', 'they', 'this', 'those', 'through', 'to', 'too', 'under', 'until', 'up', 'very', 'was',
   'we', 'were', 'what', 'when', 'where', 'which', 'while', 'who', 'whom', 'why', 'with', 'would',
   'you', 'your', 'yours', 'yourself', 'yourselves', 'et', 'al', 'via', 'vs', 'com', 'org', 'edu',
-  'gov', 'html', 'pdf', 'abs', 'paper', 'article', 'journal', 'proceedings'
+  'gov', 'html', 'pdf', 'abs', 'paper', 'article', 'journal', 'proceedings',
+  // Tightened publisher and site words
+  'press', 'university', 'official', 'website', 'home', 'homepage', 'welcome', 'wikipedia'
 ]);
 
 export function getSignificantWords(str) {
@@ -47,11 +49,37 @@ export function countSharedWords(label, title) {
   return count;
 }
 
-export function isHomepage(urlStr) {
+export function isHomepage(urlStr, title = '') {
   try {
     const u = new URL(urlStr);
-    const p = u.pathname.replace(/\/+$/, '');
-    return (p === '' || p === '/') && !u.search;
+    const pathname = u.pathname.replace(/\/+$/, '');
+    const segments = pathname.split('/').filter(Boolean);
+    const isShortPath = (segments.length <= 1);
+
+    if (!title) {
+      return (segments.length === 0) && !u.search;
+    }
+
+    const tLower = title.toLowerCase().trim();
+    const hasHome = /\bhome\b|\bhomepage\b/i.test(tLower);
+    const hasWelcome = /\bwelcome\b/i.test(tLower);
+    const hasOfficial = /official website/i.test(tLower);
+
+    const hostParts = u.hostname.replace(/^www\./, '').split('.');
+    const domainName = hostParts[0].toLowerCase();
+
+    const cleanWords = tLower.replace(/[^a-z0-9\s]/g, ' ').split(/\s+/).filter(Boolean);
+    const nonBrandWords = cleanWords.filter(w => !['the', 'of', 'and', 'a', 'an', 'org', 'com', 'official', 'website', 'home', 'page', 'welcome', domainName].includes(w));
+
+    const isSiteNameOnly = (
+      nonBrandWords.length === 0 ||
+      cleanWords.join(' ') === domainName ||
+      /^(world health organization|jim collins|brian balfour|avalon project)/i.test(tLower)
+    );
+
+    const isTitleFlagged = (hasHome || hasWelcome || hasOfficial || isSiteNameOnly);
+
+    return isShortPath && isTitleFlagged;
   } catch {
     return false;
   }
@@ -179,17 +207,18 @@ async function fetchUrl(targetUrl, retryCount = 0) {
       };
     }
 
-    if (!isHomepage(targetUrl) && isHomepage(finalUrl)) {
+    const html = await res.text();
+    const title = extractTitle(html);
+
+    if (isHomepage(finalUrl, title)) {
       return {
         status: 'redirected-to-homepage',
         httpStatus,
         finalUrl,
-        title: ''
+        title
       };
     }
 
-    const html = await res.text();
-    const title = extractTitle(html);
     return {
       status: 'success',
       httpStatus,
@@ -331,17 +360,22 @@ export async function runCheck({ cache = false, maxConcurrent = 3, domainDelayMs
           let sharedWords = 0;
 
           if (finalStatus === 'success') {
-            let maxShared = 0;
-            for (const lbl of item.labels) {
-              const shared = countSharedWords(lbl, fetchRes.title);
-              if (shared > maxShared) maxShared = shared;
-            }
-            sharedWords = maxShared;
-
-            if (maxShared >= 2) {
-              finalStatus = 'ok';
+            if (isHomepage(fetchRes.finalUrl, fetchRes.title)) {
+              finalStatus = 'redirected-to-homepage';
             } else {
-              finalStatus = 'title-mismatch';
+              let maxShared = 0;
+              for (const lbl of item.labels) {
+                const shared = countSharedWords(lbl, fetchRes.title);
+                if (shared > maxShared) maxShared = shared;
+              }
+              sharedWords = maxShared;
+
+              const titleWords = getSignificantWords(fetchRes.title);
+              if (maxShared >= 2 || (titleWords.length === 1 && maxShared === 1)) {
+                finalStatus = 'ok';
+              } else {
+                finalStatus = 'title-mismatch';
+              }
             }
           }
 
@@ -414,6 +448,44 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const args = process.argv.slice(2);
   const cacheFlag = args.includes('--cache');
   const inventoryOnly = args.includes('--inventory-only');
+  const detectHomepages = args.includes('--detect-homepages');
+
+  if (detectHomepages) {
+    const topics = JSON.parse(fs.readFileSync(canonicalFile, 'utf8'));
+    let auditData = {};
+    if (fs.existsSync(reportFile)) {
+      try {
+        auditData = JSON.parse(fs.readFileSync(reportFile, 'utf8'));
+      } catch {}
+    }
+    const flagged = [];
+    for (const t of topics) {
+      for (const r of t.resources || []) {
+        const item = auditData[r.url];
+        const finalUrl = item?.finalUrl || r.url;
+        const title = item?.title || '';
+        if (isHomepage(finalUrl, title)) {
+          flagged.push({
+            topicId: t.id,
+            label: r.label,
+            finalUrl,
+            pageTitle: title
+          });
+        }
+      }
+    }
+    printLog('====================================================');
+    printLog('              HOMEPAGE DETECTOR REPORT              ');
+    printLog('====================================================');
+    printLog(`Total URLs flagged as homepages: ${flagged.length}`);
+    printLog('topic id | label | final URL | page title');
+    printLog('---|---|---|---');
+    for (const f of flagged) {
+      printLog(`${f.topicId} | ${f.label} | ${f.finalUrl} | ${f.pageTitle}`);
+    }
+    printLog('====================================================\n');
+    process.exit(0);
+  }
 
   if (inventoryOnly) {
     const inv = extractInventory();

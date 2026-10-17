@@ -642,7 +642,7 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'read-repair-vs-anti-entropy-merkle-trees': {
     url: 'https://en.wikipedia.org/wiki/Merkle_tree',
-    label: 'Wikipedia: Merkle tree',
+    label: 'Wikipedia (Related): Merkle tree',
     title: 'Merkle tree - Wikipedia'
   },
   'hybrid-logical-clocks-cockroachdb': {
@@ -692,7 +692,7 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'raci-matrix-governance': {
     url: 'https://en.wikipedia.org/wiki/Responsibility_assignment_matrix',
-    label: 'Wikipedia: Responsibility assignment matrix',
+    label: 'Wikipedia (Related): Responsibility assignment matrix',
     title: 'Responsibility assignment matrix - Wikipedia'
   },
   'career-moats-specific-knowledge': {
@@ -702,7 +702,7 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'sponsorship-vs-mentorship': {
     url: 'https://en.wikipedia.org/wiki/Mentorship',
-    label: 'Wikipedia: Mentorship',
+    label: 'Wikipedia (Related): Mentorship',
     title: 'Mentorship - Wikipedia'
   },
   'eisenhower-matrix-prioritization': {

@@ -355,7 +355,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Debt snowball method",
+        "label": "Wikipedia (Related): Debt snowball method",
         "url": "https://en.wikipedia.org/wiki/Debt_snowball_method"
       }
     ]
@@ -744,11 +744,7 @@ export const topics = [
     "resources": [
       {
         "label": "U.S. Bureau of Labor Statistics: Consumer Price Index Overview & Methodology",
-        "url": "https://www.bls.gov/cpi/"
-      },
-      {
-        "label": "U.S. Bureau of Economic Analysis (BEA): PCE Price Index Overview",
-        "url": "https://www.bea.gov/data/personal-consumption-expenditures-price-index"
+        "url": "https://www.bls.gov/cpi/questions-and-answers.htm"
       }
     ]
   },
@@ -1184,7 +1180,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Vesting",
+        "label": "Wikipedia (Related): Vesting",
         "url": "https://en.wikipedia.org/wiki/Vesting"
       }
     ]
@@ -1493,7 +1489,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Decentralized finance",
+        "label": "Wikipedia (Related): Decentralized finance",
         "url": "https://en.wikipedia.org/wiki/Decentralized_finance"
       }
     ]
@@ -1568,7 +1564,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Andy Grove — High Output Management (Vintage)",
+        "label": "Goodreads: High Output Management by Andrew S. Grove",
         "url": "https://www.goodreads.com/book/show/324750.High_Output_Management"
       }
     ]
@@ -1924,8 +1920,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Brian Balfour — Why Retention Is The King of Growth Strategy",
-        "url": "https://brianbalfour.com"
+        "label": "Wikipedia (Related): Cohort analysis",
+        "url": "https://en.wikipedia.org/wiki/Cohort_analysis"
       }
     ]
   },
@@ -2038,8 +2034,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Jim Collins — Good to Great: Why Some Companies Make the Leap... and Others Don't",
-        "url": "https://www.jimcollins.com"
+        "label": "Jim Collins: Concepts - The Flywheel Effect",
+        "url": "https://www.jimcollins.com/concepts/the-flywheel.html"
       }
     ]
   },
@@ -2161,8 +2157,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "DSDM Consortium — Agile Project Framework: MoSCoW Prioritisation",
-        "url": "https://www.agilebusiness.org"
+        "label": "Wikipedia: MoSCoW method",
+        "url": "https://en.wikipedia.org/wiki/MoSCoW_method"
       }
     ]
   },

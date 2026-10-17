@@ -150,8 +150,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Cambridge University Department of Psychology: Inoculation Theory Research Lab",
-        "url": "https://www.psychol.cam.ac.uk/"
+        "label": "Wikipedia: Inoculation theory",
+        "url": "https://en.wikipedia.org/wiki/Inoculation_theory"
       }
     ],
     "lesson": {
@@ -339,8 +339,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Stanford Medicine: Nonviolent Communication in Healthcare and Difficult Dialogues",
-        "url": "https://med.stanford.edu/"
+        "label": "Wikipedia: Nonviolent Communication",
+        "url": "https://en.wikipedia.org/wiki/Nonviolent_Communication"
       }
     ]
   },
@@ -406,12 +406,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Carl R. Rogers & Richard E. Farson: Active Listening (Industrial Relations Center, University of Chicago 1957)",
-        "url": "https://www.chicagobooth.edu/"
-      },
-      {
-        "label": "Harvard Business Review: What Great Listeners Actually Do (Jack Zenger & Joseph Folkman)",
-        "url": "https://hbr.org/2016/07/what-great-listeners-actually-do"
+        "label": "Wikipedia: Active listening",
+        "url": "https://en.wikipedia.org/wiki/Active_listening"
       }
     ]
   },
@@ -878,7 +874,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Harvard Business Review: Communicating Across Cultures",
+        "label": "Harvard Business Review: Navigating the Cultural Minefield (Erin Meyer)",
         "url": "https://hbr.org/2014/05/navigating-the-cultural-minefield"
       }
     ]
@@ -1468,10 +1464,6 @@ export const topics = [
       "argumentation"
     ],
     "resources": [
-      {
-        "label": "Douglas Walton: Ad Hominem Arguments (University of Alabama Press)",
-        "url": "https://www.uapress.ua.edu/9780817309220/ad-hominem-arguments/"
-      },
       {
         "label": "Stanford Encyclopedia of Philosophy: Fallacies and Genetic Arguments",
         "url": "https://plato.stanford.edu/entries/fallacies/"
@@ -3196,7 +3188,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Personality development",
+        "label": "Wikipedia (Related): Personality development",
         "url": "https://en.wikipedia.org/wiki/Personality_development"
       }
     ]
@@ -3577,7 +3569,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Social loafing",
+        "label": "Wikipedia (Related): Social loafing",
         "url": "https://en.wikipedia.org/wiki/Social_loafing"
       }
     ]
