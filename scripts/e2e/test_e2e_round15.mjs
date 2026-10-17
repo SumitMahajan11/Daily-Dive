@@ -54,7 +54,7 @@ async function runRound15E2ETests() {
   printLog('       ROUND 15: VERIFICATION E2E SUITE                         ');
   printLog('================================================================\n');
 
-  const distDir = path.resolve(__dirname, '../dist');
+  const distDir = path.resolve(__dirname, '../../dist');
   if (!fs.existsSync(distDir)) {
     throw new Error('Dist directory does not exist. Run "npm run build" first.');
   }

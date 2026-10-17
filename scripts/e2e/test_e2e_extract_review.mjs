@@ -3,7 +3,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { safeLog } from './safeLog.mjs';
+import { safeLog } from '../safeLog.mjs';
 
 function serveStatic(distDir, port = 4192) {
   const mimeTypes = {
@@ -79,7 +79,7 @@ async function testExtractReviewFlow() {
     assert.ok(fs.existsSync(fixturePath), 'Fixture tests/fixtures/real_roadmap.md must exist');
 
     // ── CHECK 1: LIST APPEARS BEFORE SAVING ──
-    safeLog('[TEST 1] Uploading file for review list...');
+    safeLog('[TEST 1] Upload for review list...');
     const [fileChooser1] = await Promise.all([
       page.waitForEvent('filechooser'),
       uploadBtn.click()
@@ -227,7 +227,7 @@ async function testExtractReviewFlow() {
 
     await context.close();
 
-    safeLog('=== ALL REVIEW FLOW ASSERTIONS PASSED ===');
+    safeLog('=== ALL REVIEW ASSERTIONS PASSED ===');
   } finally {
     await browser.close();
     server.close();

@@ -5,7 +5,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { generateDailyReminderICS } from '../src/lib/calendar.js';
+import { generateDailyReminderICS } from '../../src/lib/calendar.js';
 
 function serveStatic(distDir, port = 4185) {
   const mimeTypes = {

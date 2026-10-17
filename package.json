@@ -10,7 +10,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --import ./tests/_setup.mjs --test tests/",
-    "test:e2e": "node scripts/run_all_e2e.mjs",
+    "test:e2e": "node scripts/e2e/run_all_e2e.mjs",
     "pre-commit": "node scripts/check_no_console_log.mjs"
   },
   "dependencies": {
