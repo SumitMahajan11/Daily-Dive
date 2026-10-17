@@ -3,6 +3,7 @@ import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
 import { extractTopicsLocally, isMetaOrAsideLine } from '../src/lib/topicExtractor.js';
+import { safeLog } from './safeLog.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const roadmapPath = path.resolve(__dirname, '../tests/fixtures/real_roadmap.md');
@@ -17,11 +18,8 @@ const content = fs.readFileSync(roadmapPath, 'utf8');
 // In-app upload path: extractTopicsLocally(rawText, [], file.name)
 const topics = extractTopicsLocally(content, [], 'ROADMAP.md');
 
-console.log('================================================================');
-console.log('=== REAL ROADMAP CANDIDATES WITH TRUE PARSING SOURCE LINES ===');
-console.log('================================================================');
-console.log(`Source File: ${roadmapPath}`);
-console.log(`Total Candidates Extracted: ${topics.length}\n`);
+safeLog('=== REAL ROADMAP CANDIDATES ===');
+safeLog({ total_candidates: topics.length });
 
 assert(topics.length > 0, 'Must extract candidates from real ROADMAP.md');
 
@@ -46,15 +44,16 @@ topics.forEach((t, idx) => {
   assert(Array.isArray(t.source_lines) && t.source_lines.length === 2, 'Must have recorded source_lines during parsing');
   assert(Array.isArray(t.description_source_lines) && t.description_source_lines.length > 0, 'Must have recorded description_source_lines during parsing');
 
-  console.log(`[Candidate ${idx + 1}]`);
-  console.log(`  Title: "${t.title}" (Source Line: ${t.title_source_line})`);
-  console.log(`  Confidence: ${t.confidence}% (Rating: ${t.confidence_rating || 'medium'}, Needs Review: ${t.needs_review})`);
-  console.log(`  Category: ${t.category}`);
-  console.log(`  Tags: [${(t.tags || []).join(', ')}]`);
-  console.log(`  Description: "${t.description}"`);
-  console.log(`  Description Source Line(s): ${t.description_source_lines.join(', ')}`);
-  console.log(`  Overall Section Lines: ${t.source_lines[0]}-${t.source_lines[1]}`);
-  console.log('');
+  safeLog({
+    candidate: idx + 1,
+    source_line: t.title_source_line,
+    confidence: t.confidence,
+    rating: t.confidence_rating || 'medium',
+    needs_review: t.needs_review,
+    category: t.category,
+    source_lines: t.source_lines,
+    desc_lines: t.description_source_lines
+  });
 });
 
-console.log('=== REAL ROADMAP EXTRACTION COMPLETED AND VERIFIED ===');
+safeLog('=== ROADMAP EXTRACTION VERIFIED ===');

@@ -3,6 +3,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { safeLog } from './safeLog.mjs';
 import { execSync } from 'node:child_process';
 
 function serveStatic(distDir, port = 4187) {
@@ -38,11 +39,11 @@ function serveStatic(distDir, port = 4187) {
 }
 
 async function testUploadRealRoadmap() {
-  console.log('=== [EXTRACTOR] REAL ROADMAP.MD UPLOAD UI TEST ===\n');
+  safeLog('=== REAL ROADMAP UPLOAD UI TEST ===');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(path.join(distDir, 'index.html'))) {
-    console.log('Building production bundle for UI test...');
+    safeLog('Building bundle for UI test...');
     execSync('npm run build', { stdio: 'inherit' });
   }
   const server = await serveStatic(distDir, 4187);
@@ -51,7 +52,7 @@ async function testUploadRealRoadmap() {
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  console.log('1. Loading Daily Dive and scrolling to Library...');
+  safeLog('1. Loading Daily Dive...');
   await page.goto('http://localhost:4187/');
   await page.evaluate(() => localStorage.setItem('daily_dive_onboarding_seen', 'true'));
   await page.reload();
@@ -63,7 +64,7 @@ async function testUploadRealRoadmap() {
   const chooseFileBtn = page.locator('#library button:has-text("Upload notes"), #library button:has-text("Choose a file")').first();
   await chooseFileBtn.waitFor({ state: 'visible', timeout: 5000 });
 
-  console.log('2. Triggering file chooser via real upload UI button...');
+  safeLog('2. Triggering file chooser...');
   const realRoadmapPath = path.resolve('tests/fixtures/real_roadmap.md');
   assert.ok(fs.existsSync(realRoadmapPath), 'tests/fixtures/real_roadmap.md must exist');
 
@@ -72,17 +73,17 @@ async function testUploadRealRoadmap() {
     chooseFileBtn.click()
   ]);
 
-  console.log(`3. Selecting real ROADMAP file: ${realRoadmapPath}`);
+  safeLog('3. Selecting real ROADMAP file');
   await fileChooser.setFiles(realRoadmapPath);
 
-  console.log('4. Waiting for extraction and Candidate Review UI...');
+  safeLog('4. Waiting for Candidate Review UI...');
   const reviewHeading = page.locator('h3:has-text("Review Extracted Topics")');
   await reviewHeading.waitFor({ state: 'visible', timeout: 15000 });
 
   // Extract rendered candidates from the review list
   const candidateCards = page.locator('div[data-testid="review-topic-row"]');
   const count = await candidateCards.count();
-  console.log(`\nExtracted ${count} candidate topics from real ROADMAP.md:\n`);
+  safeLog({ extracted_count: count });
 
   assert.ok(count > 0, 'Must extract at least one candidate topic from real ROADMAP.md');
 
@@ -95,11 +96,7 @@ async function testUploadRealRoadmap() {
     const tags = tagElements.map(t => t.trim()).filter(Boolean);
 
     candidates.push({ index: i + 1, title, description: desc, tags });
-    console.log(`Candidate ${i + 1}:`);
-    console.log(`  Title:       ${title}`);
-    console.log(`  Description: ${desc}`);
-    console.log(`  Tags:        ${tags.join(', ')}`);
-    console.log('');
+    safeLog({ index: i + 1, tag_count: tags.length });
 
     // Assert description starts with a capital letter
     assert.match(desc, /^[A-Z]/, `Description for "${title}" must start with a capital letter`);
@@ -114,7 +111,7 @@ async function testUploadRealRoadmap() {
     }
   }
 
-  console.log('[PASS]: Real ROADMAP.md successfully uploaded and verified through in-app UI.');
+  safeLog('[PASS]: Real ROADMAP upload verified');
 
   await browser.close();
   server.close();

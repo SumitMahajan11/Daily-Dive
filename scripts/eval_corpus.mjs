@@ -2,6 +2,7 @@ import { chromium } from 'playwright';
 import { createServer } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
+import { safeLog } from './safeLog.mjs';
 
 function getMimeType(fileName) {
   const ext = fileName.split('.').pop().toLowerCase();
@@ -51,8 +52,7 @@ async function main() {
   await page.goto('http://localhost:5218/');
   await page.waitForLoadState('networkidle');
 
-  console.log('| file | pages | pages with outcome | skipped | flagged topics | topics | source chars | chars in topics\' full_text | coverage % | seconds |');
-  console.log('|---|---|---|---|---|---|---|---|---|---|');
+  safeLog('=== EVAL CORPUS START ===');
 
   for (const filePath of filePaths) {
     const fileName = path.basename(filePath);
@@ -151,10 +151,25 @@ async function main() {
       }, { b64, fileName, mime });
 
       const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
-      console.log(`| ${displayName} | ${result.pages} | ${result.pagesWithOutcome} | ${result.skipped} | ${result.flagged} | ${result.topics} | ${result.sourceChars} | ${result.charsInFullText} | ${result.coverage} | ${elapsed} |`);
+      const safeName = displayName.length > 35 ? displayName.slice(-35) : displayName;
+      safeLog({
+        file: safeName,
+        pages: result.pages,
+        outcomes: result.pagesWithOutcome,
+        skipped: result.skipped,
+        flagged: result.flagged,
+        topics: result.topics,
+        coverage: result.coverage,
+        elapsed
+      });
     } catch (err) {
       const elapsed = ((performance.now() - t0) / 1000).toFixed(2);
-      console.log(`| ${displayName} | 0 | 0 | 0 | 0 | 0 | 0 | 0 | 0.0% | ${elapsed} |`);
+      const safeName = displayName.length > 35 ? displayName.slice(-35) : displayName;
+      safeLog({
+        file: safeName,
+        error: true,
+        elapsed
+      });
     }
   }
 

@@ -3,6 +3,8 @@ import { createServer } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
 
+import { safeLog } from './safeLog.mjs';
+
 async function main() {
   const server = await createServer({ server: { port: 5210 } });
   await server.listen();
@@ -97,10 +99,15 @@ async function main() {
     });
   }
 
-  console.log('| Fixture Name | Type | Main Count | New Count | Count Changed? | Coverage | Topic Titles (if count changed) |');
-  console.log('|---|---|---|---|---|---|---|');
+  safeLog('=== EVAL 16 SUMMARY ===');
   for (const r of results) {
-    console.log(`| \`${r.name}\` | ${r.type} | ${r.main} | ${r.newCount} | ${r.countChanged} | ${r.coverage} | ${r.titlesChanged} |`);
+    safeLog({
+      file: r.name,
+      main: r.main,
+      topics: r.newCount,
+      changed: r.countChanged === 'Yes',
+      coverage: r.coverage
+    });
   }
 
   await browser.close();

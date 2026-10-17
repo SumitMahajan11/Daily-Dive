@@ -3,6 +3,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
+import { safeLog } from './safeLog.mjs';
 
 function serveStatic(distDir, port = 4192) {
   const mimeTypes = {
@@ -37,9 +38,7 @@ function serveStatic(distDir, port = 4192) {
 }
 
 async function testExtractReviewFlow() {
-  console.log('================================================================');
-  console.log('     EXTRACT TOPICS REVIEW FLOW (E2E PLAYWRIGHT TEST)           ');
-  console.log('================================================================\n');
+  safeLog('=== EXTRACT TOPICS REVIEW FLOW ===');
 
   const distDir = path.resolve('dist');
   assert.ok(fs.existsSync(distDir), 'Production build dist/ must exist');
@@ -54,7 +53,7 @@ async function testExtractReviewFlow() {
     // ------------------------------------------------------------
     // VIEWPORT: 390x844 (Mobile)
     // ------------------------------------------------------------
-    console.log('Testing at 390x844 mobile viewport...');
+    safeLog('Testing at 390x844 mobile viewport...');
     const context = await browser.newContext({
       viewport: { width: 390, height: 844 }
     });
@@ -80,7 +79,7 @@ async function testExtractReviewFlow() {
     assert.ok(fs.existsSync(fixturePath), 'Fixture tests/fixtures/real_roadmap.md must exist');
 
     // ── CHECK 1: LIST APPEARS BEFORE SAVING ──
-    console.log('\n[TEST 1] Uploading real file and verifying review list appears BEFORE saving...');
+    safeLog('[TEST 1] Uploading file for review list...');
     const [fileChooser1] = await Promise.all([
       page.waitForEvent('filechooser'),
       uploadBtn.click()
@@ -92,7 +91,7 @@ async function testExtractReviewFlow() {
 
     const rows = page.locator('div[data-testid="review-topic-row"]');
     const initialCount = await rows.count();
-    console.log(`  Found ${initialCount} candidate topic rows in review list.`);
+    safeLog({ initial_topic_rows: initialCount });
     assert.ok(initialCount >= 2, `Expected at least 2 candidate topics, got ${initialCount}`);
 
     // Verify all rows have checked checkbox by default
@@ -105,7 +104,7 @@ async function testExtractReviewFlow() {
     // Verify Save button shows correct initial count
     const saveBtn = page.locator(`button:has-text("Save selected (${initialCount})")`);
     await saveBtn.waitFor({ state: 'visible', timeout: 3000 });
-    console.log(`  [PASS] Review list appeared with all ${initialCount} topics checked by default.`);
+    safeLog('[PASS] Review list appeared checked');
 
     // Verify topics are NOT yet saved in localStorage
     const savedBefore = await page.evaluate(() => {
@@ -113,15 +112,15 @@ async function testExtractReviewFlow() {
       return raw ? JSON.parse(raw) : [];
     });
     assert.equal(savedBefore.length, 0, 'No custom topics should be saved before clicking Save');
-    console.log('  [PASS] Verified 0 topics saved before user confirms save.');
+    safeLog('[PASS] 0 topics saved before confirm');
 
     // Save screenshot of the review list at 390x844 under evidence/extract-review/
     const screenshotPath = path.join(evidenceDir, 'review_list_390x844.png');
     await page.screenshot({ path: screenshotPath, fullPage: false });
-    console.log(`  [SCREENSHOT] Saved review list screenshot at 390x844: ${screenshotPath}`);
+    safeLog('[SCREENSHOT] Saved review list');
 
     // ── CHECK 2: CANCEL SAVES NOTHING ──
-    console.log('\n[TEST 2] Verifying Cancel saves nothing...');
+    safeLog('[TEST 2] Verifying Cancel saves nothing');
     const cancelBtn = page.locator('#library button:has-text("Cancel")').first();
     await cancelBtn.click();
     await page.waitForTimeout(500);
@@ -136,10 +135,10 @@ async function testExtractReviewFlow() {
       return raw ? JSON.parse(raw) : [];
     });
     assert.equal(savedAfterCancel.length, 0, 'Cancel must save nothing');
-    console.log('  [PASS] Cancel saved nothing and returned to idle state.');
+    safeLog('[PASS] Cancel saved nothing');
 
     // ── CHECK 3 & 4: UNCHECKING A ROW SKIPS IT & EDITING A TITLE IS SAVED ──
-    console.log('\n[TEST 3 & 4] Uploading again to test unchecking a row and editing a title...');
+    safeLog('[TEST 3&4] Uploading again to test edit');
     const uploadBtn2 = page.locator('#library button:has-text("Upload notes"), #library button:has-text("Choose a file")').first();
     const [fileChooser2] = await Promise.all([
       page.waitForEvent('filechooser'),
@@ -153,23 +152,23 @@ async function testExtractReviewFlow() {
 
     // Record original title of first topic to uncheck
     const firstRowTitle = (await rows2.nth(0).locator('input[type="text"]').inputValue()).trim();
-    console.log(`  Unchecking row 1 ("${firstRowTitle}")...`);
+    safeLog({ unchecking_row: 1 });
     await rows2.nth(0).locator('input[type="checkbox"]').uncheck();
 
     // Verify live update of button text
     const expectedRemaining = rowCount2 - 1;
     const saveBtnRemaining = page.locator(`button:has-text("Save selected (${expectedRemaining})")`);
     await saveBtnRemaining.waitFor({ state: 'visible', timeout: 3000 });
-    console.log(`  [PASS] Save button updated live to "Save selected (${expectedRemaining})".`);
+    safeLog('[PASS] Save button updated live');
 
     // Edit the title of row 2
     const editedTitle = 'Structural Backbone (Edited for Verification)';
-    console.log(`  Editing row 2 title to: "${editedTitle}"...`);
+    safeLog({ editing_row: 2 });
     const secondRowInput = rows2.nth(1).locator('input[type="text"]');
     await secondRowInput.fill(editedTitle);
 
     // Click Save selected
-    console.log('  Clicking Save selected...');
+    safeLog('Clicking Save selected...');
     await saveBtnRemaining.click();
     await page.waitForTimeout(800);
 
@@ -182,26 +181,26 @@ async function testExtractReviewFlow() {
       const raw = localStorage.getItem('daily_dive_custom_topics');
       return raw ? JSON.parse(raw) : [];
     });
-    console.log(`  Saved ${savedCustomTopics.length} custom topics.`);
+    safeLog({ saved_custom_topics: savedCustomTopics.length });
     assert.equal(savedCustomTopics.length, expectedRemaining, `Expected ${expectedRemaining} saved topics`);
 
     // Verify the edited title is saved
     const hasEditedTitle = savedCustomTopics.some(t => t.title === editedTitle);
     assert.ok(hasEditedTitle, `Saved topics must contain edited title: "${editedTitle}"`);
-    console.log(`  [PASS] Editing a title was successfully saved: "${editedTitle}".`);
+    safeLog('[PASS] Editing title was saved');
 
     // Verify the unchecked row was skipped
     const hasUncheckedTopic = savedCustomTopics.some(t => t.title === firstRowTitle);
     assert.ok(!hasUncheckedTopic, `Unchecked topic "${firstRowTitle}" must NOT be saved`);
-    console.log(`  [PASS] Unchecked row ("${firstRowTitle}") was skipped.`);
+    safeLog('[PASS] Unchecked row was skipped');
 
     // Verify the edited topic is rendered in the Library screen DOM
     const editedTopicEl = page.locator(`text=${editedTitle}`).first();
     await editedTopicEl.waitFor({ state: 'visible', timeout: 5000 });
-    console.log('  [PASS] Edited topic title is visible in Library screen.');
+    safeLog('[PASS] Edited topic visible in Library');
 
     // ── CHECK 5: IF NOTHING IS CHECKED, SAVE SELECTED IS DISABLED ──
-    console.log('\n[TEST 5] Verifying disabled state when nothing is checked...');
+    safeLog('[TEST 5] Checking disabled state');
     const uploadBtn3 = page.locator('#library button:has-text("Upload notes"), #library button:has-text("Choose a file")').first();
     const [fileChooser3] = await Promise.all([
       page.waitForEvent('filechooser'),
@@ -220,7 +219,7 @@ async function testExtractReviewFlow() {
     await disabledSaveBtn.waitFor({ state: 'visible', timeout: 3000 });
     const isDisabled = await disabledSaveBtn.isDisabled();
     assert.ok(isDisabled, 'Save selected button must be disabled when 0 topics are checked');
-    console.log('  [PASS] "Save selected (0)" is disabled when nothing is checked.');
+    safeLog('[PASS] Save selected (0) is disabled');
 
     // Cancel out
     await page.locator('#library button:has-text("Cancel")').first().click();
@@ -228,9 +227,7 @@ async function testExtractReviewFlow() {
 
     await context.close();
 
-    console.log('\n================================================================');
-    console.log('ALL EXTRACT TOPICS REVIEW FLOW E2E ASSERTIONS PASSED!');
-    console.log('================================================================\n');
+    safeLog('=== ALL REVIEW FLOW ASSERTIONS PASSED ===');
   } finally {
     await browser.close();
     server.close();
