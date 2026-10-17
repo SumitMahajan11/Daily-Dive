@@ -1,0 +1,294 @@
+﻿=== DAILYDIVE SMOKE TEST REPORT ===
+Directory: D:/DailyDive-SmokeTest
+Total PDF files found: 8
+
+----------------------------------------------------------------
+File: mit14_01scf11_lec01.pdf
+[PDF_PAGES] total=13 textLayer=13 ocr=0 empty=0 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit14_01scf11_lec01.pdf | Topics: 12 | Coverage: 4.9%
+Page count: 13
+Topic count: 12
+Flagged count: 4
+Flagged %: 33.3%
+Topics per page min/median/max: 0 / 1 / 1
+Count of titles starting lowercase: 1
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 0
+Count of duplicate titles: 0
+Provenance violations: 0
+
+10 shortest titles:
+  1. Fifth Edition
+  2. come to taste later. OK?
+  3. We're Going to Develop the Consumer
+  4. So Basically, What We're Going to Do
+  5. A Certain Set of Things Would They Be
+  6. Poor Who Would Get the Kidney If It Went
+  7. Sadly, Not Many People Are Willing to Be
+  8. Now There's Two Questions Here. the First
+  9. That's a Constrained Optimization Decision
+  10. That's Right. There Could, but Let's Leave
+
+10 longest titles:
+  1. Because economists think that these all come
+  2. Their Decisions to Consume, and Firms Make
+  3. That's Right. There Could, but Let's Leave
+  4. That's a Constrained Optimization Decision
+  5. Now There's Two Questions Here. the First
+  6. Sadly, Not Many People Are Willing to Be
+  7. Poor Who Would Get the Kidney If It Went
+  8. A Certain Set of Things Would They Be
+  9. So Basically, What We're Going to Do
+  10. We're Going to Develop the Consumer
+
+----------------------------------------------------------------
+File: mit18_05_s22_class01-prep-a.pdf
+[PDF_PAGES] total=3 textLayer=3 ocr=0 empty=0 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit18_05_s22_class01-prep-a.pdf | Topics: 3 | Coverage: 7.1%
+Page count: 3
+Topic count: 3
+Flagged count: 0
+Flagged %: 0.0%
+Topics per page min/median/max: 1 / 1 / 1
+Count of titles starting lowercase: 0
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 0
+Count of duplicate titles: 0
+Provenance violations: 0
+
+10 shortest titles:
+  1. MIT OpenCourseWare
+  2. Jeremy Orloff and Jonathan Bloom
+  3. 2 18.05 Class 1, Introduction, Spring
+
+10 longest titles:
+  1. 2 18.05 Class 1, Introduction, Spring
+  2. Jeremy Orloff and Jonathan Bloom
+  3. MIT OpenCourseWare
+
+----------------------------------------------------------------
+File: mit18_05_s22_lec01.pdf
+[PDF_PAGES] total=34 textLayer=34 ocr=0 empty=0 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit18_05_s22_lec01.pdf | Topics: 29 | Coverage: 32.3%
+Page count: 34
+Topic count: 29
+Flagged count: 11
+Flagged %: 37.9%
+Topics per page min/median/max: 0 / 1 / 1
+Count of titles starting lowercase: 0
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 0
+Count of duplicate titles: 0
+Provenance violations: 5
+
+10 shortest titles:
+  1. Class
+  2. Welcome
+  3. Solution
+  4. Websites
+  5. R, Piazza
+  6. Poker Hands
+  7. Problem Sets
+  8. For Next Time
+  9. Sets in Words
+  10. Board Question
+
+10 longest titles:
+  1. 05 Introduction to Probability and Statistics
+  2. Lining things up. How many ways can you do
+  3. Calendar, Information, Policies and Goals
+  4. Permutations of ≡¥æÿ from a set of ≡¥æ¢
+  5. Combinations of ≡¥æÿ from a set of ≡¥æ¢
+  6. Permutations and Combinations
+  7. Counting: Motivating Examples
+  8. How Many Ways Can You Do It?
+  9. Probability Vs. Statistics
+  10. Concept Questions: DNA
+
+----------------------------------------------------------------
+File: mit6_006s20_lec1.pdf
+[PDF_PAGES] total=5 textLayer=5 ocr=0 empty=0 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit6_006s20_lec1.pdf | Topics: 5 | Coverage: 9.3%
+Page count: 5
+Topic count: 5
+Flagged count: 1
+Flagged %: 20.0%
+Topics per page min/median/max: 1 / 1 / 1
+Count of titles starting lowercase: 0
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 0
+Count of duplicate titles: 0
+Provenance violations: 0
+
+10 shortest titles:
+  1. Correctness
+  2. MIT OpenCourseWare
+  3. Model of Computation
+  4. 1 Def Birthday_match(students)
+  5. Massachusetts Institute of Technology
+
+10 longest titles:
+  1. Massachusetts Institute of Technology
+  2. 1 Def Birthday_match(students)
+  3. Model of Computation
+  4. MIT OpenCourseWare
+  5. Correctness
+
+----------------------------------------------------------------
+File: mit7_91js14_lecture1.pdf
+[PDF_PAGES] total=62 textLayer=58 ocr=0 empty=4 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit7_91js14_lecture1.pdf | Topics: 53 | Coverage: 18.8%
+Page count: 62
+Topic count: 53
+Flagged count: 12
+Flagged %: 22.6%
+Topics per page min/median/max: 0 / 1 / 1
+Count of titles starting lowercase: 0
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 2
+Count of duplicate titles: 0
+Provenance violations: 4
+
+10 shortest titles:
+  1. Homework
+  2. Text Book
+  3. Recitations
+  4. This Course
+  5. Barbara Wold
+  6. Online Access
+  7. Plan for Today
+  8. The 2000S Part
+  9. Modeling Scales
+  10. Project Component
+
+10 longest titles:
+  1. Atgccgatcgtacgacacatatcgtcatcgtactgactgtctagtctaaacacatccatcgtactgactgcatcgatccatt
+  2. Atgccgatcgtacgacacatatcgtcatcgtactgactgtctagtctaaacacatccatcgtactgactgcatcgatccat
+  3. Photograph of Eric Davidson removed due to copyright restrictions
+  4. Idea ΓÇô Use DNA Sequencing to Measure Diverse
+  5. Similarity Matrices and Molecular Evolution
+  6. DNA Sequencing Technology Is Improving More
+  7. Quantitative Trait Loci (QTLs) Can Predict
+  8. Profs Chris Burge, Ernest Fraenkel, David
+  9. GWAS Analysis Can Identify Human Variants
+  10. 90S: HMMs, Ab Initio Protein Structure
+
+----------------------------------------------------------------
+File: mit7_91js14_lecture2.pdf
+[PDF_PAGES] total=26 textLayer=26 ocr=0 empty=0 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit7_91js14_lecture2.pdf | Topics: 22 | Coverage: 28.9%
+Page count: 26
+Topic count: 22
+Flagged count: 2
+Flagged %: 9.1%
+Topics per page min/median/max: 0 / 1 / 1
+Count of titles starting lowercase: 0
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 0
+Count of duplicate titles: 0
+Provenance violations: 1
+
+10 shortest titles:
+  1. Topic 1 Info
+  2. Untitled slide 15
+  3. MIT OpenCourseWare
+  4. Types of Nucleotides
+  5. Comparison of Platforms
+  6. Bead-Based Pyrosequencing
+  7. DNA Sequence Alignment II
+  8. DNA Sequence Alignment IV
+  9. DNA Sequence Alignment VI
+  10. DNA Sequence Alignment III
+
+10 longest titles:
+  1. For Those RegΓÇÖd for Grad Versions of Course
+  2. ΓÇÿNext GenerationΓÇÖ Sequencing Technologies
+  3. Evolution of Sequencing Technologies
+  4. DNA Sequence Alignment I: Motivation
+  5. 1D, 2D and 3D Representations of DNA
+  6. If You Want to Find Regions with R%
+  7. Example: Bead-Based Pyrosequencing
+  8. Which alignments are significant?
+  9. Illumina Cluster-Based Sequencing
+  10. Next-Gen Sequencing: Templates
+
+----------------------------------------------------------------
+File: mit8_04s16_lecnotes1.pdf
+[PDF_PAGES] total=15 textLayer=15 ocr=0 empty=0 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit8_04s16_lecnotes1.pdf | Topics: 15 | Coverage: 4.3%
+Page count: 15
+Topic count: 15
+Flagged count: 5
+Flagged %: 33.3%
+Topics per page min/median/max: 1 / 1 / 1
+Count of titles starting lowercase: 0
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 0
+Count of duplicate titles: 0
+Provenance violations: 0
+
+10 shortest titles:
+  1. Figure
+  2. B. Zwiebach
+  3. MIT OpenCourseWare
+  4. Different Direction
+  5. When We Say That Light
+  6. . EulerΓÇÖs Identity Relates
+  7. Probabilities Can Be Determined
+  8. One Where They Are Doing Exactly
+  9. Equation (3.6) is another example
+  10. State in Which They Are Entangled
+
+10 longest titles:
+  1. ╦å where the Hamiltonian (or energy operator)
+  2. . Verify that (1.7) satisfies the conditions
+  3. In Here We Are Ignoring the Time and Space
+  4. Representing a Photon Polarized Along Y
+  5. The Semi-Major Axes (The First Real
+  6. State in Which They Are Entangled
+  7. Equation (3.6) is another example
+  8. One Where They Are Doing Exactly
+  9. Probabilities Can Be Determined
+  10. . EulerΓÇÖs Identity Relates
+
+----------------------------------------------------------------
+File: mit9_00scf11_lec01.pdf
+[PDF_PAGES] total=54 textLayer=43 ocr=0 empty=11 notProcessed=0
+[TOPIC_COVERAGE] Path: structured | Source: mit9_00scf11_lec01.pdf | Topics: 26 | Coverage: 30.6%
+Page count: 54
+Topic count: 26
+Flagged count: 9
+Flagged %: 34.6%
+Topics per page min/median/max: 0 / 0 / 1
+Count of titles starting lowercase: 0
+Count of titles ending mid-sentence: 0
+Count of titles longer than 80 chars: 0
+Count of duplicate titles: 0
+Provenance violations: 8
+
+10 shortest titles:
+  1. Illusions ContΓÇÖd
+  2. Untitled slide 18
+  3. Untitled slide 21
+  4. Untitled slide 27
+  5. Untitled slide 46
+  6. Untitled slide 47
+  7. Untitled slide 50
+  8. Untitled slide 52
+  9. Untitled slide 53
+  10. MIT OpenCourseWare
+
+10 longest titles:
+  1. There Are 30 People in a Group. You Get
+  2. Reproduced (Or Adapted) with Permission
+  3. A Gap Between Attitudes & Actions
+  4. Behavioral Response to Racism
+  5. Finished Files ARE the RE
+  6. Visual/Optical Illusions
+  7. In the Picture Was There
+  8. Mispredicting Affective
+  9. Checker-Shadow Illusion
+  10. 00. Intro to Psychology
+
+================================================================
+=== SMOKE TEST REPORT COMPLETE ===

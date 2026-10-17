@@ -1,0 +1,134 @@
+[
+  {
+    "role": "primary",
+    "filename": "mit18_05_s22_lec01.pdf",
+    "source_url": "https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_lec01.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/resources/mit18_05_s22_lec01_pdf/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "6E3155EAB5B3E98D86115F80ACB59F25C876F8E79951E6D830F26902B5C7944A",
+    "page_count": 34,
+    "subject": "statistics",
+    "style": "slides"
+  },
+  {
+    "role": "primary",
+    "filename": "mit18_05_s22_class01-prep-a.pdf",
+    "source_url": "https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_class01-prep-a.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/resources/mit18_05_s22_class01-prep-a_pdf/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "BE276CBF2F9A8E6C07F19790CFA33C47135CB14C409A166F0FC92C8DAC0C4FDB",
+    "page_count": 3,
+    "subject": "statistics",
+    "style": "prose"
+  },
+  {
+    "role": "primary",
+    "filename": "mit8_04s16_lecnotes1.pdf",
+    "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/7f930e013cef9cd7dec5aa88baa83f0a_MIT8_04S16_LecNotes1.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/resources/mit8_04s16_lecnotes1/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "DF3742F6F0DFABBC46CD4120637308760FEC1C0D9C5A0708E0B74D8B2AC14181",
+    "page_count": 15,
+    "subject": "physics",
+    "style": "prose"
+  },
+  {
+    "role": "primary",
+    "filename": "mit6_006s20_lec1.pdf",
+    "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/477c78e0af2df61fa205bcc6cb613ceb_MIT6_006S20_lec1.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/mit6_006s20_lec1/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "8F2F9C1CE1B63313344C86491870E487DA796DE71B3312EA05B681A00A5B2DE5",
+    "page_count": 5,
+    "subject": "algorithms",
+    "style": "prose"
+  },
+  {
+    "role": "primary",
+    "filename": "mit9_00scf11_lec01.pdf",
+    "source_url": "https://ocw.mit.edu/courses/9-00sc-introduction-to-psychology-fall-2011/568e0d32a2401684b5daca281261f210_MIT9_00SCF11_lec01.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/9-00sc-introduction-to-psychology-fall-2011/resources/mit9_00scf11_lec01/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "A4E7B7FB1710620FBEDD6D4E3DF9A3C8C0EC75DB4518458BFD287D3336ED7E3E",
+    "page_count": 54,
+    "subject": "psychology",
+    "style": "slides"
+  },
+  {
+    "role": "primary",
+    "filename": "mit7_91js14_lecture1.pdf",
+    "source_url": "https://ocw.mit.edu/courses/7-91j-foundations-of-computational-and-systems-biology-spring-2014/cd0757e31d7e05bd9fae6154f71ba12f_MIT7_91JS14_Lecture1.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/7-91j-foundations-of-computational-and-systems-biology-spring-2014/resources/mit7_91js14_lecture1/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "8480D50859F0EB3C451BE8BEBFADE687C29EEE1B4B4D3642D7E5764462AC0DE0",
+    "page_count": 62,
+    "subject": "biology",
+    "style": "slides"
+  },
+  {
+    "role": "primary",
+    "filename": "mit14_01scf11_lec01.pdf",
+    "source_url": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/284f079556213649d50be3de129e856e_Vss3nofHpZI.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/14-01sc-principles-of-microeconomics-fall-2011/resources/lecture-1-introduction-to-microeconomics/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "A734D98F146EB65D6A116F4FD2B41FC201F8D31711B9E796F60145CEFB5CAEC0",
+    "page_count": 13,
+    "subject": "economics",
+    "style": "prose"
+  },
+  {
+    "role": "primary",
+    "filename": "mit7_91js14_lecture2.pdf",
+    "source_url": "https://ocw.mit.edu/courses/7-91j-foundations-of-computational-and-systems-biology-spring-2014/82572f8d7508c4b86aa03c31879ed144_MIT7_91JS14_Lecture2.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/7-91j-foundations-of-computational-and-systems-biology-spring-2014/resources/mit7_91js14_lecture2/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "A46E69236AA234DAC72D7158F27D4B1C768CD964EBD08D8350BBAC9FE2848CF8",
+    "page_count": 26,
+    "subject": "biology",
+    "style": "slides"
+  },
+  {
+    "role": "reserve",
+    "filename": "mit18_05_s22_lec02.pdf",
+    "source_url": "https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/mit18_05_s22_lec02.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/18-05-introduction-to-probability-and-statistics-spring-2022/resources/mit18_05_s22_lec02_pdf/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "5F8E4B037C34E7157D49420D52A23063C6F58152CB8B8EE125154B7E622CC638",
+    "page_count": 22,
+    "subject": "statistics",
+    "style": "slides"
+  },
+  {
+    "role": "reserve",
+    "filename": "mit8_04s16_lecnotes2.pdf",
+    "source_url": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/afaef4b8271759d352ac75c4e85eaee6_MIT8_04S16_LecNotes2.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/8-04-quantum-physics-i-spring-2016/resources/mit8_04s16_lecnotes2/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "2921ABFB6621E4EB9DAEA07BE7873A2CDE0CD283F3D2CB8E23471121CE6A8B52",
+    "page_count": 8,
+    "subject": "physics",
+    "style": "prose"
+  },
+  {
+    "role": "reserve",
+    "filename": "mit6_006s20_lec2.pdf",
+    "source_url": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/79a07dc1cb47d76dae2ffedc701e3d2b_MIT6_006S20_lec2.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/6-006-introduction-to-algorithms-spring-2020/resources/mit6_006s20_lec2/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "8A4659725B3F91ACE2590603449A656FDC7B66BD344F1AAAF8004F8BE550CB50",
+    "page_count": 5,
+    "subject": "algorithms",
+    "style": "prose"
+  },
+  {
+    "role": "reserve",
+    "filename": "mit9_00scf11_lec02.pdf",
+    "source_url": "https://ocw.mit.edu/courses/9-00sc-introduction-to-psychology-fall-2011/21f7ddebe30671c5a2fda15bb3be8ea9_2fbrl6WoIyo.pdf",
+    "resource_page": "https://ocw.mit.edu/courses/9-00sc-introduction-to-psychology-fall-2011/resources/how-our-minds-make-our-worlds-vision-memory-attention/",
+    "licence": "CC BY-NC-SA 4.0",
+    "sha256": "673630F4039FD9B25E0624D9CB15294A270F290C388C8517252220545BB976D8",
+    "page_count": 24,
+    "subject": "psychology",
+    "style": "slides"
+  }
+]
