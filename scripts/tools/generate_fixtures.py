@@ -4,7 +4,7 @@ import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
 
-FIXTURES_DIR = os.path.join(os.path.dirname(__file__), '..', 'tests', 'fixtures')
+FIXTURES_DIR = os.path.join(os.path.dirname(__file__), '..', '..', 'tests', 'fixtures')
 os.makedirs(FIXTURES_DIR, exist_ok=True)
 
 # 1. GENERATE PPTX (Valid ZIP with standard PowerPoint XML structure)

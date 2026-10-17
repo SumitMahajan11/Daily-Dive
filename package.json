@@ -5,13 +5,13 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build:data": "node scripts/split_topics_by_group.mjs",
+    "build:data": "node scripts/tools/split_topics_by_group.mjs",
     "prebuild": "npm run build:data",
     "build": "vite build",
     "preview": "vite preview",
     "test": "node --import ./tests/_setup.mjs --test tests/",
     "test:e2e": "node scripts/e2e/run_all_e2e.mjs",
-    "pre-commit": "node scripts/check_no_console_log.mjs"
+    "pre-commit": "node scripts/tools/check_no_console_log.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",

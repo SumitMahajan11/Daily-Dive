@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const rootDir = path.resolve(__dirname, '..');
+const rootDir = path.resolve(__dirname, '../..');
 
 const canonicalFile = path.join(rootDir, 'data', 'topics.curated.json');
 const lessonsFile = path.join(rootDir, 'data', 'lessons.json');
@@ -135,7 +135,7 @@ if (starterTopicsList.length === 16) {
   const starterContent = `/**
  * Curated first-spin starter topic set (16 topics across all 4 groups).
  * Hydrates instant spin with zero chunk delay on initial load.
- * Generated automatically by scripts/split_topics_by_group.mjs
+ * Generated automatically by scripts/tools/split_topics_by_group.mjs
  */
 export const starterTopics = ${JSON.stringify(starterTopicsList, null, 2)};
 `;
