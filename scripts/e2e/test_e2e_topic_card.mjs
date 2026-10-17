@@ -218,6 +218,10 @@ async function runTopicCardE2ETests() {
       await fixturePage.goto(`http://localhost:${port}/?topic=${syntheticTopic.id}`, { waitUntil: 'networkidle' });
       await fixturePage.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
 
+      // Assert topic card is visible before asserting go-deeper-button is absent
+      const topicCard = fixturePage.locator('[data-testid="post-spin-topic-card"]');
+      assert.strictEqual(await topicCard.isVisible(), true, 'Topic card must be visible before checking go-deeper-button');
+
       // Assert "Go deeper" button does NOT exist
       const absentGoDeeperBtn = fixturePage.locator('[data-testid="go-deeper-button"]');
       assert.strictEqual(await absentGoDeeperBtn.count(), 0, 'UI must hide "Go deeper" when resources is empty');

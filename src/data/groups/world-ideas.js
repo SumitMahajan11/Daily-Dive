@@ -1245,7 +1245,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Donald Henderson",
+        "label": "Wikipedia (About the person): Donald Henderson",
         "url": "https://en.wikipedia.org/wiki/Donald_Henderson"
       }
     ]
