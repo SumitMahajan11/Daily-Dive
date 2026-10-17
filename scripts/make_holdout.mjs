@@ -51,6 +51,8 @@ export function normalizeName(name) {
 export function normalizeBuildStem(name) {
   let base = path.basename(name).toLowerCase();
   base = base.replace(/(\.[a-z0-9]+)+$/i, ''); // strip extensions
+  // strip leading 32-hex prefix before digit stripping
+  base = base.replace(/^[0-9a-f]{32}[_\-\s]*/i, '');
   // strip copy suffixes like (1), (2), _1, - copy, etc.
   base = base.replace(/\s*\(\d+\)/g, '');
   base = base.replace(/[\s\-_]+copy/gi, '');

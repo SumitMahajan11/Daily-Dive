@@ -131,6 +131,24 @@ test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_S
   for (const t of topics) {
     assert.ok(!DELETED_LOOKUP_STRINGS.has(t.title), `title "${t.title}" must not equal any string from the deleted lookup`);
   }
+
+  // 8. Provenance invariant (report-only mode):
+  // For each topic, normalised title (lowercase, alphanumerics only) must be
+  // a substring of the normalised text of its source page, unless needs_review is true.
+  let provenanceViolations = 0;
+  for (const t of topics) {
+    if (t.needs_review) continue;
+    const pageNum = t.page != null ? t.page : t.slideNumber;
+    const pageItem = extractedData.rawSlides ? extractedData.rawSlides[pageNum - 1] : '';
+    const pageText = typeof pageItem === 'string' ? pageItem : (pageItem?.text || '');
+    const normTitle = (t.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const normPage = (pageText || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!normPage.includes(normTitle)) {
+      provenanceViolations++;
+      console.log(`${fileName}:${pageNum}`);
+    }
+  }
+  console.log(`[PROVENANCE] ${fileName} violation count: ${provenanceViolations}`);
 });
 
 test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', async () => {
@@ -180,6 +198,24 @@ test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', asy
   for (const t of topics) {
     assert.ok(!DELETED_LOOKUP_STRINGS.has(t.title), `title "${t.title}" must not equal any string from the deleted lookup`);
   }
+
+  // 8. Provenance invariant (report-only mode):
+  // For each topic, normalised title (lowercase, alphanumerics only) must be
+  // a substring of the normalised text of its source page, unless needs_review is true.
+  let provenanceViolations = 0;
+  for (const t of topics) {
+    if (t.needs_review) continue;
+    const pageNum = t.page != null ? t.page : t.slideNumber;
+    const pageItem = extractedData.rawPages ? extractedData.rawPages[pageNum - 1] : (extractedData.pages ? extractedData.pages[pageNum - 1] : '');
+    const pageText = typeof pageItem === 'string' ? pageItem : (pageItem?.text || '');
+    const normTitle = (t.title || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const normPage = (pageText || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    if (!normPage.includes(normTitle)) {
+      provenanceViolations++;
+      console.log(`${fileName}:${pageNum}`);
+    }
+  }
+  console.log(`[PROVENANCE] ${fileName} violation count: ${provenanceViolations}`);
 });
 
 test('PDF 100-page text extraction: processes all 100 pages in-memory without warning', async () => {
