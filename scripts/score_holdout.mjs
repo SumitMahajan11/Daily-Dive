@@ -1,5 +1,6 @@
 import fs from 'node:fs';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
 import { safeLog } from './safeLog.mjs';
@@ -29,8 +30,8 @@ function parseCsvLine(line) {
   return result;
 }
 
-export async function scoreHoldout() {
-  const csvPath = path.resolve('reports/holdout_titles_blind.csv');
+export async function scoreHoldout(options = {}) {
+  const csvPath = options.csvPath || path.resolve('reports/holdout_titles_blind.csv');
   if (!fs.existsSync(csvPath)) {
     throw new Error('Missing holdout_titles_blind.csv');
   }
@@ -58,16 +59,21 @@ export async function scoreHoldout() {
   }
 
   if (blankCount > 0) {
+    if (options.throwOnBlank) {
+      throw new Error(`Refusing to run: ${blankCount} labels are blank.`);
+    }
     safeLog('Refusing to run: labels are blank.');
     safeLog({ total_rows: rows.length, blank_count: blankCount });
     process.exit(1);
   }
 
   // If labels are present, perform fresh run and join
-  const holdoutDir = 'D:/DailyDive-Holdout-Final';
-  const files = fs.readdirSync(holdoutDir).filter(f => f.toLowerCase().endsWith('.pdf')).sort();
+  const holdoutDir = options.holdoutDir || 'D:/DailyDive-Holdout-Final';
+  const files = options.files || (fs.existsSync(holdoutDir) ? fs.readdirSync(holdoutDir).filter(f => f.toLowerCase().endsWith('.pdf')).sort() : []);
 
-  safeLog('Running fresh extraction on holdout...');
+  if (!options.silent) {
+    safeLog('Running fresh extraction on holdout...');
+  }
 
   const docStats = [];
   const writtenLecStats = [];
@@ -82,12 +88,22 @@ export async function scoreHoldout() {
   }
 
   for (const fileName of files) {
-    const filePath = path.join(holdoutDir, fileName);
-    const buf = fs.readFileSync(filePath);
-    const fileObj = new File([buf], fileName, { type: 'application/pdf' });
+    let extractedData;
+    let topics;
 
-    const extractedData = await extractFromPdf(fileObj);
-    const topics = await extractTopicsFromSections(extractedData, fileName);
+    if (options.extractor) {
+      const res = await options.extractor(fileName);
+      extractedData = res.extractedData || { pageCount: 1 };
+      topics = res.topics || [];
+    } else {
+      const filePath = path.join(holdoutDir, fileName);
+      const buf = fs.readFileSync(filePath);
+      const fileObj = new File([buf], fileName, { type: 'application/pdf' });
+
+      extractedData = await extractFromPdf(fileObj);
+      topics = await extractTopicsFromSections(extractedData, fileName);
+    }
+
     const pageCount = extractedData.pageCount || (extractedData.rawPages ? extractedData.rawPages.length : 0);
     const topicCount = topics.length;
 
@@ -124,7 +140,9 @@ export async function scoreHoldout() {
       topics: topicCount
     };
     docStats.push(stat);
-    safeLog(stat);
+    if (!options.silent) {
+      safeLog(stat);
+    }
 
     if (fileName.toLowerCase().includes('writtenlec')) {
       const coverage = pageCount > 0 ? (topicCount / pageCount).toFixed(3) : '0.000';
@@ -137,20 +155,36 @@ export async function scoreHoldout() {
     }
   }
 
-  safeLog('--- WRITTENLEC COVERAGE ---');
-  for (const w of writtenLecStats) {
-    safeLog(w);
+  if (!options.silent) {
+    safeLog('--- WRITTENLEC COVERAGE ---');
+    for (const w of writtenLecStats) {
+      safeLog(w);
+    }
+
+    safeLog({
+      total_TP: overallTP,
+      total_FP: overallFP,
+      total_FN: overallFN,
+      total_TN: overallTN
+    });
   }
 
-  safeLog({
-    total_TP: overallTP,
-    total_FP: overallFP,
-    total_FN: overallFN,
-    total_TN: overallTN
+  return {
+    docStats,
+    writtenLecStats,
+    totals: {
+      overallTP,
+      overallFP,
+      overallFN,
+      overallTN
+    }
+  };
+}
+
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  scoreHoldout().catch(err => {
+    safeLog({ error: String(err.message).slice(0, 35) });
+    process.exit(1);
   });
 }
 
-scoreHoldout().catch(err => {
-  safeLog({ error: String(err.message).slice(0, 35) });
-  process.exit(1);
-});
