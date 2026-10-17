@@ -49,7 +49,40 @@ if (!Map.prototype.getOrInsertComputed) {
 
 import { extractFromPptx } from '../src/lib/extractors/pptxExtractor.js';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
-import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
+import { extractTopicsFromSections, isCleanHeading } from '../src/lib/topicExtractor.js';
+
+const DELETED_LOOKUP_STRINGS = new Set([
+  'Wireshark Packet Filtering',
+  'TCP Stream & Handshake Analysis',
+  'Network Protocol Hierarchy',
+  'Network Conversation & Endpoints',
+  'Packet Capture Workflow',
+  'Transport Layer Protocol Analysis',
+  'Packet File Reconstruction',
+  'Cyber Attack Traffic Detection',
+  'IPv4 Subnetting & Topology',
+  'Cisco Packet Tracer Design',
+  'Horizontal vs Vertical Scaling',
+  'Cloud Load Balancing Strategy',
+  'Dijkstra Shortest Path Algorithm',
+  'Dynamic Programming Foundations',
+  'Distributed Consensus & Paxos',
+  'Distributed Data Replication',
+  'Multithreading Scaling Simulation',
+  'Latency & Performance Benchmarks',
+  'API Gateway Routing & Security',
+  'Microservices Architecture Patterns',
+  'Integrated Shelter Architecture',
+  'Decision-Support Framework',
+  'Thermal Comfort Benchmarks',
+  'Cross-Climate Prediction Gaps',
+  'Cross-Climate Design Gaps',
+  'Thermal Comfort ML Objectives',
+  'Adaptive Shelter Methodology',
+  'Climate-Adaptive Shelter Outcomes',
+  'Energy & Comfort Optimization',
+  'Thermal Comfort Fundamentals'
+]);
 
 test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx satisfies invariants', async () => {
   const filePath = 'tests/fixtures/AI_ML_Climate_Adaptive_Shelter_Technical_Seminar_.pptx';
@@ -78,10 +111,26 @@ test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_S
     assert.ok(!/^Page(?:\s+\d+)?$/i.test(t.title), `title "${t.title}" must not match /^Page(\\s+\\d+)?$/`);
   }
 
-  // 4. Climate file includes "Thermal Comfort Fundamentals" and "Decision-Support Framework"
+  // 4. Topic count equals page count minus skipped pages
+  const skippedPages = pageOutcomes.filter(po => po.outcome === 'skipped' || po.outcome === 'merged').length;
+  assert.equal(topics.length, extractedData.slideCount - skippedPages, 'topic count equals page count minus skipped pages');
+
+  // 5. Every non-flagged title passes isCleanHeading
+  for (const t of topics) {
+    if (!t.needs_review) {
+      assert.ok(isCleanHeading(t.title), `non-flagged title "${t.title}" must pass isCleanHeading`);
+    }
+  }
+
+  // 6. No two titles are equal
   const titles = topics.map(t => t.title);
-  assert.ok(titles.includes('Thermal Comfort Fundamentals'), 'must include "Thermal Comfort Fundamentals"');
-  assert.ok(titles.includes('Decision-Support Framework'), 'must include "Decision-Support Framework"');
+  const uniqueTitles = new Set(titles);
+  assert.equal(uniqueTitles.size, titles.length, 'no two titles are equal');
+
+  // 7. No title equals a string from the deleted lookup
+  for (const t of topics) {
+    assert.ok(!DELETED_LOOKUP_STRINGS.has(t.title), `title "${t.title}" must not equal any string from the deleted lookup`);
+  }
 });
 
 test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', async () => {
@@ -111,11 +160,26 @@ test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', asy
     assert.ok(!/^Page(?:\s+\d+)?$/i.test(t.title), `title "${t.title}" must not match /^Page(\\s+\\d+)?$/`);
   }
 
-  // 4. Kartik file includes "Vertical Scaling", "Cloud Load Balancing Strategy", "Multithreading Scaling Simulation"
+  // 4. Topic count equals page count minus skipped pages
+  const skippedPages = pageOutcomes.filter(po => po.outcome === 'skipped' || po.outcome === 'merged').length;
+  assert.equal(topics.length, extractedData.pageCount - skippedPages, 'topic count equals page count minus skipped pages');
+
+  // 5. Every non-flagged title passes isCleanHeading
+  for (const t of topics) {
+    if (!t.needs_review) {
+      assert.ok(isCleanHeading(t.title), `non-flagged title "${t.title}" must pass isCleanHeading`);
+    }
+  }
+
+  // 6. No two titles are equal
   const titles = topics.map(t => t.title);
-  assert.ok(titles.includes('Vertical Scaling'), 'must include "Vertical Scaling"');
-  assert.ok(titles.includes('Cloud Load Balancing Strategy'), 'must include "Cloud Load Balancing Strategy"');
-  assert.ok(titles.includes('Multithreading Scaling Simulation'), 'must include "Multithreading Scaling Simulation"');
+  const uniqueTitles = new Set(titles);
+  assert.equal(uniqueTitles.size, titles.length, 'no two titles are equal');
+
+  // 7. No title equals a string from the deleted lookup
+  for (const t of topics) {
+    assert.ok(!DELETED_LOOKUP_STRINGS.has(t.title), `title "${t.title}" must not equal any string from the deleted lookup`);
+  }
 });
 
 test('PDF 100-page text extraction: processes all 100 pages in-memory without warning', async () => {
