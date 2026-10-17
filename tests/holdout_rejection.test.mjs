@@ -49,8 +49,11 @@ test('Holdout Rejection Paths: proves every rejection path fires on synthetic fi
       fs.writeFileSync(path.join(syntheticDir, '1000142068 (1).pdf'), 'build-name');
     }
 
-    // Path 7b: Build family rejection (matches normalized stem of build file, e.g. Assignment No.)
-    fs.writeFileSync(path.join(syntheticDir, 'Assignment No. 88 _2026 _For Students.pdf'), 'synthetic-build-family-payload');
+    // Path 7b: Build family rejection (matches normalized stem of build file, e.g. Activity Template_ Add estimation)
+    fs.writeFileSync(path.join(syntheticDir, 'Activity Template_ Add estimation _Copy.pdf'), 'synthetic-build-family-payload');
+
+    // Path 7c: Excluded series rejection (starts with assignment, coursera, awp, sepm, experiment)
+    fs.writeFileSync(path.join(syntheticDir, 'coursera_novel_deep_learning.pdf'), 'synthetic-excluded-series-payload');
 
     // Path 8: Family duplicate rejection (same stem 'synthetic report', different content)
     fs.writeFileSync(path.join(syntheticDir, 'synthetic_report_v1.pdf'), 'family-report-alpha');
@@ -70,6 +73,7 @@ test('Holdout Rejection Paths: proves every rejection path fires on synthetic fi
     assert.ok(result.rejectedFixture > 0, 'rejectedFixture path must fire');
     assert.ok(result.rejectedBuild > 0, 'rejectedBuild path must fire');
     assert.ok(result.rejectedBuildFamily > 0, 'rejectedBuildFamily path must fire');
+    assert.ok(result.rejectedExcludedSeries > 0, 'rejectedExcludedSeries path must fire');
     assert.ok(result.rejectedFamilyDuplicate > 0, 'rejectedFamilyDuplicate path must fire');
     assert.ok(result.holdoutCount > 0, 'clean document must be accepted into holdout');
 
@@ -83,6 +87,7 @@ test('Holdout Rejection Paths: proves every rejection path fires on synthetic fi
     safeLog('rejectedFixture:', result.rejectedFixture);
     safeLog('rejectedBuild:', result.rejectedBuild);
     safeLog('rejectedBuildFamily:', result.rejectedBuildFamily);
+    safeLog('rejectedExcludedSeries:', result.rejectedExcludedSeries);
     safeLog('rejectedFamilyDuplicate:', result.rejectedFamilyDuplicate);
     safeLog('acceptedHoldout:', result.holdoutCount);
 

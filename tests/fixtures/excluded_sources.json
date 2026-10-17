@@ -1,7 +1,16 @@
-[
-  "Experiment no 3 cn.pdf",
-  "lecture_systems.pptx",
-  "study_guide_algorithms.pdf",
-  "microservices_architecture_spec.md",
-  "real_roadmap.md"
-]
+{
+  "excluded_sources": [
+    "Experiment no 3 cn.pdf",
+    "lecture_systems.pptx",
+    "study_guide_algorithms.pdf",
+    "microservices_architecture_spec.md",
+    "real_roadmap.md"
+  ],
+  "excluded_series": [
+    "assignment",
+    "coursera",
+    "awp",
+    "sepm",
+    "experiment"
+  ]
+}

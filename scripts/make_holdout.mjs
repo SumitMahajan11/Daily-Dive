@@ -181,20 +181,30 @@ export function getFlagLabelSources() {
 
 /**
  * Collects SHA-256 hashes and normalized names of heldout_labels sources from tests/fixtures/excluded_sources.json.
- * @returns {{ heldoutLabelHashes: Set<string>, heldoutLabelNormNames: Set<string> }}
+ * Also parses excluded_series prefix list.
+ * @returns {{ heldoutLabelHashes: Set<string>, heldoutLabelNormNames: Set<string>, excludedSeries: string[] }}
  */
 export function getHeldoutLabelSources() {
   const heldoutLabelHashes = new Set();
   const heldoutLabelNormNames = new Set();
+  const excludedSeries = [];
 
   const excludedSourcesPath = 'tests/fixtures/excluded_sources.json';
   if (fs.existsSync(excludedSourcesPath)) {
     try {
-      const records = JSON.parse(fs.readFileSync(excludedSourcesPath, 'utf8'));
+      const data = JSON.parse(fs.readFileSync(excludedSourcesPath, 'utf8'));
+      const records = Array.isArray(data) ? data : (data.excluded_sources || data.sources || []);
       for (const rec of records) {
         const name = typeof rec === 'string' ? rec : rec.file;
         if (name) {
           heldoutLabelNormNames.add(normalizeName(name));
+        }
+      }
+      if (data && !Array.isArray(data) && Array.isArray(data.excluded_series)) {
+        for (const s of data.excluded_series) {
+          if (typeof s === 'string' && s.trim()) {
+            excludedSeries.push(s.trim().toLowerCase());
+          }
         }
       }
     } catch (e) {}
@@ -227,7 +237,7 @@ export function getHeldoutLabelSources() {
     }
   }
 
-  return { heldoutLabelHashes, heldoutLabelNormNames };
+  return { heldoutLabelHashes, heldoutLabelNormNames, excludedSeries };
 }
 
 /**
@@ -276,7 +286,7 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
 
   const { buildHashes, buildNormNames, buildStems } = getBuildSources();
   const { flagLabelHashes, flagLabelNormNames } = getFlagLabelSources();
-  const { heldoutLabelHashes, heldoutLabelNormNames } = getHeldoutLabelSources();
+  const { heldoutLabelHashes, heldoutLabelNormNames, excludedSeries } = getHeldoutLabelSources();
   const { fixtureHashes, fixtureNormNames } = getFixtureSources();
 
   const entries = fs.readdirSync(candidateDir, { withFileTypes: true });
@@ -292,6 +302,7 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
   let rejectedFixture = 0;
   let rejectedBuild = 0;
   let rejectedBuildFamily = 0;
+  let rejectedExcludedSeries = 0;
 
   for (const ent of entries) {
     if (!ent.isFile()) continue;
@@ -352,11 +363,17 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
       continue;
     }
 
-    // 8. Reject on equal build family stem
-    const bStemClean = bStem.replace(/\bcca\b/g, '').trim();
-    if (buildStems.has(bStem) || (bStemClean && buildStems.has(bStemClean))) {
+    // 8. Reject on equal build family stem (equality on normalised stems only, no prefix matching)
+    if (buildStems.has(bStem)) {
       rejectedBuildFamily++;
       decisions.push({ name: ent.name, sha256, status: 'rejectedBuildFamily' });
+      continue;
+    }
+
+    // 9. Reject candidates whose normalised stem starts with any excluded series
+    if (excludedSeries.some(s => bStem.startsWith(s))) {
+      rejectedExcludedSeries++;
+      decisions.push({ name: ent.name, sha256, status: 'rejectedExcludedSeries' });
       continue;
     }
 
@@ -433,7 +450,7 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
   // Construct manifest content
   const gitHash = getScriptGitHash();
   const headerLines = [
-    '# RULE: Candidate documents are sorted ascending by raw SHA-256 hash. Rejection of build files, dev-labels, heldout-labels, fixtures, non-PDFs, banned patterns, duplicate hashes, build-family matches, and family duplicates enforced.',
+    '# RULE: Candidate documents are sorted ascending by raw SHA-256 hash. Rejection of build files, dev-labels, heldout-labels, fixtures, non-PDFs, banned patterns, duplicate hashes, build-family matches, excluded series, and family duplicates enforced.',
     `# SCRIPT_GIT_HASH: ${gitHash}`,
     'path,name,extension,size_bytes,sha256,family,split'
   ];
@@ -476,6 +493,7 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
   safeLog('Rejected fixture:', rejectedFixture);
   safeLog('Rejected build:', rejectedBuild);
   safeLog('Rejected build family:', rejectedBuildFamily);
+  safeLog('Rejected excluded series:', rejectedExcludedSeries);
   safeLog('Rejected family duplicate:', rejectedFamilyDuplicate);
   safeLog('Smoke-only count:', smokeOnlyRows.length);
   safeLog('Holdout count:', selectedHoldout.length);
@@ -496,6 +514,7 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
     rejectedFixture,
     rejectedBuild,
     rejectedBuildFamily,
+    rejectedExcludedSeries,
     rejectedFamilyDuplicate,
     smokeOnlyCount: smokeOnlyRows.length,
     holdoutCount: selectedHoldout.length,
