@@ -113,7 +113,7 @@ async function testUploadRealRoadmap() {
 
   safeLog('[PASS]: Real ROADMAP upload verified');
 
-  console.log('5. Testing corrupt .heic upload path...');
+  safeLog('5. Testing corrupt .heic upload path...');
   // Click Cancel on candidate review to return to upload tray
   const cancelBtn = page.locator('button:has-text("Cancel")').first();
   if (await cancelBtn.isVisible()) {
@@ -133,11 +133,12 @@ async function testUploadRealRoadmap() {
   ]);
   await heicChooser.setFiles(corruptHeicPath);
 
-  console.log('6. Waiting for corrupt HEIC conversion toast...');
+  safeLog('6. Waiting for corrupt HEIC conversion toast...');
   const toastText = 'This HEIC photo could not be converted. Export it as JPEG and try again.';
   const toastLocator = page.locator(`text="${toastText}"`).first();
   await toastLocator.waitFor({ state: 'visible', timeout: 10000 });
-  console.log('[PASS]: Corrupt HEIC upload correctly displayed conversion error toast.');
+  safeLog('[PASS]: Corrupt HEIC upload correctly displayed conversion error toast.');
+
 
   await browser.close();
   server.close();
