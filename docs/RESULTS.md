@@ -1,54 +1,60 @@
-# Daily Dive – Results Snapshot (commit 15a)
+# Daily Dive – Results Snapshot (commit 15c)
 
-## Build numbers
+## Build Numbers (Evaluated over D:\DailyDive-Eval\build)
 
-| Metric | Value |
-|---|---|
-| Topics in build | **692** (313 tech · 113 money-career · 176 mind-growth · 90 world-ideas) |
-| Source lessons | 64 (in `data/lessons.json`) |
-| Flagged topics | **0** |
-| Provenance violations | **0** |
-| Test suite | **630 pass · 0 fail** (as of 15a) |
+Ran `extractFromPdf` + `extractTopicsFromSections` over the 31 build PDFs in `D:\DailyDive-Eval\build` (same corpus set as the earlier 324/114/0 reference run; 28 digital text PDFs extracted, 3 scanned/vector-only require OCR):
 
-*Previous reference: 324 topics / 114 flagged / 0 violations – those numbers were from an earlier
-corpus run before the lesson set was expanded to 692 topics across 4 group files.*
+| Metric | Earlier Run | Current Run (15c) | Delta |
+|---|---|---|---|
+| Extracted PDFs | 28 (of 31) | 28 (of 31) | 0 |
+| Total topics extracted | 324 | **396** | **+72** |
+| Topics flagged for review | 114 | **167** | **+53** |
+| Provenance violations | 0 | **0** | **0** |
+| Full test suite | 630 pass · 0 fail | **630 pass · 0 fail** | 0 |
 
-## Holdout coverage (7 PDFs + 1 written-lecture set, smoke-only)
+### Per-File Deltas Where Topics Changed (8 files)
+- `Sumit_Mahajan_Resume.pdf`: 1 -> 31 (+30) [list/sequence fallback extracts discrete items instead of raw text block]
+- `Sumit_Mahajan_Resume (3) (1).pdf`: 1 -> 30 (+29) [list/sequence fallback extracts discrete items]
+- `notes-3-4.docx.pdf`: 26 -> 33 (+7) [improved sectioning & cover slide filtering on multi-page text notes]
+- `unit-III  front end framework (5).pptx.pdf`: 21 -> 23 (+2)
+- `unit-IV Back End Technology -2 (1).pptx.pdf`: 19 -> 20 (+1)
+- `Assignment No. 05 _2026 _Updated (1).pdf`: 1 -> 2 (+1)
+- `Assignment No. 05 _2026 _Updated.pdf`: 1 -> 2 (+1)
+- `kartik awp 9.pdf`: 5 -> 6 (+1)
+- *Remaining 20 extracted PDFs*: identical topic counts across both runs.
+- *3 OCR-dependent PDFs* (`1000142068 (1).pdf`, `Chapter 2 DES Updated.pptx (1).pdf`, `Chapter 2 DES Updated.pptx.pdf`): 0 text layer; require OCR.
 
-| File | Pages | Topics | Flagged | Extraction path |
+## Test Regressions (Commit 47d8cdb vs HEAD)
+
+Measured directly in a clean worktree at commit `47d8cdb` (after `npm install` and build) and at `HEAD`:
+
+| Script | Exit Code (47d8cdb) | Exit Code (HEAD) | First Failing Assertion / Outcome | Regressed in 10a? |
 |---|---|---|---|---|
-| MIT lec07.pdf | 33 | 26 | 9 | all text-layer |
-| MIT lec10.pdf | 7 | 6 | 1 | all text-layer |
-| MIT writtenlec23.pdf | 11 | 1 | 0 | 10 empty + 1 text |
-| MIT lec02.pdf | 7 | 7 | 3 | all text-layer |
-| MIT writtenlec6.pdf | 11 | 1 | 0 | 10 empty + 1 text |
-| MIT lec13.pdf | 20 | 20 | 3 | all text-layer |
-| MIT writtenlec3.pdf | 8 | 1 | 0 | 7 empty + 1 text |
-| MIT writtenlec11.pdf | 9 | 1 | 0 | 8 empty + 1 text |
-| **Total** | **106** | **63** | **16** | — |
+| `test_e2e_real_tabs.mjs` | **1** | **1** | `Library section top must be within 80px, got: 1089.5` (47d8cdb) / `1113.5` (HEAD) | **No** (pre-existing single-page scroll offset) |
+| `test_hygiene.mjs` | **0** | **0** | All 9 checks passed on both commits | **No** |
+| `test_spin_timing.mjs` | **1** | **1** | `AssertionError: Number of ticks must be at least 15, got 0` | **No** (pre-existing; Web Audio ticks disabled in headless) |
 
-## Known gaps
+## Holdout Coverage (scripts/run_holdout_extractor.mjs)
 
-1. **OCR cannot run in Node.js** – `pdfjs-dist` requires a DOM/canvas for rendering;
-   the Node extractor sets `ocrCouldNotRun: true` with reason `"no canvas"`. Vector-only
-   PDF pages that need OCR are correctly detected and flagged in `buildExtractionWarning`
-   but no OCR text is produced.
+| Document | Pages | Path Counts (text / ocr / empty / notProcessed) | Topics | Flagged |
+|---|---|---|---|---|
+| `MIT6_046JS15_lec07.pdf` | 33 | 33 text / 0 ocr / 0 empty / 0 notProcessed | 26 | 9 |
+| `MIT6_046JS15_lec10.pdf` | 7 | 7 text / 0 ocr / 0 empty / 0 notProcessed | 6 | 1 |
+| `MIT6_046JS15_writtenlec23.pdf` | 11 | 1 text / 0 ocr / 10 empty / 0 notProcessed | 1 | 0 |
+| `MIT6_046JS15_lec02.pdf` | 7 | 7 text / 0 ocr / 0 empty / 0 notProcessed | 7 | 3 |
+| `MIT6_046JS15_writtenlec6.pdf` | 11 | 1 text / 0 ocr / 10 empty / 0 notProcessed | 1 | 0 |
+| `MIT6_046JS15_lec13.pdf` | 20 | 20 text / 0 ocr / 0 empty / 0 notProcessed | 20 | 3 |
+| `MIT6_046JS15_writtenlec3.pdf` | 8 | 1 text / 0 ocr / 7 empty / 0 notProcessed | 1 | 0 |
+| `MIT6_046JS15_writtenlec11.pdf` | 9 | 1 text / 0 ocr / 8 empty / 0 notProcessed | 1 | 0 |
+| **Total** | **106** | **71 text / 0 ocr / 35 empty / 0 notProcessed** | **63** | **16** |
 
-2. **One course only** – all 8 holdout files are from a single MIT 6.046J algorithms
-   course. Coverage numbers are not representative of a diverse corpus.
+Totals equal earlier run (63/16): 4 digital slide decks have selectable text layers; 4 handwritten lectures have vector handwriting without text layers on pages 2+ where OCR cannot run in Node (no canvas), falling back to 1 topic from page 1 text.
 
-3. **Circular dev labels** – `flag_labels.json` was constructed from the same build that
-   produces the topics; precision/recall scores in `tests/truthful_review_flags.test.mjs`
-   are informative but not independently validated.
+## Known Gaps
 
-4. **pdfjs 21:20 exposure** – parser emits `TT: undefined function: 21` and
-   `TT: undefined function: 32` warnings for some PDFs. These are benign font-encoding
-   gaps in pdfjs-dist but could cause missed glyphs in those documents.
-
-5. **Old 7-file holdout is smoke-only** – `reports/holdout_run.json` covers 8 files
-   frozen by `scripts/make_holdout.mjs`. It verifies extraction runs end-to-end but
-   does not validate topic *quality* (no ground-truth labels).
-
-6. **Holdout titles unlabeled and no longer blind** – `reports/holdout_titles_blind.csv`
-   was un-blinded during the 14b investigation. Manual title review has not been
-   conducted; the file is retained for reference only.
+1. **OCR cannot run in Node.js** – `pdfjs-dist` requires a DOM/canvas; Node sets `ocrCouldNotRun: true` ("no canvas").
+2. **One course only** – All 8 holdout files come from MIT 6.046J; coverage is not representative of a multi-domain corpus.
+3. **Circular dev labels** – `flag_labels.json` was derived from development builds rather than external annotation.
+4. **pdfjs font warnings** – Parser emits `TT: undefined function: 21/32` warnings for subsetted fonts.
+5. **Holdout is smoke-only** – `reports/holdout_run.json` tests pipeline completion without qualitative ground truth.
+6. **Holdout titles un-blinded** – `reports/holdout_titles_blind.csv` was unblinded in 14b; retained for reference only.
