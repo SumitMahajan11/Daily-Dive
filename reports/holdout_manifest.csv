@@ -1,5 +1,5 @@
 # RULE: Candidate documents are sorted ascending by raw SHA-256 hash. Rejection of build files, dev-labels, heldout-labels, fixtures, non-PDFs, banned patterns, duplicate hashes, build-family matches, excluded series, and family duplicates enforced.
-# SCRIPT_GIT_HASH: 0be39dbb4470c26261ae8d37a78fd5c935372cc7
+# SCRIPT_GIT_HASH: 0d8fcf79aff21d7ee112e873221e1232317b5158
 path,name,extension,size_bytes,sha256,family,split
 "D:\DailyDive-Eval\build\awp 10 kartik.pdf","awp 10 kartik.pdf",".pdf",219268,"052E9DEEE9E6E3B56C3B9F7517242C0848F7D3CD8EFEE69E1B2CC52EF9362462","awp kartik","SMOKE_ONLY"
 "D:\DailyDive-Eval\build\CC_Unit-3.pdf","CC_Unit-3.pdf",".pdf",1035562,"48D2892DD216B4151110E9D5C0C1DFBA03E707F61B4FD50D6A8062ABB94035E4","cc unit","SMOKE_ONLY"

@@ -2,6 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
+import './_setup.mjs';
 import {
   isCleanHeading,
   BRAND_CASING,
@@ -9,7 +10,8 @@ import {
   isTitleOrContentReason,
   scoreCandidateTitle,
   extractTopicsFromSections,
-  extractTopicsLocally
+  extractTopicsLocally,
+  enforceNoCleanFilenameDerivedTitles
 } from '../src/lib/topicExtractor.js';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 
@@ -278,4 +280,37 @@ test('Invariant: flag decision uses the same string that becomes the emitted tit
     assert.equal(t._flagInput, undefined, '_flagInput must be stripped in production');
   }
 });
+
+test('filename-derived title: a clean topic must not take its title from the file name', () => {
+  // Test 1: Unit level enforcement via enforceNoCleanFilenameDerivedTitles
+  const syntheticCleanTopic = {
+    title: 'Lecture 05 Algorithms',
+    title_source: 'heading',
+    needs_review: false,
+    is_confirmed: true,
+    review_reasons: []
+  };
+  const enforced = enforceNoCleanFilenameDerivedTitles([syntheticCleanTopic], 'Lecture 05 Algorithms.pdf');
+  assert.equal(enforced[0].needs_review, true, 'must force needs_review=true when title equals document base name');
+  assert.equal(enforced[0].title_source, 'filename', 'must set title_source to filename');
+  assert.equal(enforced[0].is_confirmed, false, 'must set is_confirmed to false');
+  assert.ok(
+    enforced[0].review_reasons.includes('Filename-derived title: user review required'),
+    'must attach filename review reason'
+  );
+
+  // Test 2: Extraction path with no short heading line falling back to filename
+  const text = 'This is a long introductory sentence describing the principles of web engineering without any short heading.\nAnother long sentence providing additional explanations about data flow and reactive state management in modern distributed systems.';
+  const topics = extractTopicsLocally(text, [], 'Advanced Web Systems.pdf');
+  assert.ok(topics.length > 0, 'Must produce at least one topic');
+
+  for (const t of topics) {
+    if (t.title.toLowerCase().includes('advanced web systems') || t.title_source === 'filename') {
+      assert.equal(t.needs_review, true, `Topic with filename-derived title "${t.title}" must have needs_review = true`);
+      assert.equal(t.is_confirmed, false, `Topic with filename-derived title "${t.title}" must have is_confirmed = false`);
+      assert.equal(t.title_source, 'filename', `Topic with filename-derived title "${t.title}" must have title_source = 'filename'`);
+    }
+  }
+});
+
 

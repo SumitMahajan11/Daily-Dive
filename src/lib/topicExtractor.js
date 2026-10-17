@@ -1490,6 +1490,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
   }
 
   // 3. Fallback: never use a truncated sentence as a title
+  let isFilenameDerived = false;
   if (!title) {
     const domain = synthesizeDomainTitle(lines.join(' '));
     if (domain && isValidListTitle(domain)) {
@@ -1498,6 +1499,7 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
       const fileBase = (sourceFileName || '').replace(/\.[^/.]+$/, '').replace(/[_\-]+/g, ' ').trim();
       if (fileBase && fileBase.length >= 3) {
         title = toTitleCase(fileBase);
+        isFilenameDerived = true;
       }
     }
   }
@@ -1527,14 +1529,16 @@ function buildListTopic(lines, index, sourceFileName, timestamp, fullText) {
   const createdAt = new Date().toISOString();
   const expiresAt = new Date(Date.now() + 14 * 86400000).toISOString();
 
-  const isClean = isCleanHeading(title);
-  const needsReview = !isClean;
-  const reviewReasons = !isClean ? ['Unverified raw text: user rewrite recommended'] : [];
+  const isClean = !isFilenameDerived && isCleanHeading(title);
+  const needsReview = isFilenameDerived || !isClean;
+  const reviewReasons = isFilenameDerived
+    ? ['Filename-derived title: user review required']
+    : (!isClean ? ['Unverified raw text: user rewrite recommended'] : []);
 
   const topicObj = {
     id: `custom-list-${timestamp}-${index}`,
     title,
-    title_source: 'heading',
+    title_source: isFilenameDerived ? 'filename' : 'heading',
     raw_heading: lines[0],
     description: desc,
     full_text: lines.join('\n').trim(),
@@ -1619,9 +1623,17 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
   }
 
   // If no short heading line exists, NEVER use a truncated sentence: fallback to domain title or filename
+  let isFilenameDerived = false;
   if (!candidateTitle) {
     const domainTitle = synthesizeDomainTitle(clean, fileBaseName.toLowerCase());
-    candidateTitle = domainTitle || fileBaseName || 'Extracted Document';
+    if (domainTitle) {
+      candidateTitle = domainTitle;
+    } else if (fileBaseName) {
+      candidateTitle = fileBaseName;
+      isFilenameDerived = true;
+    } else {
+      candidateTitle = 'Extracted Document';
+    }
   }
 
   const title = toTitleCase(candidateTitle);
@@ -1638,7 +1650,7 @@ export function extractTopicsFromRawText(fullText, sourceFileName = 'uploaded_fi
   const topicObj = {
     id: `custom-raw-${timestamp}-0`,
     title,
-    title_source: 'heading',
+    title_source: isFilenameDerived ? 'filename' : 'heading',
     raw_heading: rawLines[0] || title,
     description: desc,
     full_text: clean,
@@ -2401,6 +2413,34 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
   return candidateTopics;
 }
 
+export function enforceNoCleanFilenameDerivedTitles(topics, sourceFileName) {
+  if (!Array.isArray(topics) || topics.length === 0) return topics;
+  const docBaseClean = (sourceFileName || '')
+    .replace(/\.[^/.]+$/, '')
+    .replace(/[_\-]+/g, ' ')
+    .trim()
+    .toLowerCase();
+
+  for (const t of topics) {
+    if (!t.needs_review) {
+      const isFilenameTitle = t.title_source === 'filename' ||
+        (docBaseClean && docBaseClean.length >= 3 && t.title.toLowerCase() === docBaseClean);
+      if (isFilenameTitle) {
+        t.needs_review = true;
+        t.is_confirmed = false;
+        t.confidence = Math.min(t.confidence || 40, 40);
+        t.confidence_rating = 'low';
+        t.title_source = 'filename';
+        if (!t.review_reasons) t.review_reasons = [];
+        if (!t.review_reasons.includes('Filename-derived title: user review required')) {
+          t.review_reasons.push('Filename-derived title: user review required');
+        }
+      }
+    }
+  }
+  return topics;
+}
+
 /**
  * Local NLP topic synthesis with fallback ladder: structured -> list/sequence -> raw text.
  * Switches path when structured result has coverage below 60%, or no topics.
@@ -2444,12 +2484,12 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   extractTopicsLocally.lastPageOutcomes = structuredTopics.pageOutcomes || [];
 
   if (options.forcePath === 'structured') {
-    return structuredTopics;
+    return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   }
 
   // Preserve structured path for multi-section documents/decks with explicit sections that structured already handles well
   if (Array.isArray(rawSections) && rawSections.length >= 2 && structuredTopics.length >= 2) {
-    return structuredTopics;
+    return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   }
 
   // Requirement 1: Only fall back from structured path when structured returns 0 topics,
@@ -2460,7 +2500,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   const shouldFallback = structuredTopics.length === 0 || (isShort && structuredCoverage < 0.60);
 
   if (!shouldFallback) {
-    return structuredTopics;
+    return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   }
 
   // Path 2: List / Sequence
@@ -2471,7 +2511,7 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   if (listTopics.length > 0 && (listCoverage >= 0.50 || listCoverage >= structuredCoverage)) {
     listTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
     extractTopicsLocally.lastPageOutcomes = listTopics.pageOutcomes;
-    return listTopics;
+    return enforceNoCleanFilenameDerivedTitles(listTopics, sourceFileName);
   }
 
   // Path 3: Raw Text
@@ -2482,16 +2522,16 @@ export function extractTopicsLocally(fullText, rawSections = [], sourceFileName 
   if (rawTopics.length > 0) {
     rawTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
     extractTopicsLocally.lastPageOutcomes = rawTopics.pageOutcomes;
-    return rawTopics;
+    return enforceNoCleanFilenameDerivedTitles(rawTopics, sourceFileName);
   }
 
   // Return highest non-empty fallback if under 60%
   if (listTopics.length > 0 && listCoverage >= structuredCoverage) {
     listTopics.pageOutcomes = structuredTopics.pageOutcomes || [];
     extractTopicsLocally.lastPageOutcomes = listTopics.pageOutcomes;
-    return listTopics;
+    return enforceNoCleanFilenameDerivedTitles(listTopics, sourceFileName);
   }
-  if (structuredTopics.length > 0) return structuredTopics;
+  if (structuredTopics.length > 0) return enforceNoCleanFilenameDerivedTitles(structuredTopics, sourceFileName);
   return [];
 }
 
