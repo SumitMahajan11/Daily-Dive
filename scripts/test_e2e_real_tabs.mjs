@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -42,9 +44,9 @@ const VIEWPORTS = [
 ];
 
 async function runRealTabsE2E() {
-  console.log('================================================================');
-  console.log('      REAL TABS (SEPARATE SCREENS & URLS) E2E SUITE             ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('      REAL TABS (SEPARATE SCREENS & URLS) E2E SUITE             ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -62,9 +64,9 @@ async function runRealTabsE2E() {
 
   try {
     for (const vp of VIEWPORTS) {
-      console.log(`\n------------------------------------------------------------`);
-      console.log(`TESTING VIEWPORT: ${vp.name}`);
-      console.log(`------------------------------------------------------------`);
+      printLog(`\n------------------------------------------------------------`);
+      printLog(`TESTING VIEWPORT: ${vp.name}`);
+      printLog(`------------------------------------------------------------`);
 
       const context = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
       const page = await context.newPage();
@@ -77,7 +79,7 @@ async function runRealTabsE2E() {
       // ─────────────────────────────────────────────────────────────
       // a) Library open: #spin, #progress and #library all exist, and #library is scrolled into view (top within 80 px)
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST a] Verifying Library open: all 3 sections exist and #library is scrolled into view...');
+      printLog('\n[TEST a] Verifying Library open: all 3 sections exist and #library is scrolled into view...');
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
       await page.waitForSelector('#spin');
 
@@ -100,12 +102,12 @@ async function runRealTabsE2E() {
         return el ? el.getBoundingClientRect().top : null;
       });
       assert.ok(libraryTop !== null && libraryTop >= -20 && libraryTop <= 80, `Library section top must be within 80px, got: ${libraryTop}`);
-      console.log('  [PASS] (a) Library open: #spin, #progress and #library all exist, and #library is scrolled into view.');
+      printLog('  [PASS] (a) Library open: #spin, #progress and #library all exist, and #library is scrolled into view.');
 
       // ─────────────────────────────────────────────────────────────
       // b) Browser Back returns to the previous screen (scrolled back to #spin)
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST b] Verifying Browser Back returns to the previous screen (scrolled to #spin)...');
+      printLog('\n[TEST b] Verifying Browser Back returns to the previous screen (scrolled to #spin)...');
       // We are currently on Library (#/library). Now click browser Back:
       await page.goBack();
       await page.waitForSelector('#spin', { state: 'visible', timeout: 5000 });
@@ -118,12 +120,12 @@ async function runRealTabsE2E() {
       });
       assert.strictEqual(spinVisibleAfterBack, true, 'Browser Back must restore the Spin screen');
       assert.ok(spinTopAfterBack !== null && spinTopAfterBack >= -20 && spinTopAfterBack <= 80, `Spin section top must be within 80px after Back, got: ${spinTopAfterBack}`);
-      console.log('  [PASS] (b) Browser Back returned successfully: page is scrolled back to #spin.');
+      printLog('  [PASS] (b) Browser Back returned successfully: page is scrolled back to #spin.');
 
       // ─────────────────────────────────────────────────────────────
       // c) Refresh on the Library screen stays on Library
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST c] Verifying Refresh on Library screen stays on Library...');
+      printLog('\n[TEST c] Verifying Refresh on Library screen stays on Library...');
       // Re-navigate to Library
       await page.locator('button[data-nav-id="library"]:visible').first().click();
       await page.waitForSelector('#library', { state: 'visible', timeout: 5000 });
@@ -142,12 +144,12 @@ async function runRealTabsE2E() {
       assert.strictEqual(libraryVisibleAfterReload, true, 'Library screen must remain visible after page reload');
       assert.ok(libraryTopAfterReload !== null && libraryTopAfterReload >= -20 && libraryTopAfterReload <= 80, `Library section top must be within 80px after reload, got: ${libraryTopAfterReload}`);
       assert.ok(currentUrl.includes('library'), `URL after reload must contain "library", got: ${currentUrl}`);
-      console.log('  [PASS] (c) Refresh on Library screen maintained Library view and URL.');
+      printLog('  [PASS] (c) Refresh on Library screen maintained Library view and URL.');
 
       // ─────────────────────────────────────────────────────────────
       // d) Space on the Library screen (outside an input): a spin starts
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST d] Verifying Space key on Library screen starts a spin...');
+      printLog('\n[TEST d] Verifying Space key on Library screen starts a spin...');
       // While on Library screen (outside an input), press Spacebar
       await page.keyboard.press('Space');
       await page.waitForTimeout(400);
@@ -158,12 +160,12 @@ async function runRealTabsE2E() {
       });
       assert.strictEqual(isSpinningAfterSpace, true, 'Space on Library (outside an input) must start a spin');
       await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 12000 });
-      console.log('  [PASS] (d) Space on Library (outside an input) successfully started a spin.');
+      printLog('  [PASS] (d) Space on Library (outside an input) successfully started a spin.');
 
       // ─────────────────────────────────────────────────────────────
       // e) /t/<id> still opens the topic
       // ─────────────────────────────────────────────────────────────
-      console.log('\n[TEST e] Verifying /t/<id> still opens the topic...');
+      printLog('\n[TEST e] Verifying /t/<id> still opens the topic...');
       const testTopicId = 'multi-head-self-attention';
       await page.goto(`${baseUrl}/t/${testTopicId}`, { waitUntil: 'networkidle' });
 
@@ -181,7 +183,7 @@ async function runRealTabsE2E() {
       assert.strictEqual(spinVisibleOnDeeplink, true, 'Spin screen must contain the topic card');
       assert.ok(spinTopOnDeeplink !== null && spinTopOnDeeplink >= -20 && spinTopOnDeeplink <= 80, `Spin section must be scrolled to top on /t/<id>, got: ${spinTopOnDeeplink}`);
       assert.ok(topicHeading.includes('Scaled Dot-Product'), `Expected heading to contain "Scaled Dot-Product", got: "${topicHeading}"`);
-      console.log(`  [PASS] (e) Deeplink /t/${testTopicId} opened topic card "${topicHeading}".`);
+      printLog(`  [PASS] (e) Deeplink /t/${testTopicId} opened topic card "${topicHeading}".`);
 
       await context.close();
     }
@@ -189,9 +191,9 @@ async function runRealTabsE2E() {
     // ─────────────────────────────────────────────────────────────
     // Capture mobile 390x844 screenshots of all 3 screens
     // ─────────────────────────────────────────────────────────────
-    console.log('\n------------------------------------------------------------');
-    console.log('CAPTURING SCREENSHOTS AT 390x844 UNDER evidence/real-tabs/');
-    console.log('------------------------------------------------------------');
+    printLog('\n------------------------------------------------------------');
+    printLog('CAPTURING SCREENSHOTS AT 390x844 UNDER evidence/real-tabs/');
+    printLog('------------------------------------------------------------');
 
     const snapContext = await browser.newContext({ viewport: { width: 390, height: 844 } });
     const snapPage = await snapContext.newPage();
@@ -206,7 +208,7 @@ async function runRealTabsE2E() {
     await snapPage.waitForTimeout(400);
     const spinPath = path.join(evidenceDir, 'spin_390x844.png');
     await snapPage.screenshot({ path: spinPath });
-    console.log(`  Saved screenshot: ${spinPath}`);
+    printLog(`  Saved screenshot: ${spinPath}`);
 
     // 2. Library Screen
     await snapPage.locator('button[data-nav-id="library"]:visible').first().click();
@@ -214,7 +216,7 @@ async function runRealTabsE2E() {
     await snapPage.waitForTimeout(400);
     const libraryPath = path.join(evidenceDir, 'library_390x844.png');
     await snapPage.screenshot({ path: libraryPath });
-    console.log(`  Saved screenshot: ${libraryPath}`);
+    printLog(`  Saved screenshot: ${libraryPath}`);
 
     // 3. Progress Screen
     await snapPage.locator('button[data-nav-id="progress"]:visible').first().click();
@@ -222,13 +224,13 @@ async function runRealTabsE2E() {
     await snapPage.waitForTimeout(400);
     const progressPath = path.join(evidenceDir, 'progress_390x844.png');
     await snapPage.screenshot({ path: progressPath });
-    console.log(`  Saved screenshot: ${progressPath}`);
+    printLog(`  Saved screenshot: ${progressPath}`);
 
     await snapContext.close();
 
-    console.log('\n============================================================');
-    console.log('ALL REAL TABS E2E ASSERTIONS PASSED (viewports: 1280x800 & 390x844)');
-    console.log('============================================================\n');
+    printLog('\n============================================================');
+    printLog('ALL REAL TABS E2E ASSERTIONS PASSED (viewports: 1280x800 & 390x844)');
+    printLog('============================================================\n');
   } finally {
     await browser.close();
     server.close();

@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -25,7 +27,7 @@ const topics = JSON.parse(rawData);
 let lessonsMap = {};
 if (fs.existsSync(lessonsFile)) {
   lessonsMap = JSON.parse(fs.readFileSync(lessonsFile, 'utf8'));
-  console.log(`Loaded ${Object.keys(lessonsMap).length} lessons from ${lessonsFile}`);
+  printLog(`Loaded ${Object.keys(lessonsMap).length} lessons from ${lessonsFile}`);
 }
 
 if (topics.length !== 692) {
@@ -108,7 +110,7 @@ for (const [groupName, expCount] of Object.entries(expectedGroups)) {
   if (actualCount !== expCount) {
     throw new Error(`FATAL: Group '${groupName}' count mismatch: expected ${expCount}, got ${actualCount}`);
   }
-  console.log(`  [OK] Group '${groupName}': ${actualCount} topics`);
+  printLog(`  [OK] Group '${groupName}': ${actualCount} topics`);
 }
 
 // Write ES Module group chunks
@@ -125,7 +127,7 @@ export const topics = ${JSON.stringify(groupTopics, null, 2)};
 export default topics;
 `;
   fs.writeFileSync(outFile, content, 'utf8');
-  console.log(`Generated ${outFile} (${groupTopics.length} topics)`);
+  printLog(`Generated ${outFile} (${groupTopics.length} topics)`);
 }
 
 // Write starterTopics.js
@@ -138,13 +140,13 @@ if (starterTopicsList.length === 16) {
 export const starterTopics = ${JSON.stringify(starterTopicsList, null, 2)};
 `;
   fs.writeFileSync(starterTopicsFile, starterContent, 'utf8');
-  console.log(`Generated ${starterTopicsFile} (16 starter topics)`);
+  printLog(`Generated ${starterTopicsFile} (16 starter topics)`);
 }
 
 // Write topicIds.json containing every curated topic id
 const topicIdsFile = path.join(rootDir, 'src', 'data', 'topicIds.json');
 const allTopicIds = topics.map(t => t.id);
 fs.writeFileSync(topicIdsFile, JSON.stringify(allTopicIds, null, 2), 'utf8');
-console.log(`Generated ${topicIdsFile} (${allTopicIds.length} topic ids)`);
+printLog(`Generated ${topicIdsFile} (${allTopicIds.length} topic ids)`);
 
-console.log(`\n[SUCCESS]: Successfully partitioned all ${topics.length} topics across 4 group modules, starterTopics.js, and topicIds.json.\n`);
+printLog(`\n[SUCCESS]: Successfully partitioned all ${topics.length} topics across 4 group modules, starterTopics.js, and topicIds.json.\n`);

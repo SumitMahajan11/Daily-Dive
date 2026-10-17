@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 /**
  * Reproduction and Verification Script for Round 2 LEADs and Selector Invariants
  */
@@ -19,12 +21,12 @@ import {
 } from '../src/lib/roulette.js';
 import { loadAllBuiltinTopics } from '../src/lib/topicLoader.js';
 
-console.log('================================================================');
-console.log('       ROUND 4: SOURCE OF TRUTH & LEAD RECONCILIATION SUITE      ');
-console.log('================================================================\n');
+printLog('================================================================');
+printLog('       ROUND 4: SOURCE OF TRUTH & LEAD RECONCILIATION SUITE      ');
+printLog('================================================================\n');
 
 // ── REPRODUCTION 1: History Pruning Corrupting Explored & Review Queue (Old Bug) ──
-console.log('>>> [LEAD 1 & 2 REPRODUCTION]: Demonstrating Old Bug vs Fixed Selector Architecture');
+printLog('>>> [LEAD 1 & 2 REPRODUCTION]: Demonstrating Old Bug vs Fixed Selector Architecture');
 
 // Create 120 topics progress.
 // topic_0 was last seen 70 days ago (and ONLY 70 days ago).
@@ -102,22 +104,22 @@ const oldReviewQueueAfterPrune = simulatedTopics
   .sort((a, b) => new Date(simulatedProgress[a.id]?.last_seen || 0) - new Date(simulatedProgress[b.id]?.last_seen || 0))
   .slice(0, 4);
 
-console.log('--- OLD BUGGY BEHAVIOR (Derived from History) ---');
-console.log(`Unpruned History: ${unprunedHistory.length} entries -> Old Explored: ${oldExploredBeforePrune}`);
-console.log(`Pruned History: ${prunedHistory.length} entries -> Old Explored: ${oldExploredAfterPrune} (DROPPED FROM 120 TO ${oldExploredAfterPrune}!)`);
-console.log(`Old Review Queue topic_0 (seen 70 days ago) included after prune? ${oldReviewQueueAfterPrune.some(t => t.id === 'topic_0') ? 'YES' : 'NO (DROPPED/EVICTED!)'}`);
+printLog('--- OLD BUGGY BEHAVIOR (Derived from History) ---');
+printLog(`Unpruned History: ${unprunedHistory.length} entries -> Old Explored: ${oldExploredBeforePrune}`);
+printLog(`Pruned History: ${prunedHistory.length} entries -> Old Explored: ${oldExploredAfterPrune} (DROPPED FROM 120 TO ${oldExploredAfterPrune}!)`);
+printLog(`Old Review Queue topic_0 (seen 70 days ago) included after prune? ${oldReviewQueueAfterPrune.some(t => t.id === 'topic_0') ? 'YES' : 'NO (DROPPED/EVICTED!)'}`);
 
 // Fixed derivations using single source of truth selectors:
 const fixedExploredAfterPrune = selectExploredCount(simulatedProgress);
 const fixedReviewQueueAfterPrune = selectReviewQueue(simulatedTopics, simulatedProgress, 4);
 const fixedTotalSpins = selectTotalSpins({ userProgressMap: simulatedProgress, history: prunedHistory });
 
-console.log('\n--- FIXED SELECTOR ARCHITECTURE (Derived from Persistent user_progress) ---');
-console.log(`Persistent Explored count: ${fixedExploredAfterPrune} (PRESERVED AT EXACTLY 120)`);
-console.log(`Persistent Review Queue size: ${fixedReviewQueueAfterPrune.length}`);
-console.log(`First item in Review Queue: "${fixedReviewQueueAfterPrune[0]?.id}" (last seen: ${simulatedProgress[fixedReviewQueueAfterPrune[0]?.id]?.last_seen})`);
-console.log(`Topic seen 70 days ago (topic_0) is still at front of review queue: ${fixedReviewQueueAfterPrune[0]?.id === 'topic_0' ? 'YES (VERIFIED)' : 'NO'}`);
-console.log(`Total Spins: ${fixedTotalSpins}`);
+printLog('\n--- FIXED SELECTOR ARCHITECTURE (Derived from Persistent user_progress) ---');
+printLog(`Persistent Explored count: ${fixedExploredAfterPrune} (PRESERVED AT EXACTLY 120)`);
+printLog(`Persistent Review Queue size: ${fixedReviewQueueAfterPrune.length}`);
+printLog(`First item in Review Queue: "${fixedReviewQueueAfterPrune[0]?.id}" (last seen: ${simulatedProgress[fixedReviewQueueAfterPrune[0]?.id]?.last_seen})`);
+printLog(`Topic seen 70 days ago (topic_0) is still at front of review queue: ${fixedReviewQueueAfterPrune[0]?.id === 'topic_0' ? 'YES (VERIFIED)' : 'NO'}`);
+printLog(`Total Spins: ${fixedTotalSpins}`);
 
 if (fixedExploredAfterPrune !== 120) {
   throw new Error(`Expected explored to be 120, got ${fixedExploredAfterPrune}`);
@@ -127,7 +129,7 @@ if (fixedReviewQueueAfterPrune[0]?.id !== 'topic_0') {
 }
 
 // ── REPRODUCTION 2: Streak Reconciliation Invariant (Lead 3) ──
-console.log('\n>>> [LEAD 3 REPRODUCTION]: Best streak >= current streak and historical max');
+printLog('\n>>> [LEAD 3 REPRODUCTION]: Best streak >= current streak and historical max');
 
 const streakHistory = [
   { local_date: '2026-09-20', action: 'spin', timestamp: '2026-09-20T10:00:00Z' },
@@ -143,31 +145,31 @@ const streakMetrics = selectStreakMetrics({
   nowDate: now
 });
 
-console.log(`Stored longest: 1 | Historical run: 3 days (Sep 20-22) | Current run: 1 day (Oct 10)`);
-console.log(`Reconciled Current Streak: ${streakMetrics.current_streak}`);
-console.log(`Reconciled Best Streak: ${streakMetrics.longest_streak}`);
+printLog(`Stored longest: 1 | Historical run: 3 days (Sep 20-22) | Current run: 1 day (Oct 10)`);
+printLog(`Reconciled Current Streak: ${streakMetrics.current_streak}`);
+printLog(`Reconciled Best Streak: ${streakMetrics.longest_streak}`);
 if (streakMetrics.longest_streak < 3) {
   throw new Error(`Expected longest streak >= 3, got ${streakMetrics.longest_streak}`);
 }
 
 // ── REPRODUCTION 3: Reel Filter Invariant (Lead 4) ──
-console.log('\n>>> [LEAD 4 REPRODUCTION]: Reel filtered by enabled categories');
+printLog('\n>>> [LEAD 4 REPRODUCTION]: Reel filtered by enabled categories');
 const customEnabled = { 'tech': true, 'tech::ai-ml': true, 'mind-growth': false };
 const filteredReel = BASE_REEL_CATEGORIES.filter(cat => {
   if (customEnabled[cat.group] === false) return false;
   return true;
 });
-console.log(`Reel contains only enabled categories: ${filteredReel.every(c => c.group !== 'mind-growth') ? 'YES' : 'NO'}`);
+printLog(`Reel contains only enabled categories: ${filteredReel.every(c => c.group !== 'mind-growth') ? 'YES' : 'NO'}`);
 
 // ── REPRODUCTION 4: Category Tree Non-Empty (Lead 5) ──
-console.log('\n>>> [LEAD 5 REPRODUCTION]: Category Tree Topic Counts');
+printLog('\n>>> [LEAD 5 REPRODUCTION]: Category Tree Topic Counts');
 const allBuiltin = await loadAllBuiltinTopics();
 CATEGORY_TREE.forEach(g => {
   const count = allBuiltin.filter(t => (t.group_name || t.group) === g.group).length;
-  console.log(`  - ${g.label} (${g.group}): ${count} topics`);
+  printLog(`  - ${g.label} (${g.group}): ${count} topics`);
   if (count === 0) throw new Error(`Empty category group: ${g.group}`);
 });
 
-console.log('\n================================================================');
-console.log('ALL ROUND 4 SOURCE-OF-TRUTH INVARIANTS PROVEN & VERIFIED!');
-console.log('================================================================\n');
+printLog('\n================================================================');
+printLog('ALL ROUND 4 SOURCE-OF-TRUTH INVARIANTS PROVEN & VERIFIED!');
+printLog('================================================================\n');

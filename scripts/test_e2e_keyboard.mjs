@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -37,7 +39,7 @@ function serveStatic(distDir, port = 4183) {
 }
 
 async function testKeyboard() {
-  console.log('=== [E2E] KEYBOARD NAVIGATION & ACCESSIBILITY SHORTCUTS TEST ===\n');
+  printLog('=== [E2E] KEYBOARD NAVIGATION & ACCESSIBILITY SHORTCUTS TEST ===\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -45,20 +47,20 @@ async function testKeyboard() {
   }
 
   const server = await serveStatic(distDir, 4183);
-  console.log('1. Static server listening on http://localhost:4183');
+  printLog('1. Static server listening on http://localhost:4183');
 
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext();
   const page = await context.newPage();
 
-  console.log('2. Loading Daily Dive...');
+  printLog('2. Loading Daily Dive...');
   await page.goto('http://localhost:4183/');
   await page.evaluate(() => localStorage.setItem('daily_dive_onboarding_seen', 'true'));
   await page.reload();
   await page.waitForSelector('#spin');
 
   // Test Space to Spin
-  console.log('3. Testing Spacebar key on Spin button...');
+  printLog('3. Testing Spacebar key on Spin button...');
   const spinBtn = page.locator('#spin button').filter({ hasText: /spin|dive/i }).first();
   await spinBtn.focus();
   const isFocused = await spinBtn.evaluate(el => document.activeElement === el);
@@ -67,7 +69,7 @@ async function testKeyboard() {
   await page.waitForTimeout(500);
 
   // Test Tab Navigation to Library
-  console.log('4. Testing Tab and Enter navigation to Library...');
+  printLog('4. Testing Tab and Enter navigation to Library...');
   const libraryNavBtn = page.locator('aside button[data-nav-id="library"], nav button[data-nav-id="library"], nav button:has-text("Library")').first();
   await libraryNavBtn.focus();
   await page.keyboard.press('Enter');
@@ -79,11 +81,11 @@ async function testKeyboard() {
     const rect = el.getBoundingClientRect();
     return rect.top >= -100 && rect.top <= window.innerHeight;
   });
-  console.log(`   Library scrolled into view via Enter: ${libraryInView}`);
+  printLog(`   Library scrolled into view via Enter: ${libraryInView}`);
   assert.ok(libraryInView, 'Enter key on Library nav button must scroll Library into view');
 
   // Test Escape key behavior (e.g. closing modals or drawers)
-  console.log('5. Testing Escape key handling...');
+  printLog('5. Testing Escape key handling...');
   // Open Settings or reset modal
   const settingsGearBtn = page.locator('header button[aria-label="Settings"]');
   await settingsGearBtn.click();
@@ -97,15 +99,15 @@ async function testKeyboard() {
   // Check that confirmation modal is open
   const modal = page.locator('[role="dialog"], [role="alertdialog"], .modal-container').first();
   await modal.waitFor({ state: 'visible', timeout: 3000 });
-  console.log('   Confirmation modal opened, pressing Escape...');
+  printLog('   Confirmation modal opened, pressing Escape...');
   await page.keyboard.press('Escape');
   await page.waitForTimeout(300);
 
   const modalAfterEscape = await modal.isVisible().catch(() => false);
   assert.ok(!modalAfterEscape, 'Escape key must dismiss open modal dialog');
-  console.log('   Modal dismissed cleanly by Escape key.');
+  printLog('   Modal dismissed cleanly by Escape key.');
 
-  console.log('\n[PASS]: Keyboard navigation verified successfully.');
+  printLog('\n[PASS]: Keyboard navigation verified successfully.');
 
   await browser.close();
   server.close();

@@ -1,8 +1,10 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { generateDailyReminderICS, formatTo24Hour } from '../src/lib/calendar.js';
 
-console.log('================================================================');
-console.log('            PART C: SHARE & CALENDAR REMINDER TEST              ');
-console.log('================================================================\n');
+printLog('================================================================');
+printLog('            PART C: SHARE & CALENDAR REMINDER TEST              ');
+printLog('================================================================\n');
 
 let totalTests = 0;
 let passedTests = 0;
@@ -11,7 +13,7 @@ function assert(condition, message) {
   totalTests++;
   if (condition) {
     passedTests++;
-    console.log(`  ✓ PASS: ${message}`);
+    printLog(`  ✓ PASS: ${message}`);
   } else {
     console.error(`  ✗ FAIL: ${message}`);
     throw new Error(`Assertion failed: ${message}`);
@@ -19,15 +21,15 @@ function assert(condition, message) {
 }
 
 // ── TEST 1: .ics Calendar Event Generation & Content Verification ──
-console.log('[1/2] Testing .ics calendar reminder generation...');
+printLog('[1/2] Testing .ics calendar reminder generation...');
 
 const time12 = '08:30 AM';
 const appUrl = 'https://daily-dive.vercel.app';
 const icsContent = generateDailyReminderICS(time12, appUrl);
 
-console.log('--- LITERAL GENERATED .ICS CONTENT ---');
-console.log(icsContent);
-console.log('--------------------------------------\n');
+printLog('--- LITERAL GENERATED .ICS CONTENT ---');
+printLog(icsContent);
+printLog('--------------------------------------\n');
 
 assert(icsContent.includes('BEGIN:VCALENDAR'), 'Contains BEGIN:VCALENDAR');
 assert(icsContent.includes('VERSION:2.0'), 'Contains VERSION:2.0');
@@ -41,7 +43,7 @@ assert(icsContent.includes('TRIGGER:-PT0M'), 'Alarm trigger is set to on-time no
 assert(icsContent.includes('END:VCALENDAR'), 'Contains END:VCALENDAR');
 
 // ── TEST 2: Valid vs Invalid Slug Deeplinking Simulation ──
-console.log('\n[2/2] Testing Slug Deeplinking Logic...');
+printLog('\n[2/2] Testing Slug Deeplinking Logic...');
 
 const mockTopics = [
   { id: 'tech-ai-101', title: 'RLHF Policy Alignment', slug: 'rlhf-policy-alignment', category: 'ai-ml' },
@@ -77,6 +79,6 @@ assert(unknownResult === null, 'Unknown slug falls back silently to null (render
 const emptyResult = resolveDeeplinkTopic('', mockTopics);
 assert(emptyResult === null, 'Empty slug parameter falls back silently to null');
 
-console.log('\n================================================================');
-console.log(`PART C TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
-console.log('================================================================\n');
+printLog('\n================================================================');
+printLog(`PART C TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
+printLog('================================================================\n');

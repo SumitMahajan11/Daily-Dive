@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -44,9 +46,9 @@ function serveStaticApp(distDir) {
 }
 
 async function runReviewConsumeTest() {
-  console.log('================================================================');
-  console.log('       REVIEW TOPIC STATE CONSUMPTION TEST                      ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('       REVIEW TOPIC STATE CONSUMPTION TEST                      ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -74,14 +76,14 @@ async function runReviewConsumeTest() {
     await page.waitForSelector('[data-testid="review-queue-section"]');
 
     // 1. Locate review button in Progress section
-    console.log('[Step 1] Finding and clicking Review button on a topic in Progress...');
+    printLog('[Step 1] Finding and clicking Review button on a topic in Progress...');
     const reviewBtn = page.locator('[data-testid="review-queue-section"] button:has-text("Review")').first();
     await reviewBtn.waitFor({ state: 'visible', timeout: 5000 });
     
     // Find the title of topic A being reviewed
     const topicARow = page.locator('[data-testid="review-queue-section"] div:has(> button:has-text("Review"))').first();
     const topicATitle = (await topicARow.locator('span.font-semibold, span.font-medium, div.font-semibold, h3').first().innerText()).trim();
-    console.log(`  Topic A to review: "${topicATitle}"`);
+    printLog(`  Topic A to review: "${topicATitle}"`);
 
     await reviewBtn.click();
     await page.waitForTimeout(800);
@@ -91,10 +93,10 @@ async function runReviewConsumeTest() {
     await topicHeading.waitFor({ state: 'visible', timeout: 5000 });
     const currentTitleAfterReview = (await topicHeading.innerText()).trim();
     assert.match(currentTitleAfterReview, new RegExp(topicATitle.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'i'), `Expected card A "${topicATitle}" to be visible`);
-    console.log(`  [PASS] Topic card A displayed: "${currentTitleAfterReview}"`);
+    printLog(`  [PASS] Topic card A displayed: "${currentTitleAfterReview}"`);
 
     // 2. Spin to topic B
-    console.log('[Step 2] Spinning to topic B...');
+    printLog('[Step 2] Spinning to topic B...');
     const spinBtn = page.locator('#spin [data-testid="primary-spin-button"], #spin button:has-text("Spin another")').first();
     await spinBtn.click();
 
@@ -107,19 +109,19 @@ async function runReviewConsumeTest() {
     await page.waitForTimeout(1000);
 
     const topicBTitle = (await topicHeading.innerText()).trim();
-    console.log(`  Topic B after spin: "${topicBTitle}"`);
+    printLog(`  Topic B after spin: "${topicBTitle}"`);
     assert.notStrictEqual(topicBTitle, topicATitle, 'Topic B must be different from Topic A after spin');
-    console.log(`  [PASS] Spun successfully to topic B: "${topicBTitle}"`);
+    printLog(`  [PASS] Spun successfully to topic B: "${topicBTitle}"`);
 
     // 3. Open Settings (unmounts SpinScreen)
-    console.log('[Step 3] Opening Settings (unmounting SpinScreen)...');
+    printLog('[Step 3] Opening Settings (unmounting SpinScreen)...');
     const settingsBtn = page.locator('button[aria-label="Settings"]');
     await settingsBtn.click();
     await page.waitForSelector('h1:has-text("Settings"), button:has-text("Back")', { timeout: 5000 });
-    console.log('  Settings screen mounted.');
+    printLog('  Settings screen mounted.');
 
     // 4. Click Back (remounts SpinScreen)
-    console.log('[Step 4] Clicking Back (remounting SpinScreen)...');
+    printLog('[Step 4] Clicking Back (remounting SpinScreen)...');
     const backBtn = page.locator('[data-testid="settings-back-button"], button[aria-label="Back"]').first();
     await backBtn.click();
     await page.waitForSelector('#spin', { timeout: 5000 });
@@ -130,16 +132,16 @@ async function runReviewConsumeTest() {
     const isCardVisible = await cardLocator.isVisible();
     if (isCardVisible) {
       const titleAfterBack = (await cardLocator.innerText()).trim();
-      console.log(`  Topic card after returning from Settings: "${titleAfterBack}"`);
+      printLog(`  Topic card after returning from Settings: "${titleAfterBack}"`);
       assert.notStrictEqual(titleAfterBack, topicATitle, `Card must not show Topic A ("${topicATitle}")`);
-      console.log(`  [PASS] Card shows "${titleAfterBack}", not Topic A ("${topicATitle}")`);
+      printLog(`  [PASS] Card shows "${titleAfterBack}", not Topic A ("${topicATitle}")`);
     } else {
-      console.log(`  [PASS] Card does not show Topic A ("${topicATitle}"): SpinScreen remounted without stale reviewedTopic.`);
+      printLog(`  [PASS] Card does not show Topic A ("${topicATitle}"): SpinScreen remounted without stale reviewedTopic.`);
     }
 
-    console.log('\n================================================================');
-    console.log('       ALL REVIEW CONSUMPTION ASSERTIONS PASSED!                ');
-    console.log('================================================================');
+    printLog('\n================================================================');
+    printLog('       ALL REVIEW CONSUMPTION ASSERTIONS PASSED!                ');
+    printLog('================================================================');
   } finally {
     await browser.close();
     server.close();

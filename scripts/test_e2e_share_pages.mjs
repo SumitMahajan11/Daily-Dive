@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -61,9 +63,9 @@ function fetchRawHtml(url) {
 }
 
 async function runSharePagesE2ETests() {
-  console.log('================================================================');
-  console.log('       ROUND 16: SHARE PAGES & OPEN GRAPH E2E SUITE             ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('       ROUND 16: SHARE PAGES & OPEN GRAPH E2E SUITE             ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve(__dirname, '../dist');
   if (!fs.existsSync(distDir)) {
@@ -72,10 +74,10 @@ async function runSharePagesE2ETests() {
 
   const { server, port } = await serveStaticWithShareHandler(distDir);
   const baseUrl = `http://127.0.0.1:${port}`;
-  console.log(`Test server running at ${baseUrl}`);
+  printLog(`Test server running at ${baseUrl}`);
 
   // 1. Crawler / Serverless function direct inspection (No JS execution)
-  console.log('Testing serverless response for link crawlers (WhatsApp/Facebook/Twitter)...');
+  printLog('Testing serverless response for link crawlers (WhatsApp/Facebook/Twitter)...');
   const crawlerRes = await fetchRawHtml(`${baseUrl}/t/multi-head-self-attention`);
   assert.strictEqual(crawlerRes.statusCode, 200, 'Crawler request must return 200 OK');
   assert.ok(crawlerRes.headers['content-type'].includes('text/html'), 'Response must be text/html');
@@ -85,7 +87,7 @@ async function runSharePagesE2ETests() {
   assert.ok(crawlerRes.body.includes(`/t/multi-head-self-attention`), 'Must contain canonical /t/ URL in og:url');
   assert.ok(crawlerRes.body.includes(`/og-default.png`), 'Must contain /og-default.png in og:image');
   assert.ok(crawlerRes.body.includes('<meta name="twitter:card" content="summary_large_image">'), 'Must contain twitter:card');
-  console.log('  [PASS] Serverless HTML contains complete Open Graph and Twitter tags for crawlers.');
+  printLog('  [PASS] Serverless HTML contains complete Open Graph and Twitter tags for crawlers.');
 
   // 2. Playwright Browser Tests
   const browser = await chromium.launch({ headless: true });
@@ -101,7 +103,7 @@ async function runSharePagesE2ETests() {
     });
 
     // TEST A: Opening /t/<id> directly in a browser lands on the topic card
-    console.log('\nTesting opening /t/multi-head-self-attention in browser...');
+    printLog('\nTesting opening /t/multi-head-self-attention in browser...');
     await page.goto(`${baseUrl}/t/multi-head-self-attention`, { waitUntil: 'networkidle' });
 
     // Assert that the page redirects and lands on the topic card
@@ -111,10 +113,10 @@ async function runSharePagesE2ETests() {
 
     const cardTitle = await postSpinCard.locator('h2').textContent();
     assert.strictEqual(cardTitle.trim(), 'Scaled Dot-Product', 'Topic card title must match topic');
-    console.log(`  [PASS] Navigating to /t/multi-head-self-attention landed on topic card: "${cardTitle.trim()}".`);
+    printLog(`  [PASS] Navigating to /t/multi-head-self-attention landed on topic card: "${cardTitle.trim()}".`);
 
     // TEST B: Clicking Share button copies /t/<id> to clipboard
-    console.log('\nTesting Share button copies /t/<id> to clipboard...');
+    printLog('\nTesting Share button copies /t/<id> to clipboard...');
     // Override navigator.share to ensure clipboard path is taken
     await page.evaluate(() => {
       if (navigator.share) delete navigator.share;
@@ -137,17 +139,17 @@ async function runSharePagesE2ETests() {
       `${baseUrl}/t/multi-head-self-attention`,
       `Clipboard text must match /t/<id> (got: ${clipboardText})`
     );
-    console.log(`  [PASS] Share button copied exact /t/<id> URL: ${clipboardText}`);
+    printLog(`  [PASS] Share button copied exact /t/<id> URL: ${clipboardText}`);
 
     // TEST C: Opening /t/unknown-id redirects to / without crash
-    console.log('\nTesting unknown topic id redirect...');
+    printLog('\nTesting unknown topic id redirect...');
     await page.goto(`${baseUrl}/t/unknown-topic-id-999`, { waitUntil: 'networkidle' });
     await page.waitForTimeout(500);
 
     const spinHeader = page.locator('#spin');
     await spinHeader.waitFor({ state: 'visible', timeout: 5000 });
     assert.strictEqual(await spinHeader.isVisible(), true, 'Unknown topic redirects to root Spin screen');
-    console.log('  [PASS] Unknown topic redirected gracefully to root Spin screen.');
+    printLog('  [PASS] Unknown topic redirected gracefully to root Spin screen.');
 
     await context.close();
   } finally {
@@ -155,8 +157,8 @@ async function runSharePagesE2ETests() {
     server.close();
   }
 
-  console.log('\nROUND 16 E2E SUITE COMPLETED SUCCESSFULLY!');
-  console.log('[PASS]: scripts/test_e2e_share_pages.mjs');
+  printLog('\nROUND 16 E2E SUITE COMPLETED SUCCESSFULLY!');
+  printLog('[PASS]: scripts/test_e2e_share_pages.mjs');
 }
 
 runSharePagesE2ETests().catch((err) => {

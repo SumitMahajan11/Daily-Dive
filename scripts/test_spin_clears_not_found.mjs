@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -44,9 +46,9 @@ function serveStaticApp(distDir) {
 }
 
 async function runSpinClearsNotFoundTest() {
-  console.log('================================================================');
-  console.log('       SPIN CLEARS NOT FOUND STATE TEST                         ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('       SPIN CLEARS NOT FOUND STATE TEST                         ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -67,17 +69,17 @@ async function runSpinClearsNotFoundTest() {
     });
 
     // 1. Open unknown topic deeplink
-    console.log('[Step 1] Navigating to /t/not-a-real-id...');
+    printLog('[Step 1] Navigating to /t/not-a-real-id...');
     await page.goto(`${baseUrl}/t/not-a-real-id`, { waitUntil: 'networkidle' });
 
     const notFoundCard = page.locator('[data-testid="topic-not-found-card"]');
     await notFoundCard.waitFor({ state: 'visible', timeout: 5000 });
     const notFoundText = await notFoundCard.innerText();
     assert.match(notFoundText, /Topic not found/i, 'Expected "Topic not found" card to be visible');
-    console.log('  [PASS] "Topic not found" card is visible.');
+    printLog('  [PASS] "Topic not found" card is visible.');
 
     // 2. Trigger spin
-    console.log('[Step 2] Triggering spin while "Topic not found" is displayed...');
+    printLog('[Step 2] Triggering spin while "Topic not found" is displayed...');
     const spinBtn = page.locator('[data-testid="primary-spin-button"]');
     await spinBtn.click();
     await page.waitForTimeout(600);
@@ -90,18 +92,18 @@ async function runSpinClearsNotFoundTest() {
     await page.waitForTimeout(1000);
 
     // 3. Confirm "Topic not found" card is gone and post-spin card is visible
-    console.log('[Step 3] Confirming "Topic not found" card is gone after spin lands...');
+    printLog('[Step 3] Confirming "Topic not found" card is gone after spin lands...');
     const notFoundCount = await page.locator('[data-testid="topic-not-found-card"]').count();
     assert.strictEqual(
       notFoundCount,
       0,
       'Expected "Topic not found" card to be gone after spin lands, but it is still in DOM!'
     );
-    console.log('  [PASS] "Topic not found" card is completely gone after spin lands.');
+    printLog('  [PASS] "Topic not found" card is completely gone after spin lands.');
 
-    console.log('\n================================================================');
-    console.log('       ALL SPIN CLEARS NOT FOUND CHECKS PASSED!                 ');
-    console.log('================================================================');
+    printLog('\n================================================================');
+    printLog('       ALL SPIN CLEARS NOT FOUND CHECKS PASSED!                 ');
+    printLog('================================================================');
   } finally {
     await browser.close();
     server.close();

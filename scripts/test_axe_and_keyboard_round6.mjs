@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 import http from 'node:http';
@@ -39,7 +41,7 @@ function serveStatic(distDir, port = 4186) {
 
 function assertNoSeriousOrCritical(screenName, results) {
   const seriousOrCritical = results.violations.filter(v => ['serious', 'critical'].includes(v.impact));
-  console.log(`[AXE] ${screenName}: ${results.violations.length} total violations, ${seriousOrCritical.length} serious/critical`);
+  printLog(`[AXE] ${screenName}: ${results.violations.length} total violations, ${seriousOrCritical.length} serious/critical`);
   if (seriousOrCritical.length > 0) {
     seriousOrCritical.forEach(v => {
       console.error(`  - [${v.impact.toUpperCase()}] ${v.help} (${v.id})`);
@@ -61,7 +63,7 @@ async function runAudit() {
   const context = await browser.newContext({ viewport: { width: 1280, height: 800 } });
   const page = await context.newPage();
 
-  console.log('=== AXE ACCESSIBILITY & KEYBOARD VALIDATION ===');
+  printLog('=== AXE ACCESSIBILITY & KEYBOARD VALIDATION ===');
   await page.goto('http://localhost:4186');
   await page.evaluate(() => {
     localStorage.setItem('daily_dive_onboarding_seen', 'true');
@@ -70,14 +72,14 @@ async function runAudit() {
   await page.waitForSelector('#spin');
 
   // 1. Run Axe Core on initial Spin screen
-  console.log('\n1. Auditing Spin Screen with Axe...');
+  printLog('\n1. Auditing Spin Screen with Axe...');
   const spinResults = await new AxeBuilder({ page })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
   assertNoSeriousOrCritical('Spin', spinResults);
 
   // 2. Audit Library Screen
-  console.log('\n2. Auditing Library Screen with Axe...');
+  printLog('\n2. Auditing Library Screen with Axe...');
   await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
   await page.waitForTimeout(500);
   const libraryResults = await new AxeBuilder({ page })
@@ -86,7 +88,7 @@ async function runAudit() {
   assertNoSeriousOrCritical('Library', libraryResults);
 
   // 3. Audit Progress Screen
-  console.log('\n3. Auditing Progress Screen with Axe...');
+  printLog('\n3. Auditing Progress Screen with Axe...');
   await page.evaluate(() => document.getElementById('progress')?.scrollIntoView());
   await page.waitForTimeout(500);
   const progressResults = await new AxeBuilder({ page })
@@ -95,7 +97,7 @@ async function runAudit() {
   assertNoSeriousOrCritical('Progress', progressResults);
 
   // 4. Audit Settings Screen
-  console.log('\n4. Auditing Settings Screen with Axe...');
+  printLog('\n4. Auditing Settings Screen with Axe...');
   await page.evaluate(() => document.getElementById('settings')?.scrollIntoView());
   await page.waitForTimeout(500);
   const settingsResults = await new AxeBuilder({ page })
@@ -104,7 +106,7 @@ async function runAudit() {
   assertNoSeriousOrCritical('Settings', settingsResults);
 
   // 4. Test Keyboard Navigation & Tab Switching via Enter
-  console.log('\n4. Testing Keyboard Navigation & Tab Activation via Enter...');
+  printLog('\n4. Testing Keyboard Navigation & Tab Activation via Enter...');
   await page.evaluate(() => window.scrollTo(0, 0));
   await page.waitForTimeout(300);
 
@@ -114,7 +116,7 @@ async function runAudit() {
   
   // Check visible focus ring / outline
   const isFocused = await libraryNavBtn.evaluate(el => document.activeElement === el);
-  console.log(`Library Nav Button focused: ${isFocused}`);
+  printLog(`Library Nav Button focused: ${isFocused}`);
   
   await page.keyboard.press('Enter');
   await page.waitForTimeout(1000);
@@ -125,7 +127,7 @@ async function runAudit() {
     const rect = el.getBoundingClientRect();
     return rect.top >= -50 && rect.top <= window.innerHeight;
   });
-  console.log(`Enter on Library Tab scrolled Library into view: ${libraryInView}`);
+  printLog(`Enter on Library Tab scrolled Library into view: ${libraryInView}`);
 
   // Focus Progress nav button and press Enter
   const progressNavBtn = page.locator('aside button[data-nav-id="progress"], nav button[data-nav-id="progress"]').first();
@@ -138,9 +140,9 @@ async function runAudit() {
     const rect = el.getBoundingClientRect();
     return rect.top >= -50 && rect.top <= window.innerHeight;
   });
-  console.log(`Enter on Progress Tab scrolled Progress into view: ${progressInView}`);
+  printLog(`Enter on Progress Tab scrolled Progress into view: ${progressInView}`);
 
-  console.log('\n[PASS]: Axe accessibility and keyboard navigation successfully verified.');
+  printLog('\n[PASS]: Axe accessibility and keyboard navigation successfully verified.');
   server.close();
   await browser.close();
 }

@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -37,9 +39,9 @@ function serveStatic(distDir, port = 4210) {
 }
 
 async function runSpinTimingTest() {
-  console.log('================================================================');
-  console.log('     SPIN DECELERATION & SYNCHRONIZED AUDIO TIMING TEST         ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('     SPIN DECELERATION & SYNCHRONIZED AUDIO TIMING TEST         ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -115,7 +117,7 @@ async function runSpinTimingTest() {
     const spinBtn = page.locator('#spin button[data-testid="primary-spin-button"]');
     await spinBtn.waitFor({ state: 'visible', timeout: 5000 });
 
-    console.log('[1/6] Clicking Spin and testing in-progress state...');
+    printLog('[1/6] Clicking Spin and testing in-progress state...');
     await page.evaluate(() => {
       window.__spin_spy.clickTime = performance.now();
     });
@@ -127,15 +129,15 @@ async function runSpinTimingTest() {
     const btnText = await spinBtn.innerText();
     assert.strictEqual(isDisabled, true, 'Spin button must be disabled while spinning');
     assert.match(btnText, /Spinning/i, 'Spin button must display "Spinning..." while spinning');
-    console.log(`  [PASS] Button disabled = ${isDisabled}, button text = "${btnText.trim()}"`);
+    printLog(`  [PASS] Button disabled = ${isDisabled}, button text = "${btnText.trim()}"`);
 
     // (f) Space during a spin does NOT start another spin
-    console.log('\n[2/6] Pressing Space key during spin to test rejection of second spin...');
+    printLog('\n[2/6] Pressing Space key during spin to test rejection of second spin...');
     await page.keyboard.press('Space');
     await page.waitForTimeout(300);
 
     // Wait for the spin to complete and topic card to appear
-    console.log('\n[3/6] Waiting for spin to finish and topic card to appear...');
+    printLog('\n[3/6] Waiting for spin to finish and topic card to appear...');
     await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
     await page.waitForTimeout(600); // Allow landing settle
 
@@ -144,22 +146,22 @@ async function runSpinTimingTest() {
 
     // Verify Space key did not start a second spin (whoosh count must be exactly 1)
     assert.strictEqual(spy.spinCount, 1, 'Space during spin must NOT trigger a second spin');
-    console.log('  [PASS] (f) Only 1 spin was initiated; Space key during spin was ignored.');
+    printLog('  [PASS] (f) Only 1 spin was initiated; Space key during spin was ignored.');
 
     // a) Total time from click to landing is between 4000 and 5200 ms
     const totalTimeMs = spy.landingTime - spy.clickTime;
-    console.log(`\n[4/6] Verifying total time from click to landing: ${totalTimeMs.toFixed(1)} ms...`);
+    printLog(`\n[4/6] Verifying total time from click to landing: ${totalTimeMs.toFixed(1)} ms...`);
     assert.ok(
       totalTimeMs >= 4000 && totalTimeMs <= 5200,
       `Total time from click to landing must be between 4000 and 5200 ms, got ${totalTimeMs.toFixed(1)} ms`
     );
-    console.log(`  [PASS] (a) Total time is ${totalTimeMs.toFixed(1)} ms (within 4000-5200 ms).`);
+    printLog(`  [PASS] (a) Total time is ${totalTimeMs.toFixed(1)} ms (within 4000-5200 ms).`);
 
     // e) Number of ticks is at least 15
     const tickCount = spy.tickTimes.length;
-    console.log(`\n[5/6] Verifying tick count: ${tickCount} ticks recorded...`);
+    printLog(`\n[5/6] Verifying tick count: ${tickCount} ticks recorded...`);
     assert.ok(tickCount >= 15, `Number of ticks must be at least 15, got ${tickCount}`);
-    console.log(`  [PASS] (e) Number of ticks is ${tickCount} (>= 15).`);
+    printLog(`  [PASS] (e) Number of ticks is ${tickCount} (>= 15).`);
 
     // Compute tick gaps
     const gaps = [];
@@ -173,7 +175,7 @@ async function runSpinTimingTest() {
     const landingDelay = totalTimeMs - lastTickTime;
 
     // b) Gaps between consecutive ticks never get shorter after phase 1 (non-decreasing)
-    console.log('\n[6/6] Verifying gap progression & non-decreasing deceleration after Phase 1 (1200ms)...');
+    printLog('\n[6/6] Verifying gap progression & non-decreasing deceleration after Phase 1 (1200ms)...');
     let phase1EndIndex = 0;
     for (let i = 0; i < spy.tickTimes.length; i++) {
       if (spy.tickTimes[i] <= 1200) {
@@ -189,7 +191,7 @@ async function runSpinTimingTest() {
         );
       }
     }
-    console.log(`  [PASS] (b) All ${gaps.length - phase1EndIndex} gaps after Phase 1 are strictly non-decreasing.`);
+    printLog(`  [PASS] (b) All ${gaps.length - phase1EndIndex} gaps after Phase 1 are strictly non-decreasing.`);
 
     // c) Last tick gap is at least 3 times the first tick gap
     const ratio = lastGap / firstGap;
@@ -197,7 +199,7 @@ async function runSpinTimingTest() {
       ratio >= 3.0,
       `Last tick gap (${lastGap} ms) must be at least 3x the first tick gap (${firstGap} ms), ratio: ${ratio.toFixed(2)}`
     );
-    console.log(`  [PASS] (c) Last gap (${lastGap} ms) is ${ratio.toFixed(2)}x first gap (${firstGap} ms) (>= 3x).`);
+    printLog(`  [PASS] (c) Last gap (${lastGap} ms) is ${ratio.toFixed(2)}x first gap (${firstGap} ms) (>= 3x).`);
 
     // d) Landing sound plays after last tick and within 150 ms of landing moment (landing-ring appearance)
     assert.ok(
@@ -214,25 +216,25 @@ async function runSpinTimingTest() {
       cardDelayAfterLanding >= 250 && cardDelayAfterLanding <= 450,
       `Topic card must appear 250 to 450 ms after landing sound, diff: ${cardDelayAfterLanding.toFixed(1)} ms`
     );
-    console.log(`  [PASS] (d) Landing sound played after last tick (delay: ${landingDelay.toFixed(1)} ms) and within ${ringLandingDiff.toFixed(1)} ms of landing ring.`);
-    console.log(`  [PASS] (d2) Topic card appeared ${cardDelayAfterLanding.toFixed(1)} ms after landing sound (within 250-450 ms).`);
+    printLog(`  [PASS] (d) Landing sound played after last tick (delay: ${landingDelay.toFixed(1)} ms) and within ${ringLandingDiff.toFixed(1)} ms of landing ring.`);
+    printLog(`  [PASS] (d2) Topic card appeared ${cardDelayAfterLanding.toFixed(1)} ms after landing sound (within 250-450 ms).`);
 
     // Print measured numbers table
-    console.log('\n================================================================');
-    console.log('                 MEASURED TIMING NUMBERS                        ');
-    console.log('================================================================');
-    console.log(`Total Duration (Click to Landing): ${totalTimeMs.toFixed(1)} ms`);
-    console.log(`Total Ticks Count:                 ${tickCount}`);
-    console.log(`First Tick Gap:                    ${firstGap.toFixed(1)} ms`);
-    console.log(`Last Tick Gap:                     ${lastGap.toFixed(1)} ms`);
-    console.log(`Deceleration Ratio (Last / First): ${ratio.toFixed(2)}x`);
-    console.log(`Last Tick Time:                    ${lastTickTime.toFixed(1)} ms`);
-    console.log(`Landing Sound Delay (from last):   ${landingDelay.toFixed(1)} ms`);
-    console.log(`Landing Sound vs Ring Diff:        ${ringLandingDiff.toFixed(1)} ms`);
-    console.log(`Card Delay After Landing:          ${cardDelayAfterLanding.toFixed(1)} ms`);
-    console.log('\nTable of All Consecutive Tick Gaps (ms):');
-    console.log(gaps.map((g, idx) => `  [#${idx + 1}->#${idx + 2}] ${g.toFixed(1)} ms`).join('\n'));
-    console.log('================================================================\n');
+    printLog('\n================================================================');
+    printLog('                 MEASURED TIMING NUMBERS                        ');
+    printLog('================================================================');
+    printLog(`Total Duration (Click to Landing): ${totalTimeMs.toFixed(1)} ms`);
+    printLog(`Total Ticks Count:                 ${tickCount}`);
+    printLog(`First Tick Gap:                    ${firstGap.toFixed(1)} ms`);
+    printLog(`Last Tick Gap:                     ${lastGap.toFixed(1)} ms`);
+    printLog(`Deceleration Ratio (Last / First): ${ratio.toFixed(2)}x`);
+    printLog(`Last Tick Time:                    ${lastTickTime.toFixed(1)} ms`);
+    printLog(`Landing Sound Delay (from last):   ${landingDelay.toFixed(1)} ms`);
+    printLog(`Landing Sound vs Ring Diff:        ${ringLandingDiff.toFixed(1)} ms`);
+    printLog(`Card Delay After Landing:          ${cardDelayAfterLanding.toFixed(1)} ms`);
+    printLog('\nTable of All Consecutive Tick Gaps (ms):');
+    printLog(gaps.map((g, idx) => `  [#${idx + 1}->#${idx + 2}] ${g.toFixed(1)} ms`).join('\n'));
+    printLog('================================================================\n');
 
   } finally {
     await browser.close();

@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -40,7 +42,7 @@ function serveStatic(distDir) {
 }
 
 async function testReducedMotion() {
-  console.log('=== [E2E] PREFERS-REDUCED-MOTION LATENCY & AUDIO TEST ===\n');
+  printLog('=== [E2E] PREFERS-REDUCED-MOTION LATENCY & AUDIO TEST ===\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -48,7 +50,7 @@ async function testReducedMotion() {
   }
 
   const { server, port } = await serveStatic(distDir);
-  console.log(`1. Static server listening on http://localhost:${port}`);
+  printLog(`1. Static server listening on http://localhost:${port}`);
 
   const browser = await chromium.launch({ headless: true });
   
@@ -58,7 +60,7 @@ async function testReducedMotion() {
   });
   const page = await context.newPage();
 
-  console.log('2. Loading app with reducedMotion: "reduce"...');
+  printLog('2. Loading app with reducedMotion: "reduce"...');
   await page.goto(`http://localhost:${port}/`);
   await page.evaluate(() => {
     localStorage.setItem('daily_dive_onboarding_seen', 'true');
@@ -71,11 +73,11 @@ async function testReducedMotion() {
   const matchesReducedMotion = await page.evaluate(() => {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
   });
-  console.log(`   (prefers-reduced-motion: reduce) matches: ${matchesReducedMotion}`);
+  printLog(`   (prefers-reduced-motion: reduce) matches: ${matchesReducedMotion}`);
   assert.equal(matchesReducedMotion, true, 'Browser must report prefers-reduced-motion: reduce');
 
   // Spy on audio controller calls
-  console.log('3. Installing AudioController spy in browser...');
+  printLog('3. Installing AudioController spy in browser...');
   await page.evaluate(() => {
     window.__audio_ticks = 0;
     window.__audio_landings = 0;
@@ -94,7 +96,7 @@ async function testReducedMotion() {
   });
 
   // Focus Spin button
-  console.log('4. Focusing Spin button and triggering Space key press...');
+  printLog('4. Focusing Spin button and triggering Space key press...');
   const spinBtn = page.locator('#spin button[data-testid="primary-spin-button"], #spin button').filter({ hasText: /spin|dive/i }).first();
   await spinBtn.focus();
 
@@ -107,7 +109,7 @@ async function testReducedMotion() {
 
   await page.waitForSelector('#spin article h2, #spin article h3, #spin [data-testid="topic-title"], #spin h2', { timeout: 5000 });
   const latencyMs = Date.now() - startTime;
-  console.log(`   Latency from keypress to result visible: ${latencyMs} ms`);
+  printLog(`   Latency from keypress to result visible: ${latencyMs} ms`);
 
   // Hard assertion: latency < 300ms
   assert.ok(latencyMs < 300, `Result must appear in < 300ms under reduced motion. Took: ${latencyMs}ms`);
@@ -117,12 +119,12 @@ async function testReducedMotion() {
     ticks: window.__audio_ticks || 0,
     landings: window.__audio_landings || 0
   }));
-  console.log(`   AudioController Spies: ticks = ${audioStats.ticks}, landings = ${audioStats.landings}`);
+  printLog(`   AudioController Spies: ticks = ${audioStats.ticks}, landings = ${audioStats.landings}`);
 
   assert.equal(audioStats.ticks, 0, `Tick sound must not play under reduced motion (expected 0, got ${audioStats.ticks})`);
   assert.equal(audioStats.landings, 1, `Landing sound must play exactly once on result arrival (expected 1, got ${audioStats.landings})`);
 
-  console.log('\n[PASS]: Reduced motion latency (<300ms) and audio (tick=0, landing=1) verified with hard assertions.');
+  printLog('\n[PASS]: Reduced motion latency (<300ms) and audio (tick=0, landing=1) verified with hard assertions.');
 
   await browser.close();
   server.close();

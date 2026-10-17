@@ -2,9 +2,6 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { selectTotalSpins, selectExploredCount, selectLearnedCount } from '../src/lib/selectors.js';
 
-console.log('================================================================');
-console.log('       TEST: TOTAL DIVES RESILIENCE, PRUNE & BACKFILL           ');
-console.log('================================================================\n');
 
 test('Total Dives: remains constant after rolling history prune (>60 days / >150 entries)', () => {
   const now = new Date('2026-10-10T12:00:00.000Z').getTime();
@@ -38,7 +35,6 @@ test('Total Dives: remains constant after rolling history prune (>60 days / >150
 
   // Verify initial Total Dives before prune
   const totalBeforePrune = selectTotalSpins({ userProgressMap, history: fullHistory });
-  console.log(`  Initial Total Dives: ${totalBeforePrune} (Expected: ${expectedTotalDives})`);
   assert.equal(totalBeforePrune, expectedTotalDives, 'Initial Total Dives matches cumulative times_seen');
 
   // 3. Apply rolling history prune (keep <= 60 days, <= 150 entries)
@@ -47,13 +43,11 @@ test('Total Dives: remains constant after rolling history prune (>60 days / >150
     .filter(h => new Date(h.timestamp).getTime() >= cutoff)
     .slice(0, 150);
 
-  console.log(`  History pruned from ${fullHistory.length} -> ${prunedHistory.length} entries`);
   assert.ok(prunedHistory.length <= 150, 'Pruned history is <= 150 entries');
   assert.ok(prunedHistory.length < fullHistory.length, 'Older history entries were removed');
 
   // 4. Assert Total Dives remains strictly CONSTANT after history prune
   const totalAfterPrune = selectTotalSpins({ userProgressMap, history: prunedHistory });
-  console.log(`  Total Dives after History Prune: ${totalAfterPrune}`);
   assert.equal(totalAfterPrune, totalBeforePrune, 'Total Dives remains strictly constant after rolling history prune');
 });
 
@@ -91,7 +85,6 @@ test('Total Dives: is fully restored after export and import cycle', () => {
   restoredHistory = parsed.history;
 
   const restoredTotal = selectTotalSpins({ userProgressMap: restoredProgress, history: restoredHistory });
-  console.log(`  Total Dives before export: ${originalTotal} | after import: ${restoredTotal}`);
   assert.equal(restoredTotal, originalTotal, 'Total Dives is 100% identical after export and import cycle');
 });
 
@@ -151,7 +144,6 @@ test('Total Dives: backfills correctly from legacy/v1 backups with missing times
     history: legacyBackupV1.history
   });
 
-  console.log(`  Legacy Backup Backfilled Total Dives: ${totalDivesLegacy} (Explored: ${selectExploredCount(normalizedProgress)})`);
   assert.equal(totalDivesLegacy, 4, 'Total Dives accurately reflects backfilled topics across progress and history');
   assert.equal(selectExploredCount(normalizedProgress), 4, 'Explored count accurately reflects all backfilled topics');
 });

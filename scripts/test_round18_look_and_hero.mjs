@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -37,7 +39,7 @@ function serveStatic(distDir, port = 4192) {
 }
 
 async function runRound18Tests() {
-  console.log('=== ROUND 18: LOOK + HERO REAL FLOWS VERIFICATION ===\n');
+  printLog('=== ROUND 18: LOOK + HERO REAL FLOWS VERIFICATION ===\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -51,7 +53,7 @@ async function runRound18Tests() {
     // -------------------------------------------------------------------------
     // Flow (a): fresh profile with prefers-color-scheme: dark emulated -> dark NOT applied
     // -------------------------------------------------------------------------
-    console.log('1. Testing Flow (a): Fresh profile with prefers-color-scheme: dark emulated...');
+    printLog('1. Testing Flow (a): Fresh profile with prefers-color-scheme: dark emulated...');
     const contextA = await browser.newContext({
       colorScheme: 'dark',
       viewport: { width: 1280, height: 800 }
@@ -73,10 +75,10 @@ async function runRound18Tests() {
       };
     });
 
-    console.log(`   - prefers-color-scheme emulated: dark`);
-    console.log(`   - <html> classList: "${htmlClassesA}" (contains dark: ${hasDarkClassA})`);
-    console.log(`   - Computed body background: ${bodyBgA}`);
-    console.log(`   - Computed primary button background: ${btnBgA}`);
+    printLog(`   - prefers-color-scheme emulated: dark`);
+    printLog(`   - <html> classList: "${htmlClassesA}" (contains dark: ${hasDarkClassA})`);
+    printLog(`   - Computed body background: ${bodyBgA}`);
+    printLog(`   - Computed primary button background: ${btnBgA}`);
 
     assert.strictEqual(
       hasDarkClassA,
@@ -93,13 +95,13 @@ async function runRound18Tests() {
       'rgb(181, 80, 46)',
       `Flow (a) FAIL: Primary button background must match Sep 27 terracotta rgb(181, 80, 46), got ${btnBgA}`
     );
-    console.log('   ✓ PASS Flow (a): Fresh profile defaults to LIGHT (Sep 27 cream surface & terracotta accent)\n');
+    printLog('   ✓ PASS Flow (a): Fresh profile defaults to LIGHT (Sep 27 cream surface & terracotta accent)\n');
     await contextA.close();
 
     // -------------------------------------------------------------------------
     // Flow (b): stored dark choice -> dark applies
     // -------------------------------------------------------------------------
-    console.log('2. Testing Flow (b): Stored dark choice in localStorage...');
+    printLog('2. Testing Flow (b): Stored dark choice in localStorage...');
     const contextB = await browser.newContext({
       viewport: { width: 1280, height: 800 }
     });
@@ -115,9 +117,9 @@ async function runRound18Tests() {
     const hasDarkClassB = htmlClassesB.includes('dark');
     const bodyBgB = await pageB.evaluate(() => window.getComputedStyle(document.body).backgroundColor);
 
-    console.log(`   - Stored theme in localStorage: "dark"`);
-    console.log(`   - <html> classList: "${htmlClassesB}" (contains dark: ${hasDarkClassB})`);
-    console.log(`   - Computed body background: ${bodyBgB}`);
+    printLog(`   - Stored theme in localStorage: "dark"`);
+    printLog(`   - <html> classList: "${htmlClassesB}" (contains dark: ${hasDarkClassB})`);
+    printLog(`   - Computed body background: ${bodyBgB}`);
 
     assert.strictEqual(
       hasDarkClassB,
@@ -129,14 +131,14 @@ async function runRound18Tests() {
       'rgb(28, 26, 23)',
       `Flow (b) FAIL: Dark body background must be rgb(28, 26, 23), got ${bodyBgB}`
     );
-    console.log('   ✓ PASS Flow (b): Stored dark choice is respected and dark mode applies\n');
+    printLog('   ✓ PASS Flow (b): Stored dark choice is respected and dark mode applies\n');
     await contextB.close();
 
     // -------------------------------------------------------------------------
     // Flow (c): Hero visibility on load for fresh & returning at 390x844 & 1280x800,
     //           hidden after a spin and on /t/<id>
     // -------------------------------------------------------------------------
-    console.log('3. Testing Flow (c): Hero visibility across viewports, profiles, spin & deeplink...');
+    printLog('3. Testing Flow (c): Hero visibility across viewports, profiles, spin & deeplink...');
 
     // 3.1 Fresh profile @ 390x844
     const contextC_MobileFresh = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -150,7 +152,7 @@ async function runRound18Tests() {
     const heroVisibleC1 = await pageC1.locator('[data-testid="spin-hero"]').isVisible();
     const spinBoxC1 = await pageC1.locator('button[data-testid="primary-spin-button"]').boundingBox();
     const bottomEdgeC1 = spinBoxC1.y + spinBoxC1.height;
-    console.log(`   - Fresh @ 390x844: Hero visible = ${heroVisibleC1}, Headline = "${heroTextC1}", Spin bottom = ${bottomEdgeC1.toFixed(1)}px (< 844px)`);
+    printLog(`   - Fresh @ 390x844: Hero visible = ${heroVisibleC1}, Headline = "${heroTextC1}", Spin bottom = ${bottomEdgeC1.toFixed(1)}px (< 844px)`);
     assert.ok(heroVisibleC1, 'Hero must be visible on fresh profile at 390x844');
     assert.match(heroTextC1, /Learn something new,\s*one spin at a time/i, 'Headline must match Oct 10 hero');
     assert.ok(bottomEdgeC1 < 844, `Spin button bottom edge (${bottomEdgeC1}px) must be < 844px`);
@@ -164,7 +166,7 @@ async function runRound18Tests() {
     await pageC2.reload();
     await pageC2.waitForSelector('[data-testid="spin-hero"]');
     const heroVisibleC2 = await pageC2.locator('[data-testid="spin-hero"]').isVisible();
-    console.log(`   - Fresh @ 1280x800: Hero visible = ${heroVisibleC2}`);
+    printLog(`   - Fresh @ 1280x800: Hero visible = ${heroVisibleC2}`);
     assert.ok(heroVisibleC2, 'Hero must be visible on fresh profile at 1280x800');
     await contextC_DeskFresh.close();
 
@@ -181,7 +183,7 @@ async function runRound18Tests() {
     const heroVisibleC3 = await pageC3.locator('[data-testid="spin-hero"]').isVisible();
     const spinBoxC3 = await pageC3.locator('button[data-testid="primary-spin-button"]').boundingBox();
     const bottomEdgeC3 = spinBoxC3.y + spinBoxC3.height;
-    console.log(`   - Returning @ 390x844: Hero visible = ${heroVisibleC3}, Spin bottom = ${bottomEdgeC3.toFixed(1)}px (< 844px)`);
+    printLog(`   - Returning @ 390x844: Hero visible = ${heroVisibleC3}, Spin bottom = ${bottomEdgeC3.toFixed(1)}px (< 844px)`);
     assert.ok(heroVisibleC3, 'Hero must be visible on returning profile at 390x844 before spin');
     assert.ok(bottomEdgeC3 < 844, `Spin button bottom edge (${bottomEdgeC3}px) must be < 844px for returning user`);
     await contextC_MobileRet.close();
@@ -197,7 +199,7 @@ async function runRound18Tests() {
     await pageC4.reload();
     await pageC4.waitForSelector('[data-testid="spin-hero"]');
     const heroVisibleC4 = await pageC4.locator('[data-testid="spin-hero"]').isVisible();
-    console.log(`   - Returning @ 1280x800: Hero visible = ${heroVisibleC4}`);
+    printLog(`   - Returning @ 1280x800: Hero visible = ${heroVisibleC4}`);
     assert.ok(heroVisibleC4, 'Hero must be visible on returning profile at 1280x800 before spin');
     await contextC_DeskRet.close();
 
@@ -211,7 +213,7 @@ async function runRound18Tests() {
     // Wait for post-spin topic card to appear
     await pageC5.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
     const heroCountAfterSpin = await pageC5.locator('[data-testid="spin-hero"]').count();
-    console.log(`   - After spin: Topic card visible = true, Hero count in DOM = ${heroCountAfterSpin}`);
+    printLog(`   - After spin: Topic card visible = true, Hero count in DOM = ${heroCountAfterSpin}`);
     assert.strictEqual(heroCountAfterSpin, 0, 'Hero must hide after a spin results in a topic card');
     await contextC_Spin.close();
 
@@ -221,19 +223,19 @@ async function runRound18Tests() {
     await pageC6.goto('http://localhost:4192/t/multi-head-self-attention');
     await pageC6.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
     const heroCountDeeplink = await pageC6.locator('[data-testid="spin-hero"]').count();
-    console.log(`   - On /t/<id>: Topic card visible = true, Hero count in DOM = ${heroCountDeeplink}`);
+    printLog(`   - On /t/<id>: Topic card visible = true, Hero count in DOM = ${heroCountDeeplink}`);
     assert.strictEqual(heroCountDeeplink, 0, 'Hero must hide when /t/<id> topic card is shown');
     await contextC_Deep.close();
 
-    console.log('   ✓ PASS Flow (c): Hero visibility and hiding verified across all conditions\n');
+    printLog('   ✓ PASS Flow (c): Hero visibility and hiding verified across all conditions\n');
   } finally {
     await browser.close();
     server.close();
   }
 
-  console.log('=============================================================');
-  console.log('ALL ROUND 18 TESTS PASSED SUCCESSFULLY!');
-  console.log('=============================================================\n');
+  printLog('=============================================================');
+  printLog('ALL ROUND 18 TESTS PASSED SUCCESSFULLY!');
+  printLog('=============================================================\n');
 }
 
 runRound18Tests().catch((err) => {

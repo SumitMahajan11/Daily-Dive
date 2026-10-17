@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import AxeBuilder from '@axe-core/playwright';
 import http from 'node:http';
@@ -39,7 +41,7 @@ function serveStatic(distDir, port = 4189) {
 
 function assertNoSeriousOrCritical(screenName, results) {
   const seriousOrCritical = results.violations.filter(v => ['serious', 'critical'].includes(v.impact));
-  console.log(`[AXE] ${screenName}: ${results.violations.length} total violations, ${seriousOrCritical.length} serious/critical`);
+  printLog(`[AXE] ${screenName}: ${results.violations.length} total violations, ${seriousOrCritical.length} serious/critical`);
   if (seriousOrCritical.length > 0) {
     seriousOrCritical.forEach(v => {
       console.error(`  - [${v.impact.toUpperCase()}] ${v.help} (${v.id})`);
@@ -54,7 +56,7 @@ function assertNoSeriousOrCritical(screenName, results) {
 }
 
 async function runVerification() {
-  console.log('=== ROUND 9: HERO REDESIGN VERIFICATION & EVIDENCE SUITE ===\n');
+  printLog('=== ROUND 9: HERO REDESIGN VERIFICATION & EVIDENCE SUITE ===\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -67,14 +69,14 @@ async function runVerification() {
   }
 
   const server = await serveStatic(distDir, 4189);
-  console.log('1. Static server listening on http://localhost:4189');
+  printLog('1. Static server listening on http://localhost:4189');
 
   const browser = await chromium.launch({ headless: true });
 
   // -------------------------------------------------------------
   // Test A: Mobile First-Run (390x844)
   // -------------------------------------------------------------
-  console.log('\n2. Testing Mobile First-Run layout (390x844)...');
+  printLog('\n2. Testing Mobile First-Run layout (390x844)...');
   const mobileContext = await browser.newContext({
     viewport: { width: 390, height: 844 },
     deviceScaleFactor: 2
@@ -94,26 +96,26 @@ async function runVerification() {
   const boxMobileFirstRun = await spinBtnMobile.boundingBox();
   assert.ok(boxMobileFirstRun, 'Spin button must have a valid bounding box');
   const bottomEdgeFirstRun = boxMobileFirstRun.y + boxMobileFirstRun.height;
-  console.log(`   Spin Button Bounding Box (First-Run Mobile 390x844):`);
-  console.log(`   - Top (y): ${boxMobileFirstRun.y.toFixed(1)}px`);
-  console.log(`   - Height: ${boxMobileFirstRun.height.toFixed(1)}px`);
-  console.log(`   - Bottom Edge: ${bottomEdgeFirstRun.toFixed(1)}px`);
-  console.log(`   - Viewport Height: 844px`);
+  printLog(`   Spin Button Bounding Box (First-Run Mobile 390x844):`);
+  printLog(`   - Top (y): ${boxMobileFirstRun.y.toFixed(1)}px`);
+  printLog(`   - Height: ${boxMobileFirstRun.height.toFixed(1)}px`);
+  printLog(`   - Bottom Edge: ${bottomEdgeFirstRun.toFixed(1)}px`);
+  printLog(`   - Viewport Height: 844px`);
 
   // Hard assertion: bottom edge must be < 844
   assert.ok(
     bottomEdgeFirstRun < 844,
     `Spin button bottom edge (${bottomEdgeFirstRun}px) must be less than 844px on 390x844 phone!`
   );
-  console.log(`   ✓ PASS: Spin button bottom edge (${bottomEdgeFirstRun.toFixed(1)}px < 844px) is fully visible without scrolling!`);
+  printLog(`   ✓ PASS: Spin button bottom edge (${bottomEdgeFirstRun.toFixed(1)}px < 844px) is fully visible without scrolling!`);
 
   // Capture First-Run Mobile Screenshot
   const firstRunMobilePath = path.join(evidenceDir, 'spin_first_run_390x844.png');
   await mobilePage.screenshot({ path: firstRunMobilePath, fullPage: false });
-  console.log(`   Saved screenshot: ${firstRunMobilePath}`);
+  printLog(`   Saved screenshot: ${firstRunMobilePath}`);
 
   // Axe on First-Run
-  console.log('\n3. Auditing First-Run Spin Screen with Axe...');
+  printLog('\n3. Auditing First-Run Spin Screen with Axe...');
   const firstRunAxe = await new AxeBuilder({ page: mobilePage })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
@@ -122,7 +124,7 @@ async function runVerification() {
   // -------------------------------------------------------------
   // Test B: Mobile Returning (390x844)
   // -------------------------------------------------------------
-  console.log('\n4. Testing Mobile Returning layout (390x844)...');
+  printLog('\n4. Testing Mobile Returning layout (390x844)...');
   await mobilePage.evaluate(() => {
     localStorage.setItem('daily_dive_has_spun', 'true');
     localStorage.setItem('daily_dive_guest_streaks', JSON.stringify({
@@ -147,20 +149,20 @@ async function runVerification() {
   const boxMobileRet = await spinBtnMobileRet.boundingBox();
   assert.ok(boxMobileRet, 'Spin button must have a valid bounding box in returning view');
   const bottomEdgeRet = boxMobileRet.y + boxMobileRet.height;
-  console.log(`   Spin Button Bounding Box (Returning Mobile 390x844):`);
-  console.log(`   - Top (y): ${boxMobileRet.y.toFixed(1)}px`);
-  console.log(`   - Height: ${boxMobileRet.height.toFixed(1)}px`);
-  console.log(`   - Bottom Edge: ${bottomEdgeRet.toFixed(1)}px`);
+  printLog(`   Spin Button Bounding Box (Returning Mobile 390x844):`);
+  printLog(`   - Top (y): ${boxMobileRet.y.toFixed(1)}px`);
+  printLog(`   - Height: ${boxMobileRet.height.toFixed(1)}px`);
+  printLog(`   - Bottom Edge: ${bottomEdgeRet.toFixed(1)}px`);
   assert.ok(bottomEdgeRet < 844, `Spin button bottom edge (${bottomEdgeRet}px) must be less than 844px in returning view!`);
-  console.log(`   ✓ PASS: Spin button bottom edge (${bottomEdgeRet.toFixed(1)}px < 844px) is fully visible without scrolling!`);
+  printLog(`   ✓ PASS: Spin button bottom edge (${bottomEdgeRet.toFixed(1)}px < 844px) is fully visible without scrolling!`);
 
   // Capture Returning Mobile Screenshot
   const returningMobilePath = path.join(evidenceDir, 'spin_returning_390x844.png');
   await mobilePage.screenshot({ path: returningMobilePath, fullPage: false });
-  console.log(`   Saved screenshot: ${returningMobilePath}`);
+  printLog(`   Saved screenshot: ${returningMobilePath}`);
 
   // Axe on Returning
-  console.log('\n5. Auditing Returning Spin Screen with Axe...');
+  printLog('\n5. Auditing Returning Spin Screen with Axe...');
   const returningAxe = await new AxeBuilder({ page: mobilePage })
     .withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa'])
     .analyze();
@@ -171,7 +173,7 @@ async function runVerification() {
   // -------------------------------------------------------------
   // Test C: Desktop First-Run (1280x800)
   // -------------------------------------------------------------
-  console.log('\n6. Testing Desktop First-Run layout (1280x800)...');
+  printLog('\n6. Testing Desktop First-Run layout (1280x800)...');
   const desktopContext = await browser.newContext({
     viewport: { width: 1280, height: 800 },
     deviceScaleFactor: 1
@@ -187,12 +189,12 @@ async function runVerification() {
 
   const firstRunDesktopPath = path.join(evidenceDir, 'spin_first_run_1280x800.png');
   await desktopPage.screenshot({ path: firstRunDesktopPath, fullPage: false });
-  console.log(`   Saved screenshot: ${firstRunDesktopPath}`);
+  printLog(`   Saved screenshot: ${firstRunDesktopPath}`);
 
   // -------------------------------------------------------------
   // Test D: Desktop Returning (1280x800)
   // -------------------------------------------------------------
-  console.log('\n7. Testing Desktop Returning layout (1280x800)...');
+  printLog('\n7. Testing Desktop Returning layout (1280x800)...');
   await desktopPage.evaluate(() => {
     localStorage.setItem('daily_dive_has_spun', 'true');
     localStorage.setItem('daily_dive_guest_streaks', JSON.stringify({
@@ -215,15 +217,15 @@ async function runVerification() {
 
   const returningDesktopPath = path.join(evidenceDir, 'spin_returning_1280x800.png');
   await desktopPage.screenshot({ path: returningDesktopPath, fullPage: false });
-  console.log(`   Saved screenshot: ${returningDesktopPath}`);
+  printLog(`   Saved screenshot: ${returningDesktopPath}`);
 
   await desktopContext.close();
   await browser.close();
   server.close();
 
-  console.log('\n=============================================================');
-  console.log('ALL ROUND 9 VERIFICATION AND ARTIFACT GENERATIONS PASSED!');
-  console.log('=============================================================\n');
+  printLog('\n=============================================================');
+  printLog('ALL ROUND 9 VERIFICATION AND ARTIFACT GENERATIONS PASSED!');
+  printLog('=============================================================\n');
 }
 
 runVerification().catch(err => {

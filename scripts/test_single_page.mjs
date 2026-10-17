@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -42,9 +44,9 @@ const VIEWPORTS = [
 ];
 
 async function runSinglePageSuite() {
-  console.log('================================================================');
-  console.log('       SINGLE PAGE (SPIN + PROGRESS + LIBRARY) E2E SUITE        ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('       SINGLE PAGE (SPIN + PROGRESS + LIBRARY) E2E SUITE        ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -59,9 +61,9 @@ async function runSinglePageSuite() {
 
   try {
     for (const vp of VIEWPORTS) {
-      console.log(`\n------------------------------------------------------------`);
-      console.log(`TESTING VIEWPORT: ${vp.name}`);
-      console.log(`------------------------------------------------------------`);
+      printLog(`\n------------------------------------------------------------`);
+      printLog(`TESTING VIEWPORT: ${vp.name}`);
+      printLog(`------------------------------------------------------------`);
 
       const context = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
       const page = await context.newPage();
@@ -75,26 +77,26 @@ async function runSinglePageSuite() {
       await page.waitForTimeout(500);
 
       // ── a) All three section ids exist on one page in order: spin, progress, library ──
-      console.log('\n[TEST a] Verifying all 3 sections exist on one page in order [spin, progress, library]...');
+      printLog('\n[TEST a] Verifying all 3 sections exist on one page in order [spin, progress, library]...');
       const sectionIds = await page.evaluate(() => {
         return Array.from(document.querySelectorAll('#spin, #progress, #library')).map(el => el.id);
       });
-      console.log(`  Found sections: [${sectionIds.join(', ')}]`);
+      printLog(`  Found sections: [${sectionIds.join(', ')}]`);
       assert.strictEqual(sectionIds.length, 3, `Expected all 3 sections in DOM, got ${sectionIds.length}: [${sectionIds}]`);
       assert.strictEqual(sectionIds[0], 'spin', `First section must be "spin", found "${sectionIds[0]}"`);
       assert.strictEqual(sectionIds[1], 'progress', `Second section must be "progress", found "${sectionIds[1]}"`);
       assert.strictEqual(sectionIds[2], 'library', `Third section must be "library", found "${sectionIds[2]}"`);
-      console.log('  [PASS a] All 3 sections exist in DOM in correct order: spin -> progress -> library.');
+      printLog('  [PASS a] All 3 sections exist in DOM in correct order: spin -> progress -> library.');
 
       // ── b) Page scrolls vertically (scrollHeight > clientHeight); no horizontal scroll ──
-      console.log('\n[TEST b] Verifying page scrolls vertically and has no horizontal overflow...');
+      printLog('\n[TEST b] Verifying page scrolls vertically and has no horizontal overflow...');
       const scrollMetrics = await page.evaluate(() => ({
         scrollHeight: document.documentElement.scrollHeight,
         clientHeight: document.documentElement.clientHeight,
         scrollWidth: document.documentElement.scrollWidth,
         clientWidth: document.documentElement.clientWidth
       }));
-      console.log(`  Metrics: scrollHeight=${scrollMetrics.scrollHeight}px vs clientHeight=${scrollMetrics.clientHeight}px | scrollWidth=${scrollMetrics.scrollWidth}px vs clientWidth=${scrollMetrics.clientWidth}px`);
+      printLog(`  Metrics: scrollHeight=${scrollMetrics.scrollHeight}px vs clientHeight=${scrollMetrics.clientHeight}px | scrollWidth=${scrollMetrics.scrollWidth}px vs clientWidth=${scrollMetrics.clientWidth}px`);
       assert.ok(
         scrollMetrics.scrollHeight > scrollMetrics.clientHeight,
         `Page must vertically scroll: scrollHeight (${scrollMetrics.scrollHeight}) must be > clientHeight (${scrollMetrics.clientHeight})`
@@ -103,10 +105,10 @@ async function runSinglePageSuite() {
         scrollMetrics.scrollWidth <= scrollMetrics.clientWidth,
         `Page must not horizontally overflow: scrollWidth (${scrollMetrics.scrollWidth}) must be <= clientWidth (${scrollMetrics.clientWidth})`
       );
-      console.log('  [PASS b] Page scrolls vertically and has zero horizontal overflow.');
+      printLog('  [PASS b] Page scrolls vertically and has zero horizontal overflow.');
 
       // ── c) Clicking each sidebar/nav item scrolls its section into view (top within 80px) ──
-      console.log('\n[TEST c] Verifying clicking each nav item scrolls section into view (top within 80px)...');
+      printLog('\n[TEST c] Verifying clicking each nav item scrolls section into view (top within 80px)...');
       for (const targetId of ['progress', 'library', 'spin']) {
         const navBtn = page.locator(`[data-nav-id="${targetId}"]:visible`).first();
         await navBtn.click();
@@ -118,33 +120,33 @@ async function runSinglePageSuite() {
           return el.getBoundingClientRect().top;
         }, targetId);
 
-        console.log(`  Clicked "${targetId}" -> bounding top: ${boundingTop !== null ? boundingTop.toFixed(1) : 'null'}px`);
+        printLog(`  Clicked "${targetId}" -> bounding top: ${boundingTop !== null ? boundingTop.toFixed(1) : 'null'}px`);
         assert.ok(
           boundingTop !== null && boundingTop >= -20 && boundingTop <= 80,
           `Section #${targetId} top must be within 80px of viewport top after scrolling, got: ${boundingTop}px`
         );
       }
-      console.log('  [PASS c] Clicking each nav item scrolled its section within 80px of top.');
+      printLog('  [PASS c] Clicking each nav item scrolled its section within 80px of top.');
 
       // ── d) Active sidebar item matches the section in view after scrolling ──
-      console.log('\n[TEST d] Verifying active sidebar/nav item matches the section in view...');
+      printLog('\n[TEST d] Verifying active sidebar/nav item matches the section in view...');
       for (const targetId of ['spin', 'progress', 'library']) {
         const navBtn = page.locator(`[data-nav-id="${targetId}"]:visible`).first();
         await navBtn.click();
         await page.waitForTimeout(800);
 
         const ariaCurrent = await navBtn.getAttribute('aria-current');
-        console.log(`  Section "${targetId}" nav aria-current: "${ariaCurrent}"`);
+        printLog(`  Section "${targetId}" nav aria-current: "${ariaCurrent}"`);
         assert.strictEqual(
           ariaCurrent,
           'page',
           `Nav item for "${targetId}" must have aria-current="page" when scrolled into view, got "${ariaCurrent}"`
         );
       }
-      console.log('  [PASS d] Active nav item matches section in view with aria-current="page".');
+      printLog('  [PASS d] Active nav item matches section in view with aria-current="page".');
 
       // ── e) Opening #/library and #/progress directly scrolls to that section ──
-      console.log('\n[TEST e] Verifying direct URL loads (#/library and #/progress) scroll to section...');
+      printLog('\n[TEST e] Verifying direct URL loads (#/library and #/progress) scroll to section...');
       for (const targetId of ['library', 'progress']) {
         await page.goto(`${baseUrl}/#/${targetId}`, { waitUntil: 'networkidle' });
         await page.waitForTimeout(900);
@@ -155,16 +157,16 @@ async function runSinglePageSuite() {
           return el.getBoundingClientRect().top;
         }, targetId);
 
-        console.log(`  Opened direct #/${targetId} -> bounding top: ${boundingTop !== null ? boundingTop.toFixed(1) : 'null'}px`);
+        printLog(`  Opened direct #/${targetId} -> bounding top: ${boundingTop !== null ? boundingTop.toFixed(1) : 'null'}px`);
         assert.ok(
           boundingTop !== null && boundingTop >= -20 && boundingTop <= 80,
           `Direct open #/${targetId} must scroll section to top within 80px, got: ${boundingTop}px`
         );
       }
-      console.log('  [PASS e] Direct open #/library and #/progress correctly scrolled to respective sections.');
+      printLog('  [PASS e] Direct open #/library and #/progress correctly scrolled to respective sections.');
 
       // ── f) Space inside a Library input does not start a spin; Space elsewhere does ──
-      console.log('\n[TEST f] Verifying Space inside Library input does NOT spin, but Space elsewhere DOES...');
+      printLog('\n[TEST f] Verifying Space inside Library input does NOT spin, but Space elsewhere DOES...');
       await page.goto(`${baseUrl}/`, { waitUntil: 'networkidle' });
       await page.waitForTimeout(500);
 
@@ -189,7 +191,7 @@ async function runSinglePageSuite() {
         false,
         'Space pressed while focused inside Library input must NOT start spin'
       );
-      console.log('  [PASS] Space inside Library text input did not trigger spin.');
+      printLog('  [PASS] Space inside Library text input did not trigger spin.');
 
       // Unfocus / click outside and press Space
       await page.evaluate(() => {
@@ -207,13 +209,13 @@ async function runSinglePageSuite() {
         true,
         'Space pressed outside input MUST trigger spin'
       );
-      console.log('  [PASS] Space pressed outside input successfully triggered spin.');
+      printLog('  [PASS] Space pressed outside input successfully triggered spin.');
 
       // Wait for spin to land
       await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 12000 });
 
       // ── g) One full spin works with page scrolled halfway down and back ──
-      console.log('\n[TEST g] Verifying full spin works while scrolling away mid-spin and back...');
+      printLog('\n[TEST g] Verifying full spin works while scrolling away mid-spin and back...');
       await page.evaluate(() => window.scrollTo(0, 450));
       await page.waitForTimeout(300);
 
@@ -237,10 +239,10 @@ async function runSinglePageSuite() {
       await page.waitForTimeout(1600);
       const stuckRings = await page.locator('.landing-ring').count();
       assert.strictEqual(stuckRings, 0, 'No landing ring must remain after spin finish');
-      console.log('  [PASS g] Full spin completed cleanly while scrolling across sections.');
+      printLog('  [PASS g] Full spin completed cleanly while scrolling across sections.');
 
       // ── l) Scroll page with window.scrollTo without clicking nav items -> aria-current moves to matching nav within 500ms ──
-      console.log('\n[TEST l] Verifying window.scrollTo moves aria-current to matching nav item within 500ms...');
+      printLog('\n[TEST l] Verifying window.scrollTo moves aria-current to matching nav item within 500ms...');
       for (const secId of ['progress', 'library', 'spin']) {
         const targetScrollTop = await page.evaluate((id) => {
           const el = document.getElementById(id);
@@ -264,21 +266,21 @@ async function runSinglePageSuite() {
         );
 
         const ariaCurrent = await navBtn.getAttribute('aria-current');
-        console.log(`  Scrolled to #${secId} -> nav item aria-current: "${ariaCurrent}"`);
+        printLog(`  Scrolled to #${secId} -> nav item aria-current: "${ariaCurrent}"`);
         assert.strictEqual(
           ariaCurrent,
           'page',
           `Nav item for #${secId} must have aria-current="page" within 500ms when scrolled via window.scrollTo`
         );
       }
-      console.log('  [PASS l] Pure scroll via window.scrollTo successfully moved aria-current to matching nav item within 500ms.');
+      printLog('  [PASS l] Pure scroll via window.scrollTo successfully moved aria-current to matching nav item within 500ms.');
 
       await context.close();
     }
 
-    console.log('\n================================================================');
-    console.log('ALL SINGLE-PAGE E2E TESTS PASSED AT 390x844 AND 1280x800!');
-    console.log('================================================================\n');
+    printLog('\n================================================================');
+    printLog('ALL SINGLE-PAGE E2E TESTS PASSED AT 390x844 AND 1280x800!');
+    printLog('================================================================\n');
   } finally {
     await browser.close();
     server.close();

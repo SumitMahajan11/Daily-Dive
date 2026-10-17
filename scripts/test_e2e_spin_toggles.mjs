@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -44,7 +46,7 @@ function serveStatic(distDir) {
 }
 
 async function testSpinToggles() {
-  console.log('=== [E2E] SPIN SCREEN GROUP TOGGLES & 5-SPIN DETERMINISM TEST ===\n');
+  printLog('=== [E2E] SPIN SCREEN GROUP TOGGLES & 5-SPIN DETERMINISM TEST ===\n');
 
   const distDir = path.resolve(__dirname, '../dist');
   if (!fs.existsSync(distDir)) {
@@ -54,10 +56,10 @@ async function testSpinToggles() {
   const moneyCareerTitleSet = new Set(
     moneyCareerTopics.map(t => t.title.trim().toLowerCase())
   );
-  console.log(`1. Loaded ${moneyCareerTopics.length} topics from src/data/groups/money-career.js`);
+  printLog(`1. Loaded ${moneyCareerTopics.length} topics from src/data/groups/money-career.js`);
 
   const { server, port } = await serveStatic(distDir);
-  console.log(`2. Static server listening on http://localhost:${port}`);
+  printLog(`2. Static server listening on http://localhost:${port}`);
 
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
@@ -66,7 +68,7 @@ async function testSpinToggles() {
   const page = await context.newPage();
 
   try {
-    console.log('3. Loading app fresh on Spin screen...');
+    printLog('3. Loading app fresh on Spin screen...');
     await page.goto(`http://localhost:${port}/`);
     await page.evaluate(() => {
       localStorage.clear();
@@ -77,7 +79,7 @@ async function testSpinToggles() {
     await page.waitForTimeout(300);
 
     // 4. Verify initial state of the 4 group buttons (all ON by default)
-    console.log('4. Verifying initial group states (Tech & Mind ON, Money & World OFF in starter categories)...');
+    printLog('4. Verifying initial group states (Tech & Mind ON, Money & World OFF in starter categories)...');
     const techBtn = page.locator('#spin button[aria-label="Toggle Tech"]');
     const moneyBtn = page.locator('#spin button[aria-label="Toggle Money"]');
     const mindBtn = page.locator('#spin button[aria-label="Toggle Mind"]');
@@ -94,7 +96,7 @@ async function testSpinToggles() {
     assert.equal(worldInitial, 'false', 'World button must be aria-pressed="false" initially');
 
     // 5. Test Money toggle cycling, then turn OFF Tech, Mind leaving Money ON.
-    console.log('5. Testing Money toggle interaction & turning OFF other groups...');
+    printLog('5. Testing Money toggle interaction & turning OFF other groups...');
     
     // Turn Money ON
     await moneyBtn.click();
@@ -128,7 +130,7 @@ async function testSpinToggles() {
     assert.equal(worldAfter, 'false', 'World button must be aria-pressed="false" after toggle');
 
     // 6. Spin 5 consecutive times and verify every single landed topic belongs to Money group
-    console.log('6. Executing 5 consecutive spins with only Money enabled...');
+    printLog('6. Executing 5 consecutive spins with only Money enabled...');
     for (let i = 1; i <= 5; i++) {
       const spinBtn = page.locator('#spin button[data-testid="primary-spin-button"], #spin button').filter({ hasText: /spin/i }).first();
       await spinBtn.waitFor({ state: 'visible', timeout: 10000 });
@@ -140,14 +142,14 @@ async function testSpinToggles() {
         return heading ? heading.textContent.trim() : '';
       });
 
-      console.log(`   [Spin ${i}/5] Landed Topic: "${title}"`);
+      printLog(`   [Spin ${i}/5] Landed Topic: "${title}"`);
       assert.ok(title.length > 0, `Spin ${i}: Topic title must be non-empty`);
       const isMoneyTopic = moneyCareerTitleSet.has(title.toLowerCase());
       assert.equal(isMoneyTopic, true, `Spin ${i}: Landed topic "${title}" must belong strictly to Money & Career group!`);
       await page.waitForTimeout(100);
     }
 
-    console.log('\n[PASS]: Spin screen group toggles & 5-spin determinism verified with 100% hard assertions.');
+    printLog('\n[PASS]: Spin screen group toggles & 5-spin determinism verified with 100% hard assertions.');
   } finally {
     await browser.close();
     server.close();

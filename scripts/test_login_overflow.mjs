@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -37,9 +39,9 @@ function serveStatic(distDir, port = 4225) {
 }
 
 async function testLoginRenderingAndOverflow() {
-  console.log('================================================================');
-  console.log('   TEST: /login RENDERING AND NO HORIZONTAL OVERFLOW AT 360x800 ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('   TEST: /login RENDERING AND NO HORIZONTAL OVERFLOW AT 360x800 ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -53,14 +55,14 @@ async function testLoginRenderingAndOverflow() {
     const page = await browser.newPage({ viewport: { width: 360, height: 800 } });
     await page.goto(`http://127.0.0.1:${port}/#/login`, { waitUntil: 'networkidle' });
 
-    console.log('[1/4] Verifying /login route renders [data-testid="login-screen"]...');
+    printLog('[1/4] Verifying /login route renders [data-testid="login-screen"]...');
     const loginScreen = page.locator('[data-testid="login-screen"]');
     await loginScreen.waitFor({ state: 'visible', timeout: 5000 });
     const isVisible = await loginScreen.isVisible();
     assert.strictEqual(isVisible, true, '/login screen must be visible');
-    console.log('  [PASS] /login screen is rendered and visible.');
+    printLog('  [PASS] /login screen is rendered and visible.');
 
-    console.log('\n[2/4] Asserting form elements visibility...');
+    printLog('\n[2/4] Asserting form elements visibility...');
     const emailInput = page.locator('[data-testid="auth-email-input"]');
     const googleBtn = page.locator('[data-testid="google-auth-btn"]');
     const hasEmail = (await emailInput.count()) > 0;
@@ -69,17 +71,17 @@ async function testLoginRenderingAndOverflow() {
       const googleVisible = await googleBtn.isVisible();
       assert.strictEqual(emailVisible, true, 'Email input must be visible on /login');
       assert.strictEqual(googleVisible, true, 'Google button must be visible on /login');
-      console.log(`  [PASS] Email field is visible: ${emailVisible}`);
-      console.log(`  [PASS] Google button is visible: ${googleVisible}`);
+      printLog(`  [PASS] Email field is visible: ${emailVisible}`);
+      printLog(`  [PASS] Google button is visible: ${googleVisible}`);
     } else {
       const unconfNotice = page.locator('text=Sign-in isn\'t set up yet.');
       await unconfNotice.waitFor({ state: 'visible', timeout: 5000 });
       const unconfVisible = await unconfNotice.isVisible();
       assert.strictEqual(unconfVisible, true, 'Unconfigured notice must be visible');
-      console.log(`  [PASS] Unconfigured notice is visible: ${unconfVisible}`);
+      printLog(`  [PASS] Unconfigured notice is visible: ${unconfVisible}`);
     }
 
-    console.log('\n[3/4] Measuring horizontal overflow at 360x800...');
+    printLog('\n[3/4] Measuring horizontal overflow at 360x800...');
     const overflowMetrics = await page.evaluate(() => {
       function isClippedByAncestor(el) {
         let p = el.parentElement;
@@ -126,10 +128,10 @@ async function testLoginRenderingAndOverflow() {
       };
     });
 
-    console.log(`  scrollWidth: ${overflowMetrics.scrollWidth}px`);
-    console.log(`  clientWidth: ${overflowMetrics.clientWidth}px`);
-    console.log(`  innerWidth:  ${overflowMetrics.innerWidth}px`);
-    console.log(`  worstRight:  ${overflowMetrics.worstRight}px (${overflowMetrics.worstEl?.tag}.${overflowMetrics.worstEl?.className})`);
+    printLog(`  scrollWidth: ${overflowMetrics.scrollWidth}px`);
+    printLog(`  clientWidth: ${overflowMetrics.clientWidth}px`);
+    printLog(`  innerWidth:  ${overflowMetrics.innerWidth}px`);
+    printLog(`  worstRight:  ${overflowMetrics.worstRight}px (${overflowMetrics.worstEl?.tag}.${overflowMetrics.worstEl?.className})`);
 
     assert.ok(
       overflowMetrics.scrollWidth <= overflowMetrics.clientWidth,
@@ -140,16 +142,16 @@ async function testLoginRenderingAndOverflow() {
       `Element bounds right (${overflowMetrics.worstRight}px) exceeds innerWidth (${overflowMetrics.innerWidth}px)`
     );
     assert.strictEqual(overflowMetrics.overflows, false, 'No horizontal overflow allowed at 360x800');
-    console.log('  [PASS] No horizontal overflow detected at 360x800.');
+    printLog('  [PASS] No horizontal overflow detected at 360x800.');
 
-    console.log('\n[4/4] Verifying interactive controls within viewport bounds...');
+    printLog('\n[4/4] Verifying interactive controls within viewport bounds...');
     const loginCard = page.locator('[data-testid="login-screen"]');
     const bbox = await loginCard.boundingBox();
     assert.ok(bbox, 'Login card bounding box must exist');
     assert.ok(bbox.width <= 360, `Login card width (${bbox.width}px) must be <= 360px`);
-    console.log(`  [PASS] Login card width: ${bbox.width}px <= 360px.`);
+    printLog(`  [PASS] Login card width: ${bbox.width}px <= 360px.`);
 
-    console.log('\n[SUCCESS] /login renders without overflow at 360x800.');
+    printLog('\n[SUCCESS] /login renders without overflow at 360x800.');
   } finally {
     await browser.close();
     server.close();

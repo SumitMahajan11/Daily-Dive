@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -44,7 +46,7 @@ function serveStatic(distDir) {
 }
 
 async function testOffline() {
-  console.log('=== [E2E] OFFLINE FUNCTIONALITY & GROUP TOGGLE TEST ===\n');
+  printLog('=== [E2E] OFFLINE FUNCTIONALITY & GROUP TOGGLE TEST ===\n');
 
   const distDir = path.resolve(__dirname, '../dist');
   if (!fs.existsSync(distDir)) {
@@ -54,10 +56,10 @@ async function testOffline() {
   const moneyCareerTitleSet = new Set(
     moneyCareerTopics.map(t => t.title.trim().toLowerCase())
   );
-  console.log(`Loaded ${moneyCareerTopics.length} topics from src/data/groups/money-career.js`);
+  printLog(`Loaded ${moneyCareerTopics.length} topics from src/data/groups/money-career.js`);
 
   const { server, port } = await serveStatic(distDir);
-  console.log(`1. Static server listening on http://localhost:${port}`);
+  printLog(`1. Static server listening on http://localhost:${port}`);
 
   const browser = await chromium.launch({ headless: true });
   const context = await browser.newContext({
@@ -66,7 +68,7 @@ async function testOffline() {
   const page = await context.newPage();
 
   // 1. Warm up online to precache all screen chunks and assets
-  console.log('2. Warming up Service Worker and precaching all lazy-loaded screens...');
+  printLog('2. Warming up Service Worker and precaching all lazy-loaded screens...');
   await page.goto(`http://localhost:${port}/`);
   await page.evaluate(() => {
     localStorage.setItem('daily_dive_onboarding_seen', 'true');
@@ -84,21 +86,21 @@ async function testOffline() {
       await navigator.serviceWorker.ready;
     }
   });
-  console.log('   All screens and group chunks cached.');
+  printLog('   All screens and group chunks cached.');
 
   // Return to Spin before going offline
   await page.locator('[data-nav-id="spin"]').first().click();
   await page.waitForSelector('#spin');
 
   // 2. Go offline
-  console.log('3. Simulating network disconnect (context.setOffline(true))...');
+  printLog('3. Simulating network disconnect (context.setOffline(true))...');
   await context.setOffline(true);
 
   // 3. Reload while offline
-  console.log('4. Hard reloading page while fully offline...');
+  printLog('4. Hard reloading page while fully offline...');
   await page.reload();
   await page.waitForSelector('#spin', { timeout: 10000 });
-  console.log('   App loaded cleanly from Service Worker cache while offline.');
+  printLog('   App loaded cleanly from Service Worker cache while offline.');
 
   // 4. Navigate to Library to inspect and configure category toggles
   await page.locator('[data-nav-id="library"]').first().click();
@@ -111,11 +113,11 @@ async function testOffline() {
 
   // a. Before clicking, read whether Money & Career toggle is ON or OFF. Assert OFF.
   const moneyCareerInitial = await moneyCareerToggle.isChecked();
-  console.log(`   Initial Money & Career toggle state: ${moneyCareerInitial ? 'ON' : 'OFF'}`);
+  printLog(`   Initial Money & Career toggle state: ${moneyCareerInitial ? 'ON' : 'OFF'}`);
   assert.equal(moneyCareerInitial, false, 'Money & Career toggle must be OFF initially');
 
   // b. Turn OFF every other group toggle
-  console.log('6. Turning OFF all other group toggles in Library...');
+  printLog('6. Turning OFF all other group toggles in Library...');
   await page.evaluate(() => {
     const tech = document.querySelector('#library input[aria-label="Toggle Tech"]');
     if (tech && tech.checked) tech.click();
@@ -136,7 +138,7 @@ async function testOffline() {
   assert.equal(worldIdeasAfter, false, 'World & Ideas toggle must be OFF');
 
   // c. Click Money & Career toggle. Assert it is now ON.
-  console.log('7. Turning ON Money & Career toggle in Library...');
+  printLog('7. Turning ON Money & Career toggle in Library...');
   await page.evaluate(() => {
     const mc = document.querySelector('#library input[aria-label="Toggle Money & Career"]');
     if (mc && !mc.checked) mc.click();
@@ -144,7 +146,7 @@ async function testOffline() {
   await page.waitForTimeout(200);
 
   const moneyCareerAfter = await moneyCareerToggle.isChecked();
-  console.log(`   Money & Career toggle state after click: ${moneyCareerAfter ? 'ON' : 'OFF'}`);
+  printLog(`   Money & Career toggle state after click: ${moneyCareerAfter ? 'ON' : 'OFF'}`);
   assert.equal(moneyCareerAfter, true, 'Money & Career toggle must be ON after click');
 
   // d. Spin. Read the landed topic title.
@@ -163,14 +165,14 @@ async function testOffline() {
     return heading ? heading.textContent.trim() : '';
   });
 
-  console.log(`   Landed Topic Title: "${landedTitle}"`);
+  printLog(`   Landed Topic Title: "${landedTitle}"`);
 
   // e. Assert the title is in the topic list of the Money & Career group
   assert.ok(landedTitle.length > 0, 'Landed topic title must be non-empty');
   const isMatch = moneyCareerTitleSet.has(landedTitle.toLowerCase());
   assert.equal(isMatch, true, `Landed topic "${landedTitle}" must belong to Money & Career group topics`);
 
-  console.log('\n[PASS]: Offline group toggle and spin successfully verified with hard assertions.');
+  printLog('\n[PASS]: Offline group toggle and spin successfully verified with hard assertions.');
 
   await browser.close();
   server.close();

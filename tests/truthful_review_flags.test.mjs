@@ -214,20 +214,6 @@ test('Precision and recall evaluation against flag_labels.json', () => {
   const afterPrecision = (afterTP / (afterTP + afterFP)) * 100;
   const afterGoodFlaggedPct = (afterFP / goodTotal) * 100;
 
-  console.log('\n========================================================================================');
-  console.log('                   PRECISION / RECALL EVALUATION (BEFORE vs AFTER FIX)');
-  console.log('========================================================================================');
-  console.log(`Metric                              Before Fix                 After Fix`);
-  console.log('----------------------------------------------------------------------------------------');
-  console.log(`Junk topics (total)                 ${junkTotal.toString().padEnd(27)}${junkTotal}`);
-  console.log(`Good topics (total)                 ${goodTotal.toString().padEnd(27)}${goodTotal}`);
-  console.log(`Junk flagged (True Positives)       ${beforeTP.toString().padEnd(27)}${afterTP}`);
-  console.log(`Junk missed  (False Negatives)      ${beforeFN.toString().padEnd(27)}${afterFN}`);
-  console.log(`Good flagged (False Positives)      ${`${beforeFP}/${goodTotal} (${beforeGoodFlaggedPct.toFixed(1)}%)`.padEnd(27)}${`${afterFP}/${goodTotal} (${afterGoodFlaggedPct.toFixed(1)}%)`}`);
-  console.log(`Good accepted (True Negatives)      ${`${beforeTN} (${(100 - beforeGoodFlaggedPct).toFixed(1)}%)`.padEnd(27)}${`${afterTN} (${(100 - afterGoodFlaggedPct).toFixed(1)}%)`}`);
-  console.log(`Recall (Junk flagged)               ${`${beforeRecall.toFixed(1)}%`.padEnd(27)}${`${afterRecall.toFixed(1)}%`}`);
-  console.log(`Precision                           ${`${beforePrecision.toFixed(1)}%`.padEnd(27)}${`${afterPrecision.toFixed(1)}%`}`);
-  console.log('========================================================================================\n');
 
   // Positive class: "junk" (needs_review = true is a positive detection of a junk/flawed topic)
   // Negative class: "good" (needs_review = false is an accepted clean topic)

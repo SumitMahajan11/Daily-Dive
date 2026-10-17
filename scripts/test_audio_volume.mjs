@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -79,7 +81,7 @@ async function runAudioTest() {
       };
     });
 
-    console.log('Audio Spy Results:', JSON.stringify(result, null, 2));
+    printLog('Audio Spy Results:', JSON.stringify(result, null, 2));
 
     // Verify tick volume roughly doubled (was 0.105 -> 0.25, 0.15 -> 0.35)
     assert.strictEqual(result.tickStart, 0.25, 'Tick volume at progress 0 must be 0.25 (was 0.105)');
@@ -99,7 +101,7 @@ async function runAudioTest() {
     // Verify sound disabled produces 0 audio calls
     assert.strictEqual(result.disabledCalls, 0, 'Disabled sound must produce 0 audio gain calls');
 
-    console.log('[PASS] Audio spy test passed successfully.');
+    printLog('[PASS] Audio spy test passed successfully.');
   } finally {
     await browser.close();
     server.close();

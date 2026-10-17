@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -59,22 +61,22 @@ const REQUIRED_STRINGS = [
 ];
 
 async function runDeclutterE2ETests() {
-  console.log('================================================================');
-  console.log('       ROUND 14: DECLUTTER VERIFICATION E2E SUITE               ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('       ROUND 14: DECLUTTER VERIFICATION E2E SUITE               ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   assert.ok(fs.existsSync(distDir), 'dist directory not found. Please run "npm run build" first.');
 
   const port = 4194;
   const server = await serveStatic(distDir, port);
-  console.log(`Static server listening on http://localhost:${port}`);
+  printLog(`Static server listening on http://localhost:${port}`);
 
   const browser = await chromium.launch({ headless: true });
 
   try {
     for (const vp of VIEWPORTS) {
-      console.log(`\nTesting viewport ${vp.name}...`);
+      printLog(`\nTesting viewport ${vp.name}...`);
       const context = await browser.newContext({
         viewport: { width: vp.width, height: vp.height }
       });
@@ -115,7 +117,7 @@ async function runDeclutterE2ETests() {
           false,
           `[FAIL] Page at ${vp.name} must NOT contain forbidden string "${str}"`
         );
-        console.log(`  [PASS] Forbidden string absent: "${str}"`);
+        printLog(`  [PASS] Forbidden string absent: "${str}"`);
       }
 
       // Hard asserts: required strings MUST be present
@@ -125,7 +127,7 @@ async function runDeclutterE2ETests() {
           true,
           `[FAIL] Page at ${vp.name} MUST contain required string "${str}"`
         );
-        console.log(`  [PASS] Required string present: "${str}"`);
+        printLog(`  [PASS] Required string present: "${str}"`);
       }
 
       // Hard assert: "on your device" appears at most once on the whole page
@@ -134,11 +136,11 @@ async function runDeclutterE2ETests() {
         deviceMatches <= 1,
         `[FAIL] "on your device" appeared ${deviceMatches} times (max allowed: 1)`
       );
-      console.log(`  [PASS] "on your device" count: ${deviceMatches} (<= 1)`);
+      printLog(`  [PASS] "on your device" count: ${deviceMatches} (<= 1)`);
 
       await context.close();
     }
-    console.log('\nAll declutter assertions passed across all viewports!');
+    printLog('\nAll declutter assertions passed across all viewports!');
   } finally {
     await browser.close();
     server.close();

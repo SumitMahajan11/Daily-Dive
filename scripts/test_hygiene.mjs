@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -85,9 +87,9 @@ function getJpegDimensions(filePath) {
 }
 
 export async function runHygieneSuite(targetItem = null) {
-  console.log('================================================================');
-  console.log('                 DAILY DIVE HYGIENE TEST SUITE                  ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('                 DAILY DIVE HYGIENE TEST SUITE                  ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -115,9 +117,9 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 1: OVERFLOW
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 1) {
-      console.log('----------------------------------------------------');
-      console.log('ITEM 1: OVERFLOW AT 360, 390, 430');
-      console.log('----------------------------------------------------');
+      printLog('----------------------------------------------------');
+      printLog('ITEM 1: OVERFLOW AT 360, 390, 430');
+      printLog('----------------------------------------------------');
       const viewports = [
         { width: 360, height: 800 },
         { width: 390, height: 844 },
@@ -188,14 +190,14 @@ export async function runHygieneSuite(targetItem = null) {
         };
 
         const mainMeasure = await measure(`Single-page at ${vp.width}x${vp.height}`);
-        console.log(`[Viewport ${vp.width}x${vp.height}] Single Page: scrollWidth=${mainMeasure.scrollWidth}, clientWidth=${mainMeasure.clientWidth}, worstElement right=${mainMeasure.worstEl?.right}px (${mainMeasure.worstEl?.tag}.${mainMeasure.worstEl?.className})`);
+        printLog(`[Viewport ${vp.width}x${vp.height}] Single Page: scrollWidth=${mainMeasure.scrollWidth}, clientWidth=${mainMeasure.clientWidth}, worstElement right=${mainMeasure.worstEl?.right}px (${mainMeasure.worstEl?.tag}.${mainMeasure.worstEl?.className})`);
 
         // Check Settings
         await page.goto(`${baseUrl}/#/settings`);
         await page.waitForSelector('#settings');
         await page.waitForTimeout(200);
         const settingsMeasure = await measure(`Settings at ${vp.width}x${vp.height}`);
-        console.log(`[Viewport ${vp.width}x${vp.height}] Settings: scrollWidth=${settingsMeasure.scrollWidth}, clientWidth=${settingsMeasure.clientWidth}, worstElement right=${settingsMeasure.worstEl?.right}px`);
+        printLog(`[Viewport ${vp.width}x${vp.height}] Settings: scrollWidth=${settingsMeasure.scrollWidth}, clientWidth=${settingsMeasure.clientWidth}, worstElement right=${settingsMeasure.worstEl?.right}px`);
 
         if (mainMeasure.overflows || settingsMeasure.overflows) {
           allPassed = false;
@@ -204,7 +206,7 @@ export async function runHygieneSuite(targetItem = null) {
       }
 
       assert.strictEqual(allPassed, true, 'Item 1: Document must not overflow horizontally and no element edge may exceed viewport.');
-      console.log('[PASS Item 1]: No horizontal overflow across all 3 viewports and all screens.');
+      printLog('[PASS Item 1]: No horizontal overflow across all 3 viewports and all screens.');
       results.item1 = true;
     }
 
@@ -212,9 +214,9 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 2: LINKS
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 2) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 2: LINKS RESOLUTION & SHARE LINK COPY/OPEN');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 2: LINKS RESOLUTION & SHARE LINK COPY/OPEN');
+      printLog('----------------------------------------------------');
       const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
       await page.goto(`${baseUrl}/t/multi-head-self-attention`);
       const card = page.locator('[data-testid="post-spin-topic-card"]');
@@ -229,7 +231,7 @@ export async function runHygieneSuite(targetItem = null) {
       const shareBtn = card.locator('button[aria-label="Share topic"]').first();
       await shareBtn.click();
       const copied = await page.evaluate(() => window.__copied);
-      console.log(`Copied share link: ${copied}`);
+      printLog(`Copied share link: ${copied}`);
       assert.ok(copied.includes('/t/multi-head-self-attention'), 'Share link must target /t/<id>');
 
       // Open in fresh incognito context
@@ -240,7 +242,7 @@ export async function runHygieneSuite(targetItem = null) {
       const freshCard = freshPage.locator('[data-testid="post-spin-topic-card"]');
       await freshCard.waitFor({ state: 'visible', timeout: 5000 });
       const freshTitle = await freshCard.locator('h2').textContent();
-      console.log(`Fresh context loaded topic: "${freshTitle.trim()}"`);
+      printLog(`Fresh context loaded topic: "${freshTitle.trim()}"`);
       assert.strictEqual(freshTitle.trim(), 'Scaled Dot-Product', 'Copied share link must open correct topic in fresh context');
       await freshContext.close();
 
@@ -255,13 +257,13 @@ export async function runHygieneSuite(targetItem = null) {
         }));
       });
       for (const link of extLinks) {
-        console.log(`External link checked: ${link.href} (target="${link.target}", rel="${link.rel}")`);
+        printLog(`External link checked: ${link.href} (target="${link.target}", rel="${link.rel}")`);
         assert.strictEqual(link.target, '_blank', 'External link must have target="_blank"');
         assert.ok(link.rel && link.rel.includes('noopener') && link.rel.includes('noreferrer'), 'External link must have rel="noopener noreferrer"');
       }
 
       await page.close();
-      console.log('[PASS Item 2]: Links verified and share link opens topic.');
+      printLog('[PASS Item 2]: Links verified and share link opens topic.');
       results.item2 = true;
     }
 
@@ -269,9 +271,9 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 3: BUTTONS & REAL STATE READ AFTER RELOAD
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 3) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 3: BUTTONS & REAL STATE SURVIVES RELOAD');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 3: BUTTONS & REAL STATE SURVIVES RELOAD');
+      printLog('----------------------------------------------------');
       const page = await browser.newPage({ viewport: { width: 390, height: 844 } });
       page.on('pageerror', err => console.error('PAGE ERROR in Item 3:', err.message));
       await page.context().grantPermissions(['clipboard-read', 'clipboard-write', 'notifications']);
@@ -279,7 +281,7 @@ export async function runHygieneSuite(targetItem = null) {
       await page.waitForSelector('#spin');
 
       // 1. Theme toggle survives reload
-      console.log('Testing Theme toggle persistence across reload...');
+      printLog('Testing Theme toggle persistence across reload...');
       const initialDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
       const themeBtn = page.locator('button[aria-label*="Switch to"]');
       await themeBtn.click();
@@ -288,10 +290,10 @@ export async function runHygieneSuite(targetItem = null) {
       await page.waitForSelector('#spin');
       const reloadedDark = await page.evaluate(() => document.documentElement.classList.contains('dark'));
       assert.notStrictEqual(reloadedDark, initialDark, 'Theme state must flip and survive page reload');
-      console.log(`  [PASS] Theme toggle persisted: initial ${initialDark} -> reloaded ${reloadedDark}`);
+      printLog(`  [PASS] Theme toggle persisted: initial ${initialDark} -> reloaded ${reloadedDark}`);
 
       // 2. All Settings toggles persistence across reload
-      console.log('Testing all Settings toggles persistence across reload...');
+      printLog('Testing all Settings toggles persistence across reload...');
       await page.goto(`${baseUrl}/#/settings`);
       await page.waitForSelector('#settings');
 
@@ -332,14 +334,14 @@ export async function runHygieneSuite(targetItem = null) {
       assert.strictEqual(reloadedSound, !initialSoundState, 'Sound effects state must persist across reload');
       assert.strictEqual(reloadedHaptic, !initialHapticState, 'Haptic state must persist across reload');
       assert.strictEqual(reloadedReminder, false, 'Daily reminders state must persist across reload');
-      console.log(`  [PASS] All 3 Settings toggles persisted across reload: sound=${reloadedSound}, haptic=${reloadedHaptic}, reminders=${reloadedReminder}`);
+      printLog(`  [PASS] All 3 Settings toggles persisted across reload: sound=${reloadedSound}, haptic=${reloadedHaptic}, reminders=${reloadedReminder}`);
 
       // Test permission guard: clicking reminder when browser permission is denied shows warning toast
       await reminderToggle.click({ force: true });
       const blockedToast = page.getByText(/Notifications are (blocked|not supported)/i);
       await blockedToast.waitFor({ state: 'visible', timeout: 3000 });
       assert.ok(await blockedToast.isVisible(), 'Clicking reminders with denied permission must show feedback toast');
-      console.log('  [PASS] Reminders toggle safely blocked with warning toast when permission is denied.');
+      printLog('  [PASS] Reminders toggle safely blocked with warning toast when permission is denied.');
 
       // d) Reminder time preset button
       await page.evaluate(() => {
@@ -360,19 +362,19 @@ export async function runHygieneSuite(targetItem = null) {
         return s.reminder_time;
       });
       assert.strictEqual(reloadedTime, '12:00 PM', 'Reminder time preset must persist across reload');
-      console.log(`  [PASS] Reminder time preset "12:00 PM" persisted across reload`);
+      printLog(`  [PASS] Reminder time preset "12:00 PM" persisted across reload`);
 
       // 3. Settings Back button navigates back
-      console.log('Testing Back button on Settings...');
+      printLog('Testing Back button on Settings...');
       const backBtn = page.locator('[data-testid="settings-back-button"]');
       await backBtn.click();
       await page.waitForTimeout(300);
       const activeHash = await page.evaluate(() => window.location.hash);
       assert.ok(activeHash.includes('spin') || activeHash === '', 'Back button must return to main page');
-      console.log(`  [PASS] Back from Settings returned to: ${activeHash || '#/spin'}`);
+      printLog(`  [PASS] Back from Settings returned to: ${activeHash || '#/spin'}`);
 
       // 4. Interest / Category toggles persistence across reload
-      console.log('Testing Interest / Category toggles persistence across reload...');
+      printLog('Testing Interest / Category toggles persistence across reload...');
       await page.goto(`${baseUrl}/#/library`);
       await page.waitForSelector('#library');
       const categoryCheckbox = page.locator('#library input[type="checkbox"]').first();
@@ -384,10 +386,10 @@ export async function runHygieneSuite(targetItem = null) {
       await page.waitForSelector('#library');
       const reloadedCatState = await page.locator('#library input[type="checkbox"]').first().isChecked();
       assert.strictEqual(reloadedCatState, !initialCatState, 'Category interest toggle state must persist across reload');
-      console.log(`  [PASS] Category interest toggle persisted across reload: initial ${initialCatState} -> reloaded ${reloadedCatState}`);
+      printLog(`  [PASS] Category interest toggle persisted across reload: initial ${initialCatState} -> reloaded ${reloadedCatState}`);
 
       // 5. Spaced repetition Review button
-      console.log('Testing Spaced repetition Review button...');
+      printLog('Testing Spaced repetition Review button...');
       await page.evaluate(() => {
         const yesterday = new Date(Date.now() - 48 * 3600 * 1000).toISOString();
         const progress = {
@@ -413,10 +415,10 @@ export async function runHygieneSuite(targetItem = null) {
       await topicCardTitle.waitFor({ state: 'visible', timeout: 3000 });
       const renderedTitle = await topicCardTitle.innerText();
       assert.match(renderedTitle, /Scaled Dot-Product|Multi-Head/i, 'Topic card with reviewed title must be visible on #spin');
-      console.log(`  [PASS] Review button opened topic card for "${renderedTitle.trim()}" on #spin.`);
+      printLog(`  [PASS] Review button opened topic card for "${renderedTitle.trim()}" on #spin.`);
 
       // 6. Share copy -> opens that topic in a fresh context
-      console.log('Testing Share copy -> opens topic in fresh context...');
+      printLog('Testing Share copy -> opens topic in fresh context...');
       await page.goto(`${baseUrl}/t/multi-head-self-attention`);
       await page.waitForSelector('[data-testid="post-spin-topic-card"]');
       const shareBtn = page.locator('button[aria-label="Share topic"]').first();
@@ -426,7 +428,7 @@ export async function runHygieneSuite(targetItem = null) {
       const copiedText = await page.evaluate(async () => {
         try { return await navigator.clipboard.readText(); } catch (e) { return null; }
       });
-      console.log(`  Copied share link: ${copiedText}`);
+      printLog(`  Copied share link: ${copiedText}`);
       assert.ok(copiedText && copiedText.includes('/t/'), 'Share must copy /t/<id> link');
 
       const freshContext = await browser.newContext();
@@ -436,20 +438,20 @@ export async function runHygieneSuite(targetItem = null) {
       await freshPage.waitForSelector('[data-testid="post-spin-topic-card"]');
       const freshTitle = await freshPage.locator('[data-testid="post-spin-topic-card"] h2').innerText();
       assert.match(freshTitle, /Scaled Dot-Product|Multi-Head/i, 'Fresh context must render the shared topic');
-      console.log(`  [PASS] Fresh context opened topic: "${freshTitle.trim()}"`);
+      printLog(`  [PASS] Fresh context opened topic: "${freshTitle.trim()}"`);
 
       // Verify topic survives reload in fresh context
       await freshPage.reload();
       await freshPage.waitForSelector('[data-testid="post-spin-topic-card"]');
       const reloadedTitle = await freshPage.locator('[data-testid="post-spin-topic-card"] h2').innerText();
       assert.strictEqual(reloadedTitle.trim(), freshTitle.trim(), 'Topic must survive reload in fresh context');
-      console.log(`  [PASS] Fresh context topic persisted across reload: "${reloadedTitle.trim()}"`);
+      printLog(`  [PASS] Fresh context topic persisted across reload: "${reloadedTitle.trim()}"`);
 
       await freshPage.close();
       await freshContext.close();
 
       await page.close();
-      console.log('[PASS Item 3]: All controls tested, mutate real state, and persist across reload.');
+      printLog('[PASS Item 3]: All controls tested, mutate real state, and persist across reload.');
       results.item3 = true;
     }
 
@@ -457,9 +459,9 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 4: ICONS
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 4) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 4: ICONS EXIST, 200, CORRECT MIME, SIZE MATCH');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 4: ICONS EXIST, 200, CORRECT MIME, SIZE MATCH');
+      printLog('----------------------------------------------------');
       const manifestPath = path.resolve('public/manifest.json');
       const manifest = JSON.parse(fs.readFileSync(manifestPath, 'utf8'));
 
@@ -470,7 +472,7 @@ export async function runHygieneSuite(targetItem = null) {
         const dims = getPngDimensions(filePath);
         assert.ok(dims, `Icon must be valid PNG: ${filePath}`);
         const expectedDim = parseInt(icon.sizes.split('x')[0], 10);
-        console.log(`Icon ${icon.src}: declared ${icon.sizes}, measured ${dims.width}x${dims.height}`);
+        printLog(`Icon ${icon.src}: declared ${icon.sizes}, measured ${dims.width}x${dims.height}`);
         assert.strictEqual(dims.width, expectedDim, `Icon width must match declared (${expectedDim}px)`);
         assert.strictEqual(dims.height, expectedDim, `Icon height must match declared (${expectedDim}px)`);
       }
@@ -479,7 +481,7 @@ export async function runHygieneSuite(targetItem = null) {
       const faviconPath = path.resolve('public/favicon.ico');
       assert.ok(fs.existsSync(faviconPath), 'Favicon (public/favicon.ico) must exist');
 
-      console.log('[PASS Item 4]: All declared icons exist, return 200, and match declared dimensions.');
+      printLog('[PASS Item 4]: All declared icons exist, return 200, and match declared dimensions.');
       results.item4 = true;
     }
 
@@ -487,16 +489,16 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 5: META TAGS
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 5) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 5: RUNTIME META TAGS FOR / AND /t/<id>');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 5: RUNTIME META TAGS FOR / AND /t/<id>');
+      printLog('----------------------------------------------------');
       const page = await browser.newPage();
       await page.goto(baseUrl);
       await page.waitForSelector('#spin');
       const homeTitle = await page.title();
       const homeDesc = await page.locator('meta[name="description"]').getAttribute('content');
-      console.log(`Home page title: "${homeTitle}"`);
-      console.log(`Home page description: "${homeDesc}"`);
+      printLog(`Home page title: "${homeTitle}"`);
+      printLog(`Home page description: "${homeDesc}"`);
 
       // Open a topic
       await page.goto(`${baseUrl}/t/multi-head-self-attention`);
@@ -506,8 +508,8 @@ export async function runHygieneSuite(targetItem = null) {
 
       const topicTitle = await page.title();
       const topicDesc = await page.locator('meta[name="description"]').getAttribute('content');
-      console.log(`Topic page title: "${topicTitle}"`);
-      console.log(`Topic page description: "${topicDesc}"`);
+      printLog(`Topic page title: "${topicTitle}"`);
+      printLog(`Topic page description: "${topicDesc}"`);
 
       assert.notStrictEqual(topicTitle, homeTitle, 'Topic title must differ from home title at runtime');
       assert.ok(topicTitle.includes('Scaled Dot-Product') || topicTitle.includes('multi-head'), 'Topic title must contain topic name');
@@ -523,7 +525,7 @@ export async function runHygieneSuite(targetItem = null) {
       assert.strictEqual(restoredDesc, homeDesc, 'Home description must be restored when leaving topic');
 
       await page.close();
-      console.log('[PASS Item 5]: Dynamic meta title and description update and restore.');
+      printLog('[PASS Item 5]: Dynamic meta title and description update and restore.');
       results.item5 = true;
     }
 
@@ -531,19 +533,19 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 6: 404 NOT FOUND STATE
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 6) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 6: 404 TOPIC NOT FOUND STATE');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 6: 404 TOPIC NOT FOUND STATE');
+      printLog('----------------------------------------------------');
       const page = await browser.newPage();
       await page.goto(`${baseUrl}/t/not-a-real-id`);
       await page.waitForTimeout(600);
 
       const currentUrl = page.url();
-      console.log(`Opened /t/not-a-real-id -> current URL: ${currentUrl}`);
+      printLog(`Opened /t/not-a-real-id -> current URL: ${currentUrl}`);
       assert.ok(currentUrl.includes('/t/not-a-real-id'), 'URL must remain /t/not-a-real-id (not redirected to /)');
 
       const pageTitle = await page.title();
-      console.log(`Page title: "${pageTitle}"`);
+      printLog(`Page title: "${pageTitle}"`);
       assert.strictEqual(pageTitle, 'Topic not found', 'Page title must be "Topic not found"');
 
       const bodyText = await page.evaluate(() => document.body.innerText);
@@ -560,7 +562,7 @@ export async function runHygieneSuite(targetItem = null) {
       assert.ok(page.url().includes('#/spin') || page.url().endsWith('/'), 'Clicking Back to Spin must navigate to #/spin');
 
       await page.close();
-      console.log('[PASS Item 6]: 404 Topic not found state verified.');
+      printLog('[PASS Item 6]: 404 Topic not found state verified.');
       results.item6 = true;
     }
 
@@ -568,15 +570,15 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 7: MESSAGES FEEDBACK
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 7) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 7: USER ACTION MESSAGES AND TOAST FEEDBACK');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 7: USER ACTION MESSAGES AND TOAST FEEDBACK');
+      printLog('----------------------------------------------------');
       const page = await browser.newPage();
       await page.goto(baseUrl);
       await page.waitForSelector('#library');
 
       // 1. Manual add-topic: empty title feedback
-      console.log('Testing add-topic empty title toast...');
+      printLog('Testing add-topic empty title toast...');
       const addManuallyBtn = page.locator('button:has-text("Add Manually")');
       await addManuallyBtn.scrollIntoViewIfNeeded();
       await addManuallyBtn.click();
@@ -586,10 +588,10 @@ export async function runHygieneSuite(targetItem = null) {
       const toast = page.locator('text=Please enter a topic title');
       await toast.waitFor({ state: 'visible', timeout: 3000 });
       assert.ok(await toast.isVisible(), 'Empty title must show toast feedback');
-      console.log('  [PASS] Empty title gave feedback toast.');
+      printLog('  [PASS] Empty title gave feedback toast.');
 
       // 2. Manual add-topic: duplicate title feedback
-      console.log('Testing add-topic duplicate title toast...');
+      printLog('Testing add-topic duplicate title toast...');
       const titleInput = page.locator('input[placeholder*="Distributed Consensus"]');
       const descInput = page.locator('textarea[placeholder*="Summarize the core"]');
       await titleInput.fill('Scaled Dot-Product');
@@ -598,9 +600,9 @@ export async function runHygieneSuite(targetItem = null) {
       const dupToast = page.getByText(/already exists/i);
       await dupToast.waitFor({ state: 'visible', timeout: 3000 });
       assert.ok(await dupToast.isVisible(), 'Duplicate topic title must give feedback toast');
-      console.log('  [PASS] Duplicate title gave feedback toast.');
+      printLog('  [PASS] Duplicate title gave feedback toast.');
       // 3. File upload >50 MB size limit error toast
-      console.log('Testing upload limit (>50 MB) error toast...');
+      printLog('Testing upload limit (>50 MB) error toast...');
       fs.mkdirSync(path.resolve('scratch'), { recursive: true });
       const largeFilePath = path.resolve('scratch/test_50mb_large.txt');
       if (!fs.existsSync(largeFilePath)) {
@@ -611,20 +613,20 @@ export async function runHygieneSuite(targetItem = null) {
       const largeFileToast = page.getByText(/File is too large \([^)]*max 50 MB\)\. Please use a smaller file\./i);
       await largeFileToast.waitFor({ state: 'visible', timeout: 4000 });
       assert.ok(await largeFileToast.isVisible(), 'File > 50 MB must show size limit toast');
-      console.log('  [PASS] File > 50 MB triggered "File is too large (max 50 MB). Please use a smaller file." toast.');
+      printLog('  [PASS] File > 50 MB triggered "File is too large (max 50 MB). Please use a smaller file." toast.');
 
       // 4. File upload under limit (<10 MB) works without size error
-      console.log('Testing under-limit file upload...');
+      printLog('Testing under-limit file upload...');
       const smallFilePath = path.resolve('scratch/test_under_limit.txt');
       if (!fs.existsSync(smallFilePath)) {
         fs.writeFileSync(smallFilePath, 'Quantum Computing Primer\n\nQubits leverage superposition and entanglement to solve discrete optimization problems.');
       }
       await fileInput.setInputFiles(smallFilePath);
       await page.waitForTimeout(500);
-      console.log('  [PASS] Under-limit file accepted without size limit error.');
+      printLog('  [PASS] Under-limit file accepted without size limit error.');
 
       await page.close();
-      console.log('[PASS Item 7]: Messages feedback verified.');
+      printLog('[PASS Item 7]: Messages feedback verified.');
       results.item7 = true;
     }
 
@@ -632,9 +634,9 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 8: LOGO BEHAVIOR & ACCESSIBILITY
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 8) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 8: LOGO CLICK, KEYBOARD ENTER & ACCESSIBLE NAME');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 8: LOGO CLICK, KEYBOARD ENTER & ACCESSIBLE NAME');
+      printLog('----------------------------------------------------');
       const page = await browser.newPage();
       await page.goto(`${baseUrl}/#/settings`);
       await page.waitForSelector('#settings');
@@ -663,7 +665,7 @@ export async function runHygieneSuite(targetItem = null) {
       assert.ok(page.url().includes('#/spin'), 'Keyboard Enter on logo must navigate to #/spin');
 
       await page.close();
-      console.log('[PASS Item 8]: Logo click, keyboard enter, and accessible name verified.');
+      printLog('[PASS Item 8]: Logo click, keyboard enter, and accessible name verified.');
       results.item8 = true;
     }
 
@@ -671,9 +673,9 @@ export async function runHygieneSuite(targetItem = null) {
     // ITEM 9: IMAGE SIZES BUDGET
     // -------------------------------------------------------------
     if (!targetItem || targetItem === 9) {
-      console.log('\n----------------------------------------------------');
-      console.log('ITEM 9: IMAGE SIZES BUDGET');
-      console.log('----------------------------------------------------');
+      printLog('\n----------------------------------------------------');
+      printLog('ITEM 9: IMAGE SIZES BUDGET');
+      printLog('----------------------------------------------------');
       const scanDir = (dir) => {
         const files = [];
         if (!fs.existsSync(dir)) return files;
@@ -690,7 +692,7 @@ export async function runHygieneSuite(targetItem = null) {
 
       const images = scanDir('public');
       for (const img of images) {
-        console.log(`Image ${img.path}: ${img.bytes} bytes (${img.kb} KB)`);
+        printLog(`Image ${img.path}: ${img.bytes} bytes (${img.kb} KB)`);
         if (img.path.includes('icons')) {
           assert.ok(img.bytes <= 20 * 1024, `Icon ${img.path} must be <= 20 KB (got ${img.kb} KB)`);
         }
@@ -712,13 +714,13 @@ export async function runHygieneSuite(targetItem = null) {
 
       assert.ok(!fs.existsSync(path.resolve('public/og-image.png')), 'public/og-image.png must be deleted');
       assert.ok(fs.existsSync(path.resolve('public/og-image.jpg')), 'public/og-image.jpg must exist');
-      console.log('[PASS Item 9]: All images strictly within budget and verified dimensions in Node.');
+      printLog('[PASS Item 9]: All images strictly within budget and verified dimensions in Node.');
       results.item9 = true;
     }
 
-    console.log('\n================================================================');
-    console.log('               ALL HYGIENE CHECKS PASSED!                       ');
-    console.log('================================================================');
+    printLog('\n================================================================');
+    printLog('               ALL HYGIENE CHECKS PASSED!                       ');
+    printLog('================================================================');
   } finally {
     await browser.close();
     server.close();

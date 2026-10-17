@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -42,9 +44,9 @@ const VIEWPORTS = [
 ];
 
 async function runTopicCardE2ETests() {
-  console.log('================================================================');
-  console.log('     ROUND 12: TOPIC CARD DEPTH, GO DEEPER & SHARE E2E SUITE     ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('     ROUND 12: TOPIC CARD DEPTH, GO DEEPER & SHARE E2E SUITE     ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -56,15 +58,15 @@ async function runTopicCardE2ETests() {
 
   const port = 4195;
   const server = await serveStatic(distDir, port);
-  console.log(`1. Static server listening on http://localhost:${port}`);
+  printLog(`1. Static server listening on http://localhost:${port}`);
 
   const browser = await chromium.launch({ headless: true });
 
   try {
     for (const vp of VIEWPORTS) {
-      console.log(`\n============================================================`);
-      console.log(` TESTING VIEWPORT: ${vp.name} (${vp.width}x${vp.height})`);
-      console.log(`============================================================\n`);
+      printLog(`\n============================================================`);
+      printLog(` TESTING VIEWPORT: ${vp.name} (${vp.width}x${vp.height})`);
+      printLog(`============================================================\n`);
 
       const context = await browser.newContext({
         viewport: { width: vp.width, height: vp.height },
@@ -87,7 +89,7 @@ async function runTopicCardE2ETests() {
       await page.evaluate(() => localStorage.clear());
 
       // ── TEST (A): Topic with lesson ──────────────────────────────────────────
-      console.log('Test (a): Loading topic with lesson (?topic=multi-head-self-attention)...');
+      printLog('Test (a): Loading topic with lesson (?topic=multi-head-self-attention)...');
       await page.goto(`http://localhost:${port}/?topic=multi-head-self-attention`, { waitUntil: 'networkidle' });
       await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
 
@@ -113,12 +115,12 @@ async function runTopicCardE2ETests() {
 
       if (vp.width === 390) {
         await page.screenshot({ path: path.join(evidenceDir, 'card_with_lesson.png'), fullPage: false });
-        console.log('  [OK] Saved screenshot: evidence/12/card_with_lesson.png');
+        printLog('  [OK] Saved screenshot: evidence/12/card_with_lesson.png');
       }
-      console.log('  [PASS] Test (a): 3 lesson blocks & ~2 min dive badge rendered correctly.');
+      printLog('  [PASS] Test (a): 3 lesson blocks & ~2 min dive badge rendered correctly.');
 
       // ── TEST (E): Go deeper button full title & no overflow ─────────────────
-      console.log('Test (e): Verifying Go deeper button full title and bounding overflow...');
+      printLog('Test (e): Verifying Go deeper button full title and bounding overflow...');
       const goDeeperBtn = page.locator('[data-testid="go-deeper-button"]');
       assert.strictEqual(await goDeeperBtn.isVisible(), true, 'Go deeper button must be visible');
       const goDeeperText = (await goDeeperBtn.textContent()).trim();
@@ -135,10 +137,10 @@ async function runTopicCardE2ETests() {
         overflowMetrics.scrollWidth <= overflowMetrics.clientWidth + 2,
         `Go deeper button must not horizontally overflow (scrollWidth: ${overflowMetrics.scrollWidth}, clientWidth: ${overflowMetrics.clientWidth})`
       );
-      console.log(`  [PASS] Test (e): Go deeper button rendered "${goDeeperText}" without horizontal overflow.`);
+      printLog(`  [PASS] Test (e): Go deeper button rendered "${goDeeperText}" without horizontal overflow.`);
 
       // ── TEST (D): Share button clipboard fallback & toast ───────────────────
-      console.log('Test (d): Clicking share button with navigator.share disabled...');
+      printLog('Test (d): Clicking share button with navigator.share disabled...');
       const shareBtn = page.locator('button[aria-label="Share topic"]');
       assert.strictEqual(await shareBtn.isVisible(), true, 'Share button must be visible in card toolbar');
       await shareBtn.click();
@@ -158,7 +160,7 @@ async function runTopicCardE2ETests() {
         `http://localhost:${port}/t/multi-head-self-attention`,
         `Clipboard must contain full /t/<id> share URL (got: ${clipboardText})`
       );
-      console.log(`  [PASS] Test (d): Toast "Link copied" shown and clipboard text verified (${clipboardText}).`);
+      printLog(`  [PASS] Test (d): Toast "Link copied" shown and clipboard text verified (${clipboardText}).`);
 
       // ── TEST (B): Topic without lesson ─────────────────────────────────────
       const curatedTopics = JSON.parse(fs.readFileSync(path.resolve('data/topics.curated.json'), 'utf8'));
@@ -166,7 +168,7 @@ async function runTopicCardE2ETests() {
       const topicWithoutLesson = curatedTopics.find(t => !lessonsData[t.id])?.id;
       assert.ok(topicWithoutLesson, 'Must find at least one curated topic without a lesson');
 
-      console.log(`Test (b): Loading topic without lesson (?topic=${topicWithoutLesson})...`);
+      printLog(`Test (b): Loading topic without lesson (?topic=${topicWithoutLesson})...`);
       await page.goto(`http://localhost:${port}/?topic=${topicWithoutLesson}`, { waitUntil: 'networkidle' });
       await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
 
@@ -184,12 +186,12 @@ async function runTopicCardE2ETests() {
 
       if (vp.width === 390) {
         await page.screenshot({ path: path.join(evidenceDir, 'card_without_lesson.png'), fullPage: false });
-        console.log('  [OK] Saved screenshot: evidence/12/card_without_lesson.png');
+        printLog('  [OK] Saved screenshot: evidence/12/card_without_lesson.png');
       }
-      console.log('  [PASS] Test (b): Fallback description shown, 3 labels & badge omitted.');
+      printLog('  [PASS] Test (b): Fallback description shown, 3 labels & badge omitted.');
 
       // ── TEST (C): Unknown topic ID (?topic=does-not-exist) ──────────────────
-      console.log('Test (c): Loading unknown topic ID (?topic=does-not-exist)...');
+      printLog('Test (c): Loading unknown topic ID (?topic=does-not-exist)...');
       await page.goto(`http://localhost:${port}/?topic=does-not-exist`, { waitUntil: 'networkidle' });
 
       // Wait a short moment for resolution to complete
@@ -205,7 +207,7 @@ async function runTopicCardE2ETests() {
       // Assert no error toast or alert
       const errorToast = page.locator('.toast-error, [role="alert"]');
       assert.strictEqual(await errorToast.count(), 0, 'No error toast/alert should appear for unknown topic ID');
-      console.log('  [PASS] Test (c): Unknown ID gracefully ignored, standard Spin screen displayed.');
+      printLog('  [PASS] Test (c): Unknown ID gracefully ignored, standard Spin screen displayed.');
 
       await context.close();
     }
@@ -214,9 +216,9 @@ async function runTopicCardE2ETests() {
     server.close();
   }
 
-  console.log('\n================================================================');
-  console.log('     ALL TOPIC CARD E2E TESTS PASSED (10/10 assertions)         ');
-  console.log('================================================================\n');
+  printLog('\n================================================================');
+  printLog('     ALL TOPIC CARD E2E TESTS PASSED (10/10 assertions)         ');
+  printLog('================================================================\n');
 }
 
 runTopicCardE2ETests().catch(err => {

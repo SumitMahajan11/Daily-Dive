@@ -74,7 +74,6 @@ test('1. Scanned PDF OCR quality: scanned_tables_document.pdf yields >= 3 topics
   });
   const overlapPct = parseFloat(((matched.size / expectedPdfWords.size) * 100).toFixed(1));
 
-  console.log(`[TEST 1 PDF] Extracted text length: ${result.textLength}, Overlap: ${overlapPct}%, Topics: ${result.topicCount}`);
   assert.ok(result.topicCount >= 3, `Expected at least 3 topics, got ${result.topicCount}`);
   assert.ok(overlapPct >= 70.0, `Expected word overlap >= 70% (scale 2.5 baseline), got ${overlapPct}%`);
 });
@@ -127,7 +126,6 @@ test('2. CV Image OCR quality: study_notes_computer_vision.png yields >= 1 topic
   });
   const overlapPct = parseFloat(((matched.size / expectedImgWords.size) * 100).toFixed(1));
 
-  console.log(`[TEST 2 IMAGE] Extracted text length: ${result.textLength}, Overlap: ${overlapPct}%, Topics: ${result.topicCount}`);
   assert.ok(result.topicCount >= 1, `Expected at least 1 topic from CV image, got ${result.topicCount}`);
   assert.ok(overlapPct >= 80.0, `Expected word overlap >= 80% (2x upscale baseline), got ${overlapPct}%`);
   assert.ok(!result.text.includes('ayersappy'), 'Expected 2x upscale to resolve blurred "layers apply" without artifact "ayersappy"');
@@ -168,7 +166,6 @@ test('3. Video extraction: lecture_microservices.webm with 2 slides yields >= 2 
 
   await page.close();
 
-  console.log(`[TEST 3 VIDEO] Frames sampled: ${result.frameCount}, Topics: ${result.topicCount}`);
   assert.ok(result.topicCount >= 2, `Expected at least 2 topics from 2-slide video, got ${result.topicCount}`);
 });
 
@@ -185,7 +182,6 @@ test('4. Topic extraction: extractTopicsFromSections reads rawFrames', async () 
   };
   const { extractTopicsFromSections } = await import('../src/lib/topicExtractor.js');
   const topics = await extractTopicsFromSections(extractedData, 'test_video.mp4');
-  console.log(`[TEST 4 RAW FRAMES] Extracted topics count: ${topics.length}`);
   assert.equal(topics.length, 2, `Expected 2 topics from rawFrames, got ${topics.length}`);
 });
 
@@ -225,7 +221,6 @@ test('5. Per-page OCR gating: synthetic_mixed_document.pdf (3 image pages, 1 tex
 
   await page.close();
 
-  console.log(`[TEST 5 PER-PAGE OCR] Extracted pages: ${result.rawPagesCount}/4, Text length: ${result.textLength}, Topics: ${result.topicCount}`);
   assert.equal(result.rawPagesCount, 4, `Expected all 4 pages extracted (3 OCR + 1 text layer), got ${result.rawPagesCount}`);
   assert.ok(result.text.toLowerCase().includes('consensus') || result.text.toLowerCase().includes('raft'), 'Expected OCR text from page 1 in extracted text');
   assert.ok(result.text.toLowerCase().includes('database') || result.text.toLowerCase().includes('b-tree') || result.text.toLowerCase().includes('lsm'), 'Expected OCR text from page 2 in extracted text');
@@ -318,7 +313,6 @@ test('6. Playwright test: scan_text 30 pages in real Chromium, cancel after page
 
   await page.close();
 
-  console.log(`[TEST 6 CANCEL OCR] OCR pages: ${result.pageStats.ocr}, NotProcessed: ${result.pageStats.notProcessed}, Empty: ${result.pageStats.empty}`);
   assert.equal(result.pageCount, 30, 'Total pageCount must be 30');
   assert.ok(result.pageStats.ocr >= 5, `Expected at least 5 pages OCR'd, got ${result.pageStats.ocr}`);
   assert.equal(result.pageStats.notProcessed, 30 - result.pageStats.ocr, 'notProcessed count must equal 30 minus processed pages');

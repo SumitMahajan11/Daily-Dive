@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { execSync } from 'node:child_process';
 import path from 'node:path';
 
@@ -33,16 +35,16 @@ const suites = [
   'scripts/test_login_overflow.mjs'
 ];
 
-console.log('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');
+printLog('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');
 
 let failed = 0;
 for (const suite of suites) {
-  console.log(`\n----------------------------------------------------`);
-  console.log(`Running: ${suite}`);
-  console.log(`----------------------------------------------------`);
+  printLog(`\n----------------------------------------------------`);
+  printLog(`Running: ${suite}`);
+  printLog(`----------------------------------------------------`);
   try {
     execSync(`node ${suite}`, { stdio: 'inherit' });
-    console.log(`[PASS]: ${suite}`);
+    printLog(`[PASS]: ${suite}`);
   } catch (err) {
     console.error(`[FAIL]: ${suite}`);
     failed++;
@@ -53,5 +55,5 @@ if (failed > 0) {
   console.error(`\n${failed} test suites failed.`);
   process.exit(1);
 } else {
-  console.log(`\nAll ${suites.length} E2E test suites passed successfully!`);
+  printLog(`\nAll ${suites.length} E2E test suites passed successfully!`);
 }

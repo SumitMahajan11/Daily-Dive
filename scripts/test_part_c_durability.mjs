@@ -1,11 +1,13 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import {
   requestStoragePersistence,
   isIOSSafariNonStandalone
 } from '../src/lib/storage.js';
 
-console.log('================================================================');
-console.log('            PART C: STORAGE DURABILITY & NUDGE TEST             ');
-console.log('================================================================\n');
+printLog('================================================================');
+printLog('            PART C: STORAGE DURABILITY & NUDGE TEST             ');
+printLog('================================================================\n');
 
 let totalTests = 0;
 let passedTests = 0;
@@ -14,7 +16,7 @@ function assert(condition, message) {
   totalTests++;
   if (condition) {
     passedTests++;
-    console.log(`  ✓ PASS: ${message}`);
+    printLog(`  ✓ PASS: ${message}`);
   } else {
     console.error(`  ✗ FAIL: ${message}`);
     throw new Error(`Assertion failed: ${message}`);
@@ -22,7 +24,7 @@ function assert(condition, message) {
 }
 
 // ── TEST 1: navigator.storage.persist() simulation & console logging ──
-console.log('[1/2] Testing navigator.storage.persist() call and console logging...');
+printLog('[1/2] Testing navigator.storage.persist() call and console logging...');
 
 // Emulate navigator.storage API environment
 let persistCallCount = 0;
@@ -53,7 +55,7 @@ const alreadyPersisted = await requestStoragePersistence();
 assert(alreadyPersisted === true, 'requestStoragePersistence() returned true when already persisted without re-requesting');
 
 // ── TEST 2: iOS Safari Non-Standalone vs Standalone detection ──
-console.log('\n[2/2] Testing iOS Safari non-standalone vs standalone detection...');
+printLog('\n[2/2] Testing iOS Safari non-standalone vs standalone detection...');
 
 // Setup window and matchMedia mocks
 const mockWindow = {
@@ -92,6 +94,6 @@ mockNavigator.userAgent = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit
 const isDesktopTarget = isIOSSafariNonStandalone();
 assert(isDesktopTarget === false, 'Desktop Chrome does NOT trigger iOS Safari install nudge');
 
-console.log('\n================================================================');
-console.log(`PART C TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
-console.log('================================================================\n');
+printLog('\n================================================================');
+printLog(`PART C TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
+printLog('================================================================\n');

@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import {
   INITIAL_TOPICS,
   STARTER_ENABLED_CATEGORIES,
@@ -15,9 +17,9 @@ import {
 } from '../src/lib/selectors.js';
 import { loadAllBuiltinTopics } from '../src/lib/topicLoader.js';
 
-console.log('================================================================');
-console.log('     PART A INVARIANT & NUMBERS RECONCILIATION TEST SUITE       ');
-console.log('================================================================\n');
+printLog('================================================================');
+printLog('     PART A INVARIANT & NUMBERS RECONCILIATION TEST SUITE       ');
+printLog('================================================================\n');
 
 let totalTests = 0;
 let passedTests = 0;
@@ -26,7 +28,7 @@ function assert(condition, message) {
   totalTests++;
   if (condition) {
     passedTests++;
-    console.log(`  ✓ PASS: ${message}`);
+    printLog(`  ✓ PASS: ${message}`);
   } else {
     console.error(`  ✗ FAIL: ${message}`);
     throw new Error(`Assertion failed: ${message}`);
@@ -34,7 +36,7 @@ function assert(condition, message) {
 }
 
 // ── TEST 1: LEAD 1 & INVARIANT (totalSpins & explored count from selectors) ──
-console.log('\n[1/5] Invariant 1: selectTotalSpins & selectExploredCount from single source of truth');
+printLog('\n[1/5] Invariant 1: selectTotalSpins & selectExploredCount from single source of truth');
 
 const mockHistory = [
   { id: 'h1', topic_id: 't1', action: 'spin', local_date: '2026-10-01' },
@@ -61,7 +63,7 @@ assert(uniqueExploredCount === 4, `selectExploredCount (${uniqueExploredCount}) 
 assert(learnedCount === 1, `selectLearnedCount (${learnedCount}) returns 1 learned topic`);
 
 // ── TEST 2: LEAD 2 & INVARIANT (Review Queue derives from persistent user_progress) ──
-console.log('\n[2/5] Invariant 2: selectReviewQueue derives from persistent user_progress');
+printLog('\n[2/5] Invariant 2: selectReviewQueue derives from persistent user_progress');
 
 const mockTopics = [
   { id: 't1', title: 'Raft Consensus' },
@@ -87,7 +89,7 @@ assert(
 );
 
 // ── TEST 3: LEAD 3 & INVARIANT (best >= current always, and best >= any past streak) ──
-console.log('\n[3/5] Invariant 3: selectStreakMetrics reconciliation');
+printLog('\n[3/5] Invariant 3: selectStreakMetrics reconciliation');
 
 // User had active days on Sep 26 and Sep 27 (2-day streak), then lapsed, and spun today (Oct 10, 1-day streak)
 const streakHistory = [
@@ -110,7 +112,7 @@ assert(streakMetrics.longest_streak === 2, `Longest streak is reconciled to 2 (b
 assert(streakMetrics.longest_streak >= streakMetrics.current_streak, `Longest streak (${streakMetrics.longest_streak}) >= current streak (${streakMetrics.current_streak})`);
 
 // ── TEST 4: LEAD 4 & INVARIANT (Reel only contains categories eligible under current filters) ──
-console.log('\n[4/5] Invariant 4: Reel only contains categories eligible under current filters');
+printLog('\n[4/5] Invariant 4: Reel only contains categories eligible under current filters');
 
 const filteredSettings = {
   enabled_categories: {
@@ -137,7 +139,7 @@ assert(
 );
 
 // ── TEST 5: LEAD 5 (Preset removal & accurate category group pool counts) ──
-console.log('\n[5/5] Lead 5 Verification: Category Group Counts & No Presets');
+printLog('\n[5/5] Lead 5 Verification: Category Group Counts & No Presets');
 
 const allTopics = await loadAllBuiltinTopics();
 CATEGORY_TREE.forEach(groupDef => {
@@ -146,6 +148,6 @@ CATEGORY_TREE.forEach(groupDef => {
   assert(groupTopics.length > 0, `Group "${groupDef.label}" has ${groupTopics.length} real topics across ${subcategoryCount} subcategories`);
 });
 
-console.log('\n================================================================');
-console.log(`PART A TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
-console.log('================================================================\n');
+printLog('\n================================================================');
+printLog(`PART A TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
+printLog('================================================================\n');

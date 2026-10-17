@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -47,9 +49,9 @@ const VIEWPORTS = [
 ];
 
 async function runSpinVisualTests() {
-  console.log('================================================================');
-  console.log('         SPIN REEL VISUAL CONTINUITY & ALIGNMENT E2E TEST       ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('         SPIN REEL VISUAL CONTINUITY & ALIGNMENT E2E TEST       ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -63,9 +65,9 @@ async function runSpinVisualTests() {
 
   try {
     for (const vp of VIEWPORTS) {
-      console.log(`\n------------------------------------------------------------`);
-      console.log(` TESTING VIEWPORT: ${vp.name}`);
-      console.log(`------------------------------------------------------------`);
+      printLog(`\n------------------------------------------------------------`);
+      printLog(` TESTING VIEWPORT: ${vp.name}`);
+      printLog(`------------------------------------------------------------`);
 
       const context = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
       await context.addInitScript(() => {
@@ -86,7 +88,7 @@ async function runSpinVisualTests() {
       });
 
       const page = await context.newPage();
-      page.on('console', msg => console.log('PAGE LOG:', msg.text()));
+      page.on('console', msg => printLog('PAGE LOG:', msg.text()));
       page.on('pageerror', err => console.error('PAGE ERROR:', err));
       await page.goto(`http://localhost:${port}/`, { waitUntil: 'networkidle' });
 
@@ -176,7 +178,7 @@ async function runSpinVisualTests() {
 
       // Collect sample results
       const samples = await page.evaluate(() => window.__samples);
-      console.log(`\nSample measurements during spin for ${vp.name}:`);
+      printLog(`\nSample measurements during spin for ${vp.name}:`);
       console.table(samples.map(s => ({ time: s.time, visibleCards: s.visibleCards, sampleTitle: s.titles[0] || 'EMPTY' })));
 
       // Assertion (a): At least 3 cards visible in strip at every sample
@@ -186,7 +188,7 @@ async function runSpinVisualTests() {
           `[FAIL a] At ${s.time}ms, expected >= 3 visible cards, found ${s.visibleCards} on ${vp.name}`
         );
       }
-      console.log(`  [PASS a] At least 3 cards visible at all sampled timestamps (300, 1000, 2000, 3000, 4000, 4400 ms)`);
+      printLog(`  [PASS a] At least 3 cards visible at all sampled timestamps (300, 1000, 2000, 3000, 4000, 4400 ms)`);
 
       // Assertion (b): Every visible card has a non-empty title
       for (const s of samples) {
@@ -198,7 +200,7 @@ async function runSpinVisualTests() {
           );
         }
       }
-      console.log(`  [PASS b] Every visible card has a non-empty title across all samples`);
+      printLog(`  [PASS b] Every visible card has a non-empty title across all samples`);
 
       // Wait for spin to complete and topic card to appear
       await page.waitForSelector('[data-testid="post-spin-topic-card"]', { timeout: 10000 });
@@ -233,8 +235,8 @@ async function runSpinVisualTests() {
         return titleEl ? titleEl.textContent.trim() : closestCard.textContent.trim();
       });
 
-      console.log(`  Topic Card Shown Title:   "${topicCardTitle?.trim()}"`);
-      console.log(`  Card Under Reticle Title: "${cardUnderReticleTitle?.trim()}"`);
+      printLog(`  Topic Card Shown Title:   "${topicCardTitle?.trim()}"`);
+      printLog(`  Card Under Reticle Title: "${cardUnderReticleTitle?.trim()}"`);
 
       assert.ok(cardUnderReticleTitle, `[FAIL c] No card found under reticle after spin on ${vp.name}`);
       assert.strictEqual(
@@ -242,7 +244,7 @@ async function runSpinVisualTests() {
         topicCardTitle.trim(),
         `[FAIL c] Card under reticle ("${cardUnderReticleTitle}") does not match topic card ("${topicCardTitle}") on ${vp.name}`
       );
-      console.log(`  [PASS c] Card under reticle matches post-spin topic card title exactly`);
+      printLog(`  [PASS c] Card under reticle matches post-spin topic card title exactly`);
 
       // Assertion (d): At each recorded tick time, card boundary is within half a card width of reticle center
       const tickBoundaryCheck = await page.evaluate(() => {
@@ -313,7 +315,7 @@ async function runSpinVisualTests() {
         tickBoundaryCheck.maxError <= 20.0,
         `[FAIL d] Card center error ${tickBoundaryCheck.maxError.toFixed(2)}px exceeds limit (20px)`
       );
-      console.log(`  [PASS d] Max card center-to-reticle error at tick times: ${tickBoundaryCheck.maxError.toFixed(2)}px (<= 20px)`);
+      printLog(`  [PASS d] Max card center-to-reticle error at tick times: ${tickBoundaryCheck.maxError.toFixed(2)}px (<= 20px)`);
       if (tickBoundaryCheck.maxError > globalMaxError) {
         globalMaxError = tickBoundaryCheck.maxError;
       }
@@ -321,9 +323,9 @@ async function runSpinVisualTests() {
       await context.close();
     }
 
-    console.log('\n================================================================');
-    console.log(`ALL SPIN VISUAL TESTS PASSED! Largest Error Measured: ${globalMaxError.toFixed(1)}px`);
-    console.log('================================================================\n');
+    printLog('\n================================================================');
+    printLog(`ALL SPIN VISUAL TESTS PASSED! Largest Error Measured: ${globalMaxError.toFixed(1)}px`);
+    printLog('================================================================\n');
 
   } finally {
     await browser.close();

@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -42,9 +44,9 @@ const VIEWPORTS = [
 ];
 
 async function runSpinFinishTests() {
-  console.log('================================================================');
-  console.log('         SPIN FINISH SLOW-DOWN & LANDING EFFECT TEST            ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('         SPIN FINISH SLOW-DOWN & LANDING EFFECT TEST            ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -58,9 +60,9 @@ async function runSpinFinishTests() {
 
   try {
     for (const vp of VIEWPORTS) {
-      console.log(`\n----------------------------------------------------`);
-      console.log(`Testing viewport: ${vp.name}`);
-      console.log(`----------------------------------------------------`);
+      printLog(`\n----------------------------------------------------`);
+      printLog(`Testing viewport: ${vp.name}`);
+      printLog(`----------------------------------------------------`);
 
       const context = await browser.newContext({ viewport: { width: vp.width, height: vp.height } });
       const page = await context.newPage();
@@ -283,17 +285,17 @@ async function runSpinFinishTests() {
       const lastMovingSpeed = lastMovingFrame ? lastMovingFrame.v : 0;
       const finalSpeedPct = (lastMovingSpeed / vAt1200) * 100;
 
-      console.log(`Measured Speed Dynamics after Phase 1:`);
-      console.log(`  Speed at 1200 ms: ${vAt1200.toFixed(4)} px/ms`);
-      console.log(`  Speed at last moving frame: ${lastMovingSpeed.toFixed(4)} px/ms (${finalSpeedPct.toFixed(2)}% of 1200ms speed)`);
-      console.log(`  Largest Speed Increase: ${maxIncrease.toFixed(2)}%`);
-      console.log(`  Largest Speed Drop (excl. last 100ms): ${maxDrop.toFixed(2)}%`);
+      printLog(`Measured Speed Dynamics after Phase 1:`);
+      printLog(`  Speed at 1200 ms: ${vAt1200.toFixed(4)} px/ms`);
+      printLog(`  Speed at last moving frame: ${lastMovingSpeed.toFixed(4)} px/ms (${finalSpeedPct.toFixed(2)}% of 1200ms speed)`);
+      printLog(`  Largest Speed Increase: ${maxIncrease.toFixed(2)}%`);
+      printLog(`  Largest Speed Drop (excl. last 100ms): ${maxDrop.toFixed(2)}%`);
 
       // Print first 10 and last 10 frames of Phase 2 deceleration
-      console.log(`\nFirst 10 frames of slow-down (Phase 2):`);
-      console.log(p2Speeds.slice(0, 10).map((f, idx) => `  [#${idx + 1}] t=${f.t.toFixed(1)}ms, x=${f.x.toFixed(2)}px, v=${f.v.toFixed(4)}px/ms`).join('\n'));
-      console.log(`\nLast 10 frames of slow-down (Phase 2):`);
-      console.log(p2Speeds.slice(-10).map((f, idx) => `  [#${idx + 1}] t=${f.t.toFixed(1)}ms, x=${f.x.toFixed(2)}px, v=${f.v.toFixed(4)}px/ms`).join('\n'));
+      printLog(`\nFirst 10 frames of slow-down (Phase 2):`);
+      printLog(p2Speeds.slice(0, 10).map((f, idx) => `  [#${idx + 1}] t=${f.t.toFixed(1)}ms, x=${f.x.toFixed(2)}px, v=${f.v.toFixed(4)}px/ms`).join('\n'));
+      printLog(`\nLast 10 frames of slow-down (Phase 2):`);
+      printLog(p2Speeds.slice(-10).map((f, idx) => `  [#${idx + 1}] t=${f.t.toFixed(1)}ms, x=${f.x.toFixed(2)}px, v=${f.v.toFixed(4)}px/ms`).join('\n'));
 
       // Check a: Speed never increases by more than 5% frame to frame after phase 1
       try {
@@ -301,7 +303,7 @@ async function runSpinFinishTests() {
           maxIncrease <= 5.0,
           `Speed increased by ${maxIncrease.toFixed(2)}% frame to frame (must be <= 5%)`
         );
-        console.log(`  [PASS a] Largest frame-to-frame speed increase: ${maxIncrease.toFixed(2)}% (<= 5%)`);
+        printLog(`  [PASS a] Largest frame-to-frame speed increase: ${maxIncrease.toFixed(2)}% (<= 5%)`);
       } catch (err) {
         console.error(`  [FAIL a] ${err.message}`);
         allFailures.push(`[${vp.name}] Check a: ${err.message}`);
@@ -313,7 +315,7 @@ async function runSpinFinishTests() {
           finalSpeedPct < 15.0,
           `Speed at last moving frame is ${finalSpeedPct.toFixed(2)}% of speed at 1200ms (must be < 15%)`
         );
-        console.log(`  [PASS b] Speed at last moving frame: ${lastMovingSpeed.toFixed(4)} px/ms (${finalSpeedPct.toFixed(2)}% of 1200ms speed, < 15%)`);
+        printLog(`  [PASS b] Speed at last moving frame: ${lastMovingSpeed.toFixed(4)} px/ms (${finalSpeedPct.toFixed(2)}% of 1200ms speed, < 15%)`);
       } catch (err) {
         console.error(`  [FAIL b] ${err.message}`);
         allFailures.push(`[${vp.name}] Check b: ${err.message}`);
@@ -325,7 +327,7 @@ async function runSpinFinishTests() {
           maxDrop <= 30.0,
           `Largest frame-to-frame speed drop outside last 100ms is ${maxDrop.toFixed(2)}% (must be <= 30%)`
         );
-        console.log(`  [PASS drop] Largest frame-to-frame speed drop outside last 100ms: ${maxDrop.toFixed(2)}% (<= 30%)`);
+        printLog(`  [PASS drop] Largest frame-to-frame speed drop outside last 100ms: ${maxDrop.toFixed(2)}% (<= 30%)`);
       } catch (err) {
         console.error(`  [FAIL drop] ${err.message}`);
         allFailures.push(`[${vp.name}] Check drop: ${err.message}`);
@@ -354,15 +356,15 @@ async function runSpinFinishTests() {
       const stopDuration = Number((stopTime - lastTickTime).toFixed(1));
       const stopRatio = Number((stopDuration / lastTickGap).toFixed(3));
 
-      console.log(`\n--- Single-Run Timing Check (${vp.name}) ---`);
-      console.log(`  Tick 31 Timestamp:      ${lastTickTime.toFixed(1)} ms`);
-      console.log(`  Stop Timestamp:         ${stopTime.toFixed(1)} ms`);
-      console.log(`  Difference:             ${stopDuration.toFixed(1)} ms`);
-      console.log(`  Last Gap:               ${lastTickGap.toFixed(1)} ms`);
-      console.log(`  Ratio (Diff / LastGap): ${stopRatio}x`);
+      printLog(`\n--- Single-Run Timing Check (${vp.name}) ---`);
+      printLog(`  Tick 31 Timestamp:      ${lastTickTime.toFixed(1)} ms`);
+      printLog(`  Stop Timestamp:         ${stopTime.toFixed(1)} ms`);
+      printLog(`  Difference:             ${stopDuration.toFixed(1)} ms`);
+      printLog(`  Last Gap:               ${lastTickGap.toFixed(1)} ms`);
+      printLog(`  Ratio (Diff / LastGap): ${stopRatio}x`);
 
-      console.log(`\nTick Gaps in Phase 2 (ms):`, p2Gaps);
-      console.log(`Phase 2 Tick Gap Ratios:`, gapRatios);
+      printLog(`\nTick Gaps in Phase 2 (ms):`, p2Gaps);
+      printLog(`Phase 2 Tick Gap Ratios:`, gapRatios);
 
       // Check c: Tick gaps after phase 1: each gap is between 1.0 and 1.4 times previous gap
       try {
@@ -373,7 +375,7 @@ async function runSpinFinishTests() {
             `Gap ratio at index ${i} is ${r} (must be between 1.0 and 1.4)`
           );
         }
-        console.log(`  [PASS c] All ${gapRatios.length} gap ratios in Phase 2 are between 1.0 and 1.4`);
+        printLog(`  [PASS c] All ${gapRatios.length} gap ratios in Phase 2 are between 1.0 and 1.4`);
       } catch (err) {
         console.error(`  [FAIL c] ${err.message}`);
         allFailures.push(`[${vp.name}] Check c: ${err.message}`);
@@ -381,12 +383,12 @@ async function runSpinFinishTests() {
 
       // Check d: Time from last tick to the stop is at most 1.4 times the last tick gap
       try {
-        console.log(`  Time from last tick to stop: ${stopDuration} ms, Last tick gap: ${lastTickGap} ms (ratio: ${stopRatio}x)`);
+        printLog(`  Time from last tick to stop: ${stopDuration} ms, Last tick gap: ${lastTickGap} ms (ratio: ${stopRatio}x)`);
         assert.ok(
           stopRatio <= 1.4,
           `Time from last tick to stop (${stopDuration} ms) is ${stopRatio}x last tick gap (${lastTickGap} ms), must be <= 1.4x`
         );
-        console.log(`  [PASS d] Time from last tick to stop is ${stopRatio}x last tick gap (<= 1.4x)`);
+        printLog(`  [PASS d] Time from last tick to stop is ${stopRatio}x last tick gap (<= 1.4x)`);
       } catch (err) {
         console.error(`  [FAIL d] ${err.message}`);
         allFailures.push(`[${vp.name}] Check d: ${err.message}`);
@@ -395,12 +397,12 @@ async function runSpinFinishTests() {
       // Check e: After the settle, card center to reticle center is within 1 px
       const centerDist = spy.centerDistAtEnd ?? 999;
       try {
-        console.log(`  Card center to reticle center distance: ${centerDist.toFixed(2)} px`);
+        printLog(`  Card center to reticle center distance: ${centerDist.toFixed(2)} px`);
         assert.ok(
           centerDist <= 1.0,
           `Card center distance ${centerDist.toFixed(2)}px exceeds 1.0px`
         );
-        console.log(`  [PASS e] Card center to reticle center is ${centerDist.toFixed(2)} px (<= 1.0 px)`);
+        printLog(`  [PASS e] Card center to reticle center is ${centerDist.toFixed(2)} px (<= 1.0 px)`);
       } catch (err) {
         console.error(`  [FAIL e] ${err.message}`);
         allFailures.push(`[${vp.name}] Check e: ${err.message}`);
@@ -416,7 +418,7 @@ async function runSpinFinishTests() {
           spy.cardVisibleAt500,
           'Topic card must be visible at landing + 500 ms'
         );
-        console.log(`  [PASS j] Topic card is not visible at landing + 100ms and visible at landing + 500ms`);
+        printLog(`  [PASS j] Topic card is not visible at landing + 100ms and visible at landing + 500ms`);
       } catch (err) {
         console.error(`  [FAIL j] ${err.message}`);
         allFailures.push(`[${vp.name}] Check j: ${err.message}`);
@@ -432,7 +434,7 @@ async function runSpinFinishTests() {
           spy.ringGoneAfter1500,
           'landing-ring is still present 1500 ms later'
         );
-        console.log(`  [PASS f] landing-ring detected within 100 ms and removed 1500 ms later`);
+        printLog(`  [PASS f] landing-ring detected within 100 ms and removed 1500 ms later`);
       } catch (err) {
         console.error(`  [FAIL f] ${err.message}`);
         allFailures.push(`[${vp.name}] Check f: ${err.message}`);
@@ -440,7 +442,7 @@ async function runSpinFinishTests() {
 
       // Check g: A spy on navigator.vibrate shows exactly 1 call, with 20
       try {
-        console.log(`  navigator.vibrate calls:`, spy.vibrateCalls);
+        printLog(`  navigator.vibrate calls:`, spy.vibrateCalls);
         assert.strictEqual(
           spy.vibrateCalls.length,
           1,
@@ -451,7 +453,7 @@ async function runSpinFinishTests() {
           20,
           `Expected vibrate(20), got vibrate(${JSON.stringify(spy.vibrateCalls[0])})`
         );
-        console.log(`  [PASS g] navigator.vibrate called exactly once with 20`);
+        printLog(`  [PASS g] navigator.vibrate called exactly once with 20`);
       } catch (err) {
         console.error(`  [FAIL g] ${err.message}`);
         allFailures.push(`[${vp.name}] Check g: ${err.message}`);
@@ -460,12 +462,12 @@ async function runSpinFinishTests() {
       // Check i: Total click-to-landing time is between 4000 and 5200 ms
       const totalTimeMs = spy.landingTime - spy.clickTime;
       try {
-        console.log(`  Total click-to-landing duration: ${totalTimeMs.toFixed(1)} ms`);
+        printLog(`  Total click-to-landing duration: ${totalTimeMs.toFixed(1)} ms`);
         assert.ok(
           totalTimeMs >= 4000 && totalTimeMs <= 5200,
           `Total click-to-landing time (${totalTimeMs.toFixed(1)} ms) outside [4000, 5200]`
         );
-        console.log(`  [PASS i] Total click-to-landing time: ${totalTimeMs.toFixed(1)} ms (within 4000-5200 ms)`);
+        printLog(`  [PASS i] Total click-to-landing time: ${totalTimeMs.toFixed(1)} ms (within 4000-5200 ms)`);
       } catch (err) {
         console.error(`  [FAIL i] ${err.message}`);
         allFailures.push(`[${vp.name}] Check i: ${err.message}`);
@@ -473,7 +475,7 @@ async function runSpinFinishTests() {
 
       // Check k: At each real audio tick time, read the real DOM distance from reticle center to nearest card center at 390x844 (<= 8 px)
       if (vp.width === 390) {
-        console.log(`\n--- Check (k): Reticle to Nearest Card Center Distance at Real Audio Ticks (390x844) ---`);
+        printLog(`\n--- Check (k): Reticle to Nearest Card Center Distance at Real Audio Ticks (390x844) ---`);
         const scheduledTicks = spy.scheduledTicks || [];
         const cWidth = spy.chassisWidth || 358;
         const reticleX = cWidth / 2;
@@ -536,11 +538,11 @@ async function runSpinFinishTests() {
         const distances = tickMeasurements.map(m => m.distance);
         const maxTickDist = distances.length > 0 ? Math.max(...distances) : 999;
 
-        console.log(`Measured Distances at all ${tickMeasurements.length} ticks:`);
+        printLog(`Measured Distances at all ${tickMeasurements.length} ticks:`);
         tickMeasurements.forEach(m => {
-          console.log(`  Tick #${m.index} (t=${m.tMs}ms): ${m.distance} px`);
+          printLog(`  Tick #${m.index} (t=${m.tMs}ms): ${m.distance} px`);
         });
-        console.log(`  Max Reticle Distance across ticks: ${maxTickDist.toFixed(2)} px (must be <= 8 px)`);
+        printLog(`  Max Reticle Distance across ticks: ${maxTickDist.toFixed(2)} px (must be <= 8 px)`);
 
         try {
           assert.ok(
@@ -551,7 +553,7 @@ async function runSpinFinishTests() {
             maxTickDist <= 8.0,
             `Max reticle distance at tick times (${maxTickDist.toFixed(2)} px) exceeds 8 px`
           );
-          console.log(`  [PASS k] All ${tickMeasurements.length} real audio ticks within ${maxTickDist.toFixed(2)} px of reticle center (<= 8 px)`);
+          printLog(`  [PASS k] All ${tickMeasurements.length} real audio ticks within ${maxTickDist.toFixed(2)} px of reticle center (<= 8 px)`);
         } catch (err) {
           console.error(`  [FAIL k] ${err.message}`);
           allFailures.push(`[${vp.name}] Check k: ${err.message}`);
@@ -562,9 +564,9 @@ async function runSpinFinishTests() {
     }
 
     // Check h: Reduced motion emulation: no landing-ring, no vibrate call
-    console.log(`\n----------------------------------------------------`);
-    console.log(`Testing reduced motion mode`);
-    console.log(`----------------------------------------------------`);
+    printLog(`\n----------------------------------------------------`);
+    printLog(`Testing reduced motion mode`);
+    printLog(`----------------------------------------------------`);
     const rmContext = await browser.newContext({
       viewport: { width: 390, height: 844 },
       reducedMotion: 'reduce'
@@ -608,22 +610,22 @@ async function runSpinFinishTests() {
     try {
       assert.strictEqual(rmSpy.hasRing, false, 'landing-ring must not exist when reduced motion is on');
       assert.strictEqual(rmSpy.vibrateCalls.length, 0, 'navigator.vibrate must not be called when reduced motion is on');
-      console.log(`  [PASS h] Reduced motion: no landing-ring and no vibrate calls`);
+      printLog(`  [PASS h] Reduced motion: no landing-ring and no vibrate calls`);
     } catch (err) {
       console.error(`  [FAIL h] ${err.message}`);
       allFailures.push(`[Reduced Motion] Check h: ${err.message}`);
     }
     await rmContext.close();
 
-    console.log('\n================================================================');
+    printLog('\n================================================================');
     if (allFailures.length > 0) {
       console.error(`TEST FINISHED WITH ${allFailures.length} FAILURES:`);
       allFailures.forEach(f => console.error(` - ${f}`));
-      console.log('================================================================\n');
+      printLog('================================================================\n');
       process.exit(1);
     } else {
-      console.log('ALL SPIN FINISH TESTS PASSED SUCCESSFULLY!');
-      console.log('================================================================\n');
+      printLog('ALL SPIN FINISH TESTS PASSED SUCCESSFULLY!');
+      printLog('================================================================\n');
     }
 
   } finally {

@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -48,9 +50,9 @@ function serveStatic(distDir) {
 }
 
 async function runRound15E2ETests() {
-  console.log('================================================================');
-  console.log('       ROUND 15: VERIFICATION E2E SUITE                         ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('       ROUND 15: VERIFICATION E2E SUITE                         ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve(__dirname, '../dist');
   if (!fs.existsSync(distDir)) {
@@ -58,7 +60,7 @@ async function runRound15E2ETests() {
   }
 
   const { server, port } = await serveStatic(distDir);
-  console.log(`Static server listening on http://127.0.0.1:${port}`);
+  printLog(`Static server listening on http://127.0.0.1:${port}`);
 
   const browser = await chromium.launch({ headless: true });
 
@@ -68,7 +70,7 @@ async function runRound15E2ETests() {
 
     // ── 1. SPIN GROUP PILLS: ON / OFF STYLES & ARIA-PRESSED ──────────────
     // ── 1. SPIN GROUP PILLS: REAL SAVED STATE INITIALIZATION ─────────────
-    console.log('Testing Spin Group Pills with saved state (Tech ON, Money/Mind/World OFF)...');
+    printLog('Testing Spin Group Pills with saved state (Tech ON, Money/Mind/World OFF)...');
     await page.addInitScript(() => {
       localStorage.setItem('daily_dive_onboarding_seen', 'true');
       localStorage.setItem('daily_dive_guest_settings', JSON.stringify({
@@ -134,10 +136,10 @@ async function runRound15E2ETests() {
     const techClasses = await techPill.getAttribute('class');
     assert.ok(moneyClasses.includes('bg-transparent') || moneyClasses.includes('border'), 'Money pill has outline style');
     assert.ok(techClasses.includes('bg-primary'), 'Tech pill has ON style');
-    console.log('  [PASS] Saved state group pills verified: Tech ON, Money/Mind/World OFF with outline style.');
+    printLog('  [PASS] Saved state group pills verified: Tech ON, Money/Mind/World OFF with outline style.');
 
     // ── 2. LIBRARY SCREEN: UPLOAD COPY & GEMINI PRIVACY NOTICE ───────────
-    console.log('\nTesting Library Screen upload copy & Gemini disclosure notice...');
+    printLog('\nTesting Library Screen upload copy & Gemini disclosure notice...');
     await page.locator('button[data-nav-id="library"]:visible').first().click();
     await page.waitForTimeout(300);
 
@@ -146,13 +148,13 @@ async function runRound15E2ETests() {
       !libraryBodyText.includes('collection tray'),
       'Library screen text must NOT contain "collection tray"'
     );
-    console.log('  [PASS] Forbidden string absent: "collection tray"');
+    printLog('  [PASS] Forbidden string absent: "collection tray"');
 
     assert.ok(
       libraryBodyText.includes('Drop files here or choose a file'),
       'Library screen must contain "Drop files here or choose a file"'
     );
-    console.log('  [PASS] Upload line contains: "Drop files here or choose a file"');
+    printLog('  [PASS] Upload line contains: "Drop files here or choose a file"');
 
     // Expand "Improve results (optional)" panel
     const detailsSummary = page.locator('#library summary:has-text("Improve results (optional)")');
@@ -165,10 +167,10 @@ async function runRound15E2ETests() {
       updatedLibraryText.includes(expectedGeminiNotice),
       `Library "Improve results (optional)" panel must contain: "${expectedGeminiNotice}"`
     );
-    console.log(`  [PASS] Improve results panel contains: "${expectedGeminiNotice}"`);
+    printLog(`  [PASS] Improve results panel contains: "${expectedGeminiNotice}"`);
 
     // ── 3. PROGRESS SCREEN: REAL SPIN FLOW & REVIEW QUEUE EXCLUSION ───────
-    console.log('\nTesting real spin flow in UI, reload, and review queue exclusion...');
+    printLog('\nTesting real spin flow in UI, reload, and review queue exclusion...');
     await page.locator('button[data-nav-id="spin"]:visible').first().click();
     await page.waitForTimeout(300);
 
@@ -180,7 +182,7 @@ async function runRound15E2ETests() {
     const topicHeading = page.locator('#spin [data-testid="post-spin-topic-card"] h2, #spin article h2');
     await topicHeading.waitFor({ state: 'visible', timeout: 10000 });
     const landedTitle = (await topicHeading.textContent()).trim();
-    console.log(`  Landed on topic via real spin: "${landedTitle}"`);
+    printLog(`  Landed on topic via real spin: "${landedTitle}"`);
 
     // Reload page
     await page.reload({ waitUntil: 'networkidle' });
@@ -196,10 +198,10 @@ async function runRound15E2ETests() {
     if (toReviewMatch) {
       assert.strictEqual(toReviewMatch[1], '0', 'To review today count must be 0 after fresh spin');
     }
-    console.log('  [PASS] Real spin + reload verified: topic is not in review queue and not counted in "to review today".');
+    printLog('  [PASS] Real spin + reload verified: topic is not in review queue and not counted in "to review today".');
 
     // ── 4. SPIN SCREEN STATUS LINE: PIXEL GAP < 2PX AT 390x844 ────────────
-    console.log('\nTesting Streak status line pixel gap at 390x844...');
+    printLog('\nTesting Streak status line pixel gap at 390x844...');
     await page.evaluate(() => {
       const today = new Date().toISOString().slice(0, 10);
       localStorage.setItem('daily_dive_guest_streaks', JSON.stringify({
@@ -238,13 +240,13 @@ async function runRound15E2ETests() {
       return textRect.left - numRect.right;
     });
 
-    console.log(`  Pixel gap between number and "-day": ${gap?.toFixed(2)}px`);
+    printLog(`  Pixel gap between number and "-day": ${gap?.toFixed(2)}px`);
     assert.ok(gap !== null, 'Pixel gap could not be measured');
     assert.ok(gap < 2, `Pixel gap between "2" and "-day" must be < 2px, but measured: ${gap}px`);
-    console.log('  [PASS] Status line reads "2-day streak" with gap < 2px.');
+    printLog('  [PASS] Status line reads "2-day streak" with gap < 2px.');
 
     // ── 5. SETTINGS SCREEN: FULL-SCREEN VIEW, THEME ROW REMOVED, SUN BUTTON STAYS ─
-    console.log('\nTesting Settings Screen: Full screen via gear, theme text absent, Sun button remains...');
+    printLog('\nTesting Settings Screen: Full screen via gear, theme text absent, Sun button remains...');
     const settingsGearBtn = page.locator('header button[aria-label="Settings"]');
     await settingsGearBtn.click();
     await page.waitForSelector('#settings', { state: 'visible', timeout: 5000 });
@@ -258,7 +260,7 @@ async function runRound15E2ETests() {
     const settingsContent = await page.innerText('#settings');
     assert.ok(!settingsContent.toLowerCase().includes('theme'), 'Settings contains no element with text "Theme"');
     assert.ok(!settingsContent.toLowerCase().includes('light and dark'), 'Settings contains no element with text "light and dark"');
-    console.log('  [PASS] Settings contains no element with text "Theme" or "light and dark".');
+    printLog('  [PASS] Settings contains no element with text "Theme" or "light and dark".');
 
     // Test Back button returns to previous view
     const backBtn = page.locator('[data-testid="settings-back-button"]');
@@ -266,15 +268,15 @@ async function runRound15E2ETests() {
     await page.waitForTimeout(400);
     const isSpinBackVisible = await page.locator('#spin').isVisible();
     assert.strictEqual(isSpinBackVisible, true, 'Clicking Back returns to previous view');
-    console.log('  [PASS] Back button returned to previous view.');
+    printLog('  [PASS] Back button returned to previous view.');
 
     // Sun/moon button stays in header
     const navbarThemeButton = page.locator('header button[title*="Switch to"], header button[aria-label*="theme" i], header button:has(svg.lucide-sun), header button:has(svg.lucide-moon)').first();
     const isNavbarThemeVisible = await navbarThemeButton.isVisible();
     assert.ok(isNavbarThemeVisible, 'Navbar theme button must remain visible');
-    console.log('  [PASS] Navbar theme toggle button is present in header');
+    printLog('  [PASS] Navbar theme toggle button is present in header');
 
-    console.log('\nAll Round 15 E2E assertions passed successfully!');
+    printLog('\nAll Round 15 E2E assertions passed successfully!');
     await context.close();
   } finally {
     await browser.close();

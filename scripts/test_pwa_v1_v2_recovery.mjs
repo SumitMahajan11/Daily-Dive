@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import { spawn, execSync } from 'node:child_process';
 import http from 'node:http';
@@ -37,13 +39,13 @@ function serveStatic(distDir, port) {
 }
 
 async function main() {
-  console.log('=== TESTING PWA V1 -> V2 DEPLOYMENT RECOVERY ===\n');
+  printLog('=== TESTING PWA V1 -> V2 DEPLOYMENT RECOVERY ===\n');
 
   // Step 1: Build v1
-  console.log('1. Building Release V1...');
+  printLog('1. Building Release V1...');
   execSync('npm run build', { stdio: 'pipe' });
   const server = await serveStatic(path.resolve('dist'), 4180);
-  console.log('   Server running on http://localhost:4180 serving V1');
+  printLog('   Server running on http://localhost:4180 serving V1');
 
   // Step 2: Open Browser and Load Client
   const browser = await chromium.launch({ headless: true });
@@ -52,29 +54,29 @@ async function main() {
   await page.evaluate(() => localStorage.setItem('daily_dive_onboarding_seen', 'true'));
   await page.reload();
   await page.waitForSelector('#spin');
-  console.log('2. Client loaded V1 successfully.');
+  printLog('2. Client loaded V1 successfully.');
 
   // Step 3: Build V2 with modified build stamp
-  console.log('3. Building Release V2 (Simulating new deployment with new bundle hashes)...');
+  printLog('3. Building Release V2 (Simulating new deployment with new bundle hashes)...');
   execSync('npm run build', { stdio: 'pipe', env: { ...process.env, VITE_BUILD_V2: 'true' } });
-  console.log('   V2 assets built.');
+  printLog('   V2 assets built.');
 
   // Step 4: Old client encounters update / reload
-  console.log('4. Reloading client with V2 assets at same origin...');
+  printLog('4. Reloading client with V2 assets at same origin...');
   await page.reload();
   await page.waitForTimeout(1000);
 
   // Assert app recovers, renders Spin screen, and can navigate
   const spinVisible = await page.isVisible('#spin');
-  console.log(`   Spin screen active after update: ${spinVisible}`);
+  printLog(`   Spin screen active after update: ${spinVisible}`);
 
   // Test navigation to Library on V2
   await page.evaluate(() => document.getElementById('library')?.scrollIntoView());
   await page.waitForTimeout(600);
   const libraryVisible = await page.isVisible('#library');
-  console.log(`   Library screen active after update: ${libraryVisible}`);
+  printLog(`   Library screen active after update: ${libraryVisible}`);
 
-  console.log('\n[PASS]: PWA recovery test passed. App seamlessly recovered from V1 -> V2 update without chunk errors.');
+  printLog('\n[PASS]: PWA recovery test passed. App seamlessly recovered from V1 -> V2 update without chunk errors.');
 
   server.close();
   await browser.close();

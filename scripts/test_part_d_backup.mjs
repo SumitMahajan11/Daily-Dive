@@ -1,8 +1,10 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { deepStrictEqual } from 'node:assert';
 
-console.log('================================================================');
-console.log('            PART D: BACKUP COMPLETENESS & VALIDATION TEST       ');
-console.log('================================================================\n');
+printLog('================================================================');
+printLog('            PART D: BACKUP COMPLETENESS & VALIDATION TEST       ');
+printLog('================================================================\n');
 
 let totalTests = 0;
 let passedTests = 0;
@@ -11,7 +13,7 @@ function assert(condition, message) {
   totalTests++;
   if (condition) {
     passedTests++;
-    console.log(`  ✓ PASS: ${message}`);
+    printLog(`  ✓ PASS: ${message}`);
   } else {
     console.error(`  ✗ FAIL: ${message}`);
     throw new Error(`Assertion failed: ${message}`);
@@ -132,7 +134,7 @@ function validateAndImportBackup(imported) {
 }
 
 // ── TEST 1: Round-trip export / clear / import deep-equal test ──
-console.log('[1/2] Running Backup Export -> Clear Storage -> Import Round-Trip Test...');
+printLog('[1/2] Running Backup Export -> Clear Storage -> Import Round-Trip Test...');
 
 const exportedData = generateExportPayload();
 assert(exportedData.schemaVersion === 2, 'Exported payload contains schemaVersion: 2');
@@ -176,7 +178,7 @@ assert(mockLocalStorage.getItem('daily_dive_first_run_dismissed') === 'true', 'R
 
 
 // ── TEST 2: Malformed file rejection and zero partial writes ──
-console.log('\n[2/2] Testing Malformed File Validation and Atomic Rejection...');
+printLog('\n[2/2] Testing Malformed File Validation and Atomic Rejection...');
 
 // Take snapshot of storage before malicious/malformed attempts
 const snapshotBefore = new Map(storage);
@@ -207,6 +209,6 @@ for (const tc of malformedPayloads) {
 deepStrictEqual(storage, snapshotBefore);
 assert(true, 'Storage remained 100% unchanged after all rejected malformed imports (Zero Partial Writes)');
 
-console.log('\n================================================================');
-console.log(`PART D TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
-console.log('================================================================\n');
+printLog('\n================================================================');
+printLog(`PART D TESTS COMPLETE! (${passedTests}/${totalTests} assertions verified)`);
+printLog('================================================================\n');

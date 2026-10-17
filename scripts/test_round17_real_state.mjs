@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -188,42 +190,42 @@ async function main() {
   const which = process.argv[2];
   if (which === '1a') {
     await test1a();
-    console.log('[PASS] 1a: saved state pills');
+    printLog('[PASS] 1a: saved state pills');
     return;
   }
   if (which === '1b') {
     await test1b();
-    console.log('[PASS] 1b: real spin review queue exclusion');
+    printLog('[PASS] 1b: real spin review queue exclusion');
     return;
   }
   if (which === '1c') {
     await test1c();
-    console.log('[PASS] 1c: streak status line pixel gap');
+    printLog('[PASS] 1c: streak status line pixel gap');
     return;
   }
   if (which === '1d') {
     await test1d();
-    console.log('[PASS] 1d: settings screen declutter');
+    printLog('[PASS] 1d: settings screen declutter');
     return;
   }
 
-  console.log('Running test 1a (saved state pills)...');
+  printLog('Running test 1a (saved state pills)...');
   await test1a();
-  console.log('  [PASS] 1a: saved state pills');
+  printLog('  [PASS] 1a: saved state pills');
 
-  console.log('Running test 1b (real spin review queue exclusion)...');
+  printLog('Running test 1b (real spin review queue exclusion)...');
   await test1b();
-  console.log('  [PASS] 1b: real spin review queue exclusion');
+  printLog('  [PASS] 1b: real spin review queue exclusion');
 
-  console.log('Running test 1c (streak status line pixel gap)...');
+  printLog('Running test 1c (streak status line pixel gap)...');
   await test1c();
-  console.log('  [PASS] 1c: streak status line pixel gap');
+  printLog('  [PASS] 1c: streak status line pixel gap');
 
-  console.log('Running test 1d (settings screen declutter)...');
+  printLog('Running test 1d (settings screen declutter)...');
   await test1d();
-  console.log('  [PASS] 1d: settings screen declutter');
+  printLog('  [PASS] 1d: settings screen declutter');
 
-  console.log('[PASS] All Round 17 real-state checks passed successfully.');
+  printLog('[PASS] All Round 17 real-state checks passed successfully.');
 }
 
 main().catch(err => {

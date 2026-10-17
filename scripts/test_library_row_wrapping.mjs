@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -53,7 +55,7 @@ async function testLibraryWrappingAtWidth(port, width) {
         return Math.max(1, Math.round(h / lh));
       });
 
-      console.log(`[Width ${width}px] ${testId}: "${text}" -> lines: ${lineCount}`);
+      printLog(`[Width ${width}px] ${testId}: "${text}" -> lines: ${lineCount}`);
       assert.strictEqual(lineCount, 1, `Group summary "${text}" at ${width}px must NOT wrap (lineCount must be 1, found ${lineCount})`);
     }
   } finally {
@@ -64,13 +66,13 @@ async function testLibraryWrappingAtWidth(port, width) {
 async function run() {
   const { server, port } = await serveStatic(path.resolve('dist'));
   try {
-    console.log('Testing Library group row wrapping at 390px wide...');
+    printLog('Testing Library group row wrapping at 390px wide...');
     await testLibraryWrappingAtWidth(port, 390);
 
-    console.log('Testing Library group row wrapping at 360px wide...');
+    printLog('Testing Library group row wrapping at 360px wide...');
     await testLibraryWrappingAtWidth(port, 360);
 
-    console.log('[PASS] All Library group rows maintain strictly 1 line on 390px and 360px viewports.');
+    printLog('[PASS] All Library group rows maintain strictly 1 line on 390px and 360px viewports.');
   } finally {
     server.close();
   }

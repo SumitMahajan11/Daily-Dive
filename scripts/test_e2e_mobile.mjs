@@ -1,3 +1,5 @@
+import util from 'node:util';
+const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import { chromium } from 'playwright';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -42,9 +44,9 @@ const VIEWPORTS = [
 ];
 
 async function runMobileE2ETests() {
-  console.log('================================================================');
-  console.log('     ROUND 10: MOBILE FIXES COMPREHENSIVE E2E SUITE             ');
-  console.log('================================================================\n');
+  printLog('================================================================');
+  printLog('     ROUND 10: MOBILE FIXES COMPREHENSIVE E2E SUITE             ');
+  printLog('================================================================\n');
 
   const distDir = path.resolve('dist');
   if (!fs.existsSync(distDir)) {
@@ -52,14 +54,14 @@ async function runMobileE2ETests() {
   }
 
   const server = await serveStatic(distDir, 4192);
-  console.log('1. Static server listening on http://localhost:4192');
+  printLog('1. Static server listening on http://localhost:4192');
 
   const browser = await chromium.launch({ headless: true });
 
   for (const vp of VIEWPORTS) {
-    console.log(`\n============================================================`);
-    console.log(` TESTING VIEWPORT: ${vp.name} (${vp.width}x${vp.height})`);
-    console.log(`============================================================\n`);
+    printLog(`\n============================================================`);
+    printLog(` TESTING VIEWPORT: ${vp.name} (${vp.width}x${vp.height})`);
+    printLog(`============================================================\n`);
 
     const context = await browser.newContext({
       viewport: { width: vp.width, height: vp.height },
@@ -103,7 +105,7 @@ async function runMobileE2ETests() {
     // ─────────────────────────────────────────────────────────────
     // TEST A: document.documentElement.scrollWidth <= window.innerWidth on every section
     // ─────────────────────────────────────────────────────────────
-    console.log('[TEST A] Verifying no horizontal overflow on every section...');
+    printLog('[TEST A] Verifying no horizontal overflow on every section...');
     const sections = ['spin', 'library', 'progress', 'settings'];
     for (const secId of sections) {
       if (secId === 'settings') {
@@ -123,13 +125,13 @@ async function runMobileE2ETests() {
         true,
         `Section #${secId} caused horizontal overflow: scrollWidth (${overflowData.scrollWidth}px) > innerWidth (${overflowData.innerWidth}px) at ${vp.width}x${vp.height}`
       );
-      console.log(`   ✓ #${secId}: scrollWidth ${overflowData.scrollWidth}px <= innerWidth ${overflowData.innerWidth}px`);
+      printLog(`   ✓ #${secId}: scrollWidth ${overflowData.scrollWidth}px <= innerWidth ${overflowData.innerWidth}px`);
     }
 
     // ─────────────────────────────────────────────────────────────
     // TEST B: After clicking each bottom tab, header contains no page title & clicked tab has aria-current="page"
     // ─────────────────────────────────────────────────────────────
-    console.log('\n[TEST B] Testing bottom tab clicks, header title absence & aria-current="page"...');
+    printLog('\n[TEST B] Testing bottom tab clicks, header title absence & aria-current="page"...');
     const tabs = ['spin', 'library', 'progress'];
     for (const tabId of tabs) {
       const tabBtn = page.locator(`nav.md\\:hidden button[data-nav-id="${tabId}"]`);
@@ -172,13 +174,13 @@ async function runMobileE2ETests() {
         `Header must contain no page title or subtitle elements after clicking tab ${tabId}`
       );
 
-      console.log(`   ✓ Tab "${tabId}" clicked: aria-current="page" set, header has only "Daily Dive" wordmark`);
+      printLog(`   ✓ Tab "${tabId}" clicked: aria-current="page" set, header has only "Daily Dive" wordmark`);
     }
 
     // ─────────────────────────────────────────────────────────────
     // TEST C: After scrolling to Progress, Progress is active; after scrolling to Settings, Settings is active
     // ─────────────────────────────────────────────────────────────
-    console.log('\n[TEST C] Testing IntersectionObserver scroll-driven section activation...');
+    printLog('\n[TEST C] Testing IntersectionObserver scroll-driven section activation...');
     
     // Navigate to Progress
     await page.locator('nav.md\\:hidden button[data-nav-id="progress"]').click();
@@ -190,7 +192,7 @@ async function runMobileE2ETests() {
       'page',
       `After scrolling to #progress, Progress bottom tab must have aria-current="page", found: ${progressAriaCurrent}`
     );
-    console.log('   ✓ Scrolled to Progress -> Progress bottom tab became active (aria-current="page")');
+    printLog('   ✓ Scrolled to Progress -> Progress bottom tab became active (aria-current="page")');
 
     // Open Settings via header gear button
     await page.locator('header button[aria-label="Settings"]').click();
@@ -217,7 +219,7 @@ async function runMobileE2ETests() {
       0,
       'When Settings is active, bottom tabs must not have aria-current="page"'
     );
-    console.log('   ✓ Clicked Settings gear -> Settings navbar button became active (aria-current="page")');
+    printLog('   ✓ Clicked Settings gear -> Settings navbar button became active (aria-current="page")');
 
     // Return via Back button
     await page.locator('[data-testid="settings-back-button"]').click();
@@ -226,7 +228,7 @@ async function runMobileE2ETests() {
     // ─────────────────────────────────────────────────────────────
     // TEST D: Header height <= 64, streak pill height < 40 when visible
     // ─────────────────────────────────────────────────────────────
-    console.log('\n[TEST D] Checking Header height <= 64 and Streak pill height < 40...');
+    printLog('\n[TEST D] Checking Header height <= 64 and Streak pill height < 40...');
     const headerBox = await page.locator('header').boundingBox();
     assert.ok(headerBox, 'Header must exist and have bounding box');
     assert.strictEqual(
@@ -252,12 +254,12 @@ async function runMobileE2ETests() {
       'nowrap',
       `Streak pill must have white-space: nowrap, found: ${pillWhiteSpace}`
     );
-    console.log(`   ✓ Header height: ${headerBox.height.toFixed(1)}px (<= 64px), Streak pill height: ${pillBox.height.toFixed(1)}px (< 40px, nowrap)`);
+    printLog(`   ✓ Header height: ${headerBox.height.toFixed(1)}px (<= 64px), Streak pill height: ${pillBox.height.toFixed(1)}px (< 40px, nowrap)`);
 
     // ─────────────────────────────────────────────────────────────
     // TEST E: Each group card in Filter has visible text for its group name
     // ─────────────────────────────────────────────────────────────
-    console.log('\n[TEST E] Checking Filter Group cards visible group names & subline format...');
+    printLog('\n[TEST E] Checking Filter Group cards visible group names & subline format...');
     await page.locator('button[data-nav-id="library"]:visible').first().click();
     await page.waitForTimeout(500);
 
@@ -273,12 +275,12 @@ async function runMobileE2ETests() {
         `Group card name "${groupName}" must be visible`
       );
     }
-    console.log('   ✓ All 4 group cards in Filter have visible group names (Tech, Money & Career, Mind & Growth, World & Ideas)');
+    printLog('   ✓ All 4 group cards in Filter have visible group names (Tech, Money & Career, Mind & Growth, World & Ideas)');
 
     // ─────────────────────────────────────────────────────────────
     // TEST F: Review queue age element: scrollWidth <= clientWidth
     // ─────────────────────────────────────────────────────────────
-    console.log('\n[TEST F] Testing Review queue age elements (no truncation, scrollWidth <= clientWidth)...');
+    printLog('\n[TEST F] Testing Review queue age elements (no truncation, scrollWidth <= clientWidth)...');
     await page.locator('button[data-nav-id="progress"]:visible').first().click();
     await page.waitForTimeout(500);
 
@@ -309,13 +311,13 @@ async function runMobileE2ETests() {
         /^\d+d ago$/.test(metrics.text) && metrics.text !== 'Today',
         `Age text must be "Xd ago" (not "Today"), found: "${metrics.text}"`
       );
-      console.log(`   ✓ Review queue age item [${i}]: "${metrics.text}" (scrollWidth: ${metrics.scrollWidth}px <= clientWidth: ${metrics.clientWidth}px)`);
+      printLog(`   ✓ Review queue age item [${i}]: "${metrics.text}" (scrollWidth: ${metrics.scrollWidth}px <= clientWidth: ${metrics.clientWidth}px)`);
     }
 
     // ─────────────────────────────────────────────────────────────
     // TEST G: Post-spin card: Learned, Spin again, Share have same top within 2px; First source link scrollWidth <= clientWidth
     // ─────────────────────────────────────────────────────────────
-    console.log('\n[TEST G] Testing Post-spin card button alignment and first source link wrap...');
+    printLog('\n[TEST G] Testing Post-spin card button alignment and first source link wrap...');
     await page.locator('button[data-nav-id="spin"]:visible').first().click();
     await page.waitForTimeout(400);
 
@@ -348,10 +350,10 @@ async function runMobileE2ETests() {
     const diffLearnedSpin = Math.abs(boxLearned.y - boxSpinAgain.y);
     const diffSpinShare = Math.abs(boxSpinAgain.y - boxShare.y);
 
-    console.log(`   Action Buttons Y Coordinates:`);
-    console.log(`   - Learned:    ${boxLearned.y.toFixed(2)}px`);
-    console.log(`   - Spin again: ${boxSpinAgain.y.toFixed(2)}px (diff: ${diffLearnedSpin.toFixed(2)}px)`);
-    console.log(`   - Share:      ${boxShare.y.toFixed(2)}px (diff: ${diffSpinShare.toFixed(2)}px)`);
+    printLog(`   Action Buttons Y Coordinates:`);
+    printLog(`   - Learned:    ${boxLearned.y.toFixed(2)}px`);
+    printLog(`   - Spin again: ${boxSpinAgain.y.toFixed(2)}px (diff: ${diffLearnedSpin.toFixed(2)}px)`);
+    printLog(`   - Share:      ${boxShare.y.toFixed(2)}px (diff: ${diffSpinShare.toFixed(2)}px)`);
 
     assert.strictEqual(
       diffLearnedSpin <= 2,
@@ -376,7 +378,7 @@ async function runMobileE2ETests() {
         true,
         `First source link must not overflow: scrollWidth (${linkMetrics.scrollWidth}) > clientWidth (${linkMetrics.clientWidth})`
       );
-      console.log(`   ✓ First source link: scrollWidth (${linkMetrics.scrollWidth}px) <= clientWidth (${linkMetrics.clientWidth}px)`);
+      printLog(`   ✓ First source link: scrollWidth (${linkMetrics.scrollWidth}px) <= clientWidth (${linkMetrics.clientWidth}px)`);
     }
 
     await context.close();
@@ -385,9 +387,9 @@ async function runMobileE2ETests() {
   await browser.close();
   server.close();
 
-  console.log('\n================================================================');
-  console.log(' [PASS]: ALL ROUND 10 MOBILE E2E TESTS PASSED ON ALL VIEWPORTS! ');
-  console.log('================================================================\n');
+  printLog('\n================================================================');
+  printLog(' [PASS]: ALL ROUND 10 MOBILE E2E TESTS PASSED ON ALL VIEWPORTS! ');
+  printLog('================================================================\n');
 }
 
 runMobileE2ETests().catch(err => {
