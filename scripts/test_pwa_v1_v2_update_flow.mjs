@@ -147,12 +147,12 @@ async function runUpdateTest() {
     if (!('serviceWorker' in navigator)) return 'no-sw';
     const reg = await navigator.serviceWorker.getRegistration();
     if (!reg) return 'no-reg';
-    printLog('Current SW controller:', navigator.serviceWorker.controller?.state);
-    printLog('Reg active:', reg.active?.state);
-    printLog('Reg installing:', reg.installing?.state);
-    printLog('Reg waiting:', reg.waiting?.state);
+    console.info('Current SW controller:', navigator.serviceWorker.controller?.state);
+    console.info('Reg active:', reg.active?.state);
+    console.info('Reg installing:', reg.installing?.state);
+    console.info('Reg waiting:', reg.waiting?.state);
     await reg.update();
-    printLog('After update() - installing:', reg.installing?.state, 'waiting:', reg.waiting?.state);
+    console.info('After update() - installing:', reg.installing?.state, 'waiting:', reg.waiting?.state);
     return {
       hasWaiting: !!reg.waiting,
       hasInstalling: !!reg.installing
