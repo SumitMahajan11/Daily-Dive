@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { generateHoldout } from '../scripts/make_holdout.mjs';
+import { generateHoldout } from '../scripts/eval/make_holdout.mjs';
 import { safeLog } from '../scripts/safeLog.mjs';
 
 test('Holdout Rejection Paths: proves every rejection path fires on synthetic files', () => {

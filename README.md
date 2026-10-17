@@ -128,7 +128,7 @@ Navigate to `http://localhost:5173`.
 ### Compiling & Validating Topic Seeds
 ```bash
 # Validate CSV datasets against schema and check URL health
-python scripts/validation/validate_and_fix_all_seeds.py
+python scripts/tools/validation/validate_and_fix_all_seeds.py
 
 # Recompile expanded topics into client bundle
 python scripts/build_expanded_topics.py
@@ -167,7 +167,7 @@ Daily Dive is optimized for zero-config static deployment on Vercel:
 Contributions are welcome!
 1. Fork the project.
 2. Create a feature branch (`git checkout -b feature/topic-expansion`).
-3. If adding or editing topics in `seeds/*.csv`, run `python scripts/validation/validate_and_fix_all_seeds.py` and `python scripts/build_expanded_topics.py`.
+3. If adding or editing topics in `seeds/*.csv`, run `python scripts/tools/validation/validate_and_fix_all_seeds.py` and `python scripts/build_expanded_topics.py`.
 4. Ensure all tests pass (`npm run build`).
 5. Commit your changes and open a Pull Request.
 

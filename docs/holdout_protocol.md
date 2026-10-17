@@ -64,4 +64,4 @@ The holdout manifest is written in CSV format with the following columns:
 - `split`: Partition assignment (`holdout` or `SMOKE_ONLY`).
 
 ## 4. Automation Tooling
-The protocol is implemented and automated by [`scripts/make_holdout.mjs`](file:///d:/Projects/daily-dive/scripts/make_holdout.mjs).
+The protocol is implemented and automated by [`scripts/eval/make_holdout.mjs`](file:///d:/Projects/daily-dive/scripts/eval/make_holdout.mjs).

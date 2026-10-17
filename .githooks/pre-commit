@@ -1,3 +1,3 @@
 #!/bin/sh
 # Pre-commit hook: fail if console.log( is found in scratch/ or extraction scripts
-node scripts/check_no_console_log.mjs
+node scripts/tools/check_no_console_log.mjs

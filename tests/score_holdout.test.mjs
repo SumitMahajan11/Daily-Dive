@@ -2,7 +2,7 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
-import { scoreHoldout } from '../scripts/score_holdout.mjs';
+import { scoreHoldout } from '../scripts/eval/score_holdout.mjs';
 
 test('scoreHoldout correctly computes TP/FP/FN/TN metrics with stubbed extractor and synthetic CSV', async () => {
   const tempCsvPath = path.resolve('scratch/test_synthetic_labeled.csv');

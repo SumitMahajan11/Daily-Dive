@@ -12,14 +12,14 @@ import {
   selectBestStreak,
   selectCurrentStreak,
   selectEligibleTopics
-} from '../src/lib/selectors.js';
+} from '../../src/lib/selectors.js';
 import {
   appendHistoryEntry,
   INITIAL_TOPICS,
   BASE_REEL_CATEGORIES,
   CATEGORY_TREE
-} from '../src/lib/roulette.js';
-import { loadAllBuiltinTopics } from '../src/lib/topicLoader.js';
+} from '../../src/lib/roulette.js';
+import { loadAllBuiltinTopics } from '../../src/lib/topicLoader.js';
 
 printLog('================================================================');
 printLog('       ROUND 4: SOURCE OF TRUTH & LEAD RECONCILIATION SUITE      ');

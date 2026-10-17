@@ -2,11 +2,11 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
-import { extractTopicsLocally, isMetaOrAsideLine } from '../src/lib/topicExtractor.js';
-import { safeLog } from './safeLog.mjs';
+import { extractTopicsLocally, isMetaOrAsideLine } from '../../src/lib/topicExtractor.js';
+import { safeLog } from '../safeLog.mjs';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
-const roadmapPath = path.resolve(__dirname, '../tests/fixtures/real_roadmap.md');
+const roadmapPath = path.resolve(__dirname, '../../tests/fixtures/real_roadmap.md');
 
 if (!fs.existsSync(roadmapPath)) {
   console.error('File not found:', roadmapPath);

@@ -1,6 +1,6 @@
 import util from 'node:util';
 const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
-import { generateDailyReminderICS, formatTo24Hour } from '../src/lib/calendar.js';
+import { generateDailyReminderICS, formatTo24Hour } from '../../src/lib/calendar.js';
 
 printLog('================================================================');
 printLog('            PART C: SHARE & CALENDAR REMINDER TEST              ');

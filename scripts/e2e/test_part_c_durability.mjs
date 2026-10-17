@@ -3,7 +3,7 @@ const printLog = (...args) => process.stdout.write(util.format(...args) + '\n');
 import {
   requestStoragePersistence,
   isIOSSafariNonStandalone
-} from '../src/lib/storage.js';
+} from '../../src/lib/storage.js';
 
 printLog('================================================================');
 printLog('            PART C: STORAGE DURABILITY & NUDGE TEST             ');

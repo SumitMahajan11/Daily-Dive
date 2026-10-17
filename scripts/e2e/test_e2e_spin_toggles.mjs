@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
 import { fileURLToPath } from 'node:url';
-import { topics as moneyCareerTopics } from '../src/data/groups/money-career.js';
+import { topics as moneyCareerTopics } from '../../src/data/groups/money-career.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -48,7 +48,7 @@ function serveStatic(distDir) {
 async function testSpinToggles() {
   printLog('=== [E2E] SPIN SCREEN GROUP TOGGLES & 5-SPIN DETERMINISM TEST ===\n');
 
-  const distDir = path.resolve(__dirname, '../dist');
+  const distDir = path.resolve(__dirname, '../../dist');
   if (!fs.existsSync(distDir)) {
     throw new Error('dist directory not found. Please run "npm run build" before testing.');
   }

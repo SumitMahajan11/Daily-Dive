@@ -3,7 +3,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import { safeLog } from './safeLog.mjs';
+import { safeLog } from '../safeLog.mjs';
 import { execSync } from 'node:child_process';
 
 function serveStatic(distDir, port = 4187) {

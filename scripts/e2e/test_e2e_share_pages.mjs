@@ -6,7 +6,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
-import handleShareRequest from '../api/share.js';
+import handleShareRequest from '../../api/share.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -67,7 +67,7 @@ async function runSharePagesE2ETests() {
   printLog('       ROUND 16: SHARE PAGES & OPEN GRAPH E2E SUITE             ');
   printLog('================================================================\n');
 
-  const distDir = path.resolve(__dirname, '../dist');
+  const distDir = path.resolve(__dirname, '../../dist');
   if (!fs.existsSync(distDir)) {
     throw new Error('Dist directory does not exist. Run "npm run build" first.');
   }
@@ -158,7 +158,7 @@ async function runSharePagesE2ETests() {
   }
 
   printLog('\nROUND 16 E2E SUITE COMPLETED SUCCESSFULLY!');
-  printLog('[PASS]: scripts/test_e2e_share_pages.mjs');
+  printLog('[PASS]: scripts/e2e/test_e2e_share_pages.mjs');
 }
 
 runSharePagesE2ETests().catch((err) => {

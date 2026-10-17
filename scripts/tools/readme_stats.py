@@ -3,7 +3,7 @@ import re
 from pathlib import Path
 
 def main():
-    root = Path(__file__).resolve().parent.parent
+    root = Path(__file__).resolve().parent.parent.parent
     topics_path = root / 'data' / 'topics.curated.json'
     readme_path = root / 'README.md'
 

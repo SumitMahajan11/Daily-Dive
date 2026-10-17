@@ -5,7 +5,7 @@ import {
   STARTER_ENABLED_CATEGORIES,
   CATEGORY_TREE,
   BASE_REEL_CATEGORIES
-} from '../src/lib/roulette.js';
+} from '../../src/lib/roulette.js';
 import {
   selectTotalSpins,
   selectExploredCount,
@@ -14,8 +14,8 @@ import {
   selectStreakMetrics,
   selectBestStreak,
   selectEligibleTopics
-} from '../src/lib/selectors.js';
-import { loadAllBuiltinTopics } from '../src/lib/topicLoader.js';
+} from '../../src/lib/selectors.js';
+import { loadAllBuiltinTopics } from '../../src/lib/topicLoader.js';
 
 printLog('================================================================');
 printLog('     PART A INVARIANT & NUMBERS RECONCILIATION TEST SUITE       ');

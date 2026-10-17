@@ -5,7 +5,7 @@ import http from 'node:http';
 import fs from 'node:fs';
 import path from 'node:path';
 import assert from 'node:assert/strict';
-import handleShareRequest from '../api/share.js';
+import handleShareRequest from '../../api/share.js';
 
 function serveStaticApp(distDir) {
   const mimeTypes = {

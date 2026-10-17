@@ -14,7 +14,7 @@ def test_zero_third_party_requests():
     print("      C.1 ZERO THIRD-PARTY / SAME-ORIGIN NETWORK AUDIT         ")
     print("================================================================\n")
 
-    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), ".."))
+    root_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), "..", ".."))
     
     # 1. Build project
     print("[1/4] Running npm run build...")

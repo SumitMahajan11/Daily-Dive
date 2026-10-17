@@ -14,7 +14,7 @@ def measure_production_metrics():
     print("================================================================\n")
 
     # 1. Build Chunk Analysis
-    dist_assets_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'dist', 'assets'))
+    dist_assets_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', '..', 'dist', 'assets'))
     print("--- PRODUCTION BUILD CHUNK SIZES ---")
     total_size = 0
     if os.path.exists(dist_assets_dir):
@@ -29,7 +29,7 @@ def measure_production_metrics():
     print("[1/2] Launching preview server on port 4174...")
     proc = subprocess.Popen(
         ["npm", "run", "preview", "--", "--port", "4174"],
-        cwd=os.path.abspath(os.path.join(os.path.dirname(__file__), "..")),
+        cwd=os.path.abspath(os.path.join(os.path.dirname(__file__), "..", "..")),
         shell=True,
         stdout=subprocess.PIPE,
         stderr=subprocess.PIPE

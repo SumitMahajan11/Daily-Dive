@@ -1,11 +1,11 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
-import { extractFromPptx } from '../src/lib/extractors/pptxExtractor.js';
-import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
-import { safeLog } from './safeLog.mjs';
-import '../tests/_setup.mjs';
+import { extractFromPdf } from '../../src/lib/extractors/pdfExtractor.js';
+import { extractFromPptx } from '../../src/lib/extractors/pptxExtractor.js';
+import { extractTopicsFromSections } from '../../src/lib/topicExtractor.js';
+import { safeLog } from '../safeLog.mjs';
+import '../../tests/_setup.mjs';
 
 function getPageText(extractedData, pageNum) {
   const idx = pageNum - 1;

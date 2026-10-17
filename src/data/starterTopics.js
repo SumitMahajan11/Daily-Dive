@@ -1,7 +1,7 @@
 /**
  * Curated first-spin starter topic set (16 topics across all 4 groups).
  * Hydrates instant spin with zero chunk delay on initial load.
- * Generated automatically by scripts/split_topics_by_group.mjs
+ * Generated automatically by scripts/tools/split_topics_by_group.mjs
  */
 export const starterTopics = [
   {
