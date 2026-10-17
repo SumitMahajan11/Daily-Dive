@@ -340,10 +340,6 @@
       {
         "label": "First Round Review: Radical Candor: The Surprising Secret to Being a Good Boss",
         "url": "https://review.firstround.com/radical-candor-the-surprising-secret-to-being-a-good-boss/"
-      },
-      {
-        "label": "MIT Sloan Management Review: The Art of Giving and Receiving Feedback",
-        "url": "https://sloanreview.mit.edu/"
       }
     ]
   },
@@ -631,7 +627,7 @@
     "description": "Barbara Minto's SCQA framework structures problem-solving narratives: Situation establishes shared undisputed context.",
     "resources": [
       {
-        "label": "Wikipedia: Barbara Minto",
+        "label": "Wikipedia (About the author): Barbara Minto",
         "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
       }
     ]
@@ -651,7 +647,7 @@
     "description": "Justin Kruger's research on egocentrism in communication revealed that email senders believe recipients correctly interpret their sarcastic, humorous.",
     "resources": [
       {
-        "label": "Wikipedia: Egocentric bias",
+        "label": "Wikipedia (Related): Egocentric bias",
         "url": "https://en.wikipedia.org/wiki/Egocentric_bias"
       }
     ]
@@ -791,7 +787,7 @@
     "description": "Chris Argyris' Ladder of Inference maps how individuals leap from observable data, through selected reality, attributed meanings, and unverified assumptions.",
     "resources": [
       {
-        "label": "Wikipedia: Chris Argyris",
+        "label": "Wikipedia (About the author): Chris Argyris",
         "url": "https://en.wikipedia.org/wiki/Chris_Argyris"
       }
     ]
@@ -941,10 +937,6 @@
       {
         "label": "Interaction Associates: Consensus Decision-Making Protocols in Leadership",
         "url": "https://www.interactionassociates.com/"
-      },
-      {
-        "label": "MIT Sloan Management Review: The Art of High-Stakes Decision Making",
-        "url": "https://sloanreview.mit.edu/"
       }
     ]
   },
@@ -1026,8 +1018,8 @@
     "description": "Daft and Lengel's Media Richness Theory classifies communication channels by their ability to convey multiple informational cues (body language).",
     "resources": [
       {
-        "label": "MIT Sloan Management Review: The Right Media for the Right Message",
-        "url": "https://sloanreview.mit.edu/"
+        "label": "Wikipedia: Media richness theory",
+        "url": "https://en.wikipedia.org/wiki/Media_richness_theory"
       }
     ]
   },
@@ -1046,7 +1038,7 @@
     "description": "Asynchronous-first organizations replace low-density synchronous status meetings with high-fidelity long-form Request for Comments (RFC) written proposals.",
     "resources": [
       {
-        "label": "Wikipedia: Request for Comments",
+        "label": "Wikipedia (Related): Request for Comments",
         "url": "https://en.wikipedia.org/wiki/Request_for_Comments"
       }
     ]
@@ -5088,7 +5080,12 @@
     ],
     "title": "Impermanent Loss",
     "description": "Impermanent loss measures the valuation divergence between depositing token pairs into a constant-product AMM pool versus simply holding them in a wallet.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Loesch et al. (2021): Impermanent Loss in Uniswap v3 (arXiv:2111.09192)",
+        "url": "https://arxiv.org/abs/2111.09192"
+      }
+    ]
   },
   {
     "id": "stablecoin-architectures-and-depegging-mechanics",
@@ -5608,7 +5605,12 @@
     ],
     "title": "KV-Caching in Autoregressive Generation",
     "description": "Stores key and value tensor representations of historical prompt and generation tokens in GPU memory during autoregressive generation.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Hugging Face Docs: Cache strategies for Transformer Generation",
+        "url": "https://huggingface.co/docs/transformers/kv_cache"
+      }
+    ]
   },
   {
     "id": "pagedattention-virtual-memory",
@@ -9277,7 +9279,7 @@
     "description": "The Michael & Scott lock-free queue implements a concurrent FIFO queue using atomic Compare-And-Swap (CAS) primitives over a singly-linked list with a dummy head.",
     "resources": [
       {
-        "label": "Wikipedia: Non-blocking algorithm",
+        "label": "Wikipedia (Related): Non-blocking algorithm",
         "url": "https://en.wikipedia.org/wiki/Non-blocking_algorithm"
       }
     ]
@@ -9907,7 +9909,7 @@
     "description": "During network partitions or node failures where a strict quorum cannot be reached among designated home replicas.",
     "resources": [
       {
-        "label": "Wikipedia: Dynamo (storage system)",
+        "label": "Wikipedia (Related): Dynamo (storage system)",
         "url": "https://en.wikipedia.org/wiki/Dynamo_(storage_system)"
       }
     ]
@@ -10284,7 +10286,7 @@
     "description": "Hybrid Logical Clocks (HLC) merge physical timestamps with Lamport logical counters into a single 64-bit coordinate that tracks causal dependencies while staying.",
     "resources": [
       {
-        "label": "Wikipedia: CockroachDB",
+        "label": "Wikipedia (Related): CockroachDB",
         "url": "https://en.wikipedia.org/wiki/CockroachDB"
       }
     ]
@@ -11653,7 +11655,12 @@
     ],
     "title": "Source Maps v3",
     "description": "Source Maps map compiled, minified production JavaScript back to original source files and lines.",
-    "resources": []
+    "resources": [
+      {
+        "label": "MDN Web Docs: Source map",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Source_map"
+      }
+    ]
   },
   {
     "id": "module-federation-micro-frontends",
@@ -11894,7 +11901,7 @@
     "description": "Distinguishes technical leadership (Individual Contributor Track) from organizational orchestration (Management Track).",
     "resources": [
       {
-        "label": "Wikipedia: Career ladder",
+        "label": "Wikipedia (Related): Career ladder",
         "url": "https://en.wikipedia.org/wiki/Career_ladder"
       }
     ]
@@ -11997,7 +12004,7 @@
     "description": "Michael Watkins demonstrates that professional credibility is established during initial onboarding by building alliances.",
     "resources": [
       {
-        "label": "Wikipedia: Michael D. Watkins",
+        "label": "Wikipedia (About the author): Michael D. Watkins",
         "url": "https://en.wikipedia.org/wiki/Michael_D._Watkins"
       }
     ]
@@ -12141,7 +12148,7 @@
     "description": "Customers do not buy products; they 'hire' them to make progress in specific life situations.",
     "resources": [
       {
-        "label": "Wikipedia: Clayton Christensen",
+        "label": "Wikipedia (About the author): Clayton Christensen",
         "url": "https://en.wikipedia.org/wiki/Clayton_Christensen"
       }
     ]
@@ -12265,7 +12272,12 @@
     ],
     "title": "The Eisenhower Matrix",
     "description": "Prioritization quadrant separating urgency from importance, emphasizing that long-term career growth requires focusing on non-urgent, high-value tasks.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia (Related): Time management",
+        "url": "https://en.wikipedia.org/wiki/Time_management"
+      }
+    ]
   },
   {
     "id": "batna-negotiation-dynamics",
@@ -12298,7 +12310,7 @@
     "description": "This communication method requires stating the executive conclusion or recommendation first, followed by mutually exclusive.",
     "resources": [
       {
-        "label": "Wikipedia: Barbara Minto",
+        "label": "Wikipedia (About the author): Barbara Minto",
         "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
       }
     ]
@@ -12316,7 +12328,7 @@
     "description": "John Gall's rule of systems engineering states: 'A complex system that works is invariably found to have evolved from a simple system that worked.' Complex.",
     "resources": [
       {
-        "label": "Wikipedia: Systemantics",
+        "label": "Wikipedia (Related): Systemantics",
         "url": "https://en.wikipedia.org/wiki/Systemantics"
       }
     ]
@@ -12370,7 +12382,7 @@
     "description": "Richard Rumelt demystifies strategy by defining its essential three-part kernel.",
     "resources": [
       {
-        "label": "Wikipedia: Richard Rumelt",
+        "label": "Wikipedia (About the author): Richard Rumelt",
         "url": "https://en.wikipedia.org/wiki/Richard_Rumelt"
       }
     ]
@@ -12450,7 +12462,7 @@
     "description": "Naval Ravikant defines specific knowledge as rare, highly contextual domain expertise that cannot be taught in a standard course or outsourced.",
     "resources": [
       {
-        "label": "Wikipedia: Economic moat",
+        "label": "Wikipedia (Related): Economic moat",
         "url": "https://en.wikipedia.org/wiki/Economic_moat"
       }
     ]
@@ -12484,7 +12496,12 @@
     ],
     "title": "Strategyzer's Value Proposition Canvas",
     "description": "Alexander Osterwalder maps customer profiles (Jobs, Pains, Gains) directly against product offerings (Products & Services).",
-    "resources": []
+    "resources": [
+      {
+        "label": "Strategyzer: Value Proposition Canvas",
+        "url": "https://www.strategyzer.com/library/the-value-proposition-canvas"
+      }
+    ]
   },
   {
     "id": "pirate-metrics-aarrr",
@@ -12499,7 +12516,7 @@
     "description": "Deconstructs user lifecycle economics into five measurable conversion milestones.",
     "resources": [
       {
-        "label": "Wikipedia: Dave McClure",
+        "label": "Wikipedia (About the author): Dave McClure",
         "url": "https://en.wikipedia.org/wiki/Dave_McClure"
       }
     ]
@@ -13718,7 +13735,7 @@
     "description": "Alan Turing designed the electromechanical 'Bombe' to systematically eliminate impossible rotor combinations of the German Enigma cipher machine.",
     "resources": [
       {
-        "label": "Wikipedia: Bombe",
+        "label": "Wikipedia (Related): Bombe",
         "url": "https://en.wikipedia.org/wiki/Bombe"
       }
     ]
@@ -14132,7 +14149,7 @@
     "description": "Han Dynasty official Cai Lun standardized paper manufacturing by macerating mulberry bark, hemp waste, and old rags.",
     "resources": [
       {
-        "label": "Wikipedia: History of paper",
+        "label": "Wikipedia (Related): History of paper",
         "url": "https://en.wikipedia.org/wiki/History_of_paper"
       }
     ]
@@ -14148,7 +14165,12 @@
     ],
     "title": "The Magnetic Mariner's Compass",
     "description": "The suspended magnetic needle that enabled open-ocean navigation independent of celestial visibility or coastal landmarks.",
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: History of the compass",
+        "url": "https://en.wikipedia.org/wiki/History_of_the_compass"
+      }
+    ]
   },
   {
     "id": "torricelli-barometer-vacuum",
@@ -14199,7 +14221,7 @@
     "description": "Before railways, every municipality set local noon by the solar meridian, creating over 300 conflicting time standards across North America.",
     "resources": [
       {
-        "label": "Wikipedia: Standard time",
+        "label": "Wikipedia (Related): Standard time",
         "url": "https://en.wikipedia.org/wiki/Standard_time"
       }
     ]

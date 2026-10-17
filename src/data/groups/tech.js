@@ -525,7 +525,12 @@ export const topics = [
       "memory-optimization",
       "deep-learning"
     ],
-    "resources": [],
+    "resources": [
+      {
+        "label": "Hugging Face Docs: Cache strategies for Transformer Generation",
+        "url": "https://huggingface.co/docs/transformers/kv_cache"
+      }
+    ],
     "lesson": {
       "idea": "KV-Caching in autoregressive generation retains computed key and value activations in memory across successive token generation steps.",
       "why": "Recomputing attention across historical context tokens at every step imposes quadratic computational penalties. Storing key-value tensors restricts computation to incoming tokens.",
@@ -4553,7 +4558,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Non-blocking algorithm",
+        "label": "Wikipedia (Related): Non-blocking algorithm",
         "url": "https://en.wikipedia.org/wiki/Non-blocking_algorithm"
       }
     ]
@@ -5213,7 +5218,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Dynamo (storage system)",
+        "label": "Wikipedia (Related): Dynamo (storage system)",
         "url": "https://en.wikipedia.org/wiki/Dynamo_(storage_system)"
       }
     ]
@@ -5607,7 +5612,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: CockroachDB",
+        "label": "Wikipedia (Related): CockroachDB",
         "url": "https://en.wikipedia.org/wiki/CockroachDB"
       }
     ]
@@ -7039,7 +7044,12 @@ export const topics = [
       "compilers",
       "debugging"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "MDN Web Docs: Source map",
+        "url": "https://developer.mozilla.org/en-US/docs/Glossary/Source_map"
+      }
+    ]
   },
   {
     "id": "module-federation-micro-frontends",

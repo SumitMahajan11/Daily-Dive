@@ -147,12 +147,12 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'standard-time-zones-fleming': {
     url: 'https://en.wikipedia.org/wiki/Standard_time',
-    label: 'Wikipedia: Standard time',
+    label: 'Wikipedia (Related): Standard time',
     title: 'Standard time - Wikipedia'
   },
   'turing-enigma-bletchley-cryptanalysis': {
     url: 'https://en.wikipedia.org/wiki/Bombe',
-    label: 'Wikipedia: Bombe',
+    label: 'Wikipedia (Related): Bombe',
     title: 'Bombe - Wikipedia'
   },
   'longitude-problem-john-harrison': {
@@ -202,7 +202,7 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'cai-lun-papermaking': {
     url: 'https://en.wikipedia.org/wiki/History_of_paper',
-    label: 'Wikipedia: History of paper',
+    label: 'Wikipedia (Related): History of paper',
     title: 'History of paper - Wikipedia'
   },
   'gutenberg-printing-press': {
@@ -237,7 +237,7 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'ladder-of-inference-chris-argyris': {
     url: 'https://en.wikipedia.org/wiki/Chris_Argyris',
-    label: 'Wikipedia: Chris Argyris',
+    label: 'Wikipedia (About the author): Chris Argyris',
     title: 'Chris Argyris - Wikipedia'
   },
   'milgram-obedience-studies-and-the-agentic-state': {
@@ -462,7 +462,7 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'two-track-career-ladder': {
     url: 'https://en.wikipedia.org/wiki/Career_ladder',
-    label: 'Wikipedia: Career ladder',
+    label: 'Wikipedia (Related): Career ladder',
     title: 'Career ladder - Wikipedia'
   },
   'innovators-dilemma-disruption': {
@@ -482,12 +482,12 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'galls-law-systems': {
     url: 'https://en.wikipedia.org/wiki/Systemantics',
-    label: 'Wikipedia: Systemantics',
+    label: 'Wikipedia (Related): Systemantics',
     title: 'Systemantics - Wikipedia'
   },
   'pirate-metrics-aarrr': {
     url: 'https://en.wikipedia.org/wiki/Dave_McClure',
-    label: 'Wikipedia: Dave McClure',
+    label: 'Wikipedia (About the author): Dave McClure',
     title: 'Dave McClure - Wikipedia'
   },
   'framing-effect-persuasion': {
@@ -612,12 +612,12 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'email-tone-calibration-and-egocentrism-bias': {
     url: 'https://en.wikipedia.org/wiki/Egocentric_bias',
-    label: 'Wikipedia: Egocentric bias',
+    label: 'Wikipedia (Related): Egocentric bias',
     title: 'Egocentric bias - Wikipedia'
   },
   'async-first-communication-and-rfc-decision-making': {
     url: 'https://en.wikipedia.org/wiki/Request_for_Comments',
-    label: 'Wikipedia: Request for Comments',
+    label: 'Wikipedia (Related): Request for Comments',
     title: 'Request for Comments - Wikipedia'
   },
   'personality-trait-stability-and-the-maturity-principle': {
@@ -632,12 +632,12 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'lock-free-queue-michael-scott': {
     url: 'https://en.wikipedia.org/wiki/Non-blocking_algorithm',
-    label: 'Wikipedia: Non-blocking algorithm',
+    label: 'Wikipedia (Related): Non-blocking algorithm',
     title: 'Non-blocking algorithm - Wikipedia'
   },
   'sloppy-quorums-and-hinted-handoff': {
     url: 'https://en.wikipedia.org/wiki/Dynamo_(storage_system)',
-    label: 'Wikipedia: Dynamo (storage system)',
+    label: 'Wikipedia (Related): Dynamo (storage system)',
     title: 'Dynamo (storage system) - Wikipedia'
   },
   'read-repair-vs-anti-entropy-merkle-trees': {
@@ -647,7 +647,7 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'hybrid-logical-clocks-cockroachdb': {
     url: 'https://en.wikipedia.org/wiki/CockroachDB',
-    label: 'Wikipedia: CockroachDB',
+    label: 'Wikipedia (Related): CockroachDB',
     title: 'CockroachDB - Wikipedia'
   },
   'pacelc-theorem-in-practice': {
@@ -667,27 +667,27 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'first-90-days-transitions': {
     url: 'https://en.wikipedia.org/wiki/Michael_D._Watkins',
-    label: 'Wikipedia: Michael D. Watkins',
+    label: 'Wikipedia (About the author): Michael D. Watkins',
     title: 'Michael D. Watkins - Wikipedia'
   },
   'jobs-to-be-done-theory': {
     url: 'https://en.wikipedia.org/wiki/Clayton_Christensen',
-    label: 'Wikipedia: Clayton Christensen',
+    label: 'Wikipedia (About the author): Clayton Christensen',
     title: 'Clayton Christensen - Wikipedia'
   },
   'pyramid-principle-minto': {
     url: 'https://en.wikipedia.org/wiki/Barbara_Minto',
-    label: 'Wikipedia: Barbara Minto',
+    label: 'Wikipedia (About the author): Barbara Minto',
     title: 'Barbara Minto - Wikipedia'
   },
   'minto-scqa-framework-for-business-documents': {
     url: 'https://en.wikipedia.org/wiki/Barbara_Minto',
-    label: 'Wikipedia: Barbara Minto',
+    label: 'Wikipedia (About the author): Barbara Minto',
     title: 'Barbara Minto - Wikipedia'
   },
   'good-strategy-bad-strategy-kernel': {
     url: 'https://en.wikipedia.org/wiki/Richard_Rumelt',
-    label: 'Wikipedia: Richard Rumelt',
+    label: 'Wikipedia (About the author): Richard Rumelt',
     title: 'Richard Rumelt - Wikipedia'
   },
   'raci-matrix-governance': {
@@ -697,13 +697,48 @@ export const KNOWN_EXACT_WIKI_REPAIRS = {
   },
   'career-moats-specific-knowledge': {
     url: 'https://en.wikipedia.org/wiki/Economic_moat',
-    label: 'Wikipedia: Economic moat',
+    label: 'Wikipedia (Related): Economic moat',
     title: 'Economic moat - Wikipedia'
   },
   'sponsorship-vs-mentorship': {
     url: 'https://en.wikipedia.org/wiki/Mentorship',
     label: 'Wikipedia: Mentorship',
     title: 'Mentorship - Wikipedia'
+  },
+  'eisenhower-matrix-prioritization': {
+    url: 'https://en.wikipedia.org/wiki/Time_management',
+    label: 'Wikipedia (Related): Time management',
+    title: 'Time management - Wikipedia'
+  },
+  'impermanent-loss-mechanics-in-liquidity-pools': {
+    url: 'https://arxiv.org/abs/2111.09192',
+    label: 'Loesch et al. (2021): Impermanent Loss in Uniswap v3 (arXiv:2111.09192)',
+    title: '[2111.09192] Impermanent Loss in Uniswap v3'
+  },
+  'kv-caching-autoregressive-decoding': {
+    url: 'https://huggingface.co/docs/transformers/kv_cache',
+    label: 'Hugging Face Docs: Cache strategies for Transformer Generation',
+    title: 'Cache strategies · Hugging Face'
+  },
+  'source-maps-vlq-encoding-internals': {
+    url: 'https://developer.mozilla.org/en-US/docs/Glossary/Source_map',
+    label: 'MDN Web Docs: Source map',
+    title: 'Source map - Glossary | MDN'
+  },
+  'value-proposition-canvas': {
+    url: 'https://www.strategyzer.com/library/the-value-proposition-canvas',
+    label: 'Strategyzer: Value Proposition Canvas',
+    title: 'Value Proposition Canvas – Download the Official Template'
+  },
+  'mariners-magnetic-compass': {
+    url: 'https://en.wikipedia.org/wiki/History_of_the_compass',
+    label: 'Wikipedia: History of the compass',
+    title: 'History of the compass - Wikipedia'
+  },
+  'media-richness-theory-and-channel-selection': {
+    url: 'https://en.wikipedia.org/wiki/Media_richness_theory',
+    label: 'Wikipedia: Media richness theory',
+    title: 'Media richness theory - Wikipedia'
   },
   'innate-vs-adaptive-immunity': {
     url: 'https://en.wikipedia.org/wiki/Innate_immune_system',
@@ -755,8 +790,11 @@ export async function applyRepairs() {
       continue;
     }
 
+    // Remove generic sloanreview.mit.edu homepage links
+    let curResources = resources.filter(r => r.url !== 'https://sloanreview.mit.edu/');
+
     // Special fix handling: if knownFix is specified and topic needs replacement
-    // (e.g. Malcolm McLean person page or Vocal Prosody)
+    // (e.g. Malcolm McLean person page, Vocal Prosody, or Media Richness)
     if (knownFix && (
       topic.id === 'shipping-container-intermodal-revolution' ||
       topic.id === 'vocal-prosody-pitch-inflection-and-status-signaling' ||
@@ -765,7 +803,8 @@ export async function applyRepairs() {
       topic.id === 'ladder-of-inference-chris-argyris' ||
       topic.id === 'schema-theory-and-constructive-memory-bartlett' ||
       topic.id === 'dividend-policy-vs-share-buybacks' ||
-      topic.id === 'galls-law-systems'
+      topic.id === 'galls-law-systems' ||
+      topic.id === 'media-richness-theory-and-channel-selection'
     )) {
       updatedResources.push({
         label: knownFix.label,
@@ -788,7 +827,7 @@ export async function applyRepairs() {
       continue;
     }
 
-    for (const r of resources) {
+    for (const r of curResources) {
       const isWiki = (r.label && r.label.startsWith('Wikipedia:')) || (r.url && r.url.includes('wikipedia.org'));
 
       if (!isWiki) {
@@ -842,7 +881,6 @@ export async function applyRepairs() {
   const topicsZeroLinksAfterList = topics.filter(t => !t.resources || t.resources.length === 0);
 
   fs.writeFileSync(canonicalFile, JSON.stringify(topics, null, 2), 'utf8');
-  fs.writeFileSync(reportFile, JSON.stringify(audit, null, 2), 'utf8');
 
   printLog('\n====================================================');
   printLog('               REPAIR SCRIPT SUMMARY                ');
@@ -867,11 +905,22 @@ export async function applyRepairs() {
   printLog('====================================================\n');
 
   printLog('====================================================');
-  printLog('     ACCEPTED LIST (topic id | topic title | page title)     ');
+  printLog('     ACCEPTED LIST (WIKIPEDIA): topic id | topic title | page title     ');
   printLog('====================================================');
   acceptedList.forEach(item => {
     printLog(`${item.id} | ${item.topicTitle} | ${item.pageTitle}`);
   });
+  printLog('====================================================\n');
+
+  printLog('====================================================');
+  printLog('  FULL ACCEPTED LIST (ALL DOMAINS): topic id | topic title | label | page title  ');
+  printLog('====================================================');
+  for (const t of topics) {
+    for (const r of t.resources || []) {
+      const pTitle = audit[r.url]?.title || r.label;
+      printLog(`${t.id} | ${t.title} | ${r.label} | ${pTitle}`);
+    }
+  }
   printLog('====================================================\n');
 
   printLog('====================================================');

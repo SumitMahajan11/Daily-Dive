@@ -387,10 +387,6 @@ export const topics = [
       {
         "label": "First Round Review: Radical Candor: The Surprising Secret to Being a Good Boss",
         "url": "https://review.firstround.com/radical-candor-the-surprising-secret-to-being-a-good-boss/"
-      },
-      {
-        "label": "MIT Sloan Management Review: The Art of Giving and Receiving Feedback",
-        "url": "https://sloanreview.mit.edu/"
       }
     ]
   },
@@ -693,7 +689,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Barbara Minto",
+        "label": "Wikipedia (About the author): Barbara Minto",
         "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
       }
     ]
@@ -714,7 +710,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Egocentric bias",
+        "label": "Wikipedia (Related): Egocentric bias",
         "url": "https://en.wikipedia.org/wiki/Egocentric_bias"
       }
     ]
@@ -861,7 +857,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Chris Argyris",
+        "label": "Wikipedia (About the author): Chris Argyris",
         "url": "https://en.wikipedia.org/wiki/Chris_Argyris"
       }
     ]
@@ -1018,10 +1014,6 @@ export const topics = [
       {
         "label": "Interaction Associates: Consensus Decision-Making Protocols in Leadership",
         "url": "https://www.interactionassociates.com/"
-      },
-      {
-        "label": "MIT Sloan Management Review: The Art of High-Stakes Decision Making",
-        "url": "https://sloanreview.mit.edu/"
       }
     ]
   },
@@ -1107,8 +1099,8 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "MIT Sloan Management Review: The Right Media for the Right Message",
-        "url": "https://sloanreview.mit.edu/"
+        "label": "Wikipedia: Media richness theory",
+        "url": "https://en.wikipedia.org/wiki/Media_richness_theory"
       }
     ]
   },
@@ -1128,7 +1120,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Request for Comments",
+        "label": "Wikipedia (Related): Request for Comments",
         "url": "https://en.wikipedia.org/wiki/Request_for_Comments"
       }
     ]

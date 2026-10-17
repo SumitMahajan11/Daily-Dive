@@ -1422,7 +1422,12 @@ export const topics = [
       "liquidity-provision",
       "yield-farming"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Loesch et al. (2021): Impermanent Loss in Uniswap v3 (arXiv:2111.09192)",
+        "url": "https://arxiv.org/abs/2111.09192"
+      }
+    ]
   },
   {
     "id": "stablecoin-architectures-and-depegging-mechanics",
@@ -1544,7 +1549,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Career ladder",
+        "label": "Wikipedia (Related): Career ladder",
         "url": "https://en.wikipedia.org/wiki/Career_ladder"
       }
     ]
@@ -1653,7 +1658,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Michael D. Watkins",
+        "label": "Wikipedia (About the author): Michael D. Watkins",
         "url": "https://en.wikipedia.org/wiki/Michael_D._Watkins"
       }
     ]
@@ -1805,7 +1810,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Clayton Christensen",
+        "label": "Wikipedia (About the author): Clayton Christensen",
         "url": "https://en.wikipedia.org/wiki/Clayton_Christensen"
       }
     ]
@@ -1936,7 +1941,12 @@ export const topics = [
       "prioritization",
       "focus"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia (Related): Time management",
+        "url": "https://en.wikipedia.org/wiki/Time_management"
+      }
+    ]
   },
   {
     "id": "batna-negotiation-dynamics",
@@ -1971,7 +1981,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Barbara Minto",
+        "label": "Wikipedia (About the author): Barbara Minto",
         "url": "https://en.wikipedia.org/wiki/Barbara_Minto"
       }
     ]
@@ -1990,7 +2000,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Systemantics",
+        "label": "Wikipedia (Related): Systemantics",
         "url": "https://en.wikipedia.org/wiki/Systemantics"
       }
     ]
@@ -2047,7 +2057,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Richard Rumelt",
+        "label": "Wikipedia (About the author): Richard Rumelt",
         "url": "https://en.wikipedia.org/wiki/Richard_Rumelt"
       }
     ]
@@ -2132,7 +2142,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Economic moat",
+        "label": "Wikipedia (Related): Economic moat",
         "url": "https://en.wikipedia.org/wiki/Economic_moat"
       }
     ]
@@ -2168,7 +2178,12 @@ export const topics = [
       "strategyzer",
       "customer-value"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Strategyzer: Value Proposition Canvas",
+        "url": "https://www.strategyzer.com/library/the-value-proposition-canvas"
+      }
+    ]
   },
   {
     "id": "pirate-metrics-aarrr",
@@ -2184,7 +2199,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Dave McClure",
+        "label": "Wikipedia (About the author): Dave McClure",
         "url": "https://en.wikipedia.org/wiki/Dave_McClure"
       }
     ]

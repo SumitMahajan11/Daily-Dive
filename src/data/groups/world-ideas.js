@@ -1131,7 +1131,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Bombe",
+        "label": "Wikipedia (Related): Bombe",
         "url": "https://en.wikipedia.org/wiki/Bombe"
       }
     ]
@@ -1568,7 +1568,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: History of paper",
+        "label": "Wikipedia (Related): History of paper",
         "url": "https://en.wikipedia.org/wiki/History_of_paper"
       }
     ]
@@ -1585,7 +1585,12 @@ export const topics = [
       "maritime",
       "exploration"
     ],
-    "resources": []
+    "resources": [
+      {
+        "label": "Wikipedia: History of the compass",
+        "url": "https://en.wikipedia.org/wiki/History_of_the_compass"
+      }
+    ]
   },
   {
     "id": "torricelli-barometer-vacuum",
@@ -1639,7 +1644,7 @@ export const topics = [
     ],
     "resources": [
       {
-        "label": "Wikipedia: Standard time",
+        "label": "Wikipedia (Related): Standard time",
         "url": "https://en.wikipedia.org/wiki/Standard_time"
       }
     ]
