@@ -26,17 +26,29 @@ async function runHoldoutExtraction() {
     const topics = await extractTopicsFromSections(extractedData, fileName);
 
     const pageCount = extractedData.pageCount || (extractedData.rawPages ? extractedData.rawPages.length : 0);
-    const extractionPath = extractedData.ocrFallbackUsed ? 'OCR' : 'text';
+    const hasCanvas = typeof document !== 'undefined' && Boolean(document?.createElement);
+    const perPagePaths = (extractedData.pages || []).map(p => {
+      if (p.status === 'textLayer' || p.status === 'text') return 'text';
+      if (p.status === 'ocr') return 'ocr';
+      if (p.status === 'notProcessed') return 'not_processed';
+      return 'empty';
+    });
     const topicCount = topics.length;
     const flaggedCount = topics.filter(t => t.needs_review).length;
+    const ocrCouldNotRun = Boolean(extractedData.ocrCouldNotRun) || (!hasCanvas && (Boolean(extractedData.pagesNeedingOcr?.length) || extractedData.ocrSkippedReason === 'no canvas' || (extractedData.pages || []).some(p => p.hasDrawingOps || p.neededOcr)));
 
-    runSummary.push({
+    const fileSummary = {
       file: fileName,
       page_count: pageCount,
-      extraction_path: extractionPath,
+      extraction_path: perPagePaths,
       topic_count: topicCount,
       flagged_count: flaggedCount
-    });
+    };
+    if (ocrCouldNotRun) {
+      fileSummary.ocr_status = 'OCR could not run (no canvas)';
+    }
+
+    runSummary.push(fileSummary);
 
     for (const t of topics) {
       const pageNum = t.page != null ? t.page : (t.slideNumber != null ? t.slideNumber : '');
@@ -48,10 +60,13 @@ async function runHoldoutExtraction() {
     safeLog({
       file: fileName.slice(-25),
       pages: pageCount,
-      path: extractionPath,
+      path: perPagePaths.slice(0, 10).join(',').slice(0, 30),
       topics: topicCount,
       flagged: flaggedCount
     });
+    if (ocrCouldNotRun) {
+      safeLog({ ocr: 'OCR could not run (no canvas)' });
+    }
   }
 
   const runJsonPath = path.resolve('reports/holdout_run.json');

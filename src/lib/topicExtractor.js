@@ -1740,6 +1740,9 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         structuralTitle: sec.structuralTitle || null,
         slideNumber: sec.page || sec.pageNumber || sec.slideNumber || (idx + 1),
         status: sec.status || null,
+        hasDrawingOps: Boolean(sec.hasDrawingOps),
+        neededOcr: Boolean(sec.neededOcr),
+        noOcrResult: Boolean(sec.noOcrResult),
         startLine: sec.startLine || 1,
         endLine: sec.endLine || 1
       };
@@ -1770,7 +1773,7 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
       recordPageOutcome(pageNum, 'skipped', 'not processed (cancelled or limit)');
       return;
     }
-    if (origSec?.status === 'empty' || lines.length === 0) {
+    if (origSec?.status === 'empty' && lines.length === 0 && !origSec.hasDrawingOps && !origSec.neededOcr) {
       recordPageOutcome(pageNum, 'skipped', 'empty or unreadable');
       return;
     }
@@ -1792,6 +1795,15 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
     }
     if (!isContentPage && (isOutlineSlide(rawLines) || isOutlineSlide(lines))) {
       recordPageOutcome(pageNum, 'skipped', 'outline filter');
+      return;
+    }
+    const isNoTextFound = (origSec?.hasDrawingOps || origSec?.neededOcr || rawText.trim().length < 20 || lines.length === 0) && origSec?.status !== 'ocr';
+    if (isNoTextFound) {
+      recordPageOutcome(pageNum, 'skipped', 'no text found');
+      return;
+    }
+    if (origSec?.status === 'empty' || lines.length === 0) {
+      recordPageOutcome(pageNum, 'skipped', 'empty or unreadable');
       return;
     }
 
@@ -2701,13 +2713,13 @@ export async function extractTopicsFromSections(extractedData, fileName = '') {
  */
 export function buildExtractionWarning(pageOutcomes) {
   if (!Array.isArray(pageOutcomes) || pageOutcomes.length === 0) return null;
-  const skipped = pageOutcomes.filter(p => p && p.outcome === 'skipped');
+  const skipped = pageOutcomes.filter(p => p && (p.outcome === 'skipped' || p.outcome === 'no text found' || p.reason === 'no text found'));
   if (skipped.length === 0) return null;
 
   // Group skipped pages by reason
   const byReason = new Map();
-  skipped.forEach(({ page, reason }) => {
-    const r = (reason || 'non-content').trim();
+  skipped.forEach(({ page, reason, outcome }) => {
+    const r = (reason || outcome || 'non-content').trim();
     if (!byReason.has(r)) byReason.set(r, []);
     byReason.get(r).push(page);
   });

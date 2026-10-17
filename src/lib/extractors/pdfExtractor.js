@@ -118,8 +118,9 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
       if (textChars >= 30) {
         pageRecords.push({ pageIndex: i, type: 'textLayer', text: pageText, textChars });
       } else {
-        // Inspect operator list for embedded images >= 400px wide or tall
+        // Inspect operator list for embedded images >= 400px wide or tall, or drawing operators
         let hasLargeImage = false;
+        let hasDrawingOps = false;
         try {
           const ops = await page.getOperatorList();
           for (let j = 0; j < ops.fnArray.length; j++) {
@@ -149,12 +150,31 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
               }
             }
           }
+          const drawingOpCodes = new Set([
+            pdfjsLib.OPS.constructPath,
+            pdfjsLib.OPS.stroke,
+            pdfjsLib.OPS.closeStroke,
+            pdfjsLib.OPS.fill,
+            pdfjsLib.OPS.eoFill,
+            pdfjsLib.OPS.fillStroke,
+            pdfjsLib.OPS.eoFillStroke,
+            pdfjsLib.OPS.paintPath,
+            pdfjsLib.OPS.curveTo,
+            pdfjsLib.OPS.lineTo,
+            pdfjsLib.OPS.moveTo,
+            pdfjsLib.OPS.rectangle,
+            pdfjsLib.OPS.shadingFill
+          ]);
+          // Gating: 0 text items AND non-empty drawing operator list
+          if (textContent.items.length === 0 && ops && ops.fnArray && ops.fnArray.length > 0) {
+            hasDrawingOps = ops.fnArray.some(fn => drawingOpCodes.has(fn)) || ops.fnArray.length > 0;
+          }
         } catch (opsErr) {
           console.warn(`Could not inspect operators for page ${i}:`, opsErr);
         }
 
-        if (hasLargeImage) {
-          pageRecords.push({ pageIndex: i, type: 'needsOcr', text: '', textChars });
+        if (hasLargeImage || hasDrawingOps) {
+          pageRecords.push({ pageIndex: i, type: 'needsOcr', text: '', textChars, hasDrawingOps, neededOcr: true });
         } else {
           pageRecords.push({ pageIndex: i, type: 'empty', text: '', textChars });
         }
@@ -268,10 +288,13 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
               } else {
                 item.type = 'empty';
                 item.text = '';
+                item.noOcrResult = true;
               }
             } else {
               item.type = 'empty';
               item.text = '';
+              item.ocrSkippedReason = 'no canvas';
+              item.noOcrResult = true;
             }
           } finally {
             if (canvas) {
@@ -337,7 +360,15 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
     const pageStatus = (item.type === 'textLayer' || item.type === 'ocr' || item.type === 'notProcessed')
       ? item.type
       : 'empty';
-    pages.push({ page: pageNum, text: pageText, status: pageStatus });
+    pages.push({
+      page: pageNum,
+      text: pageText,
+      status: pageStatus,
+      hasDrawingOps: Boolean(item.hasDrawingOps),
+      neededOcr: Boolean(item.neededOcr),
+      noOcrResult: Boolean(item.noOcrResult),
+      ocrSkippedReason: item.ocrSkippedReason || null
+    });
     rawPages.push(pageText); // keep empty strings so indices match page numbers
   }
 
@@ -402,7 +433,9 @@ export async function extractFromPdf(file, onProgressOrOptions = () => {}, maybe
     warnings: allWarnings,
     emptyRatio,
     emptyPages: emptyCount,
-    notProcessed: notProcessedCount,
+    ocrSkippedReason: pagesNeedingOcr.length > 0 && !(typeof document !== 'undefined' && Boolean(document?.createElement)) ? 'no canvas' : null,
+    ocrCouldNotRun: pagesNeedingOcr.length > 0 && !(typeof document !== 'undefined' && Boolean(document?.createElement)),
+    pagesNeedingOcr: pagesNeedingOcr.map(p => p.pageIndex),
     totalPages
   };
 }
