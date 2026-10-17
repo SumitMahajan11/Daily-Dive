@@ -55,9 +55,12 @@ test('Holdout Rejection Paths: proves every rejection path fires on synthetic fi
     // Path 7c: Excluded series rejection (starts with assignment, coursera, awp, sepm, experiment)
     fs.writeFileSync(path.join(syntheticDir, 'coursera_novel_deep_learning.pdf'), 'synthetic-excluded-series-payload');
 
-    // Path 8: Family duplicate rejection (same stem 'synthetic report', different content)
+    // Path 8: Family duplicate rejection (same stem 'synthetic report', 5 files: keep 4, reject 1)
     fs.writeFileSync(path.join(syntheticDir, 'synthetic_report_v1.pdf'), 'family-report-alpha');
     fs.writeFileSync(path.join(syntheticDir, 'synthetic_report_v2.pdf'), 'family-report-beta');
+    fs.writeFileSync(path.join(syntheticDir, 'synthetic_report_v3.pdf'), 'family-report-gamma');
+    fs.writeFileSync(path.join(syntheticDir, 'synthetic_report_v4.pdf'), 'family-report-delta');
+    fs.writeFileSync(path.join(syntheticDir, 'synthetic_report_v5.pdf'), 'family-report-epsilon');
 
     // Valid Clean Document (passes all filters and enters holdout)
     fs.writeFileSync(path.join(syntheticDir, 'valid_unique_whitepaper.pdf'), 'pristine-clean-content-12345');

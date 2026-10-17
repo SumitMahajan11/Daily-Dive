@@ -418,7 +418,7 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
   const smokeHashes = new Set(smokeOnlyRows.map(s => s.sha256));
   const cleanCandidates = rawCandidates.filter(c => !smokeHashes.has(c.sha256));
 
-  // 9. Group candidates sharing a family stem; keep ONE per family (lowest SHA-256 hash)
+  // 9. Group candidates sharing a family stem; keep up to 4 per family (lowest SHA-256 hash)
   const familyMap = new Map();
   for (const c of cleanCandidates) {
     if (!familyMap.has(c.family)) {
@@ -432,10 +432,13 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
 
   for (const [, group] of familyMap.entries()) {
     group.sort((a, b) => a.sha256.localeCompare(b.sha256));
-    finalCandidates.push(group[0]);
-    decisions.push({ name: group[0].name, sha256: group[0].sha256, status: 'accepted' });
+    const keepCount = Math.min(4, group.length);
+    for (let i = 0; i < keepCount; i++) {
+      finalCandidates.push(group[i]);
+      decisions.push({ name: group[i].name, sha256: group[i].sha256, status: 'accepted' });
+    }
 
-    for (let i = 1; i < group.length; i++) {
+    for (let i = keepCount; i < group.length; i++) {
       rejectedFamilyDuplicate++;
       decisions.push({ name: group[i].name, sha256: group[i].sha256, status: 'rejectedFamilyDuplicate' });
     }

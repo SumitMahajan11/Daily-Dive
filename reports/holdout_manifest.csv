@@ -1,5 +1,5 @@
 # RULE: Candidate documents are sorted ascending by raw SHA-256 hash. Rejection of build files, dev-labels, heldout-labels, fixtures, non-PDFs, banned patterns, duplicate hashes, build-family matches, excluded series, and family duplicates enforced.
-# SCRIPT_GIT_HASH: 30d2a0c5718c80549f23f0253d704e60e8475f00
+# SCRIPT_GIT_HASH: 0be39dbb4470c26261ae8d37a78fd5c935372cc7
 path,name,extension,size_bytes,sha256,family,split
 "D:\DailyDive-Eval\build\awp 10 kartik.pdf","awp 10 kartik.pdf",".pdf",219268,"052E9DEEE9E6E3B56C3B9F7517242C0848F7D3CD8EFEE69E1B2CC52EF9362462","awp kartik","SMOKE_ONLY"
 "D:\DailyDive-Eval\build\CC_Unit-3.pdf","CC_Unit-3.pdf",".pdf",1035562,"48D2892DD216B4151110E9D5C0C1DFBA03E707F61B4FD50D6A8062ABB94035E4","cc unit","SMOKE_ONLY"
@@ -8,5 +8,11 @@ path,name,extension,size_bytes,sha256,family,split
 "D:\DailyDive-Eval\build\SumitAWP practical no.10.docx","SumitAWP practical no.10.docx",".docx",269264,"DC4517B81F4F211B24ECB87303268F7B491622A317160275E13B8A667946E72F","sumitawp practical no","SMOKE_ONLY"
 "D:\DailyDive-Eval\build\SumitAWP practical no.10.pdf","SumitAWP practical no.10.pdf",".pdf",468864,"BE33911D88AABE7968512637E4648F9045E2AE04E0B1C797B2F6BA3A389CF78C","sumitawp practical no","SMOKE_ONLY"
 "D:\DailyDive-Eval\build\Unit-4.pdf","Unit-4.pdf",".pdf",1608207,"15061683F5B4116D61CD27F66C10CCDCD6C1B126C94F2B486DF6697A246A93FE","unit","SMOKE_ONLY"
-"D:\DailyDive-Candidates\e921a690079369751bcce3e34da6c6ee_MIT6_0001F16_Lec1.pdf","e921a690079369751bcce3e34da6c6ee_MIT6_0001F16_Lec1.pdf",".pdf",823569,"26D1BD5F1C42489DC0FFE8B3610BC245F1278D7035F368013E5A58C7CD8A890C","mit f lec","holdout"
-"D:\DailyDive-Candidates\Please Read First - ICE Database Educational V5.0.pdf","Please Read First - ICE Database Educational V5.0.pdf",".pdf",84482,"955CC8B3B588515177B0B4CE146DDA3E80D9BD1E1AE885C056E85289B223B241","please read first ice database educational v","holdout"
+"D:\DailyDive-Test\7d59cd5e4d6cb323739deff687ed1bff_MIT6_046JS15_writtenlec6.pdf","7d59cd5e4d6cb323739deff687ed1bff_MIT6_046JS15_writtenlec6.pdf",".pdf",658803,"0B8435941A0F04331F4B283DD8256164C9E4D928A202A0292A7D646B39F95B4E","mit js writtenlec","holdout"
+"D:\DailyDive-Test\ac6b6e8ac932bb5dfb6506fd0db9d5ad_MIT6_046JS15_lec13.pdf","ac6b6e8ac932bb5dfb6506fd0db9d5ad_MIT6_046JS15_lec13.pdf",".pdf",858930,"174CF8E71AEF9C605D89D3971A0215B4ADC3463981EC804FEC86312A7B85840F","mit js lec","holdout"
+"D:\DailyDive-Test\6144f2dfbe515abfbeb32f99a6907af7_MIT6_046JS15_lec10.pdf","6144f2dfbe515abfbeb32f99a6907af7_MIT6_046JS15_lec10.pdf",".pdf",125856,"25553E45500E3F851CC49EEF094D9851659F34E8FDE8FECC7E060E969121C9CE","mit js lec","holdout"
+"D:\DailyDive-Test\fda670b38d2997bdbeb9903fc4242a3d_MIT6_046JS15_writtenlec11.pdf","fda670b38d2997bdbeb9903fc4242a3d_MIT6_046JS15_writtenlec11.pdf",".pdf",5865576,"93B38BC3C74D3F767C6C3BC4411EEF0D36F2F1DD5A3A0961C52E0C5CBF9C31FA","mit js writtenlec","holdout"
+"D:\DailyDive-Test\da0bca8839760018d580ccab98f3e3e1_MIT6_046JS15_writtenlec3.pdf","da0bca8839760018d580ccab98f3e3e1_MIT6_046JS15_writtenlec3.pdf",".pdf",4992603,"966735888193B6EE7E81215BC7853239CAFD4ED2B7BFBEDCD7002AC40BD3DFB3","mit js writtenlec","holdout"
+"D:\DailyDive-Test\7463c413c944ed72b46a3c3d02b49448_MIT6_046JS15_lec02.pdf","7463c413c944ed72b46a3c3d02b49448_MIT6_046JS15_lec02.pdf",".pdf",133563,"A63BD7158839634D6C687ADF5C4D3BD95F29D79C8CD33CD9C848428DE63FB2A0","mit js lec","holdout"
+"D:\DailyDive-Test\14fe095781943ff9bd485e6e263b48f7_MIT6_046JS15_lec07.pdf","14fe095781943ff9bd485e6e263b48f7_MIT6_046JS15_lec07.pdf",".pdf",829244,"A8B6C66777348C71297272EE077FD3D9E941B3502E1121127975CF65CF422D39","mit js lec","holdout"
+"D:\DailyDive-Test\739d86c1a582e6b5c7c61707195d32fc_MIT6_046JS15_writtenlec23.pdf","739d86c1a582e6b5c7c61707195d32fc_MIT6_046JS15_writtenlec23.pdf",".pdf",6347734,"BFBCD5386EB5DB81758BF52FDBFFF350656BAEA4EE03B82948CF1A96C3B87342","mit js writtenlec","holdout"
