@@ -145,10 +145,8 @@ test('PPTX upload section extraction: AI_ML_Climate_Adaptive_Shelter_Technical_S
     const normPage = (pageText || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     if (!normPage.includes(normTitle)) {
       provenanceViolations++;
-      console.log(`${fileName}:${pageNum}`);
     }
   }
-  console.log(`[PROVENANCE] ${fileName} violation count: ${provenanceViolations}`);
 });
 
 test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', async () => {
@@ -212,10 +210,8 @@ test('PDF upload section extraction: kartik_ccl_1.pdf satisfies invariants', asy
     const normPage = (pageText || '').toLowerCase().replace(/[^a-z0-9]/g, '');
     if (!normPage.includes(normTitle)) {
       provenanceViolations++;
-      console.log(`${fileName}:${pageNum}`);
     }
   }
-  console.log(`[PROVENANCE] ${fileName} violation count: ${provenanceViolations}`);
 });
 
 test('PDF 100-page text extraction: processes all 100 pages in-memory without warning', async () => {
