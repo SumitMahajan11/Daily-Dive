@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
-import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
-import { safeLog } from './safeLog.mjs';
-import '../tests/_setup.mjs';
+import { extractFromPdf } from '../../src/lib/extractors/pdfExtractor.js';
+import { extractTopicsFromSections } from '../../src/lib/topicExtractor.js';
+import { safeLog } from '../safeLog.mjs';
+import '../../tests/_setup.mjs';
 
 async function runHoldoutExtraction() {
   const holdoutDir = 'D:/DailyDive-Holdout-Final';

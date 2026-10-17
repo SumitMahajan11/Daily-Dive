@@ -2,7 +2,7 @@ import { chromium } from 'playwright';
 import { createServer } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
-import { safeLog } from './safeLog.mjs';
+import { safeLog } from '../safeLog.mjs';
 
 function getMimeType(fileName) {
   const ext = fileName.split('.').pop().toLowerCase();

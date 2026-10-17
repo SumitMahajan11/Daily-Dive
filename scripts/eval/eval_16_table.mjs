@@ -3,7 +3,7 @@ import { createServer } from 'vite';
 import fs from 'node:fs';
 import path from 'node:path';
 
-import { safeLog } from './safeLog.mjs';
+import { safeLog } from '../safeLog.mjs';
 
 async function main() {
   const server = await createServer({ server: { port: 5210 } });

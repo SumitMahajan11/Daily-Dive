@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
-import { safeLog } from './safeLog.mjs';
+import { safeLog } from '../safeLog.mjs';
 
 // Canonical existing holdout set (marked as SMOKE_ONLY)
 const EXISTING_HOLDOUT_SET = new Map([
