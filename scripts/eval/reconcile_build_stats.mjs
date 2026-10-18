@@ -1,10 +1,10 @@
 import fs from 'node:fs';
 import path from 'node:path';
 import crypto from 'node:crypto';
-import '../tests/_setup.mjs';
-import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
-import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
-import { EVAL_BUILD_DIR } from './eval/paths.mjs';
+import '../../tests/_setup.mjs';
+import { extractFromPdf } from '../../src/lib/extractors/pdfExtractor.js';
+import { extractTopicsFromSections } from '../../src/lib/topicExtractor.js';
+import { EVAL_BUILD_DIR } from './paths.mjs';
 
 async function main() {
   const buildDir = EVAL_BUILD_DIR;

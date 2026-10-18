@@ -1,10 +1,10 @@
 #!/usr/bin/env node
 import fs from 'node:fs';
 import path from 'node:path';
-import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
-import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
-import '../tests/_setup.mjs';
-import { SMOKE_DIR } from './eval/paths.mjs';
+import { extractFromPdf } from '../../src/lib/extractors/pdfExtractor.js';
+import { extractTopicsFromSections } from '../../src/lib/topicExtractor.js';
+import '../../tests/_setup.mjs';
+import { SMOKE_DIR } from './paths.mjs';
 
 function print(str = '') {
   process.stdout.write(str + '\n');

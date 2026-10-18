@@ -162,6 +162,16 @@ Daily Dive is optimized for zero-config static deployment on Vercel:
 
 ---
 
+## Documentation
+
+- [Extractor Limitations](docs/EXTRACTOR_LIMITATIONS.md): Limitations, synthetic extraction metrics, and title quality notes.
+- [Known Issues](docs/KNOWN_ISSUES.md): Known issues register, review criteria, and workarounds.
+- [Evaluation Results](docs/RESULTS.md): Benchmark results, precision/recall metrics, and model evaluations.
+- [Holdout Protocol](docs/holdout_protocol.md): Holdout evaluation protocol, dataset rules, and blinded testing.
+- [Structure Audit](docs/STRUCTURE_AUDIT.md): Comprehensive repository structure map, file classifications, and dependency graph.
+
+---
+
 ## Contributing
 
 Contributions are welcome!

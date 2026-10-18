@@ -1,9 +1,9 @@
 import fs from 'node:fs';
 import path from 'node:path';
-import '../tests/_setup.mjs';
-import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
-import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
-import { SMOKE_DIR } from './eval/paths.mjs';
+import '../../tests/_setup.mjs';
+import { extractFromPdf } from '../../src/lib/extractors/pdfExtractor.js';
+import { extractTopicsFromSections } from '../../src/lib/topicExtractor.js';
+import { SMOKE_DIR } from './paths.mjs';
 
 async function main() {
   const dir = SMOKE_DIR;

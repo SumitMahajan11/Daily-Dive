@@ -4,7 +4,7 @@
 - **Keyword lookup table deleted**: The artificial keyword lookup dictionary that directly produced clean synthetic titles was completely removed from the pipeline (`src/lib/topicExtractor.js`).
 - **Unified title string for flag decisions**: Flagging and review decisions now evaluate the exact same title string that is emitted to the end user, rather than an unpruned intermediate candidate (enforced by invariant test in `tests/test_upload_sections.test.mjs`).
 - **Lowercase-fragment rule and `BRAND_CASING` allowlist**: Added a rule rejecting uncapitalized non-brand opening tokens, governed by a unified `BRAND_CASING` regex allowlist.
-- **Independence of tests 52 and 53**: Tests 52 and 53 in `tests/test_upload_sections.test.mjs` no longer derive expectations or dump runtime logging from the pipeline; report-only provenance blocks were moved to the deterministic CLI script `scripts/provenance_report.mjs`.
+- **Independence of tests 52 and 53**: Tests 52 and 53 in `tests/test_upload_sections.test.mjs` no longer derive expectations or dump runtime logging from the pipeline; report-only provenance blocks were moved to the deterministic CLI script `scripts/eval/provenance_report.mjs`.
 
 ## What Has Been Measured
 - **Build-set statistics (reconciled across `D:\DailyDive-Eval\build`)**:

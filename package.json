@@ -13,7 +13,7 @@
     "check:links": "node scripts/tools/check_links.mjs",
     "test:e2e": "node scripts/e2e/run_all_e2e.mjs",
     "pre-commit": "node scripts/tools/check_no_console_log.mjs",
-    "report:provenance": "node scripts/provenance_report.mjs"
+    "report:provenance": "node scripts/eval/provenance_report.mjs"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.117.3",
