@@ -49,6 +49,9 @@ function getFileUniverse() {
 
   for (const line of statusLines) {
     const code = line.slice(0, 2);
+    if (code !== '??' && code !== '!!') {
+      continue;
+    }
     let p = line.slice(3).trim().replace(/\\/g, '/');
     if (p.startsWith('"') && p.endsWith('"')) {
       p = p.slice(1, -1);
@@ -241,6 +244,7 @@ function analyzeReferences(allFiles, trackedFiles) {
   ]);
 
   for (const f of trackedFiles) {
+    if (f === 'docs/STRUCTURE_AUDIT.md' || f === 'scripts/tools/structure_audit.mjs') continue;
     const ext = path.extname(f).toLowerCase();
     if (binaryExtensions.has(ext)) continue;
     const full = path.join(rootDir, f);
@@ -474,7 +478,79 @@ function determineVerdictAndReason(f, meta) {
   };
 }
 
-// 9. Generate Report & Console Print Sections
+// 9. Dynamic scan of external paths in scripts/ and tests/ (Requirement 2g)
+function scanExternalPaths() {
+  const dirs = ['scripts', 'tests'];
+  const findings = [];
+
+  function scanDir(d) {
+    const fullDirPath = path.join(rootDir, d);
+    if (!fs.existsSync(fullDirPath)) return;
+    const entries = fs.readdirSync(fullDirPath, { withFileTypes: true });
+
+    for (const ent of entries) {
+      const relPath = path.join(d, ent.name).replace(/\\/g, '/');
+      if (ent.isDirectory()) {
+        if (['node_modules', '.git', 'dist'].includes(ent.name)) continue;
+        scanDir(relPath);
+      } else if (ent.isFile() && /\.(m?js|py|sh)$/.test(ent.name)) {
+        if (relPath === 'scripts/tools/structure_audit.mjs') continue;
+        const full = path.join(rootDir, relPath);
+        if (!fs.existsSync(full)) continue;
+
+        const content = fs.readFileSync(full, 'utf8');
+        const lines = content.split(/\r?\n/);
+
+        lines.forEach((line, idx) => {
+          const m = line.match(/(['"])([A-Za-z]:[\\/][^'"]+)\1/);
+          if (m) {
+            const extPath = m[2];
+            if (extPath.startsWith('http') || extPath.toLowerCase().includes('projects/daily-dive')) return;
+
+            const context = lines.slice(Math.max(0, idx - 2), Math.min(lines.length, idx + 6)).join('\n');
+            let behavior = '';
+
+            if (context.includes('!fs.existsSync(') && context.includes('return')) {
+              const guard = lines.slice(idx, idx + 4).find(l => l.includes('!fs.existsSync') || l.includes('return')) || 'return;';
+              behavior = `returns early: \`${guard.trim()}\``;
+            } else if (context.includes('!fs.existsSync(') && context.includes('throw')) {
+              const guard = lines.slice(idx, idx + 4).find(l => l.includes('!fs.existsSync') || l.includes('throw')) || 'throw;';
+              behavior = `throws: \`${guard.trim()}\``;
+            } else if (line.includes('fs.existsSync(') && line.includes('?')) {
+              behavior = `skips / defaults: \`${line.trim()}\``;
+            } else if (line.includes('if (fs.existsSync(')) {
+              behavior = `skips: \`${line.trim()}\``;
+            } else if (context.includes('fs.existsSync(') && context.includes(':')) {
+              behavior = `falls back: \`${line.trim()}\``;
+            } else if (line.includes('fs.readdirSync(')) {
+              behavior = `throws ENOENT: \`${line.trim()}\``;
+            } else if (context.includes('fs.readdirSync(')) {
+              const readdirLine = lines.slice(idx, idx + 4).find(l => l.includes('fs.readdirSync(')) || line;
+              behavior = `throws ENOENT: \`${readdirLine.trim()}\``;
+            } else if (context.includes('collectFilesRecursively')) {
+              behavior = `skips: \`collectFilesRecursively returns [] if directory missing\``;
+            } else if (context.includes('catch (e)')) {
+              behavior = `catches error: \`ignores missing path in catch block\``;
+            } else {
+              behavior = `throws if path is missing: \`${line.trim()}\``;
+            }
+
+            findings.push({
+              loc: `${relPath}:${idx + 1}`,
+              path: extPath,
+              breaks: behavior
+            });
+          }
+        });
+      }
+    }
+  }
+
+  for (const d of dirs) scanDir(d);
+  return findings;
+}
+
+// 10. Generate Report & Console Print Sections
 export async function runStructureAudit() {
   const { allFiles, trackedFiles, statusMap } = getFileUniverse();
   const { last30Commits, fileLastCommit, fileFirstCommit } = getGitHistory();
@@ -569,27 +645,60 @@ export async function runStructureAudit() {
 
   // 2a. Directory tree to depth 3 with file counts and total KB per directory
   print('\n--- 2a. Directory Tree (Depth <= 3) ---');
-  const dirStats = new Map();
+  const treeNodes = new Map();
+  // Initialize root
+  treeNodes.set('.', { files: 0, bytes: 0, directFiles: 0, directBytes: 0, depth: 0 });
+
   for (const fa of fileAudits) {
     const parts = fa.path.split('/');
-    for (let depth = 1; depth <= Math.min(3, parts.length - 1); depth++) {
-      const dirPath = parts.slice(0, depth).join('/');
-      if (!dirStats.has(dirPath)) {
-        dirStats.set(dirPath, { count: 0, totalBytes: 0, depth });
+    if (parts.length === 1) {
+      // Root-level file
+      const rootNode = treeNodes.get('.');
+      rootNode.files++;
+      rootNode.bytes += fa.sizeBytes;
+      rootNode.directFiles++;
+      rootNode.directBytes += fa.sizeBytes;
+    } else {
+      const rootNode = treeNodes.get('.');
+      rootNode.files++;
+      rootNode.bytes += fa.sizeBytes;
+
+      for (let depth = 1; depth <= Math.min(3, parts.length - 1); depth++) {
+        const dirPath = parts.slice(0, depth).join('/');
+        if (!treeNodes.has(dirPath)) {
+          treeNodes.set(dirPath, { files: 0, bytes: 0, directFiles: 0, directBytes: 0, depth });
+        }
+        const node = treeNodes.get(dirPath);
+        node.files++;
+        node.bytes += fa.sizeBytes;
+        if (depth === parts.length - 1) {
+          node.directFiles++;
+          node.directBytes += fa.sizeBytes;
+        }
       }
-      const st = dirStats.get(dirPath);
-      st.count++;
-      st.totalBytes += fa.sizeBytes;
     }
   }
 
-  const sortedDirs = Array.from(dirStats.keys()).sort();
-  print(`. (all files: ${fileAudits.length}, total: ${(fileAudits.reduce((a, b) => a + b.sizeBytes, 0) / 1024).toFixed(1)} KB)`);
-  for (const d of sortedDirs) {
-    const st = dirStats.get(d);
-    const indent = '  '.repeat(st.depth);
-    print(`${indent}└── ${d} (${st.count} files, ${(st.totalBytes / 1024).toFixed(1)} KB)`);
+  const rootTotal = treeNodes.get('.');
+  print(`. (total: ${rootTotal.files} files, ${(rootTotal.bytes / 1024).toFixed(1)} KB; root files: ${rootTotal.directFiles} files, ${(rootDirectKb(rootTotal))} KB)`);
+
+  function rootDirectKb(n) {
+    return (n.directBytes / 1024).toFixed(1);
   }
+
+  const sortedDirs = Array.from(treeNodes.keys()).filter(k => k !== '.').sort();
+  for (const d of sortedDirs) {
+    const node = treeNodes.get(d);
+    const indent = '  '.repeat(node.depth);
+    print(`${indent}└── ${d} (${node.files} files, ${(node.bytes / 1024).toFixed(1)} KB)`);
+  }
+
+  // Sum check 2a
+  const topLevelDirs = sortedDirs.filter(d => !d.includes('/'));
+  const sumTopDirsBytes = topLevelDirs.reduce((acc, d) => acc + treeNodes.get(d).bytes, 0);
+  const sumTopDirsFiles = topLevelDirs.reduce((acc, d) => acc + treeNodes.get(d).files, 0);
+  const sumCheckMatch = (sumTopDirsBytes + rootTotal.directBytes === rootTotal.bytes) && (sumTopDirsFiles + rootTotal.directFiles === rootTotal.files);
+  print(`Sum check: root files (${rootTotal.directFiles} files, ${(rootTotal.directBytes / 1024).toFixed(1)} KB) + top-level dirs (${sumTopDirsFiles} files, ${(sumTopDirsBytes / 1024).toFixed(1)} KB) = total (${rootTotal.files} files, ${(rootTotal.bytes / 1024).toFixed(1)} KB) [${sumCheckMatch ? 'MATCH' : 'MISMATCH'}]`);
 
   // 2b. Directory-level table: dir | purpose (from evidence) | file count | KB | verdict mix
   print('\n--- 2b. Directory-Level Table ---');
@@ -612,9 +721,17 @@ export async function runStructureAudit() {
 
   print('| Directory | Purpose (from evidence) | Files | KB | Verdict Mix |');
   print('| :--- | :--- | :--- | :--- | :--- |');
+
+  let tableFilesSum = 0;
+  let tableBytesSum = 0;
+
   for (const d of topDirs) {
     const filesInDir = fileAudits.filter(f => f.path.startsWith(d + '/'));
-    const totalKb = (filesInDir.reduce((a, b) => a + b.sizeBytes, 0) / 1024).toFixed(1);
+    const totalBytes = filesInDir.reduce((a, b) => a + b.sizeBytes, 0);
+    const totalKb = (totalBytes / 1024).toFixed(1);
+    tableFilesSum += filesInDir.length;
+    tableBytesSum += totalBytes;
+
     const vCounts = {};
     for (const f of filesInDir) {
       vCounts[f.verdict] = (vCounts[f.verdict] || 0) + 1;
@@ -623,6 +740,22 @@ export async function runStructureAudit() {
     const purpose = dirPurposes[d] || 'UNKNOWN';
     print(`| ${d} | ${purpose} | ${filesInDir.length} | ${totalKb} KB | ${mix} |`);
   }
+
+  // Add root files row
+  const rootFilesList = fileAudits.filter(f => !f.path.includes('/'));
+  const rootBytes = rootFilesList.reduce((a, b) => a + b.sizeBytes, 0);
+  const rootKb = (rootBytes / 1024).toFixed(1);
+  tableFilesSum += rootFilesList.length;
+  tableBytesSum += rootBytes;
+  const rootVCounts = {};
+  for (const f of rootFilesList) {
+    rootVCounts[f.verdict] = (rootVCounts[f.verdict] || 0) + 1;
+  }
+  const rootMix = Object.entries(rootVCounts).map(([k, v]) => `${v} ${k}`).join(', ');
+  print(`| (root files) | Root-level build, config, and documentation files | ${rootFilesList.length} | ${rootKb} KB | ${rootMix} |`);
+
+  const sumCheck2b = (tableFilesSum === fileAudits.length) && (tableBytesSum === rootTotal.bytes);
+  print(`Sum check: directory entries + root files = ${tableFilesSum} files, ${(tableBytesSum / 1024).toFixed(1)} KB vs total = ${fileAudits.length} files, ${(rootTotal.bytes / 1024).toFixed(1)} KB [${sumCheck2b ? 'MATCH' : 'MISMATCH'}]`);
 
   // 2c. All DELETE-CANDIDATE and ARCHIVE-CANDIDATE files
   print('\n--- 2c. DELETE-CANDIDATE & ARCHIVE-CANDIDATE Files ---');
@@ -639,10 +772,20 @@ export async function runStructureAudit() {
   if (unknownFiles.length === 0) {
     print('None (0 UNKNOWN files; 100% of files classified by evidence-based rules).');
   } else {
+    print('| Path | KB | Last Touched | Reason |');
+    print('| :--- | :--- | :--- | :--- |');
     for (const f of unknownFiles) {
-      print(`| ${f.path} | ${f.sizeKb} KB | ${f.reason} |`);
+      print(`| ${f.path} | ${f.sizeKb} KB | ${f.lastCommit} | ${f.reason} |`);
     }
   }
+
+  // Verdict sum check
+  const totalCandidateInAudit = fileAudits.filter(f => f.verdict === 'DELETE-CANDIDATE' || f.verdict === 'ARCHIVE-CANDIDATE').length;
+  const totalUnknownInAudit = fileAudits.filter(f => f.verdict === 'UNKNOWN').length;
+  const totalKeepInAudit = fileAudits.filter(f => f.verdict === 'KEEP').length;
+  const totalGeneratedInAudit = fileAudits.filter(f => f.verdict === 'GENERATED').length;
+  const verdictSumMatch = (candidateFiles.length === totalCandidateInAudit) && (unknownFiles.length === totalUnknownInAudit);
+  print(`\nVerdict check: 2b verdicts (KEEP: ${totalKeepInAudit}, GENERATED: ${totalGeneratedInAudit}, CANDIDATE: ${totalCandidateInAudit}, UNKNOWN: ${totalUnknownInAudit}) match list lengths (2c: ${candidateFiles.length}, 2d: ${unknownFiles.length}) [${verdictSumMatch ? 'MATCH' : 'MISMATCH'}]`);
 
   // 2e. Byte-identical duplicate groups
   print('\n--- 2e. Byte-Identical Duplicate Groups ---');
@@ -666,27 +809,13 @@ export async function runStructureAudit() {
     print(`| ${idx + 1} | ${f.path} | ${f.sizeKb} KB | ${f.type} | ${f.verdict} | ${f.reason} |`);
   });
 
-  // 2g. Hard-coded paths outside repo in scripts/ and tests/
+  // 2g. Hard-coded paths outside repo in scripts/ and tests/ (Dynamic Scan)
   print('\n--- 2g. Hard-Coded External Paths in scripts/ & tests/ ---');
   print('| File:Line | Path | What breaks if path is missing |');
   print('| :--- | :--- | :--- |');
-  const externalPathFindings = [
-    { loc: 'scripts/eval/make_holdout.mjs:120', p: 'D:/DailyDive-Eval/build', breaks: 'Build rejection lookup skips eval build PDFs' },
-    { loc: 'scripts/eval/make_holdout.mjs:401', p: 'C:/Users/SUMIT/Downloads', breaks: 'Cannot find downloaded PDFs for holdout candidate pool' },
-    { loc: 'scripts/eval/make_holdout.mjs:484', p: 'D:/DailyDive-Eval/holdout_manifest.csv', breaks: 'Holdout manifest is not mirrored to eval folder' },
-    { loc: 'scripts/eval/make_holdout.mjs:534', p: 'D:/DailyDive-Candidates', breaks: 'Falls back to current workspace root directory' },
-    { loc: 'scripts/eval/run_holdout_extractor.mjs:9', p: 'D:/DailyDive-Holdout-Final', breaks: 'Throws ENOENT; holdout extraction benchmark crashes' },
-    { loc: 'scripts/eval/score_holdout.mjs:71', p: 'D:/DailyDive-Holdout-Final', breaks: 'Throws ENOENT; holdout scoring cannot access holdout dataset' },
-    { loc: 'scripts/validation/check_known_issues_flags.mjs:8', p: 'D:/DailyDive-SmokeTest', breaks: 'Throws ENOENT; smoke validation script fails' },
-    { loc: 'scripts/validation/check_smoke_violations.mjs:8', p: 'D:/DailyDive-SmokeTest', breaks: 'Throws ENOENT; smoke violation checks fail' },
-    { loc: 'scripts/provenance_report.mjs:87', p: 'D:/DailyDive-Eval/build', breaks: 'Audits 0 build files; provenance report shows empty build set' },
-    { loc: 'scripts/tools/reconcile_build_stats.mjs:9', p: 'D:/DailyDive-Eval/build', breaks: 'Skips build file reconciliation' },
-    { loc: 'scripts/smoke_report.mjs:119', p: 'D:/DailyDive-SmokeTest', breaks: 'Throws ENOENT or generates 0 smoke topic audits' },
-    { loc: 'tests/holdout_rejection.test.mjs:43', p: 'D:/DailyDive-Eval/build', breaks: 'Skips test path 7 (build file copy sample)' },
-    { loc: 'tests/truthful_review_flags.test.mjs:236', p: 'D:/DailyDive-Eval/build', breaks: 'Cleanly returns early and skips build review invariant test' }
-  ];
+  const externalPathFindings = scanExternalPaths();
   for (const ep of externalPathFindings) {
-    print(`| ${ep.loc} | ${ep.p} | ${ep.breaks} |`);
+    print(`| ${ep.loc} | ${ep.path} | ${ep.breaks} |`);
   }
 
   // 2h. Root-level files and folders: purpose and verdict

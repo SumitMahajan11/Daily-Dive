@@ -1,7 +1,7 @@
 # Repository Structure Audit
 
-Audit timestamp: 2026-10-18T03:49:45.292Z
-Total files audited: 377 (tracked: 235, untracked/ignored: 142)
+Audit timestamp: 2026-10-18T04:11:28.336Z
+Total files audited: 377 (tracked: 237, untracked/ignored: 140)
 
 ## Complete Per-File Audit Table
 
@@ -23,7 +23,7 @@ Total files audited: 377 (tracked: 235, untracked/ignored: 142)
 | docs/EXTRACTOR_LIMITATIONS.md | 6.9 | doc | tracked | 5e0b412 '13' | ac52f5d 2026-10-18 | 0 | none | no | no | no | no | none | none | **UNKNOWN** | added in commit 5e0b412 '13'; inconclusive evidence (inboundRefs=0, inViteGraph=false) |
 | docs/KNOWN_ISSUES.md | 5.0 | doc | tracked | 527c022 '12' | ac52f5d 2026-10-18 | 2 | docs/EXTRACTOR_LIMITATIONS.md, scripts/check_known_issues_flags.mjs | no | no | no | no | none | none | **KEEP** | added in commit 527c022 '12'; used by 2 tracked file reference(s) |
 | docs/RESULTS.md | 8.1 | doc | tracked | 9ce92f1 '15b' | 5e0b412 2026-10-18 | 0 | none | no | no | no | no | none | none | **UNKNOWN** | added in commit 9ce92f1 '15b'; inconclusive evidence (inboundRefs=0, inViteGraph=false) |
-| docs/STRUCTURE_AUDIT.md | 126.2 | generated | untracked | NONE | NONE | 0 | none | no | no | no | no | scripts/tools/structure_audit.mjs | none | **GENERATED** | untracked file (untracked); rebuildable from scripts/tools/structure_audit.mjs |
+| docs/STRUCTURE_AUDIT.md | 126.2 | generated | tracked | 1f54cd0 '15' | 1f54cd0 2026-10-18 | 0 | none | no | no | no | no | scripts/tools/structure_audit.mjs | none | **GENERATED** | added in commit 1f54cd0 '15'; rebuildable from scripts/tools/structure_audit.mjs |
 | docs/holdout_protocol.md | 5.4 | doc | tracked | 30d2a0c '7' | b815c67 2026-10-17 | 0 | none | no | no | no | no | none | none | **UNKNOWN** | added in commit 30d2a0c '7'; inconclusive evidence (inboundRefs=0, inViteGraph=false) |
 | docs/screenshots/library_screen_desktop.png | 69.4 | asset | ignored | NONE | NONE | 1 | README.md | no | no | no | no | none | none | **KEEP** | untracked file (ignored); used by 1 tracked file reference(s) |
 | docs/screenshots/progress_screen_desktop.png | 66.2 | asset | ignored | NONE | NONE | 1 | README.md | no | no | no | no | none | none | **KEEP** | untracked file (ignored); used by 1 tracked file reference(s) |
@@ -259,7 +259,7 @@ Total files audited: 377 (tracked: 235, untracked/ignored: 142)
 | scripts/tools/repair_links.mjs | 37.2 | script | tracked | c0b5ef5 '17a' | 263949b 2026-10-17 | 0 | none | no | no | no | no | none | none | **UNKNOWN** | added in commit c0b5ef5 '17a'; inconclusive evidence (inboundRefs=0, inViteGraph=false) |
 | scripts/tools/reproduce_round2_leads.mjs | 7.6 | script | tracked | 012761c 'c3: move utility tools to scri' | 012761c 2026-10-17 | 0 | none | no | no | no | no | none | none | **UNKNOWN** | added in commit 012761c 'c3: move utility tools to scripts/tools and archive dup_check.json'; inconclusive evidence (inboundRefs=0, inViteGraph=false) |
 | scripts/tools/split_topics_by_group.mjs | 5.1 | script | tracked | 012761c 'c3: move utility tools to scri' | 012761c 2026-10-17 | 2 | package.json, src/data/starterTopics.js | yes | no | no | no | none | none | **KEEP** | added in commit 012761c 'c3: move utility tools to scripts/tools and archive dup_check.json'; used by npm script in package.json, 2 tracked file reference(s) |
-| scripts/tools/structure_audit.mjs | 32.7 | script | untracked | NONE | NONE | 0 | none | no | no | no | no | none | none | **KEEP** | new structure audit tool; generates docs/STRUCTURE_AUDIT.md |
+| scripts/tools/structure_audit.mjs | 37.9 | script | tracked | 1f54cd0 '15' | 1f54cd0 2026-10-18 | 0 | none | no | no | no | no | none | none | **KEEP** | new structure audit tool; generates docs/STRUCTURE_AUDIT.md |
 | scripts/tools/validation/validate_and_fix_all_seeds.py | 2.6 | script | tracked | 012761c 'c3: move utility tools to scri' | 012761c 2026-10-17 | 1 | README.md | no | no | no | no | none | none | **KEEP** | added in commit 012761c 'c3: move utility tools to scripts/tools and archive dup_check.json'; used by 1 tracked file reference(s) |
 | src/App.jsx | 15.3 | source | tracked | 8b0cb36 'feat: complete life learning r' | 712f20e 2026-10-14 | 0 | none | no | no | no | yes | none | none | **KEEP** | added in commit 8b0cb36 'feat: complete life learning roulette with full verified seed data and PWA support'; used by Vite build/import graph |
 | src/components/Modals/ResetConfirmationModal.jsx | 3.4 | source | tracked | 8b0cb36 'feat: complete life learning r' | 206d36f 2026-10-10 | 0 | none | no | no | no | yes | none | none | **KEEP** | added in commit 8b0cb36 'feat: complete life learning roulette with full verified seed data and PWA support'; used by Vite build/import graph |
