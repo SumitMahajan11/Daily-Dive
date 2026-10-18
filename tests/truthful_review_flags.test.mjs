@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import path from 'node:path';
 import './_setup.mjs';
+import { EVAL_BUILD_DIR } from '../scripts/eval/paths.mjs';
 import {
   isCleanHeading,
   BRAND_CASING,
@@ -232,9 +233,10 @@ test('Precision and recall evaluation against flag_labels.json', () => {
   );
 });
 
-test('Invariant: flag decision uses the same string that becomes the emitted title on every topic in build', async () => {
-  const buildDir = 'D:/DailyDive-Eval/build';
+test('Invariant: flag decision uses the same string that becomes the emitted title on every topic in build', async (t) => {
+  const buildDir = EVAL_BUILD_DIR;
   if (!fs.existsSync(buildDir)) {
+    t.skip(`Missing eval build dir: ${buildDir}`);
     return;
   }
 

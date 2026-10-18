@@ -4,9 +4,14 @@ import crypto from 'node:crypto';
 import '../tests/_setup.mjs';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
+import { EVAL_BUILD_DIR } from './eval/paths.mjs';
 
 async function main() {
-  const buildDir = 'D:/DailyDive-Eval/build';
+  const buildDir = EVAL_BUILD_DIR;
+  if (!fs.existsSync(buildDir)) {
+    process.stderr.write(`Eval build directory not found: ${buildDir}\n`);
+    process.exit(2);
+  }
   const allFiles = fs.readdirSync(buildDir).filter(f => f.toLowerCase().endsWith('.pdf')).sort();
 
   process.stdout.write(`Auditing ${allFiles.length} build PDF files...\n`);

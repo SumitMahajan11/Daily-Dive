@@ -4,6 +4,7 @@ import path from 'node:path';
 import crypto from 'node:crypto';
 import { execSync } from 'node:child_process';
 import { safeLog } from '../safeLog.mjs';
+import { EVAL_DIR, EVAL_BUILD_DIR, CANDIDATES_DIR } from './paths.mjs';
 
 // Canonical existing holdout set (marked as SMOKE_ONLY)
 const EXISTING_HOLDOUT_SET = new Map([
@@ -117,7 +118,7 @@ export function getBuildSources() {
   const buildHashes = new Set();
   const buildNormNames = new Set();
   const buildStems = new Set();
-  const buildDirs = ['D:/DailyDive-Eval/build'];
+  const buildDirs = [EVAL_BUILD_DIR];
   for (const dir of buildDirs) {
     const files = collectFilesRecursively(dir);
     for (const file of files) {
@@ -163,7 +164,7 @@ export function getFlagLabelSources() {
     } catch (e) {}
   }
 
-  const lookupDirs = ['tests/fixtures', 'tests/fixtures/real', 'D:/DailyDive-Eval/build'];
+  const lookupDirs = ['tests/fixtures', 'tests/fixtures/real', EVAL_BUILD_DIR];
   for (const norm of flagLabelNormNames) {
     for (const d of lookupDirs) {
       if (!fs.existsSync(d)) continue;
@@ -224,7 +225,7 @@ export function getHeldoutLabelSources() {
     } catch (e) {}
   }
 
-  const lookupDirs = ['tests/fixtures', 'tests/fixtures/real', 'D:/DailyDive-Eval/build'];
+  const lookupDirs = ['tests/fixtures', 'tests/fixtures/real', EVAL_BUILD_DIR];
   for (const norm of heldoutLabelNormNames) {
     for (const d of lookupDirs) {
       if (!fs.existsSync(d)) continue;
@@ -480,9 +481,9 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
   }
   fs.writeFileSync(manifestPath, manifestContent, 'utf8');
 
-  // Mirror to D:/DailyDive-Eval/holdout_manifest.csv if evaluation directory exists
-  const evalManifest = 'D:/DailyDive-Eval/holdout_manifest.csv';
-  if (fs.existsSync('D:/DailyDive-Eval')) {
+  // Mirror to holdout_manifest.csv if evaluation directory exists
+  const evalManifest = path.join(EVAL_DIR, 'holdout_manifest.csv');
+  if (fs.existsSync(EVAL_DIR)) {
     try {
       fs.writeFileSync(evalManifest, manifestContent, 'utf8');
     } catch (e) {}
@@ -531,7 +532,7 @@ export function generateHoldout(candidateDir, count = null, manifestPath = 'repo
 // CLI invocation
 const isMain = process.argv[1] && path.resolve(process.argv[1]) === path.resolve(new URL(import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1'));
 if (isMain) {
-  const targetDir = process.argv[2] || (fs.existsSync('D:/DailyDive-Candidates') ? 'D:/DailyDive-Candidates' : '.');
+  const targetDir = process.argv[2] || (fs.existsSync(CANDIDATES_DIR) ? CANDIDATES_DIR : '.');
   const n = process.argv[3] ? parseInt(process.argv[3], 10) : null;
   generateHoldout(targetDir, n);
 }

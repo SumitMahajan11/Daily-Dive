@@ -4,11 +4,13 @@ import { extractFromPdf } from '../../src/lib/extractors/pdfExtractor.js';
 import { extractTopicsFromSections } from '../../src/lib/topicExtractor.js';
 import { safeLog } from '../safeLog.mjs';
 import '../../tests/_setup.mjs';
+import { HOLDOUT_DIR } from './paths.mjs';
 
 async function runHoldoutExtraction() {
-  const holdoutDir = 'D:/DailyDive-Holdout-Final';
+  const holdoutDir = HOLDOUT_DIR;
   if (!fs.existsSync(holdoutDir)) {
-    throw new Error(`Directory ${holdoutDir} does not exist`);
+    process.stderr.write(`Holdout final directory not found: ${holdoutDir}\n`);
+    process.exit(2);
   }
 
   const files = fs.readdirSync(holdoutDir).filter(f => f.toLowerCase().endsWith('.pdf')).sort();

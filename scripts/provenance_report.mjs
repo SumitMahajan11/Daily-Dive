@@ -6,6 +6,7 @@ import { extractFromPptx } from '../src/lib/extractors/pptxExtractor.js';
 import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
 import { safeLog } from './safeLog.mjs';
 import '../tests/_setup.mjs';
+import { EVAL_BUILD_DIR } from './eval/paths.mjs';
 
 function getPageText(extractedData, pageNum) {
   const idx = pageNum - 1;
@@ -84,10 +85,12 @@ export async function auditProvenance(filePath, fileName) {
 export async function runProvenanceReport() {
   safeLog('--- PROVENANCE AUDIT REPORT ---');
 
-  const buildDir = 'D:/DailyDive-Eval/build';
-  const buildFiles = fs.existsSync(buildDir)
-    ? fs.readdirSync(buildDir).filter(f => f.toLowerCase().endsWith('.pdf')).sort()
-    : [];
+  const buildDir = EVAL_BUILD_DIR;
+  if (!fs.existsSync(buildDir)) {
+    process.stderr.write(`Eval build directory not found: ${buildDir}\n`);
+    process.exit(2);
+  }
+  const buildFiles = fs.readdirSync(buildDir).filter(f => f.toLowerCase().endsWith('.pdf')).sort();
 
   let buildClean = 0;
   let buildViolations = 0;

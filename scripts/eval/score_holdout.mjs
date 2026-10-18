@@ -5,6 +5,7 @@ import { extractFromPdf } from '../../src/lib/extractors/pdfExtractor.js';
 import { extractTopicsFromSections } from '../../src/lib/topicExtractor.js';
 import { safeLog } from '../safeLog.mjs';
 import '../../tests/_setup.mjs';
+import { HOLDOUT_DIR } from './paths.mjs';
 
 function parseCsvLine(line) {
   const result = [];
@@ -68,7 +69,11 @@ export async function scoreHoldout(options = {}) {
   }
 
   // If labels are present, perform fresh run and join
-  const holdoutDir = options.holdoutDir || 'D:/DailyDive-Holdout-Final';
+  const holdoutDir = options.holdoutDir || HOLDOUT_DIR;
+  if (!options.files && !fs.existsSync(holdoutDir)) {
+    process.stderr.write(`Holdout directory not found: ${holdoutDir}\n`);
+    process.exit(2);
+  }
   const files = options.files || (fs.existsSync(holdoutDir) ? fs.readdirSync(holdoutDir).filter(f => f.toLowerCase().endsWith('.pdf')).sort() : []);
 
   if (!options.silent) {

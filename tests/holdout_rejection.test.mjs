@@ -4,8 +4,13 @@ import fs from 'node:fs';
 import path from 'node:path';
 import { generateHoldout } from '../scripts/eval/make_holdout.mjs';
 import { safeLog } from '../scripts/safeLog.mjs';
+import { EVAL_BUILD_DIR } from '../scripts/eval/paths.mjs';
 
-test('Holdout Rejection Paths: proves every rejection path fires on synthetic files', () => {
+test('Holdout Rejection Paths: proves every rejection path fires on synthetic files', (t) => {
+  if (!fs.existsSync(EVAL_BUILD_DIR)) {
+    t.skip(`Missing eval build dir: ${EVAL_BUILD_DIR}`);
+    return;
+  }
   const syntheticDir = path.resolve('scratch/synthetic_test_candidates');
   if (fs.existsSync(syntheticDir)) {
     fs.rmSync(syntheticDir, { recursive: true, force: true });
@@ -39,11 +44,11 @@ test('Holdout Rejection Paths: proves every rejection path fires on synthetic fi
       fs.writeFileSync(path.join(syntheticDir, 'corrupt_test_file.pdf'), 'corrupt-fixture');
     }
 
-    // Path 7: Build rejection (D:/DailyDive-Eval/build name or hash)
-    if (fs.existsSync('D:/DailyDive-Eval/build')) {
-      const buildFiles = fs.readdirSync('D:/DailyDive-Eval/build');
+    // Path 7: Build rejection (EVAL_BUILD_DIR name or hash)
+    if (fs.existsSync(EVAL_BUILD_DIR)) {
+      const buildFiles = fs.readdirSync(EVAL_BUILD_DIR);
       if (buildFiles.length > 0) {
-        fs.copyFileSync(path.join('D:/DailyDive-Eval/build', buildFiles[0]), path.join(syntheticDir, 'build_copy_sample.pdf'));
+        fs.copyFileSync(path.join(EVAL_BUILD_DIR, buildFiles[0]), path.join(syntheticDir, 'build_copy_sample.pdf'));
       }
     } else {
       fs.writeFileSync(path.join(syntheticDir, '1000142068 (1).pdf'), 'build-name');

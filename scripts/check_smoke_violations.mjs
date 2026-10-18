@@ -3,9 +3,14 @@ import path from 'node:path';
 import '../tests/_setup.mjs';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
+import { SMOKE_DIR } from './eval/paths.mjs';
 
 async function main() {
-  const dir = 'D:/DailyDive-SmokeTest';
+  const dir = SMOKE_DIR;
+  if (!fs.existsSync(dir)) {
+    process.stderr.write(`Smoke test directory not found: ${dir}\n`);
+    process.exit(2);
+  }
   const files = fs.readdirSync(dir).filter(f => f.toLowerCase().endsWith('.pdf')).sort();
 
   const violations = [];

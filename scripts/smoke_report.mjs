@@ -4,6 +4,7 @@ import path from 'node:path';
 import { extractFromPdf } from '../src/lib/extractors/pdfExtractor.js';
 import { extractTopicsFromSections } from '../src/lib/topicExtractor.js';
 import '../tests/_setup.mjs';
+import { SMOKE_DIR } from './eval/paths.mjs';
 
 function print(str = '') {
   process.stdout.write(str + '\n');
@@ -116,7 +117,11 @@ export async function processFile(filePath, fileName) {
   };
 }
 
-export async function runSmokeReport(dirPath = 'D:/DailyDive-SmokeTest') {
+export async function runSmokeReport(dirPath = SMOKE_DIR) {
+  if (!fs.existsSync(dirPath)) {
+    process.stderr.write(`Smoke test directory not found: ${dirPath}\n`);
+    process.exit(2);
+  }
   print('=== DAILYDIVE SMOKE TEST REPORT ===');
   print(`Directory: ${dirPath}`);
 
@@ -166,6 +171,6 @@ export async function runSmokeReport(dirPath = 'D:/DailyDive-SmokeTest') {
 import { fileURLToPath } from 'node:url';
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  const customDir = process.argv[2] || 'D:/DailyDive-SmokeTest';
+  const customDir = process.argv[2] || SMOKE_DIR;
   runSmokeReport(customDir);
 }
