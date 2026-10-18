@@ -273,6 +273,7 @@ function analyzeReferences(allFiles, trackedFiles) {
     const base = path.basename(f);
     const baseNoExt = base.replace(/\.[^.]+$/, '');
     const isGeneric = ['index', 'main', 'test', 'README', 'setup', 'App'].includes(baseNoExt) && base.length <= 10;
+    const isDotfileOrShort = base.startsWith('.') || base.length < 5 || f.startsWith('.') || f.length < 5;
 
     let matchCount = 0;
     const referrers = [];
@@ -280,10 +281,19 @@ function analyzeReferences(allFiles, trackedFiles) {
     for (const [tf, content] of textContents.entries()) {
       if (tf === f) continue;
       let matched = false;
-      if (content.includes(f)) {
-        matched = true;
-      } else if (!isGeneric && content.includes(base)) {
-        matched = true;
+      if (isDotfileOrShort) {
+        const escF = f.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const escBase = base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        const boundaryPattern = new RegExp(`(?<![a-zA-Z0-9_.])${escF}(?![a-zA-Z0-9_])|(?<![a-zA-Z0-9_.])${escBase}(?![a-zA-Z0-9_])`);
+        if (boundaryPattern.test(content)) {
+          matched = true;
+        }
+      } else {
+        if (content.includes(f)) {
+          matched = true;
+        } else if (!isGeneric && content.includes(base)) {
+          matched = true;
+        }
       }
       if (matched) {
         matchCount++;
@@ -291,9 +301,13 @@ function analyzeReferences(allFiles, trackedFiles) {
       }
     }
 
-    const usedByPkg = pkgScriptsStr.includes(f) || pkgScriptsStr.includes(base);
+    const usedByPkg = isDotfileOrShort
+      ? new RegExp(`(?<![a-zA-Z0-9_.])${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-zA-Z0-9_])`).test(pkgScriptsStr)
+      : (pkgScriptsStr.includes(f) || pkgScriptsStr.includes(base));
     const usedByTest = referrers.some(r => r.startsWith('tests/')) || f.startsWith('tests/') || f === 'scripts/e2e/run_all_e2e.mjs';
-    const usedByHook = preCommitHookContent.includes(f) || preCommitHookContent.includes(base) || f === 'scripts/tools/check_no_console_log.mjs';
+    const usedByHook = isDotfileOrShort
+      ? new RegExp(`(?<![a-zA-Z0-9_.])${base.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}(?![a-zA-Z0-9_])`).test(preCommitHookContent)
+      : (preCommitHookContent.includes(f) || preCommitHookContent.includes(base) || f === 'scripts/tools/check_no_console_log.mjs');
 
     refData.set(f, {
       count: matchCount,
@@ -387,7 +401,7 @@ function determineVerdictAndReason(f, meta) {
   const isRootBuildOrConfig = [
     'index.html', 'package.json', 'package-lock.json', 'vite.config.js',
     'tailwind.config.js', 'postcss.config.js', 'vercel.json', '.gitignore',
-    '.env.example', 'README.md', 'eng.traineddata'
+    '.env.example', 'README.md'
   ].includes(f);
 
   const isCiWorkflow = f.startsWith('.github/workflows/');
@@ -412,10 +426,13 @@ function determineVerdictAndReason(f, meta) {
     };
   }
 
-  if (f === '.env' || f.startsWith('.vercel/')) {
+  if (f === '.env' || f.startsWith('.vercel/') || f === 'eng.traineddata') {
+    const reason = f === 'eng.traineddata'
+      ? `${commitDesc}; 0 code refs`
+      : `${commitDesc}; local untracked config/cache artifact; excluded from repository`;
     return {
-      verdict: 'DELETE-CANDIDATE',
-      reason: `${commitDesc}; local untracked config/cache artifact; excluded from repository`
+      verdict: 'LOCAL (ignored)',
+      reason
     };
   }
 
@@ -830,16 +847,16 @@ export async function runStructureAudit() {
     let purpose = 'UNKNOWN';
     let v = 'KEEP';
 
-    if (ent.name === '.env') { purpose = 'Local environment variable file with secrets'; v = 'DELETE-CANDIDATE'; }
+    if (ent.name === '.env') { purpose = 'Local environment variable file with secrets'; v = 'LOCAL (ignored)'; }
     else if (ent.name === '.env.example') { purpose = 'Example environment configuration template'; v = 'KEEP'; }
     else if (ent.name === '.githooks') { purpose = 'Git pre-commit hook scripts'; v = 'KEEP'; }
     else if (ent.name === '.github') { purpose = 'CI/CD GitHub Actions workflows'; v = 'KEEP'; }
     else if (ent.name === '.gitignore') { purpose = 'Git ignore rules for workspace'; v = 'KEEP'; }
-    else if (ent.name === '.vercel') { purpose = 'Vercel deployment metadata cache'; v = 'DELETE-CANDIDATE'; }
+    else if (ent.name === '.vercel') { purpose = 'Vercel deployment metadata cache'; v = 'LOCAL (ignored)'; }
     else if (ent.name === 'api') { purpose = 'Serverless functions for social sharing'; v = 'KEEP'; }
     else if (ent.name === 'data') { purpose = 'Canonical topics and lessons dataset'; v = 'KEEP'; }
     else if (ent.name === 'docs') { purpose = 'Project documentation and audit logs'; v = 'KEEP'; }
-    else if (ent.name === 'eng.traineddata') { purpose = 'Tesseract OCR English language trained data'; v = 'KEEP'; }
+    else if (ent.name === 'eng.traineddata') { purpose = 'Tesseract OCR English language trained data'; v = 'LOCAL (ignored)'; }
     else if (ent.name === 'evidence') { purpose = 'Test screenshots and Lighthouse execution runs'; v = 'KEEP'; }
     else if (ent.name === 'index.html') { purpose = 'Single-page application HTML entrypoint'; v = 'KEEP'; }
     else if (ent.name === 'package-lock.json') { purpose = 'NPM locked dependency tree'; v = 'KEEP'; }
