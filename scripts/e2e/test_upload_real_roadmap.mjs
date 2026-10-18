@@ -133,11 +133,11 @@ async function testUploadRealRoadmap() {
   ]);
   await heicChooser.setFiles(corruptHeicPath);
 
-  safeLog('6. Waiting for corrupt HEIC conversion toast...');
+  safeLog('6. Waiting for corrupt HEIC toast...');
   const toastText = 'This HEIC photo could not be converted. Export it as JPEG and try again.';
   const toastLocator = page.locator(`text="${toastText}"`).first();
   await toastLocator.waitFor({ state: 'visible', timeout: 10000 });
-  safeLog('[PASS]: Corrupt HEIC upload correctly displayed conversion error toast.');
+  safeLog('[PASS]: Corrupt HEIC toast verified');
 
 
   await browser.close();
