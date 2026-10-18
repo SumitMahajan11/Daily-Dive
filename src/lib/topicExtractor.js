@@ -2118,12 +2118,22 @@ function extractTopicsStructured(fullText, rawSections = [], sourceFileName = 'u
         finalTitle = truncateAtWord(cleanCandidateTitle(fallback || candidateTitle), 45);
         titleSource = 'heading';
         // Invariant: evaluate the exact resolved string that becomes emitted title!
+        const rawOnlyReasons = scoreResult.reviewReasons.filter(r =>
+          r === 'Trailing punctuation or incomplete delimiter' ||
+          r === 'Open date range or trailing hyphen');
         if (isCleanHeading(finalTitle) && !isNonTopicHeading(finalTitle)) {
           finalTitle = toTitleCase(finalTitle);
-          needsReview = false;
-          confidence = Math.max(75, scoreResult.confidence);
-          confidenceRating = 'high';
-          reviewReasons = [...unitReviewReasons];
+          if (rawOnlyReasons.length > 0) {
+            needsReview = true;
+            confidence = Math.min(scoreResult.confidence, 65);
+            confidenceRating = 'medium';
+            reviewReasons = [...rawOnlyReasons, ...unitReviewReasons];
+          } else {
+            needsReview = false;
+            confidence = Math.max(75, scoreResult.confidence);
+            confidenceRating = 'high';
+            reviewReasons = [...unitReviewReasons];
+          }
           _path = 'clean_heading_fallback';
           _flagInput = 'resolvedTitle';
         } else {

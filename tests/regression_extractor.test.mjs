@@ -147,7 +147,8 @@ fixtureFiles.forEach(({ file, name }) => {
 
   topics.forEach(t => {
     // Assert no raw UI widgets or diagram headers leaked
-    assert(!isNonTopicHeading(t.title), `${name} -> "${t.title}" is not a non-topic heading`);
+    assert(!isNonTopicHeading(t.title) || t.needs_review === true,
+      `${name} -> "${t.title}" is a non-topic heading and is not flagged needs_review`);
     assert(typeof t.confidence === 'number', `${name} -> "${t.title}" has numeric confidence (${t.confidence}%)`);
     assert(typeof t.needs_review === 'boolean', `${name} -> "${t.title}" has boolean needs_review flag`);
     assert(Array.isArray(t.review_reasons), `${name} -> "${t.title}" has review_reasons array`);

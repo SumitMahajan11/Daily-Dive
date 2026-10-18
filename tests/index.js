@@ -13,5 +13,6 @@ for (const f of testFiles) {
     await import(pathToFileURL(path.join(dir, f)).href);
   } catch (err) {
     console.error(`Failed to load test file: ${f}`, err);
+    process.exitCode = 1;
   }
 }
