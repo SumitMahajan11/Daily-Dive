@@ -32,7 +32,12 @@ const suites = [
   'scripts/e2e/test_hygiene.mjs',
   'scripts/e2e/test_review_consume.mjs',
   'scripts/e2e/test_spin_clears_not_found.mjs',
-  'scripts/e2e/test_login_overflow.mjs'
+  'scripts/e2e/test_login_overflow.mjs',
+  'scripts/e2e/test_part_a_invariants.mjs',
+  'scripts/e2e/test_part_c_durability.mjs',
+  'scripts/e2e/test_part_c_share_and_calendar.mjs',
+  'scripts/e2e/test_part_d_backup.mjs',
+  'scripts/e2e/test_pwa_v1_v2_recovery.mjs'
 ];
 
 printLog('=== RUNNING ALL DAILY DIVE E2E SUITES ===\n');
