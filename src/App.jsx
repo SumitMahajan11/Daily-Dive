@@ -95,8 +95,10 @@ const MainLayout = () => {
   const [loginNotice, setLoginNotice] = useState(null);
   const [loginMode, setLoginMode] = useState(null);
   const isScrollingProgrammatically = useRef(false);
+  const hasUserNavigated = useRef(false);
 
   const scrollToSection = useCallback((id, instant = false) => {
+    hasUserNavigated.current = true;
     if (id === 'settings' || id === 'login') {
       if (activeSection !== 'settings' && activeSection !== 'login') {
         setPreviousTab(activeSection);
@@ -173,22 +175,42 @@ const MainLayout = () => {
 
   // Initial deep link scroll
   useEffect(() => {
+    const markUserInteraction = () => {
+      hasUserNavigated.current = true;
+    };
+
+    window.addEventListener('wheel', markUserInteraction, { passive: true });
+    window.addEventListener('touchstart', markUserInteraction, { passive: true });
+    window.addEventListener('touchmove', markUserInteraction, { passive: true });
+    window.addEventListener('keydown', markUserInteraction, { passive: true });
+    window.addEventListener('pointerdown', markUserInteraction, { passive: true });
+    window.addEventListener('popstate', markUserInteraction);
+
     const initialScreen = getScreenFromUrl();
+    let t1, t2;
     if (initialScreen && initialScreen !== 'settings' && initialScreen !== 'login') {
       const doScroll = () => {
+        if (hasUserNavigated.current) return;
         const el = document.getElementById(initialScreen);
         if (el) {
           el.scrollIntoView({ behavior: 'instant', block: 'start' });
         }
       };
       doScroll();
-      const t1 = setTimeout(doScroll, 120);
-      const t2 = setTimeout(doScroll, 350);
-      return () => {
-        clearTimeout(t1);
-        clearTimeout(t2);
-      };
+      t1 = setTimeout(doScroll, 120);
+      t2 = setTimeout(doScroll, 350);
     }
+
+    return () => {
+      clearTimeout(t1);
+      clearTimeout(t2);
+      window.removeEventListener('wheel', markUserInteraction);
+      window.removeEventListener('touchstart', markUserInteraction);
+      window.removeEventListener('touchmove', markUserInteraction);
+      window.removeEventListener('keydown', markUserInteraction);
+      window.removeEventListener('pointerdown', markUserInteraction);
+      window.removeEventListener('popstate', markUserInteraction);
+    };
   }, []);
 
   // History and URL change listener
